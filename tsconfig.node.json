@@ -5,12 +5,9 @@
     "lib": ["ESNext"],
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
-    "paths": {
-      "server/*": ["apps/server/src/*"]
-    },
     "types": ["node"],
     "skipLibCheck": true
   },
-  "include": ["scripts/**/*", "apps/server/**/*", "**/vite.config.*", ".husky/**/*"],
+  "include": ["scripts/**/*", "apps/server/**/*", "apps/crawler/**/*", "**/vite.config.*", ".husky/**/*"],
   "exclude": ["**/dist", "**/node_modules/**"]
 }

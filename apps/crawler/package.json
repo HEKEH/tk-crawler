@@ -1,0 +1,58 @@
+{
+  "name": "@tk-crawler/crawler",
+  "version": "0.0.0",
+  "exports": {
+    ".": {
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "ecosystem.config.js",
+    "package.json",
+    "public"
+  ],
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development dotenv -e ../../.env.development nodemon",
+    "build": "rm -rf dist && tsup --config tsconfig.build.json ./src/index.ts --format cjs --minify",
+    "start": "cross-env NODE_ENV=production dotenv -e ${GLOBAL_DOTENV_CONFIG_PATH:-../../.env.production} node dist/index.js",
+    "prod:start": "cross-env dotenv -e ${GLOBAL_DOTENV_CONFIG_PATH:-../../.env.production} pm2-runtime start ecosystem.config.js --env production",
+    "prod:restart": "cross-env dotenv -e ${GLOBAL_DOTENV_CONFIG_PATH:-../../.env.production} pm2 restart ecosystem.config.js --env production",
+    "prod:stop": "cross-env pm2 stop ecosystem.config.js",
+    "prod:delete": "cross-env pm2 delete ecosystem.config.js",
+    "prod:log": "cross-env pm2 logs",
+    "prod:flush": "cross-env pm2 flush",
+    "lint": "eslint",
+    "preinstall": "npx only-allow pnpm"
+  },
+  "dependencies": {
+    "assert": "^2.1.0",
+    "axios": "^1.7.9",
+    "bcryptjs": "^2.4.3",
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.4.7",
+    "dotenv-cli": "^7.4.2",
+    "i18next": "^23.16.0",
+    "i18next-fs-backend": "^2.3.2",
+    "jwt-simple": "^0.5.6",
+    "koa": "^2.15.3",
+    "koa-bodyparser": "^4.4.1",
+    "koa-router": "^13.0.1",
+    "lodash": "^4.17.21",
+    "mongoose": "^8.9.2",
+    "pm2": "^5.4.3",
+    "socket.io": "^4.8.1",
+    "uuid": "^11.0.3",
+    "xss": "^1.0.15"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/koa": "^2.15.0",
+    "@types/koa-bodyparser": "^4.3.12",
+    "@types/koa-router": "^7.4.8",
+    "@types/lodash": "^4.17.13",
+    "@types/uuid": "^10.0.0",
+    "log4js": "^6.9.1",
+    "nodemon": "^3.1.9"
+  }
+}

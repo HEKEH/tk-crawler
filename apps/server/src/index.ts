@@ -1,7 +1,7 @@
 import process from 'node:process';
 // import initApp from './app';
 import config from './config';
-import { logger } from './logger';
+import { logger } from './infra/logger';
 
 const { env } = process;
 logger.info('[env]', env.NODE_ENV);

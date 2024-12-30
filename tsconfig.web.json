@@ -12,6 +12,7 @@
   "include": ["packages", "apps"],
   "exclude": [
     "apps/server/**",
+    "apps/crawler/**",
     "**/node_modules/**",
     "**/dist/**",
     "**/vite.config.*"

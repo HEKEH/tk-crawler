@@ -1,0 +1,17 @@
+{
+  "extends": ["./tsconfig.base.json"],
+  "compilerOptions": {
+    "composite": true,
+    "jsx": "preserve",
+    "lib": ["ES2018", "DOM", "DOM.Iterable"],
+    "types": ["unplugin-vue-macros/macros-global"],
+    "skipLibCheck": true
+  },
+  "include": ["packages", "apps"],
+  "exclude": [
+    "apps/server/**",
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/vite.config.*"
+  ]
+}

@@ -3,6 +3,9 @@
   "compilerOptions": {
     "composite": true,
     "lib": ["ESNext"],
+    "paths": {
+      "server/*": ["apps/server/src/*"]
+    },
     "types": ["node"],
     "skipLibCheck": true
   },

@@ -119,12 +119,18 @@ importers:
       pm2:
         specifier: ^5.4.3
         version: 5.4.3
+      qs:
+        specifier: ^6.13.1
+        version: 6.13.1
       socket.io:
         specifier: ^4.8.1
         version: 4.8.1
       uuid:
         specifier: ^11.0.3
         version: 11.0.3
+      xbogus:
+        specifier: ^1.0.2
+        version: 1.0.2
       xss:
         specifier: ^1.0.15
         version: 1.0.15
@@ -144,6 +150,9 @@ importers:
       '@types/lodash':
         specifier: ^4.17.13
         version: 4.17.13
+      '@types/qs':
+        specifier: ^6.9.17
+        version: 6.9.17
       '@types/uuid':
         specifier: ^10.0.0
         version: 10.0.0
@@ -8021,6 +8030,10 @@ packages:
         optional: true
       utf-8-validate:
         optional: true
+    dev: false
+
+  /xbogus@1.0.2:
+    resolution: {integrity: sha512-T8skigNrKyFmMqoDaKgcL/osf+kumxgNTyJ4vmcyusjVoq2XsSQdai9ywHl0Yd3KlbJehXwZoFZ0B2nfiiaeLA==}
     dev: false
 
   /xml-name-validator@4.0.0:

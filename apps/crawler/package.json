@@ -41,8 +41,10 @@
     "lodash": "^4.17.21",
     "mongoose": "^8.9.2",
     "pm2": "^5.4.3",
+    "qs": "^6.13.1",
     "socket.io": "^4.8.1",
     "uuid": "^11.0.3",
+    "xbogus": "^1.0.2",
     "xss": "^1.0.15"
   },
   "devDependencies": {
@@ -51,6 +53,7 @@
     "@types/koa-bodyparser": "^4.3.12",
     "@types/koa-router": "^7.4.8",
     "@types/lodash": "^4.17.13",
+    "@types/qs": "^6.9.17",
     "@types/uuid": "^10.0.0",
     "log4js": "^6.9.1",
     "nodemon": "^3.1.9"

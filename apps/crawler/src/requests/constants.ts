@@ -2,6 +2,8 @@ import { LANGUAGE } from '../constants';
 
 export const TIKTOK_URL = 'https://www.tiktok.com';
 export const TIKTOK_WEBCAST_URL = 'https://webcast.tiktok.com';
+export const USER_AGENT =
+  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36';
 export const COMMON_TIKTOK_HEADERS = {
   accept: '*/*',
   'accept-language': 'zh-CN,zh;q=0.9',
@@ -17,8 +19,7 @@ export const COMMON_TIKTOK_HEADERS = {
   'sec-fetch-dest': 'empty',
   'sec-fetch-mode': 'cors',
   'sec-fetch-site': 'same-site',
-  'user-agent':
-    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+  'user-agent': USER_AGENT,
 };
 
 export const COMMON_TIKTOK_QUERY = {

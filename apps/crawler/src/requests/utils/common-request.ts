@@ -1,18 +1,22 @@
 import type { AxiosRequestConfig } from 'axios';
-import type { ResponseDataWrapper } from '../types';
 import axios from 'axios';
 import { logger } from '../../infra/logger';
-import { RESPONSE_CODE } from '../types';
 
 interface CommonGetRequestParams {
   url: string;
   headers?: Record<string, string | undefined>;
 }
 
-export async function commonGetRequest<ResponseData>({
+interface FailedResponseData { message: string }
+
+export async function commonGetRequest<
+  ResponseData extends
+    | { status_code: 0; data: any }
+    | FailedResponseData,
+>({
   url,
   headers,
-}: CommonGetRequestParams): Promise<ResponseDataWrapper<ResponseData>> {
+}: CommonGetRequestParams): Promise<ResponseData> {
   try {
     const config: AxiosRequestConfig = {
       method: 'get',
@@ -21,11 +25,11 @@ export async function commonGetRequest<ResponseData>({
       headers,
     };
     logger.log('[request] config:', config);
-    const { data } = await axios<ResponseDataWrapper<ResponseData>>(config);
-    if (data.status_code === RESPONSE_CODE.SUCCESS) {
-      logger.log('[response] success:', data.data);
+    const { data } = await axios<ResponseData>(config);
+    if (data && 'status_code' in data && data.status_code === 0) {
+      logger.log('[response] success:', data);
     } else {
-      logger.error('[response] business error:', data.message);
+      logger.error('[response] business error:', (data as FailedResponseData));
     }
     return data;
   } catch (error) {

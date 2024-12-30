@@ -9,8 +9,13 @@ class Crawler {
   constructor() {}
 
   private async _run() {
-    const feed = await getFeed({ lng: LANGUAGE['ZH-CN'] });
-    logger.info('[feed]', feed);
+    try {
+      const feed = await getFeed({ lng: LANGUAGE['ZH-CN'] });
+      logger.info('[feed]', JSON.stringify((feed as any).data));
+    // eslint-disable-next-line unused-imports/no-unused-vars
+    } catch (error) {
+      logger.error('[feed] error');
+    }
   }
 
   start() {

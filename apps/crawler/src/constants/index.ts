@@ -1,1 +1,5 @@
-export const TIKTOK_URL = 'https://www.tiktok.com';
+export enum LANGUAGE {
+  'ZH-CN' = 'zh-CN',
+}
+
+export const DEFAULT_LANGUAGE = LANGUAGE['ZH-CN'];

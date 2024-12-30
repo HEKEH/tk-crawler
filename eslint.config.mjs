@@ -10,6 +10,8 @@ export default antfu(
       'style/member-delimiter-style': 'off',
       'style/multiline-ternary': 'off',
       'style/quote-props': 'off',
+      'style/indent': 'off',
+      'style/indent-binary-ops': 'off',
       'no-console': 'warn',
     },
   },

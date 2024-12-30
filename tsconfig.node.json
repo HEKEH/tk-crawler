@@ -3,6 +3,8 @@
   "compilerOptions": {
     "composite": true,
     "lib": ["ESNext"],
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "paths": {
       "server/*": ["apps/server/src/*"]
     },

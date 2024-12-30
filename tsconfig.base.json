@@ -3,8 +3,6 @@
     "target": "es2018",
     "baseUrl": ".",
     "rootDir": ".",
-    "module": "esnext",
-    "moduleResolution": "node",
     "paths": {
     },
     "resolveJsonModule": true,

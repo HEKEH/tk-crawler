@@ -3,6 +3,11 @@ export enum RESPONSE_CODE {
   ERROR = 1,
 }
 
+export interface TikTokQueryTokens {
+  verifyFp: string;
+  msToken: string;
+}
+
 export type ResponseDataWrapper<T> =
   | {
       status_code: RESPONSE_CODE.SUCCESS;

@@ -22,6 +22,10 @@ export const COMMON_TIKTOK_HEADERS = {
   'user-agent': USER_AGENT,
 };
 
+export const CHANNEL_IDS = [86, 87, 1111006, 1222001] as const;
+
+export type ChannelId = (typeof CHANNEL_IDS)[number];
+
 export const COMMON_TIKTOK_QUERY = {
   aid: '1988',
   app_name: 'tiktok_web',
@@ -31,8 +35,6 @@ export const COMMON_TIKTOK_QUERY = {
   browser_version:
     '5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
   channel: 'tiktok_web',
-  channel_id: '86',
-  content_type: '0',
   cookie_enabled: 'true',
   data_collection_enabled: 'false',
   device_id: '7451966978406073874',

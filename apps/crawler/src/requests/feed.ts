@@ -1,4 +1,5 @@
 import type { FeedResponse, WithLng } from '../types';
+import type { TikTokQueryTokens } from './types';
 import { DEFAULT_LANGUAGE } from '../constants';
 import {
   COMMON_TIKTOK_HEADERS,
@@ -8,18 +9,18 @@ import {
 } from './constants';
 import { commonGetRequest } from './utils/common-request';
 import { getUrl } from './utils/get-url';
-import { getMessageToken, getVerifyFp, getXBogus } from './utils/params';
+import { getChannelParamsByChannelId, getRandomChannelId, getXBogus } from './utils/params';
 
-// eslint-disable-next-line ts/no-empty-object-type
-export default async function getFeed({ lng = DEFAULT_LANGUAGE }: WithLng<{}>) {
+export default async function getFeed({ lng = DEFAULT_LANGUAGE, tokens }: WithLng<{ tokens: TikTokQueryTokens }>) {
+  const channelId = getRandomChannelId();
   const url = getUrl({
     baseUrl: TIKTOK_WEBCAST_URL,
     path: '/webcast/feed/',
     params: {
       ...COMMON_TIKTOK_QUERY,
       ...TIKTOK_LANGUAGE_MAP[lng],
-      verifyFp: getVerifyFp(),
-      msToken: getMessageToken(),
+      ...getChannelParamsByChannelId(channelId),
+      ...tokens,
     },
   });
   const xBogus = getXBogus(url);

@@ -7,16 +7,9 @@ interface CommonGetRequestParams {
   headers?: Record<string, string | undefined>;
 }
 
-interface FailedResponseData { message: string }
-
 export async function commonGetRequest<
-  ResponseData extends
-    | { status_code: 0; data: any }
-    | FailedResponseData,
->({
-  url,
-  headers,
-}: CommonGetRequestParams): Promise<ResponseData> {
+  ResponseData extends { status_code: number; data?: any; message?: string },
+>({ url, headers }: CommonGetRequestParams): Promise<ResponseData> {
   try {
     const config: AxiosRequestConfig = {
       method: 'get',
@@ -24,12 +17,12 @@ export async function commonGetRequest<
       url,
       headers,
     };
-    logger.log('[request] config:', config);
+    // logger.log('[request] config:', config);
     const { data } = await axios<ResponseData>(config);
     if (data && 'status_code' in data && data.status_code === 0) {
-      logger.log('[response] success:', data);
+      // logger.log('[response] success:', data);
     } else {
-      logger.error('[response] business error:', (data as FailedResponseData));
+      logger.error('[response] business error:', data);
     }
     return data;
   } catch (error) {

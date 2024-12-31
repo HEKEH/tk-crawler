@@ -84,9 +84,9 @@ export interface FeedItem {
   live_reason: string;
 }
 
-export type FeedResponse = {
-  status_code: 0;
-  extra: {
+export interface FeedResponse {
+  status_code: number;
+  extra?: {
     log_pb: {
       impr_id: string;
     };
@@ -98,8 +98,6 @@ export type FeedResponse = {
     unread_extra: string;
     now: number;
   };
-  data: FeedItem[];
-} | {
-  status_code: number;
-  message: string;
+  data?: FeedItem[];
+  message?: string;
 }

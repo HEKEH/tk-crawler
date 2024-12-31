@@ -5,10 +5,10 @@ import { LogColor, startProjects } from './utils';
 /** Projects start order */
 const projects: Array<ProjectConfig | Array<ProjectConfig>> = [
   {
-    name: 'server',
-    path: join(__dirname, '../apps/server'),
+    name: 'crawler',
+    path: join(__dirname, '../apps/crawler'),
     command: 'pnpm dev',
-    readySignal: />>>\s+server listen on/,
+    readySignal: /Crawler start successfully/,
     logColor: LogColor.seafoam,
   },
 ];

@@ -22,9 +22,17 @@ export const COMMON_TIKTOK_HEADERS = {
   'user-agent': USER_AGENT,
 };
 
-export const CHANNEL_IDS = [86, 87, 1111006, 1222001] as const;
+export enum ChannelId {
+  GAMING_WITH_TAG = 1111006,
+  LIFESTYLE_WITH_TAG = 1222001,
+  SUGGESTED = 86,
+  RECOMMEND = 87,
+  GAMING = 89,
+}
 
-export type ChannelId = (typeof CHANNEL_IDS)[number];
+export const CHANNEL_IDS = Object.values(ChannelId).filter(
+  value => typeof value === 'number',
+) as ChannelId[];
 
 export const COMMON_TIKTOK_QUERY = {
   aid: '1988',
@@ -37,7 +45,7 @@ export const COMMON_TIKTOK_QUERY = {
   channel: 'tiktok_web',
   cookie_enabled: 'true',
   data_collection_enabled: 'false',
-  device_id: '7451966978406073874',
+  device_id: '7451966978406073866',
   device_platform: 'web_pc',
   device_type: 'web_h265',
   focus_state: 'false',

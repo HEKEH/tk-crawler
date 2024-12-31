@@ -9,9 +9,10 @@ logger.info('[port]', config.port);
 
 (async () => {
   const crawler = new Crawler();
-  crawler.start();
   process.on('SIGINT', () => {
     crawler.stop();
     process.exit(0);
   });
+  await crawler.start();
+  logger.info('Crawler start successfully');
 })();

@@ -9,17 +9,20 @@ import {
 } from './constants';
 import { commonGetRequest } from './utils/common-request';
 import { getUrl } from './utils/get-url';
-import { getChannelParamsByChannelId, getRandomChannelId, getXBogus } from './utils/params';
+import { type ChannelParams, getXBogus } from './utils/params';
 
-export default async function getFeed({ lng = DEFAULT_LANGUAGE, tokens }: WithLng<{ tokens: TikTokQueryTokens }>) {
-  const channelId = getRandomChannelId();
+export default async function getFeed({
+  lng = DEFAULT_LANGUAGE,
+  tokens,
+  channelParams,
+}: WithLng<{ tokens: TikTokQueryTokens; channelParams: ChannelParams }>) {
   const url = getUrl({
     baseUrl: TIKTOK_WEBCAST_URL,
     path: '/webcast/feed/',
     params: {
       ...COMMON_TIKTOK_QUERY,
       ...TIKTOK_LANGUAGE_MAP[lng],
-      ...getChannelParamsByChannelId(channelId),
+      ...channelParams,
       ...tokens,
     },
   });

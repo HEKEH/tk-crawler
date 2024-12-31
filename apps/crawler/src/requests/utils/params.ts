@@ -1,8 +1,7 @@
-import type { ChannelId } from '../constants';
 import { randomBytes } from 'node:crypto';
 import xbogus from 'xbogus';
 import { getRandomArrayElement } from '../../utils';
-import { CHANNEL_IDS, USER_AGENT } from '../constants';
+import { CHANNEL_IDS, ChannelId, USER_AGENT } from '../constants';
 
 export function getXBogus(url: string, userAgent: string = USER_AGENT) {
   const res = xbogus(url, userAgent);
@@ -35,30 +34,65 @@ export function getRandomChannelId() {
   return getRandomArrayElement<ChannelId>(CHANNEL_IDS);
 }
 
-export function getChannelParamsByChannelId(channelId: ChannelId) {
+export interface ChannelParams {
+  channel_id: ChannelId;
+  req_from: string;
+  content_type?: string;
+  related_live_tag?: string;
+}
+
+export type ChannelSubTagMap = {
+  [key in ChannelId]?: string[];
+};
+
+export function getChannelParamsByChannelId(
+  channelId: ChannelId,
+  channelSubTagMap: ChannelSubTagMap,
+): ChannelParams {
+  const getSubTag = (channelId: ChannelId) => {
+    const subTags = channelSubTagMap[channelId];
+    if (!subTags?.length) {
+      return undefined;
+    }
+    return getRandomArrayElement(subTags);
+  };
   switch (channelId) {
-    case 1111006:
+    // 根据游戏tag获得游戏直播列表
+    case ChannelId.GAMING_WITH_TAG:
       return {
         channel_id: channelId,
-        // TODO
-        related_live_tag: 'Garena Free Fire',
+        related_live_tag: getSubTag(channelId),
         req_from: 'pc_web_game_sub_feed_refresh',
       };
-    case 1222001:
+    // 生活方式
+    case ChannelId.LIFESTYLE_WITH_TAG:
       return {
         channel_id: channelId,
+        related_live_tag: getSubTag(channelId),
         req_from: 'webapp_taxonomy_drawer_enter_feed',
       };
-    case 86:
+    // 推荐
+    case ChannelId.SUGGESTED:
       return {
         channel_id: channelId,
         content_type: '0',
         req_from: 'pc_web_suggested_host',
+        related_live_tag: getSubTag(channelId),
       };
-    case 87:
+    case ChannelId.RECOMMEND:
       return {
         channel_id: channelId,
-        enter_from: 'live_mt_pc_web_rec_tab_refresh',
+        req_from: getRandomArrayElement([
+          'live_mt_pc_web_rec_tab_refresh',
+          'pc_web_game_feed_loadmore',
+        ]),
+        related_live_tag: getSubTag(channelId),
+      };
+    case ChannelId.GAMING:
+      return {
+        channel_id: channelId,
+        req_from: 'pc_web_game_feed_refresh',
+        related_live_tag: getSubTag(channelId),
       };
   }
 }

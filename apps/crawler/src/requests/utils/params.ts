@@ -1,7 +1,10 @@
 import { randomBytes } from 'node:crypto';
 import xbogus from 'xbogus';
-import { getRandomArrayElement } from '../../utils';
-import { CHANNEL_IDS, ChannelId, USER_AGENT } from '../constants';
+import {
+  getRandomArrayElement,
+  getRandomArrayElementWithWeight,
+} from '../../utils';
+import { ChannelId, USER_AGENT } from '../constants';
 
 export function getXBogus(url: string, userAgent: string = USER_AGENT) {
   const res = xbogus(url, userAgent);
@@ -31,7 +34,14 @@ export function getVerifyFp() {
 }
 
 export function getRandomChannelId() {
-  return getRandomArrayElement<ChannelId>(CHANNEL_IDS);
+  // 自定义权重，目前游戏主播比较多，因此权重较大
+  return getRandomArrayElementWithWeight<ChannelId>([
+    [ChannelId.GAMING_WITH_TAG, 8],
+    [ChannelId.LIFESTYLE_WITH_TAG, 2],
+    [ChannelId.SUGGESTED, 1],
+    [ChannelId.RECOMMEND, 1],
+    [ChannelId.GAMING, 1],
+  ]);
 }
 
 export interface ChannelParams {
@@ -42,7 +52,10 @@ export interface ChannelParams {
 }
 
 export type ChannelSubTagMap = {
-  [key in ChannelId]?: string[];
+  [key in ChannelId]?: {
+    tag: string;
+    weight: number;
+  }[];
 };
 
 export function getChannelParamsByChannelId(
@@ -54,7 +67,9 @@ export function getChannelParamsByChannelId(
     if (!subTags?.length) {
       return undefined;
     }
-    return getRandomArrayElement(subTags);
+    return getRandomArrayElementWithWeight(
+      subTags.map(tag => [tag.tag, tag.weight]),
+    );
   };
   switch (channelId) {
     // 根据游戏tag获得游戏直播列表
@@ -71,7 +86,7 @@ export function getChannelParamsByChannelId(
         related_live_tag: getSubTag(channelId),
         req_from: 'webapp_taxonomy_drawer_enter_feed',
       };
-    // 推荐
+    // 推荐1
     case ChannelId.SUGGESTED:
       return {
         channel_id: channelId,
@@ -79,6 +94,8 @@ export function getChannelParamsByChannelId(
         req_from: 'pc_web_suggested_host',
         related_live_tag: getSubTag(channelId),
       };
+
+    // 推荐2
     case ChannelId.RECOMMEND:
       return {
         channel_id: channelId,
@@ -88,6 +105,7 @@ export function getChannelParamsByChannelId(
         ]),
         related_live_tag: getSubTag(channelId),
       };
+    // 游戏
     case ChannelId.GAMING:
       return {
         channel_id: channelId,

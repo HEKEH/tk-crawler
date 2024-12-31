@@ -11,18 +11,20 @@ import { commonGetRequest } from './utils/common-request';
 import { getUrl } from './utils/get-url';
 import { getXBogus } from './utils/params';
 
+export interface DrawerSubTab {
+  cover_url: string;
+  position: number;
+  rank_type: 'hot_game' | '';
+  tab_name: string;
+  tab_type: string;
+  viewer_count: number;
+}
+
 export interface DrawerTabsResponse {
   status_code: number;
   data?: {
     is_not_show_tab: boolean;
-    sub_tabs: {
-      cover_url: string;
-      position: number;
-      rank_type: 'hot_game' | '';
-      tab_name: string;
-      tab_type: string;
-      viewer_count: number;
-    }[];
+    sub_tabs: DrawerSubTab[];
     tab_name: string;
     tab_type: 'lifestyle' | 'gaming' | 'category' | 'setting_section';
   }[];

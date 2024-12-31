@@ -1,12 +1,10 @@
+import type { DrawerSubTab } from '../requests/drawer-tabs';
 import type { TikTokQueryTokens } from '../requests/types';
 import config from '../config';
 import { LANGUAGE } from '../constants';
 import { logger } from '../infra/logger';
 import { ChannelId } from '../requests/constants';
-import getDrawerTabs, {
-  DRAWER_TABS_SCENE,
-  DRAWER_TABS_SCENES,
-} from '../requests/drawer-tabs';
+import getDrawerTabs, { DRAWER_TABS_SCENE } from '../requests/drawer-tabs';
 import getFeed from '../requests/feed';
 import {
   type ChannelSubTagMap,
@@ -15,7 +13,10 @@ import {
   getRandomChannelId,
   getVerifyFp,
 } from '../requests/utils/params';
-import { getRandomArrayElement, setIntervalImmediate } from '../utils';
+import {
+  getRandomArrayElementWithWeight,
+  setIntervalImmediate,
+} from '../utils';
 
 const TOKEN_UPDATE_INTERVAL = 60000; // 60s更新一次
 
@@ -36,9 +37,7 @@ class Crawler {
     msToken: '',
   };
 
-  private _channelSubTagsMap: {
-    [key in ChannelId]?: Set<string>;
-  } = {};
+  private _channelSubTagsMap: ChannelSubTagMap = {};
 
   constructor() {}
 
@@ -48,13 +47,26 @@ class Crawler {
   }
 
   private async _updateChannelSubTags(scene: DRAWER_TABS_SCENE) {
-    const drawerTabs = await getDrawerTabs({
+    const { data } = await getDrawerTabs({
       lng: LANGUAGE['ZH-CN'],
       tokens: this._queryTokens,
       scene,
     });
-    if (drawerTabs.data) {
-      for (const tab of drawerTabs.data) {
+    if (data) {
+      const updateMap = (channelId: ChannelId, subTab: DrawerSubTab) => {
+        const findItem = this._channelSubTagsMap[channelId]!.find(
+          item => item.tag === subTab.tab_type,
+        );
+        if (!findItem) {
+          this._channelSubTagsMap[channelId]!.push({
+            tag: subTab.tab_type,
+            weight: subTab.viewer_count, // 根据观众数作为权重
+          });
+        } else {
+          findItem.weight = subTab.viewer_count; // 更新权重
+        }
+      };
+      for (const tab of data) {
         if (tab.tab_type === 'gaming' || tab.tab_type === 'lifestyle') {
           // gaming对应1111006
           const channelId =
@@ -62,11 +74,11 @@ class Crawler {
               ? ChannelId.GAMING_WITH_TAG
               : ChannelId.LIFESTYLE_WITH_TAG;
           if (!this._channelSubTagsMap[channelId]) {
-            this._channelSubTagsMap[channelId] = new Set();
+            this._channelSubTagsMap[channelId] = [];
           }
 
           for (const subTab of tab.sub_tabs) {
-            this._channelSubTagsMap[channelId].add(subTab.tab_type);
+            updateMap(channelId, subTab);
           }
         } else {
           for (const subTab of tab.sub_tabs) {
@@ -75,9 +87,9 @@ class Crawler {
                 ? ChannelId.GAMING_WITH_TAG
                 : ChannelId.LIFESTYLE_WITH_TAG;
             if (!this._channelSubTagsMap[channelId]) {
-              this._channelSubTagsMap[channelId] = new Set();
+              this._channelSubTagsMap[channelId] = [];
             }
-            this._channelSubTagsMap[channelId].add(subTab.tab_type);
+            updateMap(channelId, subTab);
           }
         }
       }
@@ -128,7 +140,12 @@ class Crawler {
     await this._updateChannelSubTags(DRAWER_TABS_SCENE.INIT);
 
     this._intervals.updateChannelSubTagsInterval = setInterval(() => {
-      this._updateChannelSubTags(getRandomArrayElement(DRAWER_TABS_SCENES));
+      this._updateChannelSubTags(
+        getRandomArrayElementWithWeight([
+          [DRAWER_TABS_SCENE.INIT, 1],
+          [DRAWER_TABS_SCENE.UPDATE, 3], // update场景更新频率更高
+        ]),
+      );
     }, UPDATE_CHANNEL_SUB_TAGS_INTERVAL);
 
     this._intervals.crawlInterval = setIntervalImmediate(() => {

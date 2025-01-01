@@ -1,10 +1,9 @@
-import type { WithLng } from '../types';
+import type { WithRegion } from '../types';
 import type { TikTokQueryTokens } from './types';
-import { DEFAULT_LANGUAGE } from '../constants';
 import {
   COMMON_TIKTOK_HEADERS,
   COMMON_TIKTOK_QUERY,
-  TIKTOK_LANGUAGE_MAP,
+  TIKTOK_REGION_PARAMS_MAP,
   TIKTOK_WEBCAST_URL,
 } from './constants';
 import { commonGetRequest } from './utils/common-request';
@@ -45,16 +44,17 @@ export const DRAWER_TABS_SCENES = Object.values(DRAWER_TABS_SCENE).filter(
 
 /** 获取频道对应的tag列表 */
 export default async function getDrawerTabs({
-  lng = DEFAULT_LANGUAGE,
+  region,
   tokens,
   scene,
-}: WithLng<{ tokens: TikTokQueryTokens; scene: DRAWER_TABS_SCENE }>) {
+}: WithRegion<{ tokens: TikTokQueryTokens; scene: DRAWER_TABS_SCENE }>) {
+  const { headers, params } = TIKTOK_REGION_PARAMS_MAP[region];
   const url = getUrl({
     baseUrl: TIKTOK_WEBCAST_URL,
     path: '/webcast/feed/drawer_tabs/',
     params: {
       ...COMMON_TIKTOK_QUERY,
-      ...TIKTOK_LANGUAGE_MAP[lng],
+      ...params,
       scene,
       ...tokens,
     },
@@ -64,6 +64,7 @@ export default async function getDrawerTabs({
     url: `${url}&X-Bogus=${xBogus}`,
     headers: {
       ...COMMON_TIKTOK_HEADERS,
+      ...headers,
     },
   });
 }

@@ -1,7 +1,7 @@
 import type { DrawerSubTab } from '../requests/drawer-tabs';
 import type { TikTokQueryTokens } from '../requests/types';
 import config from '../config';
-import { LANGUAGE } from '../constants';
+import { IntervalRunner } from '../infra/interval-runner';
 import { logger } from '../infra/logger';
 import { ChannelId } from '../requests/constants';
 import getDrawerTabs, { DRAWER_TABS_SCENE } from '../requests/drawer-tabs';
@@ -13,10 +13,12 @@ import {
   getRandomChannelId,
   getVerifyFp,
 } from '../requests/utils/params';
+import { Region } from '../types/region';
 import {
   getRandomArrayElementWithWeight,
   setIntervalImmediate,
 } from '../utils';
+import UserCollection from './user-collection';
 
 const TOKEN_UPDATE_INTERVAL = 60000; // 60s更新一次
 
@@ -26,18 +28,25 @@ const UPDATE_CHANNEL_SUB_TAGS_INTERVAL = 300000; // 5分钟更新一次
 class Crawler {
   private _intervals: {
     [key in
-      | 'crawlInterval'
       | 'updateTokensInterval'
       | 'updateChannelSubTagsInterval']?: NodeJS.Timeout;
   } = {};
 
-  private _userIds: Set<string> = new Set();
+  /** 爬取的地区，默认英国 */
+  private _region: Region | 'all' = Region.GB;
+
+  private _userCollection = new UserCollection({
+    regions: this._region === 'all' ? 'all' : [this._region],
+  });
+
   private _queryTokens: TikTokQueryTokens = {
     verifyFp: '',
     msToken: '',
   };
 
   private _channelSubTagsMap: ChannelSubTagMap = {};
+
+  private _crawlIntervalRunner = new IntervalRunner();
 
   constructor() {}
 
@@ -48,7 +57,7 @@ class Crawler {
 
   private async _updateChannelSubTags(scene: DRAWER_TABS_SCENE) {
     const { data } = await getDrawerTabs({
-      lng: LANGUAGE['ZH-CN'],
+      region: this._region,
       tokens: this._queryTokens,
       scene,
     });
@@ -110,22 +119,21 @@ class Crawler {
         ) as ChannelSubTagMap,
       );
       const feed = await getFeed({
-        lng: LANGUAGE['ZH-CN'],
+        region: this._region,
         tokens: this._queryTokens,
         channelParams,
       });
       if (feed.data) {
-        for (const item of feed.data) {
-          const userInfo = item.data?.owner;
-          if (userInfo && !this._userIds.has(userInfo.id_str)) {
-            this._userIds.add(userInfo.id_str);
-            logger.info(`找到第${this._userIds.size}个主播:`, {
-              id: userInfo.id_str,
-              nickname: userInfo.nickname,
-              bio_description: userInfo.bio_description || '',
-            });
-          }
-        }
+        const users = feed.data
+          .map(item => item.data?.owner)
+          .filter(Boolean)
+          .map(user => ({
+            id: user.id_str,
+            display_id: user.display_id,
+            nickname: user.nickname,
+            bio_description: user.bio_description,
+          }));
+        await this._userCollection.addUsers(users);
       }
     } catch (error) {
       logger.error('[feed] error', error);
@@ -148,9 +156,9 @@ class Crawler {
       );
     }, UPDATE_CHANNEL_SUB_TAGS_INTERVAL);
 
-    this._intervals.crawlInterval = setIntervalImmediate(() => {
-      this._crawl();
-    }, config.crawlerInterval);
+    this._crawlIntervalRunner.start(() => this._crawl(), {
+      intervalTime: config.crawlerInterval,
+    });
   }
 
   async start() {
@@ -163,6 +171,7 @@ class Crawler {
     Object.values(this._intervals).forEach(interval => {
       clearInterval(interval);
     });
+    this._crawlIntervalRunner.stop();
   }
 }
 

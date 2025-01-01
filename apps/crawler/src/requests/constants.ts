@@ -1,4 +1,4 @@
-import { LANGUAGE } from '../constants';
+import { DefaultRegion, Region } from '../types/region';
 
 export const TIKTOK_URL = 'https://www.tiktok.com';
 export const TIKTOK_WEBCAST_URL = 'https://webcast.tiktok.com';
@@ -6,7 +6,6 @@ export const USER_AGENT =
   'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36';
 export const COMMON_TIKTOK_HEADERS = {
   accept: '*/*',
-  'accept-language': 'zh-CN,zh;q=0.9',
   'cache-control': 'no-cache',
   origin: TIKTOK_URL,
   pragma: 'no-cache',
@@ -59,18 +58,62 @@ export const COMMON_TIKTOK_QUERY = {
   os: 'mac',
   priority_region: '',
   referer: '',
-  region: 'SG',
   req_from: 'pc_web_suggested_host',
   screen_height: '1440',
   screen_width: '2560',
-  tz_name: 'Asia/Shanghai',
   user_is_login: 'false',
 };
 
-export const TIKTOK_LANGUAGE_MAP = {
-  [LANGUAGE['ZH-CN']]: {
-    browser_language: 'zh-CN',
-    app_language: 'zh-Hans',
-    webcast_language: 'zh-Hans',
+export const TIKTOK_REGION_PARAMS_MAP = new Proxy(
+  {
+    [Region.CN]: {
+      headers: {
+        'accept-language': 'zh-CN,zh;q=0.9',
+      },
+      params: {
+        region: Region.CN,
+        tz_name: 'Asia/Shanghai',
+        browser_language: 'zh-CN',
+        app_language: 'zh-Hans',
+        webcast_language: 'zh-Hans',
+      },
+    },
+    [Region.GB]: {
+      headers: {
+        'accept-language': 'en-GB,en;q=0.9',
+      },
+      params: {
+        region: Region.GB,
+        tz_name: 'Europe/London',
+        browser_language: 'en-GB',
+        app_language: 'en',
+        webcast_language: 'en',
+      },
+    },
   },
+  {
+    get: (target, prop) => {
+      if (prop === 'all') {
+        return target[DefaultRegion];
+      }
+      const res = target[prop as keyof typeof target];
+      if (!res) {
+        throw new Error(`Unsupported region: ${prop as string}`);
+      }
+      return res;
+    },
+  },
+) as {
+  [key in Region | 'all']: {
+    headers: {
+      'accept-language': string;
+    };
+    params: {
+      region: Region;
+      tz_name: string;
+      browser_language: string;
+      app_language: string;
+      webcast_language: string;
+    };
+  };
 };

@@ -1,16 +1,16 @@
-import type { FeedResponse, WithRegion } from '../types';
+import type { FeedResponse, WithRegion } from '../../types';
 import type { TikTokQueryTokens } from './types';
+import { commonGetRequest } from '../utils/common-request';
+import { getUrl } from '../utils/get-url';
+import { type ChannelParams, getXBogus } from '../utils/params';
 import {
   COMMON_TIKTOK_HEADERS,
   COMMON_TIKTOK_QUERY,
   TIKTOK_REGION_PARAMS_MAP,
   TIKTOK_WEBCAST_URL,
 } from './constants';
-import { commonGetRequest } from './utils/common-request';
-import { getUrl } from './utils/get-url';
-import { type ChannelParams, getXBogus } from './utils/params';
 
-export default async function getFeed({
+export async function getFeed({
   region,
   tokens,
   channelParams,

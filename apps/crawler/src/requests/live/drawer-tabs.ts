@@ -1,14 +1,14 @@
-import type { WithRegion } from '../types';
+import type { WithRegion } from '../../types';
 import type { TikTokQueryTokens } from './types';
+import { commonGetRequest } from '../utils/common-request';
+import { getUrl } from '../utils/get-url';
+import { getXBogus } from '../utils/params';
 import {
   COMMON_TIKTOK_HEADERS,
   COMMON_TIKTOK_QUERY,
   TIKTOK_REGION_PARAMS_MAP,
   TIKTOK_WEBCAST_URL,
 } from './constants';
-import { commonGetRequest } from './utils/common-request';
-import { getUrl } from './utils/get-url';
-import { getXBogus } from './utils/params';
 
 export interface DrawerSubTab {
   cover_url: string;
@@ -43,7 +43,7 @@ export const DRAWER_TABS_SCENES = Object.values(DRAWER_TABS_SCENE).filter(
 ) as DRAWER_TABS_SCENE[];
 
 /** 获取频道对应的tag列表 */
-export default async function getDrawerTabs({
+export async function getDrawerTabs({
   region,
   tokens,
   scene,

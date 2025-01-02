@@ -4,7 +4,8 @@ import {
   getRandomArrayElement,
   getRandomArrayElementWithWeight,
 } from '../../utils';
-import { ChannelId, USER_AGENT } from '../constants';
+import { USER_AGENT } from '../constants';
+import { ChannelId } from '../live/constants';
 
 export function getXBogus(url: string, userAgent: string = USER_AGENT) {
   const res = xbogus(url, userAgent);

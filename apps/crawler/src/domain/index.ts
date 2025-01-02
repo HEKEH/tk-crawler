@@ -1,11 +1,11 @@
-import type { DrawerSubTab } from '../requests/drawer-tabs';
-import type { TikTokQueryTokens } from '../requests/types';
+import type { DrawerSubTab, TikTokQueryTokens } from '../requests/live';
 import config from '../config';
 import { IntervalRunner } from '../infra/interval-runner';
 import { logger } from '../infra/logger';
-import { ChannelId } from '../requests/constants';
-import getDrawerTabs, { DRAWER_TABS_SCENE } from '../requests/drawer-tabs';
-import getFeed from '../requests/feed';
+import { DRAWER_TABS_SCENE, getDrawerTabs, getFeed } from '../requests/live';
+import { batchCheckAnchor } from '../requests/live-admin';
+import { TEMP_COOKIE } from '../requests/live-admin/constants';
+import { ChannelId } from '../requests/live/constants';
 import {
   type ChannelSubTagMap,
   getChannelParamsByChannelId,
@@ -163,7 +163,16 @@ class Crawler {
 
   async start() {
     logger.info('start crawler');
-    await this._run();
+    // await this._run();
+    await batchCheckAnchor({
+      displayIds: [
+        'kickofffupdates',
+        'mitchaustin10',
+        'mintyaxelive',
+        'paul_mcnally_',
+      ],
+      cookie: TEMP_COOKIE,
+    });
   }
 
   stop() {

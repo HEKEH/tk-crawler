@@ -30,3 +30,34 @@ export async function commonGetRequest<
     throw error;
   }
 }
+
+interface CommonPostRequestParams {
+  url: string;
+  headers?: Record<string, string | undefined>;
+  body?: any;
+}
+
+export async function commonPostRequest<
+  ResponseData extends { status_code: number; data?: any; message?: string },
+>({ url, headers, body }: CommonPostRequestParams): Promise<ResponseData> {
+  try {
+    const config: AxiosRequestConfig = {
+      method: 'post',
+      maxBodyLength: Infinity,
+      url,
+      headers,
+      data: body,
+    };
+    logger.log('[request] config:', config);
+    const { data } = await axios<ResponseData>(config);
+    if (data && 'status_code' in data && data.status_code === 0) {
+      logger.log('[response] success:', data);
+    } else {
+      logger.error('[response] business error:', data);
+    }
+    return data;
+  } catch (error) {
+    logger.error('[response] system error:', error);
+    throw error;
+  }
+}

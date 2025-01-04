@@ -1,6 +1,7 @@
 import antfu from '@antfu/eslint-config';
 
 export default antfu({
+  ignores: ['**/tk-crack'],
   rules: {
     'style/semi': 'off',
     'style/operator-linebreak': 'off',

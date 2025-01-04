@@ -1,0 +1,10 @@
+{
+  "name": "tk-crack",
+  "version": "0.0.0",
+  "files": [],
+  "scripts": {
+    "preinstall": "npx only-allow pnpm"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}

@@ -7,7 +7,7 @@ import {
 import { USER_AGENT } from '../constants';
 import { ChannelId } from '../live/constants';
 
-export function getXBogus(url: string, userAgent: string = USER_AGENT) {
+export function getXBogus(url: string, userAgent: string = USER_AGENT): string {
   const res = xbogus(url, userAgent);
   return res;
 }

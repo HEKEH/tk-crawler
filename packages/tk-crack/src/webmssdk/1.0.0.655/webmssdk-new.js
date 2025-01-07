@@ -10,20 +10,20 @@
             'byted_acrawler'
           ] = {}),
         );
-})(this, function (Hb) {
+})(this, function (bytedAcrawlerExports) {
   'use strict';
-  var Eb = '&U';
+  var Eb = 'stage1';
   do
     switch (Eb) {
-      case 'e1':
+      case 'stage3':
         try {
-          td['decode'](et, {
+          textDecoder['decode'](et, {
             stream: true,
           }),
             (Te = 1);
         } catch (e) {}
-        (((((r = []), (BytecodeDefinitions = [])), (l = new Map())),
-        (Se = {
+        (((((constantsPool = []), (BytecodeDefinitions = [])), (l = new Map())),
+        (SDKState = {
           boe: false,
           aid: 0,
           dfp: false,
@@ -40,7 +40,7 @@
           perf: false,
           grecaptcha: {},
         })),
-        (Re = {
+        (SDKConfig = {
           __version__: '2.11.0',
           feVersion: 2,
           domNotValid: false,
@@ -48,7 +48,7 @@
           secInfoHeader: 'X-Mssdk-Info',
           googleRecaptcha: 'X-Mssdk-RC',
         })),
-          (Qe =
+          (_global =
             'undefined' != typeof globalThis
               ? globalThis
               : 'undefined' != typeof window
@@ -86,91 +86,90 @@
             n[a++] = (Lb[e['charCodeAt'](o++)] << 4) | Lb[e['charCodeAt'](o++)];
           return n;
         })),
-        (Pe = {
+        (exportsObj = {
           exports: {},
         })),
-        ((function (nf) {
+        (function (_exportsObj) {
           (function () {
-            var Db = [
-              function (e) {
-                if (e)
-                  (tf[0] =
-                    tf[16] =
-                    tf[1] =
-                    tf[2] =
-                    tf[3] =
-                    tf[4] =
-                    tf[5] =
-                    tf[6] =
-                    tf[7] =
-                    tf[8] =
-                    tf[9] =
-                    tf[10] =
-                    tf[11] =
-                    tf[12] =
-                    tf[13] =
-                    tf[14] =
-                    tf[15] =
-                      0),
-                    (this['blocks'] = tf),
-                    (this['buffer8'] = sf);
-                else if (zf) {
-                  var t = new ArrayBuffer(68);
-                  (this['buffer8'] = new Uint8Array(t)),
-                    (this['blocks'] = new Uint32Array(t));
-                } else
-                  this['blocks'] = [
-                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                  ];
-                (this['h0'] =
-                  this['h1'] =
-                  this['h2'] =
-                  this['h3'] =
-                  this['start'] =
-                  this['bytes'] =
-                  this['hBytes'] =
+            function MD5Hash(e) {
+              if (e)
+                (tf[0] =
+                  tf[16] =
+                  tf[1] =
+                  tf[2] =
+                  tf[3] =
+                  tf[4] =
+                  tf[5] =
+                  tf[6] =
+                  tf[7] =
+                  tf[8] =
+                  tf[9] =
+                  tf[10] =
+                  tf[11] =
+                  tf[12] =
+                  tf[13] =
+                  tf[14] =
+                  tf[15] =
                     0),
-                  (this['finalized'] = this['hashed'] = false),
-                  (this['first'] = true);
-              },
-            ];
-            var of,
-              pf,
-              qf,
-              rf,
+                  (this['blocks'] = tf),
+                  (this['buffer8'] = sf);
+              else if (hasArrayBuffer) {
+                var t = new ArrayBuffer(68);
+                (this['buffer8'] = new Uint8Array(t)),
+                  (this['blocks'] = new Uint32Array(t));
+              } else
+                this['blocks'] = [
+                  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                ];
+              (this['h0'] =
+                this['h1'] =
+                this['h2'] =
+                this['h3'] =
+                this['start'] =
+                this['bytes'] =
+                this['hBytes'] =
+                  0),
+                (this['finalized'] = this['hashed'] = false),
+                (this['first'] = true);
+            }
+            var md5,
+              createHashFunctionOfNode,
+              createMD5Factory,
+              createHashFunction,
               sf,
               tf,
-              uf,
-              vf,
+              base64Chars,
+              hashFormats,
               wf,
               xf,
               yf,
-              zf,
-              Af,
-              Bf,
-              Cf,
-              Df,
-              Ef,
-              Ff;
-            ((((((((((((Ff = 'input is invalid type'),
-            (Ef = 'object' == typeof window)),
-            (Df = Ef ? window : {})),
-            (Df['JS_MD5_NO_WINDOW'] && (Ef = false),
-            (Cf = !Ef && 'object' == typeof self))),
-            (Bf =
-              !Df['JS_MD5_NO_NODE_JS'] &&
+              hasArrayBuffer,
+              isCommonJs,
+              isNodeJS,
+              isSelfContext,
+              _window,
+              isWeb,
+              InvalidInputTypeError;
+            ((((((((((((InvalidInputTypeError = 'input is invalid type'),
+            (isWeb = 'object' == typeof window)),
+            (_window = isWeb ? window : {})),
+            (_window['JS_MD5_NO_WINDOW'] && (isWeb = false),
+            (isSelfContext = !isWeb && 'object' == typeof self))),
+            (isNodeJS =
+              !_window['JS_MD5_NO_NODE_JS'] &&
               'object' == typeof process &&
               process['versions'] &&
               process.versions['node'])),
-            (Bf ? (Df = Qe) : Cf && (Df = self),
-            (Af = !Df['JS_MD5_NO_COMMON_JS'] && nf['exports']))),
-            (zf =
-              !Df['JS_MD5_NO_ARRAY_BUFFER'] &&
+            (isNodeJS ? (_window = _global) : isSelfContext && (_window = self),
+            (isCommonJs =
+              !_window['JS_MD5_NO_COMMON_JS'] && _exportsObj['exports']))),
+            (hasArrayBuffer =
+              !_window['JS_MD5_NO_ARRAY_BUFFER'] &&
               'undefined' != typeof ArrayBuffer)),
             (yf = '0123456789abcdef'['split'](''))),
             (xf = [128, 32768, 8388608, -2147483648])),
             (wf = [0, 8, 16, 24])),
-            (vf = [
+            (hashFormats = [
               'hex',
               'array',
               'digest',
@@ -178,23 +177,23 @@
               'arrayBuffer',
               'base64',
             ])),
-            (uf =
+            (base64Chars =
               'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'[
                 'split'
               ](''))),
               (tf = []);
-            if (zf) {
+            if (hasArrayBuffer) {
               var Gf = new ArrayBuffer(68);
               (sf = new Uint8Array(Gf)), (tf = new Uint32Array(Gf));
             }
-            ((((((!Df['JS_MD5_NO_NODE_JS'] && Array['isArray']) ||
+            ((((((!_window['JS_MD5_NO_NODE_JS'] && Array['isArray']) ||
               (Array['isArray'] = function (e) {
                 return (
                   '[object Array]' === Object.prototype.toString['call'](e)
                 );
               }),
-            !zf ||
-              (!Df['JS_MD5_NO_ARRAY_BUFFER_IS_VIEW'] &&
+            !hasArrayBuffer ||
+              (!_window['JS_MD5_NO_ARRAY_BUFFER_IS_VIEW'] &&
                 ArrayBuffer['isView']) ||
               (ArrayBuffer['isView'] = function (e) {
                 return (
@@ -203,29 +202,28 @@
                   e.buffer['constructor'] === ArrayBuffer
                 );
               })),
-            (rf = function (e) {
+            (createHashFunction = function (outputFormat) {
               return function (t) {
-                var qa;
-                return (qa = [0]), new Db[0](!qa[0])['update'](t)[e]();
+                return new MD5Hash(true)['update'](t)[outputFormat]();
               };
             })),
-            (qf = function () {
+            (createMD5Factory = function () {
               var e;
-              (e = rf('hex')),
-                (Bf && (e = pf(e)),
+              (e = createHashFunction('hex')),
+                (isNodeJS && (e = createHashFunctionOfNode(e)),
                 (e['create'] = function () {
-                  return new Db[0]();
+                  return new MD5Hash();
                 }),
                 (e['update'] = function (t) {
                   return e.create()['update'](t);
                 }));
-              for (var t = 0; t < vf['length']; ++t) {
-                var r = vf[t];
-                e[r] = rf(r);
+              for (var t = 0; t < hashFormats['length']; ++t) {
+                var r = hashFormats[t];
+                e[r] = createHashFunction(r);
               }
               return e;
             })),
-            (pf = function (Hf) {
+            (createHashFunctionOfNode = function (Hf) {
               var If, Jf, Kf;
               return (
                 (((Kf = eval("require('crypto')")),
@@ -237,7 +235,7 @@
                     return Kf.createHash('md5')
                       .update(e, 'utf8')
                       ['digest']('hex');
-                  if (ra[0] == e) throw Ff;
+                  if (ra[0] == e) throw InvalidInputTypeError;
                   return (
                     e['constructor'] === ArrayBuffer && (e = new Uint8Array(e)),
                     Array['isArray'](e) ||
@@ -250,19 +248,22 @@
                 If
               );
             })),
-            (((Db[0].prototype['update'] = function (e) {
+            (((MD5Hash.prototype['update'] = function (e) {
               if (!this['finalized']) {
                 var t,
                   r = typeof e;
                 if ('string' !== r) {
-                  if ('object' !== r) throw Ff;
-                  if (null === e) throw Ff;
-                  if (zf && e['constructor'] === ArrayBuffer)
+                  if ('object' !== r) throw InvalidInputTypeError;
+                  if (null === e) throw InvalidInputTypeError;
+                  if (hasArrayBuffer && e['constructor'] === ArrayBuffer)
                     e = new Uint8Array(e);
                   else if (
-                    !(Array['isArray'](e) || (zf && ArrayBuffer['isView'](e)))
+                    !(
+                      Array['isArray'](e) ||
+                      (hasArrayBuffer && ArrayBuffer['isView'](e))
+                    )
                   )
-                    throw Ff;
+                    throw InvalidInputTypeError;
                   t = true;
                 }
                 for (
@@ -298,13 +299,13 @@
                           0)),
                     t)
                   ) {
-                    if (zf)
+                    if (hasArrayBuffer)
                       for (a = this['start']; o < i && a < 64; ++o)
                         u[a++] = e[o];
                     else
                       for (a = this['start']; o < i && a < 64; ++o)
                         s[a >> 2] |= e[o] << wf[3 & a++];
-                  } else if (zf)
+                  } else if (hasArrayBuffer)
                     for (a = this['start']; o < i && a < 64; ++o)
                       (n = e['charCodeAt'](o)) < 128
                         ? (u[a++] = n)
@@ -361,7 +362,7 @@
                 );
               }
             }),
-            (Db[0].prototype['finalize'] = function () {
+            (MD5Hash.prototype['finalize'] = function () {
               if (!this['finalized']) {
                 this['finalized'] = true;
                 var e = this['blocks'],
@@ -392,7 +393,7 @@
                   this['hash']();
               }
             }),
-            (Db[0].prototype['hash'] = function () {
+            (MD5Hash.prototype['hash'] = function () {
               var i, o, a, n, r, t, e;
               (i = this['blocks']),
                 (this['first']
@@ -935,7 +936,7 @@
                     (this['h2'] = (this['h2'] + r) << 0),
                     (this['h3'] = (this['h3'] + n) << 0)));
             }),
-            (Db[0].prototype['hex'] = function () {
+            (MD5Hash.prototype['hex'] = function () {
               var n, r, t, e, ua;
               return (
                 (((((ua = [24, 20, 16, 12, 8, 4, 28, 15]),
@@ -977,8 +978,8 @@
                   yf[(n >> ua[0]) & ua[7]]
               );
             }),
-            (Db[0].prototype['toString'] = Db[0].prototype['hex']),
-            (Db[0].prototype['digest'] = function () {
+            (MD5Hash.prototype['toString'] = MD5Hash.prototype['hex']),
+            (MD5Hash.prototype['digest'] = function () {
               var n, r, t, e, va;
               return (
                 (((((va = [16, 24, 8, 255]),
@@ -1006,8 +1007,8 @@
                 ]
               );
             }),
-            (Db[0].prototype['array'] = Db[0].prototype['digest']),
-            (Db[0].prototype['arrayBuffer'] = function () {
+            (MD5Hash.prototype['array'] = MD5Hash.prototype['digest']),
+            (MD5Hash.prototype['arrayBuffer'] = function () {
               var t, e, wa;
               return (
                 (((wa = [1, 2, 0, 3, 16]),
@@ -1020,8 +1021,8 @@
                 e)
               );
             }),
-            (Db[0].prototype['buffer'] = Db[0].prototype['arrayBuffer']),
-            (Db[0].prototype['base64'] = function () {
+            (MD5Hash.prototype['buffer'] = MD5Hash.prototype['arrayBuffer']),
+            (MD5Hash.prototype['base64'] = function () {
               var xa;
               xa = [63, 4, 2];
               for (var e, t, r, n = '', a = this['array'](), o = 0; o < 15; )
@@ -1029,21 +1030,25 @@
                   (t = a[o++]),
                   (r = a[o++]),
                   (n +=
-                    uf[e >>> 2] +
-                    uf[63 & ((e << 4) | (t >>> 4))] +
-                    uf[63 & ((t << 2) | (r >>> 6))] +
-                    uf[63 & r]);
+                    base64Chars[e >>> 2] +
+                    base64Chars[63 & ((e << 4) | (t >>> 4))] +
+                    base64Chars[63 & ((t << 2) | (r >>> 6))] +
+                    base64Chars[63 & r]);
               return (
                 (e = a[o]),
-                (n += uf[e >>> xa[2]] + uf[(e << xa[1]) & xa[0]] + '==')
+                (n +=
+                  base64Chars[e >>> xa[2]] +
+                  base64Chars[(e << xa[1]) & xa[0]] +
+                  '==')
               );
             })),
-            (of = qf()))),
-              Af ? (nf['exports'] = of) : (Df['md5'] = of);
+            (md5 = createMD5Factory()))),
+              isCommonJs
+                ? (_exportsObj['exports'] = md5)
+                : (_window['md5'] = md5);
           })();
-        })(Pe),
-        (Oe = Pe['exports']))),
-          (Ne = interopRequireDefault(Oe));
+        })(exportsObj)),
+          (defaultExports = interopRequireDefault(exportsObj['exports']));
         function getTypeOf(e) {
           return (
             (getTypeOf =
@@ -1063,14 +1068,15 @@
             getTypeOf(e)
           );
         }
-        Eb = '2M';
+        Eb = 'stage4';
         break;
-      case 'ty':
+      case 'stage2':
         for (var Mb = 144; Mb < 256; ++Mb) lf[Mb] = 9;
         for (var Mb = 256; Mb < 280; ++Mb) lf[Mb] = 7;
         for (var Mb = 280; Mb < 288; ++Mb) lf[Mb] = 8;
-        for (var Nb = new u8(32), Mb = 0; Mb < 32; ++Mb) Nb[Mb] = 5;
-        ((((((((((((af = kf(lf, 9, 1)), (_e = kf(Nb, 5, 1))),
+        for (var Nb = new _Uint8Array(32), Mb = 0; Mb < 32; ++Mb) Nb[Mb] = 5;
+        ((((((((((((af = generateHuffmanTable(lf, 9, 1)),
+        (_e = generateHuffmanTable(Nb, 5, 1))),
         ($e = function (e) {
           for (var t = e[0], r = 1; r < e['length']; ++r)
             e[r] > t && (t = e[r]);
@@ -1101,7 +1107,7 @@
             (ca = [0, null]),
             ((ca[1] == t || t < ca[0]) && (t = ca[0]),
             (ca[1] == r || r > e['length']) && (r = e['length']),
-            new u8(e['subarray'](t, r)))
+            new _Uint8Array(e['subarray'](t, r)))
           );
         })),
         (ec = [
@@ -1135,14 +1141,14 @@
           var y, v, h, p, d, f, c, g, l, u, s, i, o, a, da;
           ((da = [3, 2, 8, 0]), (a = e['length'])),
             (o = n ? n['length'] : da[3]);
-          if (!a || (t['f'] && !t['l'])) return r || new u8(da[3]);
+          if (!a || (t['f'] && !t['l'])) return r || new _Uint8Array(da[3]);
           (((((((((((i = !r), (s = i || da[1] != t['i'])), (u = t['i'])),
-          (i && (r = new u8(da[0] * a)),
+          (i && (r = new _Uint8Array(da[0] * a)),
           (l = function (e) {
             var t;
             t = r['length'];
             if (e > t) {
-              var n = new u8(Math['max'](2 * t, e));
+              var n = new _Uint8Array(Math['max'](2 * t, e));
               n['set'](r), (r = n);
             }
           }))),
@@ -1178,12 +1184,16 @@
                   A = Ze(e, c + 10, 15) + 4,
                   w = C + Ze(e, c + 5, 31) + 1;
                 c += 14;
-                for (var E = new u8(w), k = new u8(19), T = 0; T < A; ++T)
+                for (
+                  var E = new _Uint8Array(w), k = new _Uint8Array(19), T = 0;
+                  T < A;
+                  ++T
+                )
                   k[df[T]] = Ze(e, c + 3 * T, 7);
                 c += 3 * A;
                 var D = $e(k),
                   R = (1 << D) - 1,
-                  x = kf(k, D, 1);
+                  x = generateHuffmanTable(k, D, 1);
                 for (T = 0; T < w; ) {
                   var P,
                     O = x[Ze(e, c, R)];
@@ -1205,7 +1215,10 @@
                 }
                 var K = E['subarray'](0, C),
                   M = E['subarray'](C);
-                (h = $e(K)), (v = $e(M)), (d = kf(K, h, 1)), (p = kf(M, v, 1));
+                (h = $e(K)),
+                  (v = $e(M)),
+                  (d = generateHuffmanTable(K, h, 1)),
+                  (p = generateHuffmanTable(M, v, 1));
               } else Ve(1);
               if (c > y) {
                 u && Ve(0);
@@ -1260,12 +1273,12 @@
             ? We(r, da[3], f)
             : r['subarray'](da[3], f);
         })),
-        (et = new u8(0))),
-        (td = 'undefined' != typeof TextDecoder && new TextDecoder())),
+        (et = new _Uint8Array(0))),
+        (textDecoder = 'undefined' != typeof TextDecoder && new TextDecoder())),
           (Te = 0);
-        Eb = 'e1';
+        Eb = 'stage3';
         break;
-      case '&U':
+      case 'stage1':
         // Ab[0]
         function interopRequireDefault(e) {
           return e &&
@@ -1736,15 +1749,17 @@
         function handleErrorReport(e) {
           var t = true;
           0 === e
-            ? window['_xex'] && window._xex['r'] && window._xex['r'](e, Se, t)
+            ? window['_xex'] &&
+              window._xex['r'] &&
+              window._xex['r'](e, SDKState, t)
             : 1 === e
               ? setTimeout(function () {
-                  hc(Fe, De['slardarErrs'], Se, false, null, t);
+                  hc(Fe, De['slardarErrs'], SDKState, false, null, t);
                 }, 100)
               : 2 === e &&
                 window['_xex'] &&
                 window._xex['r'] &&
-                window._xex['r'](e, Se, t);
+                window._xex['r'](e, SDKState, t);
         }
 
         // 44
@@ -2091,25 +2106,42 @@
           bytecodeDefinition,
           executionContext,
           funcArguments,
-          o,
+          memoryStack,
         ) {
-          function setupArrayProxy(e, t, r, n) {
-            var o, a;
-            ((a = Math['min'](r['length'], e[1])), (o = {})),
-              (Object['defineProperty'](o, 'length', {
-                value: r['length'],
-                writable: true,
-                enumerable: false,
-                configurable: true,
-              }),
-              (i = e[0]),
-              (s = e[2]),
-              (u = e[3]),
-              (g = [n, o]));
-            for (var l = 0; l < a; ++l) g['push'](r[l]);
-            if (s) for (c = t, l = 0; l < r['length']; ++l) o[l] = r[l];
+          function setupArrayProxy(
+            _bytecodeDefinition,
+            _executionContext,
+            _funcArguments,
+            _memoryStack,
+          ) {
+            var o = {};
+            var a = Math['min'](
+              _funcArguments['length'],
+              _bytecodeDefinition[1],
+            );
+            Object['defineProperty'](o, 'length', {
+              value: _funcArguments['length'],
+              writable: true,
+              enumerable: false,
+              configurable: true,
+            }),
+              (bytecodeArray = _bytecodeDefinition[0]),
+              (s = _bytecodeDefinition[2]),
+              (u = _bytecodeDefinition[3]),
+              (g = [_memoryStack, o]);
+            for (var l = 0; l < a; ++l) g['push'](_funcArguments[l]);
+            if (s)
+              for (
+                c = _executionContext, l = 0;
+                l < _funcArguments['length'];
+                ++l
+              )
+                o[l] = _funcArguments[l];
             else {
-              c = null == t ? globalThis : Object(t);
+              c =
+                null == _executionContext
+                  ? globalThis
+                  : Object(_executionContext);
               var h = function (e) {
                 e < a
                   ? Object['defineProperty'](o, e, {
@@ -2122,11 +2154,11 @@
                       enumerable: true,
                       configurable: true,
                     })
-                  : (o[e] = r[e]);
+                  : (o[e] = _funcArguments[e]);
               };
-              for (l = 0; l < r['length']; ++l) h(l);
+              for (l = 0; l < _funcArguments['length']; ++l) h(l);
             }
-            (f = 0), (d = 0), (p = void 0);
+            (f = 0), (executeStatus = 0), (result = void 0);
           }
           function createGlobalVarProxy(e, t) {
             var r;
@@ -2150,42 +2182,46 @@
           function handleExecutionState() {
             var t, e;
             (e = f), (t = u);
-            if (1 === d) {
+            if (1 === executeStatus) {
               for (var r = t['length'] - 1; r >= 0; --r)
                 if ((n = t[r])[0] < e && e <= n[3])
                   return (
                     e <= n[2] && n[2] !== n[3]
                       ? (f = n[2])
-                      : ((f = p), (d = 0), (p = void 0)),
+                      : ((f = result), (executeStatus = 0), (result = void 0)),
                     true
                   );
               throw new SyntaxError('Illegal statement');
             }
-            if (2 === d) {
+            if (2 === executeStatus) {
               for (r = t['length'] - 1; r >= 0; --r)
                 if ((n = t[r])[0] < e && e <= n[2] && n[2] !== n[3])
                   return (f = n[2]), true;
               return (
                 !!(a = y['pop']()) &&
-                ((v[++h] = p),
-                (i = a[0]),
+                ((stack[++h] = result),
+                (bytecodeArray = a[0]),
                 (s = a[1]),
                 (u = a[2]),
                 (g = a[3]),
                 (c = a[4]),
                 (f = a[5]),
-                (d = a[6]),
-                (p = a[7]),
+                (executeStatus = a[6]),
+                (result = a[7]),
                 true)
               );
             }
-            if (3 === d) {
+            if (3 === executeStatus) {
               for (r = t['length'] - 1; r >= 0; --r) {
                 var n;
                 if ((n = t[r])[0] < e) {
                   if (e <= n[1] && n[1] !== n[2])
                     return (
-                      (f = n[1]), (v[++h] = p), (d = 0), (p = void 0), true
+                      (f = n[1]),
+                      (stack[++h] = result),
+                      (executeStatus = 0),
+                      (result = void 0),
+                      true
                     );
                   if (e <= n[2] && n[2] !== n[3]) return (f = n[2]), true;
                 }
@@ -2193,7 +2229,7 @@
               var a;
               if ((a = y['pop']()))
                 return (
-                  (i = a[0]),
+                  (bytecodeArray = a[0]),
                   (s = a[1]),
                   (u = a[2]),
                   (g = a[3]),
@@ -2201,19 +2237,22 @@
                   (f = a[5]),
                   handleExecutionState()
                 );
-              throw p;
+              throw result;
             }
             return true;
           }
 
-          var y, v, h, p, d, f, c, g, u, s, i, ga;
-          ((((ga = [0, 1]), (h = -ga[1])), (v = [])), (y = [])),
+          var y, stack, h, result, executeStatus, f, c, g, u, s, bytecodeArray;
+          function setStack(index, value) {
+            stack[index] = value;
+          }
+          (((h = -1), (stack = [])), (y = [])),
             ('object' != typeof globalThis &&
               (Object['defineProperty'](Object['prototype'], '__1479382789__', {
                 get: function () {
                   return this;
                 },
-                configurable: !ga[0],
+                configurable: true,
               }),
               (__1479382789__['globalThis'] = __1479382789__),
               delete Object.prototype['__1479382789__']),
@@ -2221,270 +2260,567 @@
               bytecodeDefinition,
               executionContext,
               funcArguments,
-              o,
+              memoryStack,
             ));
           do {
             try {
               execute();
             } catch (e) {
-              (d = 3), (p = e);
+              (executeStatus = 3), (result = e);
             }
           } while (handleExecutionState());
-          return p;
+          return result;
           function execute() {
             for (;;) {
-              var e = i[f++];
-              if (e < 38) {
-                if (e < 19) {
-                  if (e < 9) {
-                    if (e < 4) {
-                      if (e < 2) {
-                        if (0 === e) {
-                          var n = v[h--];
-                          v[h] = v[h][n];
-                        } else {
-                          var a = i[f++],
-                            o = r[a],
-                            b = createGlobalVarProxy(o, s);
-                          (v[++h] = b), (v[++h] = o);
-                        }
-                      } else if (2 === e) v[++h] = true;
-                      else {
-                        for (var S = i[f++], A = ((a = i[f++]), g); S > 0; )
-                          (A = A[0]), --S;
-                        (v[++h] = A), (v[++h] = a);
-                      }
-                    } else if (e < 6) {
-                      if (4 === e) --h;
-                      else {
-                        var w = v[h--];
-                        v[h] = v[h] !== w;
-                      }
-                    } else {
-                      if (e < 7) return (d = 2), void (p = v[h--]);
-                      7 === e
-                        ? ((A = i[f++]), (f += A))
-                        : ((w = v[h--]), (v[h] = v[h] <= w));
-                    }
-                  } else if (e < 14)
-                    e < 11
-                      ? 9 === e
-                        ? (v[h] = -v[h])
-                        : (v[++h] = i[f++])
-                      : e < 12
-                        ? (v[++h] = NaN)
-                        : 12 === e
-                          ? (v[h] = +v[h])
-                          : ((w = v[h--]), (v[h] = v[h] | w));
-                  else if (e < 16) {
-                    if (14 === e)
-                      (a = i[f++]), (b = v[h--]), ((q = v[h--])[r[a]] = b);
-                    else {
-                      var E = v[h--];
-                      (b = --(q = v[h--])[E]), (v[++h] = b);
-                    }
-                  } else if (e < 17) (A = i[f++]), v[h] ? (f += A) : --h;
-                  else if (17 === e) {
-                    var k = v[h--];
-                    (b = (q = v[h--])[k]--), (v[++h] = b);
-                  } else {
-                    a = i[f++];
-                    var T = v[h--];
-                    Object['defineProperty'](v[h], r[a], {
-                      set: T,
-                      enumerable: true,
-                      configurable: true,
-                    });
+              var opcode = bytecodeArray[f++];
+              switch (opcode) {
+                case 0: {
+                  // 获取对象属性: stack[h][n]
+                  var n = stack[h--];
+                  setStack(h, stack[h][n]);
+                  break;
+                }
+                case 1: {
+                  // 创建全局变量代理
+                  var a = bytecodeArray[f++],
+                    o = constantsPool[a],
+                    b = createGlobalVarProxy(o, s);
+                  setStack(++h, b);
+                  setStack(++h, o);
+                  break;
+                }
+                case 2: {
+                  // 压入true
+                  setStack(++h, true);
+                  break;
+                }
+                case 3: {
+                  // 多级属性访问
+                  for (
+                    var S = bytecodeArray[f++],
+                      A = ((a = bytecodeArray[f++]), g);
+                    S > 0;
+
+                  ) {
+                    (A = A[0]), --S;
                   }
-                } else if (e < 28) {
-                  if (e < 23)
-                    e < 21
-                      ? 19 === e
-                        ? ((A = i[f++]), v[h] ? --h : (f += A))
-                        : ((a = i[f++]), (v[h] = v[h][r[a]]))
-                      : 21 === e
-                        ? ((b = v[h--]), (v[h] -= b))
-                        : ((w = v[h--]), (v[h] = v[h] >= w));
-                  else if (e < 25) {
-                    if (23 === e) {
-                      a = i[f++];
-                      var D = r[a];
-                      (b = typeof globalThis[D]), (v[++h] = b);
-                    } else {
-                      for (S = i[f++], a = i[f++], A = g; S > 0; )
-                        (A = A[0]), --S;
-                      A[a] = v[h--];
-                    }
-                  } else
-                    e < 26
-                      ? ((b = createBytecodeFunction(i[f++], g)), (v[++h] = b))
-                      : 26 === e
-                        ? ((w = v[h--]), (v[h] = v[h] >>> w))
-                        : ((w = v[h--]), (v[h] = v[h] >> w));
-                } else if (e < 33) {
-                  if (e < 30) {
-                    if (28 === e) (a = i[f++]), (v[++h] = +r[a]);
-                    else {
-                      a = i[f++];
-                      var R = r[a];
-                      R in globalThis || (globalThis[R] = void 0);
-                    }
-                  } else
-                    e < 31
-                      ? ((w = v[h--]), (v[h] = v[h] << w))
-                      : (v[++h] = 31 === e ? c : void 0);
-                } else if (e < 35) {
-                  if (33 === e) {
-                    a = i[f++];
-                    var x = v[h--];
-                    Object['defineProperty'](v[h], r[a], {
-                      get: x,
-                      enumerable: true,
-                      configurable: true,
-                    });
-                  } else
-                    (A = i[f++]), (b = v[h--]), v[h] === b && (--h, (f += A));
-                } else if (e < 36) (A = i[f++]), v[h--] || (f += A);
-                else if (36 === e) (b = v[h--]), (v[h] /= b);
-                else {
-                  a = i[f++];
-                  var P = v[h--],
-                    O = v[h--],
+                  setStack(++h, A);
+                  setStack(++h, a);
+                  break;
+                }
+                case 4: {
+                  // 弹出栈顶
+                  --h;
+                  break;
+                }
+                case 5: {
+                  // 不等于比较 !==
+                  var w = stack[h--];
+                  setStack(h, stack[h] !== w);
+                  break;
+                }
+                case 6: {
+                  // 返回栈顶值
+                  executeStatus = 2;
+                  result = stack[h--];
+                  return;
+                }
+                case 7: {
+                  // 无条件跳转
+                  A = bytecodeArray[f++];
+                  f += A;
+                  break;
+                }
+                case 8: {
+                  // 小于等于比较 <=
+                  w = stack[h--];
+                  setStack(h, stack[h] <= w);
+                  break;
+                }
+                case 9: {
+                  // 取负
+                  setStack(h, -stack[h]);
+                  break;
+                }
+                case 10: {
+                  // 压入字节码中的常量
+                  setStack(++h, bytecodeArray[f++]);
+                  break;
+                }
+                case 11: {
+                  // 压入NaN
+                  setStack(++h, NaN);
+                  break;
+                }
+                case 12: {
+                  // 转换为数字
+                  setStack(h, +stack[h]);
+                  break;
+                }
+                case 13: {
+                  // 按位或运算 |
+                  w = stack[h--];
+                  setStack(h, stack[h] | w);
+                  break;
+                }
+                case 14: {
+                  // 设置对象属性
+                  a = bytecodeArray[f++];
+                  b = stack[h--];
+                  q = stack[h--];
+                  q[constantsPool[a]] = b;
+                  break;
+                }
+                case 15: {
+                  // 前置递减 --obj[prop]
+                  var E = stack[h--];
+                  b = --(q = stack[h--])[E];
+                  setStack(++h, b);
+                  break;
+                }
+                case 16: {
+                  // 条件跳转：如果栈顶为真则跳转
+                  A = bytecodeArray[f++];
+                  stack[h] ? (f += A) : --h;
+                  break;
+                }
+                case 17: {
+                  // 后置递减 obj[prop]--
+                  var k = stack[h--];
+                  b = (q = stack[h--])[k]--;
+                  setStack(++h, b);
+                  break;
+                }
+                case 18: {
+                  // 定义对象属性setter
+                  a = bytecodeArray[f++];
+                  var T = stack[h--];
+                  Object['defineProperty'](stack[h], constantsPool[a], {
+                    set: T,
+                    enumerable: true,
+                    configurable: true,
+                  });
+                  break;
+                }
+                case 19: {
+                  // 条件跳转：如果栈顶为真则弹出并跳转
+                  A = bytecodeArray[f++];
+                  stack[h] ? --h : (f += A);
+                  break;
+                }
+                case 20: {
+                  // 获取对象的命名属性
+                  a = bytecodeArray[f++];
+                  setStack(h, stack[h][constantsPool[a]]);
+                  break;
+                }
+                case 21: {
+                  // 减法运算 -
+                  b = stack[h--];
+                  setStack(h, stack[h] - b);
+                  break;
+                }
+                case 22: {
+                  // 大于等于比较 >=
+                  w = stack[h--];
+                  setStack(h, stack[h] >= w);
+                  break;
+                }
+                case 23: {
+                  // 获取全局变量类型
+                  a = bytecodeArray[f++];
+                  var D = constantsPool[a];
+                  b = typeof globalThis[D];
+                  setStack(++h, b);
+                  break;
+                }
+                case 24: {
+                  // 多级属性赋值
+                  for (
+                    S = bytecodeArray[f++], a = bytecodeArray[f++], A = g;
+                    S > 0;
+
+                  ) {
+                    (A = A[0]), --S;
+                  }
+                  A[a] = stack[h--];
+                  break;
+                }
+                case 25: {
+                  // 创建字节码函数
+                  b = createBytecodeFunction(bytecodeArray[f++], g);
+                  setStack(++h, b);
+                  break;
+                }
+                case 26: {
+                  // 无符号右移 >>>
+                  w = stack[h--];
+                  setStack(h, stack[h] >>> w);
+                  break;
+                }
+                case 27: {
+                  // 有符号右移 >>
+                  w = stack[h--];
+                  setStack(h, stack[h] >> w);
+                  break;
+                }
+                case 28: {
+                  // 将常量转换为数字并压栈
+                  a = bytecodeArray[f++];
+                  setStack(++h, +constantsPool[a]);
+                  break;
+                }
+                case 29: {
+                  // 确保全局变量存在
+                  a = bytecodeArray[f++];
+                  var R = constantsPool[a];
+                  R in globalThis || (globalThis[R] = void 0);
+                  break;
+                }
+                case 30: {
+                  // 左移运算 <<
+                  w = stack[h--];
+                  setStack(h, stack[h] << w);
+                  break;
+                }
+                case 31:
+                case 32: {
+                  // 压入上下文变量c或undefined
+                  setStack(++h, opcode === 31 ? c : void 0);
+                  break;
+                }
+                case 33: {
+                  // 定义对象属性getter
+                  a = bytecodeArray[f++];
+                  var x = stack[h--];
+                  Object['defineProperty'](stack[h], constantsPool[a], {
+                    get: x,
+                    enumerable: true,
+                    configurable: true,
+                  });
+                  break;
+                }
+                case 34: {
+                  // 相等则跳转
+                  A = bytecodeArray[f++];
+                  b = stack[h--];
+                  stack[h] === b && (--h, (f += A));
+                  break;
+                }
+                case 35: {
+                  // 栈顶为假则跳转
+                  A = bytecodeArray[f++];
+                  stack[h--] || (f += A);
+                  break;
+                }
+                case 36: {
+                  // 除法运算 /
+                  b = stack[h--];
+                  setStack(h, stack[h] / b);
+                  break;
+                }
+                case 37: {
+                  // 迭代器操作
+                  a = bytecodeArray[f++];
+                  var P = stack[h--],
+                    O = stack[h--],
                     H = g[a],
                     I = void 0;
                   do {
                     I = H[0]['shift']();
                   } while (void 0 !== I && !(I in H[1]));
                   void 0 !== I
-                    ? ((O[P] = I), (v[++h] = true))
-                    : (v[++h] = false);
+                    ? ((O[P] = I), setStack(++h, true))
+                    : setStack(++h, false);
+                  break;
                 }
-              } else if (e < 57) {
-                if (e < 47) {
-                  if (e < 42) {
-                    if (e < 40) {
-                      if (38 === e) {
-                        var K = v[h--];
-                        (b = ++(q = v[h--])[K]), (v[++h] = b);
-                      } else (w = v[h--]), (v[h] = v[h] & w);
-                    } else
-                      40 === e
-                        ? ((w = v[h--]), (v[h] = v[h] === w))
-                        : ((w = v[h--]), (v[h] = v[h] < w));
-                  } else if (e < 44) v[++h] = 42 !== e && 1 / 0;
-                  else if (e < 45) {
-                    a = i[f++];
-                    var M = r[a];
-                    if (!(M in globalThis))
-                      return (
-                        (d = 3),
-                        void (p = new ReferenceError(M + ' is not defined'))
-                      );
-                    (b = globalThis[M]), (v[++h] = b);
-                  } else if (45 === e) {
-                    for (S = i[f++], a = i[f++], A = g; S > 0; )
-                      (A = A[0]), --S;
-                    (b = A[a]), (v[++h] = b);
-                  } else if (0 !== d) return;
-                } else if (e < 52) {
-                  if (e < 49) {
-                    if (47 === e) v[h] = !v[h];
-                    else {
-                      var F = v[h--];
-                      (b = delete (q = v[h--])[F]), (v[++h] = b);
-                    }
-                  } else if (e < 50) (w = v[h--]), (v[h] = v[h] == w);
-                  else if (50 === e) {
-                    var N = i[f++];
-                    h -= N;
-                    var U = v['slice'](h + 1, h + N + 1),
-                      L = v[h--],
-                      X = v[h--];
-                    if ('function' != typeof L)
-                      return (
-                        (d = 3),
-                        void (p = new TypeError(
-                          typeof L + ' is not a function',
-                        ))
-                      );
-                    var B = l['get'](L);
-                    if (B)
-                      y['push']([i, s, u, g, c, f, d, p]),
-                        setupArrayProxy(B[0], X, U, B[1]);
-                    else {
-                      var W = L['apply'](X, U);
-                      v[++h] = W;
-                    }
-                  } else (w = v[h--]), (v[h] = v[h] != w);
-                } else if (e < 54) {
-                  if (52 === e) {
-                    a = i[f++];
-                    var q = v[h--];
-                    for (var I in ((H = []), q)) H['push'](I);
-                    g[a] = [H, q];
-                  } else {
-                    N = i[f++];
-                    for (var V = [void 0]; N > 0; ) V[N--] = v[h--];
-                    var Z = v[h--];
-                    (W = new (Function.bind['apply'](Z, V))()), (v[++h] = W);
+                case 38: {
+                  // 前置递增 ++obj[prop]
+                  var K = stack[h--];
+                  b = ++(q = stack[h--])[K];
+                  setStack(++h, b);
+                  break;
+                }
+                case 39: {
+                  // 按位与运算 &
+                  w = stack[h--];
+                  setStack(h, stack[h] & w);
+                  break;
+                }
+                case 40: {
+                  // 严格相等比较 ===
+                  w = stack[h--];
+                  setStack(h, stack[h] === w);
+                  break;
+                }
+                case 41: {
+                  // 小于比较 <
+                  w = stack[h--];
+                  setStack(h, stack[h] < w);
+                  break;
+                }
+                case 42:
+                case 43: {
+                  // 压入Infinity或0
+                  setStack(++h, opcode !== 42 && 1 / 0);
+                  break;
+                }
+                case 44: {
+                  // 获取全局变量
+                  a = bytecodeArray[f++];
+                  var M = constantsPool[a];
+                  if (!(M in globalThis)) {
+                    executeStatus = 3;
+                    result = new ReferenceError(M + ' is not defined');
+                    return;
                   }
-                } else if (e < 55) v[h] = void 0;
-                else if (55 === e) {
-                  (a = i[f++]), (b = v[h--]);
-                  var j = r[a];
-                  if (s && !(j in globalThis))
-                    return (
-                      (d = 3),
-                      void (p = new ReferenceError(j + ' is not defined'))
-                    );
+                  b = globalThis[M];
+                  setStack(++h, b);
+                  break;
+                }
+                case 45: {
+                  // 多级属性获取
+                  for (
+                    S = bytecodeArray[f++], a = bytecodeArray[f++], A = g;
+                    S > 0;
+
+                  ) {
+                    (A = A[0]), --S;
+                  }
+                  b = A[a];
+                  setStack(++h, b);
+                  break;
+                }
+                case 46: {
+                  // 返回检查
+                  if (0 !== executeStatus) return;
+                  break;
+                }
+                case 47: {
+                  // 逻辑非运算 !
+                  setStack(h, !stack[h]);
+                  break;
+                }
+                case 48: {
+                  // 删除对象属性 delete
+                  var F = stack[h--];
+                  b = delete (q = stack[h--])[F];
+                  setStack(++h, b);
+                  break;
+                }
+                case 49: {
+                  // 相等比较 ==
+                  w = stack[h--];
+                  setStack(h, stack[h] == w);
+                  break;
+                }
+                case 50: {
+                  // 函数调用
+                  var N = bytecodeArray[f++];
+                  h -= N;
+                  var U = stack['slice'](h + 1, h + N + 1),
+                    L = stack[h--],
+                    X = stack[h--];
+                  if ('function' != typeof L) {
+                    executeStatus = 3;
+                    result = new TypeError(typeof L + ' is not a function');
+                    return;
+                  }
+                  var B = l['get'](L);
+                  if (B) {
+                    y['push']([
+                      bytecodeArray,
+                      s,
+                      u,
+                      g,
+                      c,
+                      f,
+                      executeStatus,
+                      result,
+                    ]);
+                    setupArrayProxy(B[0], X, U, B[1]);
+                  } else {
+                    var W = L['apply'](X, U);
+                    setStack(++h, W);
+                  }
+                  break;
+                }
+                case 51: {
+                  // 不等于比较 !=
+                  w = stack[h--];
+                  setStack(h, stack[h] != w);
+                  break;
+                }
+                case 52: {
+                  // 对象遍历初始化
+                  a = bytecodeArray[f++];
+                  var q = stack[h--];
+                  for (var I in ((H = []), q)) {
+                    H['push'](I);
+                  }
+                  g[a] = [H, q];
+                  break;
+                }
+                case 53: {
+                  // new操作符调用
+                  N = bytecodeArray[f++];
+                  for (var V = [void 0]; N > 0; ) {
+                    V[N--] = stack[h--];
+                  }
+                  var Z = stack[h--];
+                  W = new (Function.bind['apply'](Z, V))();
+                  setStack(++h, W);
+                  break;
+                }
+                case 54: {
+                  // 压入undefined
+                  setStack(h, void 0);
+                  break;
+                }
+                case 55: {
+                  // 设置全局变量
+                  a = bytecodeArray[f++];
+                  b = stack[h--];
+                  var j = constantsPool[a];
+                  if (s && !(j in globalThis)) {
+                    executeStatus = 3;
+                    result = new ReferenceError(j + ' is not defined');
+                    return;
+                  }
                   globalThis[j] = b;
-                } else (a = i[f++]), (v[++h] = r[a]);
-              } else if (e < 67) {
-                if (e < 62) {
-                  if (e < 59)
-                    57 === e
-                      ? ((b = v[h--]), (v[h] *= b))
-                      : ((q = v[h--]), (v[h] = v[h] in q));
-                  else if (e < 60) (w = v[h--]), (v[h] = v[h] ^ w);
-                  else if (60 === e) {
-                    b = v[h--];
-                    var z = v[h--];
-                    (q = v[h--])[z] = b;
-                  } else (w = v[h--]), (v[h] = v[h] > w);
-                } else if (e < 64)
-                  62 === e
-                    ? ((A = i[f++]), v[h--] && (f += A))
-                    : ((b = v[h--]), (v[h] %= b));
-                else if (e < 65) v[h] = typeof v[h];
-                else if (65 === e) {
-                  var Y = v[h--];
-                  (q = v[h--])[Y] = v[h];
-                } else {
-                  var G = i[f++];
-                  v[(h = h - G + 1)] = v['slice'](h, h + G);
+                  break;
                 }
-              } else if (e < 72) {
-                if (e < 69) 67 === e ? (v[++h] = null) : (v[h] = ~v[h]);
-                else if (e < 70) (b = v[h--]), (v[h] += b);
-                else {
-                  if (70 === e) return (A = i[f++]), (d = 1), void (p = f + A);
-                  (q = v[h--]), (v[h] = v[h] instanceof q);
+                case 56: {
+                  // 压入常量池中的值
+                  a = bytecodeArray[f++];
+                  setStack(++h, constantsPool[a]);
+                  break;
                 }
-              } else if (e < 74)
-                72 === e ? ((b = v[h]), (v[++h] = b)) : (v[++h] = {});
-              else if (e < 75)
-                (a = i[f++]),
-                  (b = v[h--]),
-                  Object['defineProperty'](v[h], r[a], {
+                case 57: {
+                  // 乘法运算 *
+                  b = stack[h--];
+                  setStack(h, stack[h] * b);
+                  break;
+                }
+                case 58: {
+                  // in运算符
+                  q = stack[h--];
+                  setStack(h, stack[h] in q);
+                  break;
+                }
+                case 59: {
+                  // 按位异或运算 ^
+                  w = stack[h--];
+                  setStack(h, stack[h] ^ w);
+                  break;
+                }
+                case 60: {
+                  // 设置对象属性
+                  b = stack[h--];
+                  var z = stack[h--];
+                  q = stack[h--];
+                  q[z] = b;
+                  break;
+                }
+                case 61: {
+                  // 大于比较 >
+                  w = stack[h--];
+                  setStack(h, stack[h] > w);
+                  break;
+                }
+                case 62: {
+                  // 栈顶为真则跳转
+                  A = bytecodeArray[f++];
+                  stack[h--] && (f += A);
+                  break;
+                }
+                case 63: {
+                  // 取模运算 %
+                  b = stack[h--];
+                  stack[h] %= b;
+                  break;
+                }
+                case 64: {
+                  // typeof运算符
+                  stack[h] = typeof stack[h];
+                  break;
+                }
+                case 65: {
+                  // 设置对象属性(栈顶三个值分别为:值、属性名、对象)
+                  var Y = stack[h--];
+                  q = stack[h--];
+                  q[Y] = stack[h];
+                  break;
+                }
+                case 66: {
+                  // 创建数组切片
+                  var G = bytecodeArray[f++];
+                  setStack((h = h - G + 1), stack['slice'](h, h + G));
+                  break;
+                }
+                case 67: {
+                  // 压入null
+                  stack[++h] = null;
+                  break;
+                }
+                case 68: {
+                  // 按位取反 ~
+                  stack[h] = ~stack[h];
+                  break;
+                }
+                case 69: {
+                  // 加法运算 +
+                  b = stack[h--];
+                  stack[h] += b;
+                  break;
+                }
+                case 70: {
+                  // 跳转并返回
+                  A = bytecodeArray[f++];
+                  executeStatus = 1;
+                  result = f + A;
+                  return;
+                }
+                case 71: {
+                  // instanceof运算符
+                  q = stack[h--];
+                  stack[h] = stack[h] instanceof q;
+                  break;
+                }
+                case 72: {
+                  // 复制栈顶值
+                  b = stack[h];
+                  setStack(++h, b);
+                  break;
+                }
+                case 73: {
+                  // 创建空对象
+                  setStack(++h, {});
+                  break;
+                }
+                case 74: {
+                  // 定义对象属性(带完整属性描述符)
+                  a = bytecodeArray[f++];
+                  b = stack[h--];
+                  Object['defineProperty'](stack[h], constantsPool[a], {
                     value: b,
                     writable: true,
                     configurable: true,
                     enumerable: true,
                   });
-              else {
-                if (75 === e) return (d = 3), void (p = v[h--]);
-                var Q = v[h--];
-                (b = (q = v[h--])[Q]++), (v[++h] = b);
+                  break;
+                }
+                case 75:
+                  // 返回栈顶值(带错误标记)
+                  executeStatus = 3;
+                  result = stack[h--];
+                  return;
+                default: {
+                  var Q = stack[h--];
+                  (b = (q = stack[h--])[Q]++), setStack(++h, b);
+                  // 处理未匹配的opcode
+                  break;
+                }
               }
             }
           }
@@ -2862,11 +3198,11 @@
           isDOMReady() && onDOMContentLoaded();
         }
         // 75
-        function decodeLEB128(e) {
+        function decodeLEB128(stream) {
           for (var t = 0, r = 0; ; ) {
-            var n = e['d'][e['i']++];
-            if (((t |= (127 & n) << r), (r += 7), 0 == (128 & n)))
-              return r < 32 && 0 != (64 & n) ? t | (-1 << r) : t;
+            var byte = stream['d'][stream['i']++];
+            if (((t |= (127 & byte) << r), (r += 7), 0 == (128 & byte)))
+              return r < 32 && 0 != (64 & byte) ? t | (-1 << r) : t;
           }
         }
         // 76
@@ -2902,28 +3238,39 @@
           bytecodeIndex,
           executionContext,
           funcArguments,
-          i,
+          memoryStack,
         ) {
-          r['length'] ||
-            (function (e) {
+          constantsPool['length'] ||
+            (function (encodedBootstrapData) {
+              var pool = [];
               var i, t;
-              (t = (function (e) {
-                var fa;
-                fa = [256, 8];
-                for (var t = atob(e), r = 0, n = 4; n < 8; ++n)
+              (t = (function (EncodedBootstrapData) {
+                for (
+                  var t = atob(EncodedBootstrapData), r = 0, n = 4;
+                  n < 8;
+                  ++n
+                )
                   r += t['charCodeAt'](n);
                 return {
                   d: decompressWithOptions(
-                    Uint8Array['from'](t['slice'](fa[1]), charMixer, r % fa[0]),
+                    Uint8Array['from'](t['slice'](8), charMixer, r % 256),
                   ),
                   i: 0,
                 };
-              })(e)),
-                ((r['length'] = 0),
+              })(encodedBootstrapData)),
+                ((pool['length'] = 0),
                 (BytecodeDefinitions['length'] = 0),
                 l['clear']());
+              // 先取出字符串常量
               for (var n = decodeLEB128(t), o = 0; o < n; ++o)
-                r['push'](decodeUTF8(t));
+                pool['push'](decodeUTF8(t));
+              // constantsPool = new Proxy(pool, {
+              //     get(target, property) {
+              //         var val = target[property];
+              //         return val;
+              //     },
+              // });
+              constantsPool = pool;
               i = decodeLEB128(t);
               for (o = 0; o < i; ++o) {
                 for (
@@ -2950,16 +3297,14 @@
                 BytecodeDefinitions['push']([v, g, c, d]);
               }
             })(getEncodedBootstrapData());
+          // stringAndNumberPool是根据getEncodedBootstrapData()生成的字符串数组，其中 stringAndNumberPool[411]为X-Bogus
           var bytecodeDefinition = BytecodeDefinitions[bytecodeIndex];
           var res = executeByteCode(
             bytecodeDefinition,
             executionContext,
             funcArguments,
-            i,
+            memoryStack,
           );
-          // if (res) {
-          //     debugger;
-          // }
           return res;
         }
 
@@ -3096,18 +3441,20 @@
           }
         }
         // 87
-        function createBytecodeFunction(bytecodeIndex, t) {
+        function createBytecodeFunction(bytecodeIndex, memoryStack) {
           var n, bytecodeDefinition;
           return (
             ((bytecodeDefinition = BytecodeDefinitions[bytecodeIndex]),
             (n = function () {
-              var res = executeByteCode(bytecodeDefinition, this, arguments, t);
-              // if (res) {
-              //     debugger;
-              // }
+              var res = executeByteCode(
+                bytecodeDefinition,
+                this,
+                arguments,
+                memoryStack,
+              );
               return res;
             })),
-            (l['set'](n, [bytecodeDefinition, t]), n)
+            (l['set'](n, [bytecodeDefinition, memoryStack]), n)
           );
         }
         // 88
@@ -3117,10 +3464,10 @@
           onComplete();
         }
 
-        var Ob,
-          Pb,
-          Qb,
-          Rb,
+        var setTTWebidV2,
+          setTTWebid,
+          setTTWid,
+          isWebmssdk,
           Sb,
           Tb,
           onComplete,
@@ -3201,7 +3548,7 @@
           qd,
           rd,
           sd,
-          ud,
+          _rc4Cipher,
           vd,
           wd,
           xd,
@@ -3225,7 +3572,7 @@
           Pd,
           jsonStringify,
           Rd,
-          Sd,
+          securityCheck,
           Td,
           Ud,
           Vd,
@@ -3274,17 +3621,17 @@
           Ke,
           Le,
           Me,
-          Ne,
+          defaultExports,
           Oe,
-          Pe,
-          Qe,
-          Re,
-          Se,
+          exportsObj,
+          _global,
+          SDKConfig,
+          SDKState,
           l,
           BytecodeDefinitions,
-          r,
+          constantsPool,
           Te,
-          td,
+          textDecoder,
           et,
           decompressDeflate,
           Ve,
@@ -3299,31 +3646,31 @@
           bf,
           fl,
           _a,
-          cf,
+          createEncodingTable,
           df,
           ef,
           ff,
           gf,
-          hf,
-          u8;
-        ((((((((((u8 = Uint8Array), (hf = Uint16Array)), (gf = Int32Array)),
-        (ff = new u8([
+          _Uint16Array,
+          _Uint8Array;
+        ((((((((((_Uint8Array = Uint8Array), (_Uint16Array = Uint16Array)),
+        (gf = Int32Array)),
+        (ff = new _Uint8Array([
           0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4,
           4, 5, 5, 5, 5, 0, 0, 0, 0,
         ]))),
-        (ef = new u8([
+        (ef = new _Uint8Array([
           0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10,
           10, 11, 11, 12, 12, 13, 13, 0, 0,
         ]))),
-        (df = new u8([
+        (df = new _Uint8Array([
           16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15,
         ]))),
-        (cf = function (e, t) {
-          var a, $;
-          $ = [30];
-          for (var r = new hf(31), n = 0; n < 31; ++n)
+        (createEncodingTable = function (e, t) {
+          var a;
+          for (var r = new _Uint16Array(31), n = 0; n < 31; ++n)
             r[n] = t += 1 << e[n - 1];
-          a = new gf(r[$[0]]);
+          a = new gf(r[30]);
           for (n = 1; n < 30; ++n)
             for (var o = r[n]; o < r[n + 1]; ++o) a[o] = ((o - r[n]) << 5) | n;
           return {
@@ -3331,12 +3678,15 @@
             r: a,
           };
         })),
-        (_a = cf(ff, 2))),
+        (_a = createEncodingTable(ff, 2))),
         (fl = _a['b'])),
         (bf = _a['r'])),
           ((fl[28] = 258), (bf[258] = 28));
         for (
-          var _b = cf(ef, 0), fd = _b['b'], jf = new hf(32768), Mb = 0;
+          var _b = createEncodingTable(ef, 0),
+            fd = _b['b'],
+            jf = new _Uint16Array(32768),
+            Mb = 0;
           Mb < 32768;
           ++Mb
         ) {
@@ -3346,14 +3696,18 @@
             (jf[Mb] = (((65280 & x) >> 8) | ((255 & x) << 8)) >> 1);
         }
         for (
-          var kf = function (e, t, r) {
+          var generateHuffmanTable = function (e, t, r) {
               var s, i;
-              for (var n = e['length'], a = 0, o = new hf(t); a < n; ++a)
+              for (
+                var n = e['length'], a = 0, o = new _Uint16Array(t);
+                a < n;
+                ++a
+              )
                 e[a] && ++o[e[a] - 1];
-              s = new hf(t);
+              s = new _Uint16Array(t);
               for (a = 1; a < t; ++a) s[a] = (s[a - 1] + o[a - 1]) << 1;
               if (r) {
-                i = new hf(1 << t);
+                i = new _Uint16Array(1 << t);
                 var u = 15 - t;
                 for (a = 0; a < n; ++a)
                   if (e[a])
@@ -3367,26 +3721,26 @@
                     )
                       i[jf[c] >> u] = l;
               } else
-                for (i = new hf(n), a = 0; a < n; ++a)
+                for (i = new _Uint16Array(n), a = 0; a < n; ++a)
                   e[a] && (i[a] = jf[s[e[a] - 1]++] >> (15 - e[a]));
               return i;
             },
-            lf = new u8(288),
+            lf = new _Uint8Array(288),
             Mb = 0;
           Mb < 144;
           ++Mb
         )
           lf[Mb] = 8;
-        Eb = 'ty';
+        Eb = 'stage2';
         break;
-      case '2M':
+      case 'stage4':
         (((((((((((((((((((((((((((((((((((((((((((((((((((initAndExecuteByteCode(
           214,
           void 0,
           arguments,
           {
             get 1() {
-              return Ne;
+              return defaultExports;
             },
             get 2() {
               return Me;
@@ -3756,10 +4110,10 @@
             return Td;
           },
           get 12() {
-            return Sd;
+            return securityCheck;
           },
           set 12(e) {
-            Sd = e;
+            securityCheck = e;
           },
           get 13() {
             return Rd;
@@ -3820,55 +4174,94 @@
         }),
         initAndExecuteByteCode(187, void 0, arguments, {
           get 0() {
-            return Re;
+            return SDKConfig;
           },
           get 1() {
-            return Se;
+            return SDKState;
           },
           get 2() {
-            return Sd;
+            return securityCheck;
           },
           get 3() {
-            return Rd;
+            return function func3(...args) {
+              const res = Rd.apply(this, args);
+              return res;
+            };
           },
           get 4() {
-            return unicodeStringHash;
+            return function func4(...args) {
+              const res = unicodeStringHash.apply(this, args);
+              return res;
+            };
           },
           get 5() {
-            return hashString;
+            return function func5(...args) {
+              const res = hashString.apply(this, args);
+              return res;
+            };
           },
           get 6() {
-            return getSortedObjectCopy;
+            return function func6(...args) {
+              const res = getSortedObjectCopy.apply(this, args);
+              return res;
+            };
           },
           get 7() {
-            return toSortedQueryString;
+            return function func7(...args) {
+              const res = toSortedQueryString.apply(this, args);
+              return res;
+            };
           },
           get 8() {
-            return parseQueryParams;
+            return function func8(...args) {
+              const res = parseQueryParams.apply(this, args);
+              return res;
+            };
           },
           get 9() {
-            return getPathname;
+            return function func9(...args) {
+              const res = getPathname.apply(this, args);
+              return res;
+            };
           },
           get 10() {
-            return normalizeData;
+            return function func10(...args) {
+              const res = normalizeData.apply(this, args);
+              return res;
+            };
           },
           get 11() {
-            return Ld;
+            return function func11(...args) {
+              const res = Ld.apply(this, args);
+              return res;
+            };
           },
           get 12() {
-            return Fe;
+            return function func12(...args) {
+              const res = Fe.apply(this, args);
+              return res;
+            };
           },
           get 13() {
-            return jsonStringify;
+            return function func13(...args) {
+              const res = jsonStringify.apply(this, args);
+              return res;
+            };
           },
           get 14() {
-            return Kd;
+            return function func14(...args) {
+              const res = Kd.apply(this, args);
+              return res;
+            };
           },
           set 14(e) {
             Kd = e;
           },
           get 15() {
-            return Jd;
+            return function func15(...args) {
+              const res = Jd.apply(this, args);
+              return res;
+            };
           },
           set 15(e) {
             Jd = e;
@@ -3910,7 +4303,10 @@
             return De;
           },
           get 4() {
-            return encryptStringWithXXTEA;
+            return function func194_4(...args) {
+              const res = encryptStringWithXXTEA.apply(this, args);
+              return res;
+            };
           },
           get 5() {
             return Gd;
@@ -3987,13 +4383,13 @@
             vd = e;
           },
         })),
-        (ud = rc4Cipher))),
+        (_rc4Cipher = rc4Cipher))),
         ((initAndExecuteByteCode(238, void 0, arguments, {
           get 0() {
             return yd;
           },
           get 1() {
-            return Se;
+            return SDKState;
           },
           get 2() {
             return wd;
@@ -4005,7 +4401,7 @@
             return Ed;
           },
           get 5() {
-            return Sd;
+            return securityCheck;
           },
           get 6() {
             return Fe;
@@ -4032,13 +4428,13 @@
             rd = e;
           },
         }),
-        (Hb['frontierSign'] = void 0),
+        (bytedAcrawlerExports['frontierSign'] = void 0),
         initAndExecuteByteCode(106, void 0, arguments, {
           get 0() {
             return sd;
           },
           get 1() {
-            return Se;
+            return SDKState;
           },
           get 2() {
             return Ge;
@@ -4059,19 +4455,24 @@
             return Ed;
           },
           get 8() {
-            return rc4Cipher;
+            return function func106_8(...args) {
+              return rc4Cipher.apply(this, args);
+            };
           },
           get 9() {
             return Fe;
           },
           get 10() {
-            return Sd;
+            return securityCheck;
           },
           get 11() {
-            return Hb['frontierSign'];
+            const func = bytedAcrawlerExports['frontierSign'];
+            return function func106_11(...args) {
+              return func.apply(this, args);
+            };
           },
           set 11(e) {
-            Hb['frontierSign'] = e;
+            bytedAcrawlerExports['frontierSign'] = e;
           },
           get 12() {
             return qd;
@@ -4145,7 +4546,10 @@
         })),
         (initAndExecuteByteCode(129, void 0, arguments, {
           get 0() {
-            return ud;
+            return function func129_0(...args) {
+              const res = _rc4Cipher.apply(this, args);
+              return res;
+            };
           },
           get 1() {
             return Ed;
@@ -4289,7 +4693,7 @@
             return getTypeOf;
           },
           get 1() {
-            return Se;
+            return SDKState;
           },
           get 2() {
             return ad;
@@ -4762,10 +5166,10 @@
             return Id;
           },
           get 1() {
-            return Re;
+            return SDKConfig;
           },
           get 2() {
-            return Se;
+            return SDKState;
           },
           get 3() {
             return Cd;
@@ -4919,10 +5323,10 @@
           ae,
         ])),
         (onComplete = function () {})),
-        (((Hb['setUserMode'] = void 0),
+        (((bytedAcrawlerExports['setUserMode'] = void 0),
         initAndExecuteByteCode(4, void 0, arguments, {
           get 0() {
-            return Se;
+            return SDKState;
           },
           get 1() {
             return fc;
@@ -4931,7 +5335,7 @@
             return ConfigurationError;
           },
           get 3() {
-            return Hb['frontierSign'];
+            return bytedAcrawlerExports['frontierSign'];
           },
           get 5() {
             return hc;
@@ -4979,10 +5383,10 @@
             Tb = e;
           },
           get 21() {
-            return Hb['setUserMode'];
+            return bytedAcrawlerExports['setUserMode'];
           },
           set 21(e) {
-            Hb['setUserMode'] = e;
+            bytedAcrawlerExports['setUserMode'] = e;
           },
           get 22() {
             return Sb;
@@ -4992,49 +5396,47 @@
           },
         }),
         (function () {
-          var zb;
-          (zb = [0]),
-            initAndExecuteByteCode(zb[0], void zb[0], arguments, {
-              get 0() {
-                return getTestIdFromCookie;
-              },
-              get 10() {
-                return Fe;
-              },
-              get 11() {
-                return Ee;
-              },
-              get 12() {
-                return De;
-              },
-              get 14() {
-                return getXMST;
-              },
-              get 17() {
-                return gc;
-              },
-              get 18() {
-                return Sb;
-              },
-              get 19() {
-                return we;
-              },
-            });
+          initAndExecuteByteCode(0, void 0, arguments, {
+            get 0() {
+              return getTestIdFromCookie;
+            },
+            get 10() {
+              return Fe;
+            },
+            get 11() {
+              return Ee;
+            },
+            get 12() {
+              return De;
+            },
+            get 14() {
+              return getXMST;
+            },
+            get 17() {
+              return gc;
+            },
+            get 18() {
+              return Sb;
+            },
+            get 19() {
+              return we;
+            },
+          });
         })(),
         console['info']('.')),
-        (Rb = true))),
-        (Qb = function () {})),
-        (Pb = function () {})),
-        (Ob = function () {})),
-          ((Hb['getReferer'] = emptyString),
-          (Hb['init'] = init),
-          (Hb['isWebmssdk'] = Rb),
-          (Hb['report'] = handleErrorReport),
-          (Hb['setTTWebid'] = Pb),
-          (Hb['setTTWebidV2'] = Ob),
-          (Hb['setTTWid'] = Qb));
-        Eb = '52';
+        (isWebmssdk = true))),
+        (setTTWid = function () {})),
+        (setTTWebid = function () {})),
+        (setTTWebidV2 = function () {})),
+          ((bytedAcrawlerExports['getReferer'] = emptyString),
+          (bytedAcrawlerExports['init'] = init),
+          (bytedAcrawlerExports['isWebmssdk'] = isWebmssdk),
+          (bytedAcrawlerExports['report'] = handleErrorReport),
+          (bytedAcrawlerExports['setTTWebid'] = setTTWebid),
+          (bytedAcrawlerExports['setTTWebidV2'] = setTTWebidV2),
+          (bytedAcrawlerExports['setTTWid'] = setTTWid));
+        Eb = 'end';
         break;
     }
-  while (Eb !== '52');
+  while (Eb !== 'end');
 });

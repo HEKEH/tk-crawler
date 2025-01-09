@@ -12,6 +12,11 @@
         );
 })(this, function (bytedAcrawlerExports) {
   'use strict';
+
+  var jsvmpFunctionList = [];
+
+  var consoleEnd = false;
+
   var Eb = 'stage1';
   do
     switch (Eb) {
@@ -22,7 +27,8 @@
           }),
             (Te = 1);
         } catch (e) {}
-        (((((constantsPool = []), (BytecodeDefinitions = [])), (l = new Map())),
+        (((((constantsPool = []), (BytecodeDefinitions = [])),
+        (funcToStackMap = new Map())),
         (SDKState = {
           boe: false,
           aid: 0,
@@ -69,11 +75,14 @@
         )
           (Kb[i] = Jb[(i >> 4) & 15] + Jb[15 & i]),
             i < 16 && (i < 10 ? (Lb[48 + i] = i) : (Lb[87 + i] = i));
-        ((((Ib['hex'] = function (e) {
+        ((((Ib['hex'] = function IbHex(e) {
           for (var t = e['length'], r = '', n = 0; n < t; ) r += Kb[e[n++]];
+          if (!consoleEnd) {
+            // console.log('IbHex', e, r);
+          }
           return r;
         }),
-        (Ib['decode'] = function (e) {
+        (Ib['decode'] = function IbDecode(e) {
           for (
             var t = e['length'] >> 1,
               r = t << 1,
@@ -84,6 +93,9 @@
 
           )
             n[a++] = (Lb[e['charCodeAt'](o++)] << 4) | Lb[e['charCodeAt'](o++)];
+          if (!consoleEnd) {
+            // console.log('IbDecode', e, n);
+          }
           return n;
         })),
         (exportsObj = {
@@ -202,12 +214,12 @@
                   e.buffer['constructor'] === ArrayBuffer
                 );
               })),
-            (createHashFunction = function (outputFormat) {
+            (createHashFunction = function createHashFunction(outputFormat) {
               return function (t) {
                 return new MD5Hash(true)['update'](t)[outputFormat]();
               };
             })),
-            (createMD5Factory = function () {
+            (createMD5Factory = function createMD5Factory() {
               var e;
               (e = createHashFunction('hex')),
                 (isNodeJS && (e = createHashFunctionOfNode(e)),
@@ -223,7 +235,7 @@
               }
               return e;
             })),
-            (createHashFunctionOfNode = function (Hf) {
+            (createHashFunctionOfNode = function createHashFunctionOfNode(Hf) {
               var If, Jf, Kf;
               return (
                 (((Kf = eval("require('crypto')")),
@@ -248,7 +260,10 @@
                 If
               );
             })),
-            (((MD5Hash.prototype['update'] = function (e) {
+            (((MD5Hash.prototype['update'] = function MD5HashUpdate(e) {
+              if (!consoleEnd) {
+                // console.log('MD5HashUpdate', e);
+              }
               if (!this['finalized']) {
                 var t,
                   r = typeof e;
@@ -362,7 +377,10 @@
                 );
               }
             }),
-            (MD5Hash.prototype['finalize'] = function () {
+            (MD5Hash.prototype['finalize'] = function MD5HashFinalize() {
+              if (!consoleEnd) {
+                // console.log('MD5HashFinalize');
+              }
               if (!this['finalized']) {
                 this['finalized'] = true;
                 var e = this['blocks'],
@@ -393,7 +411,10 @@
                   this['hash']();
               }
             }),
-            (MD5Hash.prototype['hash'] = function () {
+            (MD5Hash.prototype['hash'] = function MD5HashHash() {
+              if (!consoleEnd) {
+                // console.log('MD5HashHash');
+              }
               var i, o, a, n, r, t, e;
               (i = this['blocks']),
                 (this['first']
@@ -936,7 +957,10 @@
                     (this['h2'] = (this['h2'] + r) << 0),
                     (this['h3'] = (this['h3'] + n) << 0)));
             }),
-            (MD5Hash.prototype['hex'] = function () {
+            (MD5Hash.prototype['hex'] = function MD5HashHex() {
+              if (!consoleEnd) {
+                // console.log('MD5HashHex');
+              }
               var n, r, t, e, ua;
               return (
                 (((((ua = [24, 20, 16, 12, 8, 4, 28, 15]),
@@ -979,7 +1003,10 @@
               );
             }),
             (MD5Hash.prototype['toString'] = MD5Hash.prototype['hex']),
-            (MD5Hash.prototype['digest'] = function () {
+            (MD5Hash.prototype['digest'] = function MD5HashDigest() {
+              if (!consoleEnd) {
+                // console.log('MD5HashDigest');
+              }
               var n, r, t, e, va;
               return (
                 (((((va = [16, 24, 8, 255]),
@@ -1008,7 +1035,10 @@
               );
             }),
             (MD5Hash.prototype['array'] = MD5Hash.prototype['digest']),
-            (MD5Hash.prototype['arrayBuffer'] = function () {
+            (MD5Hash.prototype['arrayBuffer'] = function MD5HashArrayBuffer() {
+              if (!consoleEnd) {
+                // console.log('MD5HashArrayBuffer');
+              }
               var t, e, wa;
               return (
                 (((wa = [1, 2, 0, 3, 16]),
@@ -1022,7 +1052,10 @@
               );
             }),
             (MD5Hash.prototype['buffer'] = MD5Hash.prototype['arrayBuffer']),
-            (MD5Hash.prototype['base64'] = function () {
+            (MD5Hash.prototype['base64'] = function MD5HashBase64() {
+              if (!consoleEnd) {
+                // console.log('MD5HashBase64');
+              }
               var xa;
               xa = [63, 4, 2];
               for (var e, t, r, n = '', a = this['array'](), o = 0; o < 15; )
@@ -2102,77 +2135,79 @@
         }
 
         // 30
-        function executeByteCode(
+        function jsvmp(
           bytecodeDefinition,
-          executionContext,
-          funcArguments,
-          memoryStack,
+          executionContext, // 即this
+          funcArguments, // 实参
+          scopeStack, // 作用域中能访问到的变量
         ) {
-          function setupArrayProxy(
+          var funcStack = [];
+          function initializeFunctionFrame(
             _bytecodeDefinition,
             _executionContext,
             _funcArguments,
-            _memoryStack,
+            _scopeStack,
           ) {
-            var o = {};
-            var a = Math['min'](
-              _funcArguments['length'],
-              _bytecodeDefinition[1],
+            var argumentsProxy = {};
+            var argumentsCounter = Math['min'](
+              _funcArguments['length'], // 实参个数
+              _bytecodeDefinition[1], // 形参个数
             );
-            Object['defineProperty'](o, 'length', {
+            Object['defineProperty'](argumentsProxy, 'length', {
               value: _funcArguments['length'],
               writable: true,
               enumerable: false,
               configurable: true,
             }),
               (bytecodeArray = _bytecodeDefinition[0]),
-              (s = _bytecodeDefinition[2]),
-              (u = _bytecodeDefinition[3]),
-              (g = [_memoryStack, o]);
-            for (var l = 0; l < a; ++l) g['push'](_funcArguments[l]);
-            if (s)
+              (isStrickMode = _bytecodeDefinition[2]),
+              (unwindTable = _bytecodeDefinition[3]),
+              (currentScope = [_scopeStack, argumentsProxy]);
+            for (var l = 0; l < argumentsCounter; ++l)
+              currentScope['push'](_funcArguments[l]);
+            if (isStrickMode)
               for (
-                c = _executionContext, l = 0;
+                context = _executionContext, l = 0;
                 l < _funcArguments['length'];
                 ++l
               )
-                o[l] = _funcArguments[l];
+                argumentsProxy[l] = _funcArguments[l];
             else {
-              c =
+              context =
                 null == _executionContext
                   ? globalThis
                   : Object(_executionContext);
               var h = function (e) {
-                e < a
-                  ? Object['defineProperty'](o, e, {
+                e < argumentsCounter
+                  ? Object['defineProperty'](argumentsProxy, e, {
                       get: function () {
-                        return g[e + 2];
+                        return currentScope[e + 2];
                       },
                       set: function (t) {
-                        g[e + 2] = t;
+                        currentScope[e + 2] = t;
                       },
                       enumerable: true,
                       configurable: true,
                     })
-                  : (o[e] = _funcArguments[e]);
+                  : (argumentsProxy[e] = _funcArguments[e]);
               };
               for (l = 0; l < _funcArguments['length']; ++l) h(l);
             }
-            (f = 0), (executeStatus = 0), (result = void 0);
+            (programCounter = 0), (executeStatus = 0), (result = void 0);
           }
-          function createGlobalVarProxy(e, t) {
+          function createGlobalVarProxy(key, strickMode) {
             var r;
             return (
               (r = Object['create'](null)),
-              (Object['defineProperty'](r, e, {
+              (Object['defineProperty'](r, key, {
                 get: function () {
-                  if (e in globalThis) return globalThis[e];
-                  throw new ReferenceError(e + ' is not defined');
+                  if (key in globalThis) return globalThis[key];
+                  throw new ReferenceError(key + ' is not defined');
                 },
                 set: function (r) {
-                  if (t && !(e in globalThis))
-                    throw new ReferenceError(e + ' is not defined');
-                  globalThis[e] = r;
+                  if (strickMode && !(key in globalThis))
+                    throw new ReferenceError(key + ' is not defined');
+                  globalThis[key] = r;
                 },
               }),
               r)
@@ -2180,61 +2215,79 @@
           }
 
           function handleExecutionState() {
-            var t, e;
-            (e = f), (t = u);
+            var _unwindTable, _programCounter;
+            (_programCounter = programCounter), (_unwindTable = unwindTable);
+            var unwindEntry;
             if (1 === executeStatus) {
-              for (var r = t['length'] - 1; r >= 0; --r)
-                if ((n = t[r])[0] < e && e <= n[3])
+              for (var r = _unwindTable['length'] - 1; r >= 0; --r)
+                if (
+                  (unwindEntry = _unwindTable[r])[0] < _programCounter &&
+                  _programCounter <= unwindEntry[3]
+                )
                   return (
-                    e <= n[2] && n[2] !== n[3]
-                      ? (f = n[2])
-                      : ((f = result), (executeStatus = 0), (result = void 0)),
+                    _programCounter <= unwindEntry[2] &&
+                    unwindEntry[2] !== unwindEntry[3]
+                      ? (programCounter = unwindEntry[2])
+                      : ((programCounter = result),
+                        (executeStatus = 0),
+                        (result = void 0)),
                     true
                   );
               throw new SyntaxError('Illegal statement');
             }
             if (2 === executeStatus) {
-              for (r = t['length'] - 1; r >= 0; --r)
-                if ((n = t[r])[0] < e && e <= n[2] && n[2] !== n[3])
-                  return (f = n[2]), true;
+              for (r = _unwindTable['length'] - 1; r >= 0; --r)
+                if (
+                  (unwindEntry = _unwindTable[r])[0] < _programCounter &&
+                  _programCounter <= unwindEntry[2] &&
+                  unwindEntry[2] !== unwindEntry[3]
+                )
+                  return (programCounter = unwindEntry[2]), true;
+              // 回到父级调用
               return (
-                !!(a = y['pop']()) &&
-                ((stack[++h] = result),
-                (bytecodeArray = a[0]),
-                (s = a[1]),
-                (u = a[2]),
-                (g = a[3]),
-                (c = a[4]),
-                (f = a[5]),
-                (executeStatus = a[6]),
-                (result = a[7]),
+                !!(stackFrame = callStack['pop']()) &&
+                ((stack[++stackPointer] = result),
+                (bytecodeArray = stackFrame[0]),
+                (isStrickMode = stackFrame[1]),
+                (unwindTable = stackFrame[2]),
+                (currentScope = stackFrame[3]),
+                (context = stackFrame[4]),
+                (programCounter = stackFrame[5]),
+                (executeStatus = stackFrame[6]),
+                (result = stackFrame[7]),
                 true)
               );
             }
             if (3 === executeStatus) {
-              for (r = t['length'] - 1; r >= 0; --r) {
-                var n;
-                if ((n = t[r])[0] < e) {
-                  if (e <= n[1] && n[1] !== n[2])
+              for (r = _unwindTable['length'] - 1; r >= 0; --r) {
+                if ((unwindEntry = _unwindTable[r])[0] < _programCounter) {
+                  if (
+                    _programCounter <= unwindEntry[1] &&
+                    unwindEntry[1] !== unwindEntry[2]
+                  )
                     return (
-                      (f = n[1]),
-                      (stack[++h] = result),
+                      (programCounter = unwindEntry[1]),
+                      (stack[++stackPointer] = result),
                       (executeStatus = 0),
                       (result = void 0),
                       true
                     );
-                  if (e <= n[2] && n[2] !== n[3]) return (f = n[2]), true;
+                  if (
+                    _programCounter <= unwindEntry[2] &&
+                    unwindEntry[2] !== unwindEntry[3]
+                  )
+                    return (programCounter = unwindEntry[2]), true;
                 }
               }
-              var a;
-              if ((a = y['pop']()))
+              var stackFrame;
+              if ((stackFrame = callStack['pop']()))
                 return (
-                  (bytecodeArray = a[0]),
-                  (s = a[1]),
-                  (u = a[2]),
-                  (g = a[3]),
-                  (c = a[4]),
-                  (f = a[5]),
+                  (bytecodeArray = stackFrame[0]),
+                  (isStrickMode = stackFrame[1]),
+                  (unwindTable = stackFrame[2]),
+                  (currentScope = stackFrame[3]),
+                  (context = stackFrame[4]),
+                  (programCounter = stackFrame[5]),
                   handleExecutionState()
                 );
               throw result;
@@ -2242,11 +2295,21 @@
             return true;
           }
 
-          var y, stack, h, result, executeStatus, f, c, g, u, s, bytecodeArray;
+          var callStack,
+            stack,
+            stackPointer,
+            result,
+            executeStatus,
+            programCounter,
+            context,
+            currentScope,
+            unwindTable,
+            isStrickMode,
+            bytecodeArray;
           function setStack(index, value) {
             stack[index] = value;
           }
-          (((h = -1), (stack = [])), (y = [])),
+          (((stackPointer = -1), (stack = [])), (callStack = [])),
             ('object' != typeof globalThis &&
               (Object['defineProperty'](Object['prototype'], '__1479382789__', {
                 get: function () {
@@ -2256,11 +2319,11 @@
               }),
               (__1479382789__['globalThis'] = __1479382789__),
               delete Object.prototype['__1479382789__']),
-            setupArrayProxy(
+            initializeFunctionFrame(
               bytecodeDefinition,
               executionContext,
               funcArguments,
-              memoryStack,
+              scopeStack,
             ));
           do {
             try {
@@ -2272,323 +2335,360 @@
           return result;
           function execute() {
             for (;;) {
-              var opcode = bytecodeArray[f++];
+              var opcode = bytecodeArray[programCounter++];
               switch (opcode) {
                 case 0: {
                   // 获取对象属性: stack[h][n]
-                  var n = stack[h--];
-                  setStack(h, stack[h][n]);
+                  var n = stack[stackPointer--];
+                  setStack(stackPointer, stack[stackPointer][n]);
                   break;
                 }
                 case 1: {
                   // 创建全局变量代理
-                  var a = bytecodeArray[f++],
+                  var a = bytecodeArray[programCounter++],
                     o = constantsPool[a],
-                    b = createGlobalVarProxy(o, s);
-                  setStack(++h, b);
-                  setStack(++h, o);
+                    b = createGlobalVarProxy(o, isStrickMode);
+                  setStack(++stackPointer, b);
+                  setStack(++stackPointer, o);
                   break;
                 }
                 case 2: {
                   // 压入true
-                  setStack(++h, true);
+                  setStack(++stackPointer, true);
                   break;
                 }
                 case 3: {
                   // 多级属性访问
                   for (
-                    var S = bytecodeArray[f++],
-                      A = ((a = bytecodeArray[f++]), g);
+                    var S = bytecodeArray[programCounter++],
+                      A = ((a = bytecodeArray[programCounter++]), currentScope);
                     S > 0;
 
                   ) {
+                    // 获取上一层的作用域
                     (A = A[0]), --S;
                   }
-                  setStack(++h, A);
-                  setStack(++h, a);
+                  setStack(++stackPointer, A);
+                  setStack(++stackPointer, a);
                   break;
                 }
                 case 4: {
                   // 弹出栈顶
-                  --h;
+                  --stackPointer;
                   break;
                 }
                 case 5: {
                   // 不等于比较 !==
-                  var w = stack[h--];
-                  setStack(h, stack[h] !== w);
+                  var w = stack[stackPointer--];
+                  setStack(stackPointer, stack[stackPointer] !== w);
                   break;
                 }
                 case 6: {
                   // 返回栈顶值
                   executeStatus = 2;
-                  result = stack[h--];
+                  result = stack[stackPointer--];
+                  // if (!consoleEnd) {
+                  //     if (
+                  //         typeof result === 'string' &&
+                  //         result.length === 28 &&
+                  //         funcStack[funcStack.length - 1]?.callee.bytecodeIndex === 113
+                  //     ) {
+                  //         console.log(
+                  //             'jsvmp func return:',
+                  //             funcStack[funcStack.length - 1],
+                  //             result,
+                  //         );
+                  //     }
+                  // }
+
+                  funcStack.pop();
                   return;
                 }
                 case 7: {
                   // 无条件跳转
-                  A = bytecodeArray[f++];
-                  f += A;
+                  A = bytecodeArray[programCounter++];
+                  programCounter += A;
                   break;
                 }
                 case 8: {
                   // 小于等于比较 <=
-                  w = stack[h--];
-                  setStack(h, stack[h] <= w);
+                  w = stack[stackPointer--];
+                  setStack(stackPointer, stack[stackPointer] <= w);
                   break;
                 }
                 case 9: {
                   // 取负
-                  setStack(h, -stack[h]);
+                  setStack(stackPointer, -stack[stackPointer]);
                   break;
                 }
                 case 10: {
                   // 压入字节码中的常量
-                  setStack(++h, bytecodeArray[f++]);
+                  let temp = bytecodeArray[programCounter++];
+                  setStack(++stackPointer, temp);
                   break;
                 }
                 case 11: {
                   // 压入NaN
-                  setStack(++h, NaN);
+                  setStack(++stackPointer, NaN);
                   break;
                 }
                 case 12: {
                   // 转换为数字
-                  setStack(h, +stack[h]);
+                  setStack(stackPointer, +stack[stackPointer]);
                   break;
                 }
                 case 13: {
                   // 按位或运算 |
-                  w = stack[h--];
-                  setStack(h, stack[h] | w);
+                  w = stack[stackPointer--];
+                  setStack(stackPointer, stack[stackPointer] | w);
                   break;
                 }
                 case 14: {
                   // 设置对象属性
-                  a = bytecodeArray[f++];
-                  b = stack[h--];
-                  q = stack[h--];
+                  a = bytecodeArray[programCounter++];
+                  b = stack[stackPointer--];
+                  q = stack[stackPointer--];
                   q[constantsPool[a]] = b;
                   break;
                 }
                 case 15: {
                   // 前置递减 --obj[prop]
-                  var E = stack[h--];
-                  b = --(q = stack[h--])[E];
-                  setStack(++h, b);
+                  var E = stack[stackPointer--];
+                  b = --(q = stack[stackPointer--])[E];
+                  setStack(++stackPointer, b);
                   break;
                 }
                 case 16: {
                   // 条件跳转：如果栈顶为真则跳转
-                  A = bytecodeArray[f++];
-                  stack[h] ? (f += A) : --h;
+                  A = bytecodeArray[programCounter++];
+                  stack[stackPointer] ? (programCounter += A) : --stackPointer;
                   break;
                 }
                 case 17: {
                   // 后置递减 obj[prop]--
-                  var k = stack[h--];
-                  b = (q = stack[h--])[k]--;
-                  setStack(++h, b);
+                  var k = stack[stackPointer--];
+                  b = (q = stack[stackPointer--])[k]--;
+                  setStack(++stackPointer, b);
                   break;
                 }
                 case 18: {
                   // 定义对象属性setter
-                  a = bytecodeArray[f++];
-                  var T = stack[h--];
-                  Object['defineProperty'](stack[h], constantsPool[a], {
-                    set: T,
-                    enumerable: true,
-                    configurable: true,
-                  });
+                  a = bytecodeArray[programCounter++];
+                  var T = stack[stackPointer--];
+                  Object['defineProperty'](
+                    stack[stackPointer],
+                    constantsPool[a],
+                    {
+                      set: T,
+                      enumerable: true,
+                      configurable: true,
+                    },
+                  );
                   break;
                 }
                 case 19: {
                   // 条件跳转：如果栈顶为真则弹出并跳转
-                  A = bytecodeArray[f++];
-                  stack[h] ? --h : (f += A);
+                  A = bytecodeArray[programCounter++];
+                  stack[stackPointer] ? --stackPointer : (programCounter += A);
                   break;
                 }
                 case 20: {
                   // 获取对象的命名属性
-                  a = bytecodeArray[f++];
-                  setStack(h, stack[h][constantsPool[a]]);
+                  a = bytecodeArray[programCounter++];
+                  setStack(stackPointer, stack[stackPointer][constantsPool[a]]);
                   break;
                 }
                 case 21: {
                   // 减法运算 -
-                  b = stack[h--];
-                  setStack(h, stack[h] - b);
+                  b = stack[stackPointer--];
+                  setStack(stackPointer, stack[stackPointer] - b);
                   break;
                 }
                 case 22: {
                   // 大于等于比较 >=
-                  w = stack[h--];
-                  setStack(h, stack[h] >= w);
+                  w = stack[stackPointer--];
+                  setStack(stackPointer, stack[stackPointer] >= w);
                   break;
                 }
                 case 23: {
                   // 获取全局变量类型
-                  a = bytecodeArray[f++];
+                  a = bytecodeArray[programCounter++];
                   var D = constantsPool[a];
                   b = typeof globalThis[D];
-                  setStack(++h, b);
+                  setStack(++stackPointer, b);
                   break;
                 }
                 case 24: {
                   // 多级属性赋值
                   for (
-                    S = bytecodeArray[f++], a = bytecodeArray[f++], A = g;
+                    S = bytecodeArray[programCounter++],
+                      a = bytecodeArray[programCounter++],
+                      A = currentScope;
                     S > 0;
 
                   ) {
                     (A = A[0]), --S;
                   }
-                  A[a] = stack[h--];
+                  let temp = stack[stackPointer--];
+                  A[a] = temp;
                   break;
                 }
                 case 25: {
                   // 创建字节码函数
-                  b = createBytecodeFunction(bytecodeArray[f++], g);
-                  setStack(++h, b);
+                  b = createBytecodeFunction(
+                    bytecodeArray[programCounter++],
+                    currentScope,
+                  );
+                  setStack(++stackPointer, b);
                   break;
                 }
                 case 26: {
                   // 无符号右移 >>>
-                  w = stack[h--];
-                  setStack(h, stack[h] >>> w);
+                  w = stack[stackPointer--];
+                  setStack(stackPointer, stack[stackPointer] >>> w);
                   break;
                 }
                 case 27: {
                   // 有符号右移 >>
-                  w = stack[h--];
-                  setStack(h, stack[h] >> w);
+                  w = stack[stackPointer--];
+                  setStack(stackPointer, stack[stackPointer] >> w);
                   break;
                 }
                 case 28: {
                   // 将常量转换为数字并压栈
-                  a = bytecodeArray[f++];
-                  setStack(++h, +constantsPool[a]);
+                  a = bytecodeArray[programCounter++];
+                  setStack(++stackPointer, +constantsPool[a]);
                   break;
                 }
                 case 29: {
                   // 确保全局变量存在
-                  a = bytecodeArray[f++];
+                  a = bytecodeArray[programCounter++];
                   var R = constantsPool[a];
                   R in globalThis || (globalThis[R] = void 0);
                   break;
                 }
                 case 30: {
                   // 左移运算 <<
-                  w = stack[h--];
-                  setStack(h, stack[h] << w);
+                  w = stack[stackPointer--];
+                  setStack(stackPointer, stack[stackPointer] << w);
                   break;
                 }
                 case 31:
                 case 32: {
                   // 压入上下文变量c或undefined
-                  setStack(++h, opcode === 31 ? c : void 0);
+                  setStack(++stackPointer, opcode === 31 ? context : void 0);
                   break;
                 }
                 case 33: {
                   // 定义对象属性getter
-                  a = bytecodeArray[f++];
-                  var x = stack[h--];
-                  Object['defineProperty'](stack[h], constantsPool[a], {
-                    get: x,
-                    enumerable: true,
-                    configurable: true,
-                  });
+                  a = bytecodeArray[programCounter++];
+                  var x = stack[stackPointer--];
+                  Object['defineProperty'](
+                    stack[stackPointer],
+                    constantsPool[a],
+                    {
+                      get: x,
+                      enumerable: true,
+                      configurable: true,
+                    },
+                  );
                   break;
                 }
                 case 34: {
                   // 相等则跳转
-                  A = bytecodeArray[f++];
-                  b = stack[h--];
-                  stack[h] === b && (--h, (f += A));
+                  A = bytecodeArray[programCounter++];
+                  b = stack[stackPointer--];
+                  stack[stackPointer] === b &&
+                    (--stackPointer, (programCounter += A));
                   break;
                 }
                 case 35: {
                   // 栈顶为假则跳转
-                  A = bytecodeArray[f++];
-                  stack[h--] || (f += A);
+                  A = bytecodeArray[programCounter++];
+                  stack[stackPointer--] || (programCounter += A);
                   break;
                 }
                 case 36: {
                   // 除法运算 /
-                  b = stack[h--];
-                  setStack(h, stack[h] / b);
+                  b = stack[stackPointer--];
+                  setStack(stackPointer, stack[stackPointer] / b);
                   break;
                 }
                 case 37: {
                   // 迭代器操作
-                  a = bytecodeArray[f++];
-                  var P = stack[h--],
-                    O = stack[h--],
-                    H = g[a],
+                  a = bytecodeArray[programCounter++];
+                  var P = stack[stackPointer--],
+                    O = stack[stackPointer--],
+                    H = currentScope[a],
                     I = void 0;
                   do {
                     I = H[0]['shift']();
                   } while (void 0 !== I && !(I in H[1]));
                   void 0 !== I
-                    ? ((O[P] = I), setStack(++h, true))
-                    : setStack(++h, false);
+                    ? ((O[P] = I), setStack(++stackPointer, true))
+                    : setStack(++stackPointer, false);
                   break;
                 }
                 case 38: {
                   // 前置递增 ++obj[prop]
-                  var K = stack[h--];
-                  b = ++(q = stack[h--])[K];
-                  setStack(++h, b);
+                  var K = stack[stackPointer--];
+                  b = ++(q = stack[stackPointer--])[K];
+                  setStack(++stackPointer, b);
                   break;
                 }
                 case 39: {
                   // 按位与运算 &
-                  w = stack[h--];
-                  setStack(h, stack[h] & w);
+                  w = stack[stackPointer--];
+                  setStack(stackPointer, stack[stackPointer] & w);
                   break;
                 }
                 case 40: {
                   // 严格相等比较 ===
-                  w = stack[h--];
-                  setStack(h, stack[h] === w);
+                  w = stack[stackPointer--];
+                  setStack(stackPointer, stack[stackPointer] === w);
                   break;
                 }
                 case 41: {
                   // 小于比较 <
-                  w = stack[h--];
-                  setStack(h, stack[h] < w);
+                  w = stack[stackPointer--];
+                  setStack(stackPointer, stack[stackPointer] < w);
                   break;
                 }
                 case 42:
                 case 43: {
                   // 压入Infinity或0
-                  setStack(++h, opcode !== 42 && 1 / 0);
+                  setStack(++stackPointer, opcode !== 42 && 1 / 0);
                   break;
                 }
                 case 44: {
                   // 获取全局变量
-                  a = bytecodeArray[f++];
+                  a = bytecodeArray[programCounter++];
                   var M = constantsPool[a];
                   if (!(M in globalThis)) {
                     executeStatus = 3;
                     result = new ReferenceError(M + ' is not defined');
+                    funcStack.pop();
                     return;
                   }
                   b = globalThis[M];
-                  setStack(++h, b);
+                  setStack(++stackPointer, b);
                   break;
                 }
                 case 45: {
-                  // 多级属性获取
+                  // console.log('S', bytecodeArray[programCounter]);
+                  // 获取变量值，如果S > 0，则是从上级作用域获取，否则从当前作用域获取
                   for (
-                    S = bytecodeArray[f++], a = bytecodeArray[f++], A = g;
+                    S = bytecodeArray[programCounter++],
+                      a = bytecodeArray[programCounter++],
+                      A = currentScope;
                     S > 0;
 
                   ) {
                     (A = A[0]), --S;
                   }
                   b = A[a];
-                  setStack(++h, b);
+                  // console.log(a, b);
+                  setStack(++stackPointer, b);
                   break;
                 }
                 case 46: {
@@ -2598,93 +2698,125 @@
                 }
                 case 47: {
                   // 逻辑非运算 !
-                  setStack(h, !stack[h]);
+                  setStack(stackPointer, !stack[stackPointer]);
                   break;
                 }
                 case 48: {
                   // 删除对象属性 delete
-                  var F = stack[h--];
-                  b = delete (q = stack[h--])[F];
-                  setStack(++h, b);
+                  var F = stack[stackPointer--];
+                  b = delete (q = stack[stackPointer--])[F];
+                  setStack(++stackPointer, b);
                   break;
                 }
                 case 49: {
                   // 相等比较 ==
-                  w = stack[h--];
-                  setStack(h, stack[h] == w);
+                  w = stack[stackPointer--];
+                  setStack(stackPointer, stack[stackPointer] == w);
                   break;
                 }
                 case 50: {
                   // 函数调用
-                  var N = bytecodeArray[f++];
-                  h -= N;
-                  var U = stack['slice'](h + 1, h + N + 1),
-                    L = stack[h--],
-                    X = stack[h--];
-                  if ('function' != typeof L) {
+                  var N = bytecodeArray[programCounter++];
+                  stackPointer -= N;
+                  var calleeArgs = stack['slice'](
+                      stackPointer + 1,
+                      stackPointer + N + 1,
+                    ),
+                    callee = stack[stackPointer--],
+                    thisArg = stack[stackPointer--];
+                  if ('function' != typeof callee) {
                     executeStatus = 3;
-                    result = new TypeError(typeof L + ' is not a function');
+                    result = new TypeError(
+                      typeof callee + ' is not a function',
+                    );
+                    funcStack.pop();
                     return;
                   }
-                  var B = l['get'](L);
+                  var B = funcToStackMap['get'](callee);
                   if (B) {
-                    y['push']([
+                    if (callee.bytecodeIndex === 113) {
+                      debugger;
+                    }
+                    callStack['push']([
                       bytecodeArray,
-                      s,
-                      u,
-                      g,
-                      c,
-                      f,
+                      isStrickMode,
+                      unwindTable,
+                      currentScope,
+                      context,
+                      programCounter,
                       executeStatus,
                       result,
                     ]);
-                    setupArrayProxy(B[0], X, U, B[1]);
+                    funcStack.push({
+                      callee,
+                      calleeArgs,
+                    });
+                    initializeFunctionFrame(B[0], thisArg, calleeArgs, B[1]);
                   } else {
-                    var W = L['apply'](X, U);
-                    setStack(++h, W);
+                    var tempRes = callee['apply'](thisArg, calleeArgs);
+                    // if (!consoleEnd) {
+                    //     console.log(
+                    //         'common function:',
+                    //         callee,
+                    //         thisArg,
+                    //         calleeArgs,
+                    //         tempRes,
+                    //     );
+                    //     if (
+                    //         typeof tempRes === 'string' &&
+                    //         tempRes.includes('X-Bogus')
+                    //     ) {
+                    //         consoleEnd = true;
+                    //     }
+                    // }
+                    setStack(++stackPointer, tempRes);
                   }
                   break;
                 }
                 case 51: {
                   // 不等于比较 !=
-                  w = stack[h--];
-                  setStack(h, stack[h] != w);
+                  w = stack[stackPointer--];
+                  setStack(stackPointer, stack[stackPointer] != w);
                   break;
                 }
                 case 52: {
                   // 对象遍历初始化
-                  a = bytecodeArray[f++];
-                  var q = stack[h--];
+                  a = bytecodeArray[programCounter++];
+                  var q = stack[stackPointer--];
                   for (var I in ((H = []), q)) {
                     H['push'](I);
                   }
-                  g[a] = [H, q];
+                  currentScope[a] = [H, q];
                   break;
                 }
                 case 53: {
                   // new操作符调用
-                  N = bytecodeArray[f++];
+                  N = bytecodeArray[programCounter++];
                   for (var V = [void 0]; N > 0; ) {
-                    V[N--] = stack[h--];
+                    V[N--] = stack[stackPointer--];
                   }
-                  var Z = stack[h--];
-                  W = new (Function.bind['apply'](Z, V))();
-                  setStack(++h, W);
+                  var Z = stack[stackPointer--];
+                  tempRes = new (Function.bind['apply'](Z, V))();
+                  // if (!consoleEnd) {
+                  //     console.log('new:', Z, V, tempRes);
+                  // }
+                  setStack(++stackPointer, tempRes);
                   break;
                 }
                 case 54: {
                   // 压入undefined
-                  setStack(h, void 0);
+                  setStack(stackPointer, void 0);
                   break;
                 }
                 case 55: {
                   // 设置全局变量
-                  a = bytecodeArray[f++];
-                  b = stack[h--];
+                  a = bytecodeArray[programCounter++];
+                  b = stack[stackPointer--];
                   var j = constantsPool[a];
-                  if (s && !(j in globalThis)) {
+                  if (isStrickMode && !(j in globalThis)) {
                     executeStatus = 3;
                     result = new ReferenceError(j + ' is not defined');
+                    funcStack.pop();
                     return;
                   }
                   globalThis[j] = b;
@@ -2692,132 +2824,142 @@
                 }
                 case 56: {
                   // 压入常量池中的值
-                  a = bytecodeArray[f++];
-                  setStack(++h, constantsPool[a]);
+                  a = bytecodeArray[programCounter++];
+                  setStack(++stackPointer, constantsPool[a]);
                   break;
                 }
                 case 57: {
                   // 乘法运算 *
-                  b = stack[h--];
-                  setStack(h, stack[h] * b);
+                  b = stack[stackPointer--];
+                  setStack(stackPointer, stack[stackPointer] * b);
                   break;
                 }
                 case 58: {
                   // in运算符
-                  q = stack[h--];
-                  setStack(h, stack[h] in q);
+                  q = stack[stackPointer--];
+                  setStack(stackPointer, stack[stackPointer] in q);
                   break;
                 }
                 case 59: {
                   // 按位异或运算 ^
-                  w = stack[h--];
-                  setStack(h, stack[h] ^ w);
+                  w = stack[stackPointer--];
+                  setStack(stackPointer, stack[stackPointer] ^ w);
                   break;
                 }
                 case 60: {
                   // 设置对象属性
-                  b = stack[h--];
-                  var z = stack[h--];
-                  q = stack[h--];
+                  b = stack[stackPointer--];
+                  var z = stack[stackPointer--];
+                  q = stack[stackPointer--];
                   q[z] = b;
                   break;
                 }
                 case 61: {
                   // 大于比较 >
-                  w = stack[h--];
-                  setStack(h, stack[h] > w);
+                  w = stack[stackPointer--];
+                  setStack(stackPointer, stack[stackPointer] > w);
                   break;
                 }
                 case 62: {
                   // 栈顶为真则跳转
-                  A = bytecodeArray[f++];
-                  stack[h--] && (f += A);
+                  A = bytecodeArray[programCounter++];
+                  stack[stackPointer--] && (programCounter += A);
                   break;
                 }
                 case 63: {
                   // 取模运算 %
-                  b = stack[h--];
-                  stack[h] %= b;
+                  b = stack[stackPointer--];
+                  stack[stackPointer] %= b;
                   break;
                 }
                 case 64: {
                   // typeof运算符
-                  stack[h] = typeof stack[h];
+                  stack[stackPointer] = typeof stack[stackPointer];
                   break;
                 }
                 case 65: {
                   // 设置对象属性(栈顶三个值分别为:值、属性名、对象)
-                  var Y = stack[h--];
-                  q = stack[h--];
-                  q[Y] = stack[h];
+                  var Y = stack[stackPointer--];
+                  q = stack[stackPointer--];
+                  q[Y] = stack[stackPointer];
                   break;
                 }
                 case 66: {
                   // 创建数组切片
-                  var G = bytecodeArray[f++];
-                  setStack((h = h - G + 1), stack['slice'](h, h + G));
+                  var G = bytecodeArray[programCounter++];
+                  setStack(
+                    (stackPointer = stackPointer - G + 1),
+                    stack['slice'](stackPointer, stackPointer + G),
+                  );
                   break;
                 }
                 case 67: {
                   // 压入null
-                  stack[++h] = null;
+                  stack[++stackPointer] = null;
                   break;
                 }
                 case 68: {
                   // 按位取反 ~
-                  stack[h] = ~stack[h];
+                  stack[stackPointer] = ~stack[stackPointer];
                   break;
                 }
                 case 69: {
                   // 加法运算 +
-                  b = stack[h--];
-                  stack[h] += b;
+                  b = stack[stackPointer--];
+                  stack[stackPointer] += b;
                   break;
                 }
                 case 70: {
                   // 跳转并返回
-                  A = bytecodeArray[f++];
+                  A = bytecodeArray[programCounter++];
                   executeStatus = 1;
-                  result = f + A;
+                  result = programCounter + A;
+                  funcStack.pop();
                   return;
                 }
                 case 71: {
                   // instanceof运算符
-                  q = stack[h--];
-                  stack[h] = stack[h] instanceof q;
+                  q = stack[stackPointer--];
+                  stack[stackPointer] = stack[stackPointer] instanceof q;
                   break;
                 }
                 case 72: {
                   // 复制栈顶值
-                  b = stack[h];
-                  setStack(++h, b);
+                  b = stack[stackPointer];
+                  setStack(++stackPointer, b);
                   break;
                 }
                 case 73: {
                   // 创建空对象
-                  setStack(++h, {});
+                  setStack(++stackPointer, {});
                   break;
                 }
                 case 74: {
                   // 定义对象属性(带完整属性描述符)
-                  a = bytecodeArray[f++];
-                  b = stack[h--];
-                  Object['defineProperty'](stack[h], constantsPool[a], {
-                    value: b,
-                    writable: true,
-                    configurable: true,
-                    enumerable: true,
-                  });
+                  a = bytecodeArray[programCounter++];
+                  b = stack[stackPointer--];
+                  Object['defineProperty'](
+                    stack[stackPointer],
+                    constantsPool[a],
+                    {
+                      value: b,
+                      writable: true,
+                      configurable: true,
+                      enumerable: true,
+                    },
+                  );
                   break;
                 }
                 case 75:
                   // 返回栈顶值(带错误标记)
                   executeStatus = 3;
-                  result = stack[h--];
+                  result = stack[stackPointer--];
+                  funcStack.pop();
                   return;
                 default: {
-                  var Q = stack[h--];
-                  (b = (q = stack[h--])[Q]++), setStack(++h, b);
+                  var Q = stack[stackPointer--];
+                  (b = (q = stack[stackPointer--])[Q]++),
+                    setStack(++stackPointer, b);
                   // 处理未匹配的opcode
                   break;
                 }
@@ -2872,11 +3014,18 @@
 
         // 38
         function init(e) {
-          return initAndExecuteByteCode(3, void 0, arguments, {
+          var res = initAndExecuteByteCode(3, void 0, arguments, {
             get 8() {
               return Tb;
             },
           });
+          // console.log(
+          //     jsvmpFunctionList[113](
+          //         'requestFrom=portal&msToken=TjV4nPQk_voIo5cr9vvgr8j0_j4kS2hPcbu_x7LVjyEfd4HLFvkgrttv84TItJt4cqlg6py775VpTQgFzYW1EXhKanytziXhESxfddeUHSmAr61L-r-bHr2bAvE6JQlsHhnbDwd3Z4E=',
+          //         undefined,
+          //     ),
+          // );
+          return res;
         }
 
         // 39
@@ -3039,8 +3188,8 @@
             t = (65599 * t + e['charCodeAt'](t % e['length'])) >>> 0;
           return t;
         }
-        // 62
-        function getXMST() {
+        // 62 msToken
+        function getMSToken() {
           return getLocalStorageItem(pd) || '';
         }
         // 63
@@ -3236,9 +3385,9 @@
         // 80
         function initAndExecuteByteCode(
           bytecodeIndex,
-          executionContext,
-          funcArguments,
-          memoryStack,
+          executionContext, // this
+          funcArguments, // 实参
+          scopeStack,
         ) {
           constantsPool['length'] ||
             (function (encodedBootstrapData) {
@@ -3260,73 +3409,77 @@
               })(encodedBootstrapData)),
                 ((pool['length'] = 0),
                 (BytecodeDefinitions['length'] = 0),
-                l['clear']());
+                funcToStackMap['clear']());
+              jsvmpFunctionList.length = 0;
               // 先取出字符串常量
               for (var n = decodeLEB128(t), o = 0; o < n; ++o)
                 pool['push'](decodeUTF8(t));
-              // constantsPool = new Proxy(pool, {
-              //     get(target, property) {
-              //         var val = target[property];
-              //         return val;
-              //     },
-              // });
+              // constantsPool是根据getEncodedBootstrapData()生成的字符串数组，其中 constantsPool[411]为X-Bogus
               constantsPool = pool;
               i = decodeLEB128(t);
               for (o = 0; o < i; ++o) {
                 for (
-                  var g = decodeLEB128(t),
-                    c = Boolean(decodeLEB128(t)),
-                    d = new Array(),
+                  var argumentCounter = decodeLEB128(t), // 形参个数
+                    strictMode = Boolean(decodeLEB128(t)),
+                    unwindTable = new Array(),
                     p = decodeLEB128(t),
                     h = 0;
                   h < p;
                   ++h
                 )
-                  d['push']([
+                  unwindTable['push']([
                     decodeLEB128(t),
                     decodeLEB128(t),
                     decodeLEB128(t),
                     decodeLEB128(t),
                   ]);
                 for (
-                  var v = new Array(), y = decodeLEB128(t), m = 0;
+                  var byteCodes = new Array(), y = decodeLEB128(t), m = 0;
                   m < y;
                   ++m
                 )
-                  v['push'](decodeLEB128(t));
-                BytecodeDefinitions['push']([v, g, c, d]);
+                  byteCodes['push'](decodeLEB128(t));
+
+                BytecodeDefinitions['push']([
+                  byteCodes,
+                  argumentCounter,
+                  strictMode,
+                  unwindTable,
+                ]);
               }
             })(getEncodedBootstrapData());
-          // stringAndNumberPool是根据getEncodedBootstrapData()生成的字符串数组，其中 stringAndNumberPool[411]为X-Bogus
           var bytecodeDefinition = BytecodeDefinitions[bytecodeIndex];
-          var res = executeByteCode(
+          var res = jsvmp(
             bytecodeDefinition,
             executionContext,
             funcArguments,
-            memoryStack,
+            scopeStack,
           );
           return res;
         }
 
         // 81
         // Cross-site Monitoring/Measurement State Token
-        function setXMST(e) {
+        // 设置msToken
+        function setMSToken(e) {
           setLocalStorageItem(pd, e);
         }
         // 82
         function encodeUTF8(e) {
-          var db;
-          db = [/^[\x00-\x7f]*$/];
-          if (db[0]['test'](e)) return e;
-          for (var t = [], r = e['length'], n = 0, a = 0; n < r; ++n, ++a) {
-            var o = e['charCodeAt'](n);
-            if (o < 128) t[a] = e['charAt'](n);
+          if (/^[\x00-\x7f]*$/['test'](e)) return e;
+          for (
+            var t = [], len = e['length'], idx = 0, a = 0;
+            idx < len;
+            ++idx, ++a
+          ) {
+            var o = e['charCodeAt'](idx);
+            if (o < 128) t[a] = e['charAt'](idx);
             else if (o < 2048)
               t[a] = String['fromCharCode'](192 | (o >> 6), 128 | (63 & o));
             else {
               if (!(o < 55296 || o > 57343)) {
-                if (n + 1 < r) {
-                  var i = e['charCodeAt'](n + 1);
+                if (idx + 1 < len) {
+                  var i = e['charCodeAt'](idx + 1);
                   if (o < 56320 && 56320 <= i && i <= 57343) {
                     var s = 65536 + (((1023 & o) << 10) | (1023 & i));
                     (t[a] = String['fromCharCode'](
@@ -3335,7 +3488,7 @@
                       128 | ((s >> 6) & 63),
                       128 | (63 & s),
                     )),
-                      ++n;
+                      ++idx;
                     continue;
                   }
                 }
@@ -3441,21 +3594,20 @@
           }
         }
         // 87
-        function createBytecodeFunction(bytecodeIndex, memoryStack) {
-          var n, bytecodeDefinition;
-          return (
-            ((bytecodeDefinition = BytecodeDefinitions[bytecodeIndex]),
-            (n = function () {
-              var res = executeByteCode(
-                bytecodeDefinition,
-                this,
-                arguments,
-                memoryStack,
-              );
-              return res;
-            })),
-            (l['set'](n, [bytecodeDefinition, memoryStack]), n)
-          );
+        function createBytecodeFunction(bytecodeIndex, scopeStack) {
+          var jsvmpFunc, bytecodeDefinition;
+          bytecodeDefinition = BytecodeDefinitions[bytecodeIndex];
+          jsvmpFunc = function jsvmpFunc() {
+            var res = jsvmp(bytecodeDefinition, this, arguments, scopeStack);
+            return res;
+          };
+          jsvmpFunc.bytecodeIndex = bytecodeIndex;
+          Object.defineProperty(jsvmpFunc, 'name', {
+            value: `bytecodeFunc_${bytecodeIndex}`,
+          });
+          funcToStackMap['set'](jsvmpFunc, [bytecodeDefinition, scopeStack]);
+          jsvmpFunctionList[bytecodeIndex] = jsvmpFunc;
+          return jsvmpFunc;
         }
         // 88
         function checkAllSignalsComplete() {
@@ -3514,7 +3666,7 @@
           Jc,
           Kc,
           Lc,
-          Mc,
+          CircularBuffer,
           Nc,
           Oc,
           Pc,
@@ -3627,7 +3779,7 @@
           _global,
           SDKConfig,
           SDKState,
-          l,
+          funcToStackMap,
           BytecodeDefinitions,
           constantsPool,
           Te,
@@ -4456,7 +4608,8 @@
           },
           get 8() {
             return function func106_8(...args) {
-              return rc4Cipher.apply(this, args);
+              var res = rc4Cipher.apply(this, args);
+              return res;
             };
           },
           get 9() {
@@ -4714,17 +4867,16 @@
             Nc = e;
           },
         })),
-        (Mc = function (e) {
-          var r, t, ub;
+        (CircularBuffer = function CircularBuffer(e) {
+          var r, t;
           return (
-            (((ub = [0]), (t = ub[0])), (r = [])),
+            ((t = 0), (r = [])),
             {
               get: function (e) {
                 return r[e];
               },
               push: function (n) {
-                var vb;
-                (vb = [1]), ((r[t] = n), (t = (e + t + vb[0]) % e));
+                (r[t] = n), (t = (e + t + 1) % e);
               },
               data: r,
               includes: function (e) {
@@ -4735,16 +4887,20 @@
         }))),
         (initAndExecuteByteCode(53, void 0, arguments, {
           get 0() {
-            return Mc;
+            return CircularBuffer;
           },
           get 1() {
-            return Lc;
+            return function func53_1(...args) {
+              return Lc.apply(this, args);
+            };
           },
           set 1(e) {
             Lc = e;
           },
           get 2() {
-            return Kc;
+            return function func53_2(...args) {
+              return Kc.apply(this, args);
+            };
           },
           set 2(e) {
             Kc = e;
@@ -5187,7 +5343,7 @@
             return qd;
           },
           get 8() {
-            return setXMST;
+            return setMSToken;
           },
           get 9() {
             return hc;
@@ -5410,7 +5566,7 @@
               return De;
             },
             get 14() {
-              return getXMST;
+              return getMSToken;
             },
             get 17() {
               return gc;
@@ -5435,6 +5591,12 @@
           (bytedAcrawlerExports['setTTWebid'] = setTTWebid),
           (bytedAcrawlerExports['setTTWebidV2'] = setTTWebidV2),
           (bytedAcrawlerExports['setTTWid'] = setTTWid));
+        bytedAcrawlerExports['getXbogus'] = function getXbogus() {
+          if (!jsvmpFunctionList[113]) {
+            throw new Error('Not initialized');
+          }
+          return jsvmpFunctionList[113].apply(this, arguments);
+        };
         Eb = 'end';
         break;
     }

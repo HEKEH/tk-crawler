@@ -3587,11 +3587,9 @@
           }
         }
         // 86
-        class ConfigurationError {
-          constructor(message) {
-            this.message = message;
-            this.name = 'ConfigException';
-          }
+        function ConfigurationError(message) {
+          this.message = message;
+          this.name = 'ConfigException';
         }
         // 87
         function createBytecodeFunction(bytecodeIndex, scopeStack) {

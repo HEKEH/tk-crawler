@@ -2,7 +2,7 @@ import type { WithRegion } from '../../types';
 import type { TikTokQueryTokens } from './types';
 import { commonGetRequest } from '../utils/common-request';
 import { getUrl } from '../utils/get-url';
-import { getXBogus } from '../utils/params';
+import { getXBogusOldVersion } from '../utils/params';
 import {
   COMMON_TIKTOK_HEADERS,
   COMMON_TIKTOK_QUERY,
@@ -59,7 +59,7 @@ export async function getDrawerTabs({
       ...tokens,
     },
   });
-  const xBogus = getXBogus(url);
+  const xBogus = getXBogusOldVersion(url);
   return commonGetRequest<DrawerTabsResponse>({
     url: `${url}&X-Bogus=${xBogus}`,
     headers: {

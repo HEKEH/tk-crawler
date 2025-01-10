@@ -1,12 +1,23 @@
 import { randomBytes } from 'node:crypto';
 import { getXBogus as _getXBogus } from 'tk-crack/webmssdk';
+import xBogus from 'xbogus';
 import {
   getRandomArrayElement,
   getRandomArrayElementWithWeight,
 } from '../../utils';
+import { USER_AGENT } from '../constants';
 import { ChannelId } from '../live/constants';
 
-export function getXBogus(
+export function getXBogusOldVersion(
+  url: string,
+  userAgent = USER_AGENT,
+): string {
+  const res = xBogus(url, userAgent);
+  return res;
+}
+
+/** 在Live管理中使用 */
+export function getXBogusNewVersion(
   url: string,
   body?: string | Record<string, any>,
 ): string {

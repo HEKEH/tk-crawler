@@ -3,8 +3,6 @@ import config from '../config';
 import { IntervalRunner } from '../infra/interval-runner';
 import { logger } from '../infra/logger';
 import { DRAWER_TABS_SCENE, getDrawerTabs, getFeed } from '../requests/live';
-import { batchCheckAnchor } from '../requests/live-admin';
-import { TEMP_COOKIE } from '../requests/live-admin/constants';
 import { ChannelId } from '../requests/live/constants';
 import {
   type ChannelSubTagMap,
@@ -163,20 +161,20 @@ class Crawler {
 
   async start() {
     logger.info('start crawler');
-    // await this._run();
+    await this._run();
     // kickofffupdates
     // mitchaustin10
     // mintyaxelive
     // paul_mcnally_
-    await batchCheckAnchor({
-      displayIds: [
-        'kickofffupdates',
-        'mitchaustin10',
-        'mintyaxelive',
-        'paul_mcnally_',
-      ],
-      cookie: TEMP_COOKIE,
-    });
+    // await batchCheckAnchor({
+    //   displayIds: [
+    //     'kickofffupdates',
+    //     'mitchaustin10',
+    //     'mintyaxelive',
+    //     'paul_mcnally_',
+    //   ],
+    //   cookie: TEMP_COOKIE,
+    // });
   }
 
   stop() {

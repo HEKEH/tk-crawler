@@ -2,7 +2,7 @@ import type { FeedResponse, WithRegion } from '../../types';
 import type { TikTokQueryTokens } from './types';
 import { commonGetRequest } from '../utils/common-request';
 import { getUrl } from '../utils/get-url';
-import { type ChannelParams, getXBogus } from '../utils/params';
+import { type ChannelParams, getXBogusOldVersion } from '../utils/params';
 import {
   COMMON_TIKTOK_HEADERS,
   COMMON_TIKTOK_QUERY,
@@ -26,7 +26,7 @@ export async function getFeed({
       ...tokens,
     },
   });
-  const xBogus = getXBogus(url);
+  const xBogus = getXBogusOldVersion(url);
   return commonGetRequest<FeedResponse>({
     url: `${url}&X-Bogus=${xBogus}`,
     headers: {

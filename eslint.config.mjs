@@ -1,6 +1,8 @@
 import antfu from '@antfu/eslint-config';
 
 export default antfu({
+  stylistic: true, // 启用样式规则
+  vue: true,
   ignores: ['**/tk-crack'],
   rules: {
     'style/semi': 'off',
@@ -14,5 +16,10 @@ export default antfu({
     'style/indent-binary-ops': 'off',
     'no-console': 'warn',
     'ts/no-unused-vars': 'warn',
+    'antfu/consistent-list-newline': 'off',
+    'vue/html-self-closing': 'off',
+    'vue/singleline-html-element-content-newline': 'off',
+    'vue/html-closing-bracket-newline': 'off',
+    'vue/html-indent': 'off',
   },
 });

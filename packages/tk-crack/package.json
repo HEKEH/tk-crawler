@@ -7,8 +7,9 @@
   },
   "exports": {
     "./*": {
-      "require": "./lib/*.js",
-      "types": "./lib/*.d.ts"
+      "types": "./lib/*.d.ts",
+      "import": "./lib/*.js",
+      "require": "./lib/*.js"
     }
   },
   "dependencies": {

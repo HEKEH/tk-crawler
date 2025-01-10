@@ -1,0 +1,23 @@
+{
+  "name": "@tk-crawler/pc-client",
+  "version": "0.0.1",
+  "description": "TK Live Crawler",
+  "main": "dist-electron/main.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc && vite build && electron-builder",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "vue": "^3.5.12"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.0.4",
+    "electron": "^30.0.1",
+    "electron-builder": "^24.13.3",
+    "vite-plugin-electron": "^0.28.6",
+    "vite-plugin-electron-renderer": "^0.14.5",
+    "vite-plugin-html": "^3.2.2",
+    "vue-tsc": "^2.0.26"
+  }
+}

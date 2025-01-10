@@ -10,7 +10,7 @@ webmssdk.init({
 });
 
 console.log(
-  webmssdk.getXbogus(
+  webmssdk.getXBogus(
     'requestFrom=portal&msToken=TjV4nPQk_voIo5cr9vvgr8j0_j4kS2hPcbu_x7LVjyEfd4HLFvkgrttv84TItJt4cqlg6py775VpTQgFzYW1EXhKanytziXhESxfddeUHSmAr61L-r-bHr2bAvE6JQlsHhnbDwd3Z4E=',
     '{a: "123"}',
   ),

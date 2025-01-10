@@ -1,7 +1,7 @@
 import type { BatchCheckAnchorResponse } from './types';
 import { commonPostRequest } from '../utils/common-request';
 import { getUrl } from '../utils/get-url';
-import { getXBogus } from '../utils/params';
+import { getMessageToken, getXBogus } from '../utils/params';
 import {
   COMMON_TIKTOK_LIVE_ADMIN_HEADERS,
   TIKTOK_LIVE_ADMIN_URL,
@@ -28,13 +28,10 @@ export function batchCheckAnchor({
     baseUrl: TIKTOK_LIVE_ADMIN_URL,
     path: '/creators/live/union_platform_api/agency/union_invite/batch_check_anchor/',
     params: {
-      // msToken: getMessageToken(),
-      msToken:
-        '3OMaGWbDznBasjXWmySfzj9J24gBpihhlM_tZsZ3cTrKi8m6CRwvfBKOGlrReAe6GQsOxA8PWy2SGSODJc7irUI8zdpp-ojPJI2tQ84-r6uBRy9XVj6AYVKGlTm7GjV_KJkGrUGh',
+      msToken: getMessageToken(),
     },
   });
-  const xBogus = getXBogus(url);
-  // const xBogus = 'DFSzswjLD3Ko4BVWt8BVJELNKBPZ';
+  const xBogus = getXBogus(url, body);
   return commonPostRequest<BatchCheckAnchorResponse>({
     url: `${url}&X-Bogus=${xBogus}`,
     headers,

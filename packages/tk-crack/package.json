@@ -6,7 +6,10 @@
     "preinstall": "npx only-allow pnpm"
   },
   "exports": {
-    "./*": "./dist/*"
+    "./*": {
+      "require": "./lib/*.js",
+      "types": "./lib/*.d.ts"
+    }
   },
   "dependencies": {
     "canvas": "^3.0.1",

@@ -164,6 +164,10 @@ class Crawler {
   async start() {
     logger.info('start crawler');
     // await this._run();
+    // kickofffupdates
+    // mitchaustin10
+    // mintyaxelive
+    // paul_mcnally_
     await batchCheckAnchor({
       displayIds: [
         'kickofffupdates',

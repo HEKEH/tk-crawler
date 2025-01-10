@@ -5804,7 +5804,7 @@
             (bytedAcrawlerExports['setTTWebid'] = setTTWebid),
             (bytedAcrawlerExports['setTTWebidV2'] = setTTWebidV2),
             (bytedAcrawlerExports['setTTWid'] = setTTWid));
-          bytedAcrawlerExports['getXbogus'] = function getXbogus() {
+          bytedAcrawlerExports['getXBogus'] = function getXBogus() {
             if (!jsvmpFunctionList[113]) {
               throw new Error('Not initialized');
             }

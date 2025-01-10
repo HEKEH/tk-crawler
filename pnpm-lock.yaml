@@ -162,6 +162,9 @@ importers:
       nodemon:
         specifier: ^3.1.9
         version: 3.1.9
+      tk-crack:
+        specifier: workspace:*
+        version: link:../../packages/tk-crack
 
   apps/server:
     dependencies:

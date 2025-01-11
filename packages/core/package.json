@@ -7,6 +7,15 @@
     "preinstall": "npx only-allow pnpm"
   },
   "dependencies": {
-    "tk-crack": "workspace:*"
+    "axios": "^1.7.9",
+    "lodash": "^4.17.21",
+    "loglevel": "^1.9.2",
+    "qs": "^6.13.1",
+    "tk-crack": "workspace:*",
+    "xbogus": "^1.0.2"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.17.13",
+    "@types/qs": "^6.9.17"
   }
 }

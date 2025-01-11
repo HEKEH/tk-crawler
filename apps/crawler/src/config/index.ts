@@ -1,5 +1,5 @@
 import process from 'node:process';
-import { logger } from '../infra/logger';
+import { logger } from '@tk-crawler/core';
 
 const { env } = process;
 

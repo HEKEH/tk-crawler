@@ -1,5 +1,8 @@
 import { randomBytes } from 'node:crypto';
-import { getXBogus as _getXBogus } from 'tk-crack/webmssdk';
+import {
+  getXBogus as _getXBogus,
+  init as webmssdkInit,
+} from 'tk-crack/webmssdk';
 import xBogus from 'xbogus';
 import {
   getRandomArrayElement,
@@ -16,11 +19,29 @@ export function getXBogusOldVersion(
   return res;
 }
 
+let webmssdkInitiated = false;
+
+function initWebmssdk() {
+  if (webmssdkInitiated) {
+    return;
+  }
+  webmssdkInitiated = true;
+  webmssdkInit({
+    aid: 1,
+    isSDK: false,
+    boe: false,
+    enablePathList: [],
+    region: 'sg-tiktok',
+    mode: 513,
+  });
+}
+
 /** 在Live管理中使用 */
 export function getXBogusNewVersion(
   url: string,
   body?: string | Record<string, any>,
 ): string {
+  initWebmssdk();
   let _body;
   if (body) {
     _body = typeof body === 'string' ? body : JSON.stringify(body);

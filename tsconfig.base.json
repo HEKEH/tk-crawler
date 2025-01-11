@@ -3,7 +3,10 @@
     "target": "es2018",
     "baseUrl": ".",
     "rootDir": ".",
-    "paths": {},
+    "paths": {
+      "@tk-crawler/core/*": ["packages/core/src/*"],
+      "@tk-crawler/core": ["packages/core/src/index.ts"]
+    },
     "resolveJsonModule": true,
     "types": [],
     "allowJs": false,

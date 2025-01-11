@@ -74,15 +74,9 @@ importers:
 
   apps/crawler:
     dependencies:
-      assert:
-        specifier: ^2.1.0
-        version: 2.1.0
-      axios:
-        specifier: ^1.7.9
-        version: 1.7.9
-      bcryptjs:
-        specifier: ^2.4.3
-        version: 2.4.3
+      '@tk-crawler/core':
+        specifier: workspace:*
+        version: link:../../packages/core
       cross-env:
         specifier: ^7.0.3
         version: 7.0.3
@@ -92,79 +86,16 @@ importers:
       dotenv-cli:
         specifier: ^7.4.2
         version: 7.4.4
-      i18next:
-        specifier: ^23.16.0
-        version: 23.16.8
-      i18next-fs-backend:
-        specifier: ^2.3.2
-        version: 2.6.0
-      jwt-simple:
-        specifier: ^0.5.6
-        version: 0.5.6
-      koa:
-        specifier: ^2.15.3
-        version: 2.15.3
-      koa-bodyparser:
-        specifier: ^4.4.1
-        version: 4.4.1
-      koa-router:
-        specifier: ^13.0.1
-        version: 13.0.1
-      lodash:
-        specifier: ^4.17.21
-        version: 4.17.21
-      mongoose:
-        specifier: ^8.9.2
-        version: 8.9.2
       pm2:
         specifier: ^5.4.3
         version: 5.4.3
-      qs:
-        specifier: ^6.13.1
-        version: 6.13.1
-      socket.io:
-        specifier: ^4.8.1
-        version: 4.8.1
-      uuid:
-        specifier: ^11.0.3
-        version: 11.0.3
-      xbogus:
-        specifier: ^1.0.2
-        version: 1.0.2
-      xss:
-        specifier: ^1.0.15
-        version: 1.0.15
-    devDependencies:
-      '@types/bcryptjs':
-        specifier: ^2.4.6
-        version: 2.4.6
-      '@types/koa':
-        specifier: ^2.15.0
-        version: 2.15.0
-      '@types/koa-bodyparser':
-        specifier: ^4.3.12
-        version: 4.3.12
-      '@types/koa-router':
-        specifier: ^7.4.8
-        version: 7.4.8
-      '@types/lodash':
-        specifier: ^4.17.13
-        version: 4.17.13
-      '@types/qs':
-        specifier: ^6.9.17
-        version: 6.9.17
-      '@types/uuid':
-        specifier: ^10.0.0
-        version: 10.0.0
-      log4js:
-        specifier: ^6.9.1
-        version: 6.9.1
-      nodemon:
-        specifier: ^3.1.9
-        version: 3.1.9
       tk-crack:
         specifier: workspace:*
         version: link:../../packages/tk-crack
+    devDependencies:
+      nodemon:
+        specifier: ^3.1.9
+        version: 3.1.9
 
   apps/pc-client:
     dependencies:
@@ -275,6 +206,34 @@ importers:
       nodemon:
         specifier: ^3.1.9
         version: 3.1.9
+
+  packages/core:
+    dependencies:
+      axios:
+        specifier: ^1.7.9
+        version: 1.7.9
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
+      loglevel:
+        specifier: ^1.9.2
+        version: 1.9.2
+      qs:
+        specifier: ^6.13.1
+        version: 6.13.1
+      tk-crack:
+        specifier: workspace:*
+        version: link:../tk-crack
+      xbogus:
+        specifier: ^1.0.2
+        version: 1.0.2
+    devDependencies:
+      '@types/lodash':
+        specifier: ^4.17.13
+        version: 4.17.13
+      '@types/qs':
+        specifier: ^6.9.17
+        version: 6.9.17
 
   packages/tk-crack:
     dependencies:
@@ -6633,6 +6592,11 @@ packages:
     transitivePeerDependencies:
       - supports-color
     dev: true
+
+  /loglevel@1.9.2:
+    resolution: {integrity: sha512-HgMmCqIJSAKqo68l0rS2AanEWfkxaZ5wNiEFb5ggm08lDs9Xl2KxBlX3PTcaD2chBM1gXAYf491/M2Rv8Jwayg==}
+    engines: {node: '>= 0.6.0'}
+    dev: false
 
   /longest-streak@3.1.0:
     resolution: {integrity: sha512-9Ri+o0JYgehTaVBBDoMqIl8GXtbWg711O3srftcHhZ0dqnETqLaoIK0x17fUw9rFSlK/0NlsKe0Ahhyl5pXE2g==}

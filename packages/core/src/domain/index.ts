@@ -1,5 +1,4 @@
 import type { DrawerSubTab, TikTokQueryTokens } from '../requests/live';
-import config from '../config';
 import { IntervalRunner } from '../infra/interval-runner';
 import { logger } from '../infra/logger';
 import { DRAWER_TABS_SCENE, getDrawerTabs, getFeed } from '../requests/live';
@@ -23,7 +22,7 @@ const TOKEN_UPDATE_INTERVAL = 60000; // 60s更新一次
 const UPDATE_CHANNEL_SUB_TAGS_INTERVAL = 300000; // 5分钟更新一次
 
 /** 爬虫逻辑 */
-class Crawler {
+export class Crawler {
   private _intervals: {
     [key in
       | 'updateTokensInterval'
@@ -46,7 +45,11 @@ class Crawler {
 
   private _crawlIntervalRunner = new IntervalRunner();
 
-  constructor() {}
+  private _crawlerInterval: number;
+
+  constructor(props: { crawlerInterval: number }) {
+    this._crawlerInterval = props.crawlerInterval;
+  }
 
   private _updateTokens() {
     this._queryTokens.verifyFp = getVerifyFp();
@@ -155,7 +158,7 @@ class Crawler {
     }, UPDATE_CHANNEL_SUB_TAGS_INTERVAL);
 
     this._crawlIntervalRunner.start(() => this._crawl(), {
-      intervalTime: config.crawlerInterval,
+      intervalTime: this._crawlerInterval,
     });
   }
 
@@ -185,5 +188,3 @@ class Crawler {
     this._crawlIntervalRunner.stop();
   }
 }
-
-export default Crawler;

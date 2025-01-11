@@ -17,10 +17,10 @@ export async function commonGetRequest<
       url,
       headers,
     };
-    logger.log('[request] config:', config);
+    logger.debug('[request] config:', config);
     const { data } = await axios<ResponseData>(config);
     if (data && 'status_code' in data && data.status_code === 0) {
-      logger.log('[response] success:', data);
+      logger.debug('[response] success:', data);
     } else {
       logger.error('[response] business error:', data);
     }
@@ -48,10 +48,10 @@ export async function commonPostRequest<
       headers,
       data: body,
     };
-    logger.log('[request] config:', config);
+    logger.debug('[request] config:', config);
     const { data } = await axios<ResponseData>(config);
     if (data && 'status_code' in data && data.status_code === 0) {
-      logger.log('[response] success:', data);
+      logger.debug('[response] success:', data);
     } else {
       logger.error('[response] business error:', data);
     }

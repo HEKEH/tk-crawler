@@ -1,27 +1,11 @@
 import path from 'node:path';
 import process from 'node:process';
 // import { createRequire } from 'node:module'
-import { fileURLToPath } from 'node:url';
 import { app, BrowserWindow } from 'electron';
+import { RENDERER_DIST, VITE_DEV_SERVER_URL } from './config';
 
 // const require = createRequire(import.meta.url)
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-// The built directory structure
-//
-// ├─┬─┬ dist
-// │ │ └── index.html
-// │ │
-// │ ├─┬ dist-electron
-// │ │ ├── main.js
-// │ │ └── preload.mjs
-// │
-process.env.APP_ROOT = path.join(__dirname, '..');
-
-// 🚧 Use ['ENV_NAME'] avoid vite:define plugin - Vite@2.x
-export const VITE_DEV_SERVER_URL = process.env.VITE_DEV_SERVER_URL;
-export const MAIN_DIST = path.join(process.env.APP_ROOT, 'dist-electron');
-export const RENDERER_DIST = path.join(process.env.APP_ROOT, 'dist');
+// const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL
   ? path.join(process.env.APP_ROOT, 'public')
@@ -67,17 +51,5 @@ app.on('activate', () => {
     createWindow();
   }
 });
-
-// // 声明支持安全状态恢复
-// app.on('ready', () => {
-//   if (
-//     process.platform === 'darwin' &&
-//     // @ts-expect-error - 忽略类型检查，因为这是macOS特有的API
-//     app.applicationSupportsSecureRestorableState
-//   ) {
-//     // @ts-expect-error - 忽略类型检查，因为这是macOS特有的API
-//     app.applicationSupportsSecureRestorableState = true;
-//   }
-// });
 
 app.whenReady().then(createWindow);

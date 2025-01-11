@@ -1,0 +1,12 @@
+{
+  "name": "@tk-crawler/core",
+  "version": "0.0.0",
+  "private": true,
+  "files": [],
+  "scripts": {
+    "preinstall": "npx only-allow pnpm"
+  },
+  "dependencies": {
+    "tk-crack": "workspace:*"
+  }
+}

@@ -8,6 +8,13 @@
     "types": ["node"],
     "skipLibCheck": true
   },
-  "include": ["scripts/**/*", "apps/server/**/*", "apps/crawler/**/*", "**/vite.config.*", ".husky/**/*"],
+  "include": [
+    "scripts/**/*",
+    "apps/server/**/*",
+    "apps/crawler/**/*",
+    "apps/pc-client/electron/**/*",
+    "**/vite.config.*",
+    ".husky/**/*"
+  ],
   "exclude": ["**/dist", "**/node_modules/**"]
 }

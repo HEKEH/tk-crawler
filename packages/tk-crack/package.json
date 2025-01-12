@@ -9,8 +9,8 @@
   "exports": {
     "./*": {
       "types": "./lib/*.d.ts",
-      "import": "./lib/*.js",
-      "require": "./lib/*.js"
+      "import": "./lib/*.mjs",
+      "require": "./lib/*.cjs"
     }
   },
   "dependencies": {

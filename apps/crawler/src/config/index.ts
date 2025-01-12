@@ -14,9 +14,9 @@ if (!allowOrigin) {
   process.exit(1);
 }
 
-const crawlerInterval = env.CRAWLER_INTERVAL;
+const crawlerInterval = env.CLIENT_CRAWLER_INTERVAL;
 if (!crawlerInterval) {
-  logger.error('CRAWLER_INTERVAL is required');
+  logger.error('CLIENT_CRAWLER_INTERVAL is required');
   process.exit(1);
 }
 

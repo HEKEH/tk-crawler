@@ -3,6 +3,7 @@ import process from 'node:process';
 // import { createRequire } from 'node:module'
 import { app, BrowserWindow } from 'electron';
 import { RENDERER_DIST, VITE_DEV_SERVER_URL } from './config';
+// import { crawlerStart } from './crawler';
 
 // const require = createRequire(import.meta.url)
 // const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -44,12 +45,14 @@ app.on('window-all-closed', () => {
   }
 });
 
-app.on('activate', () => {
-  // On OS X it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow();
-  }
+app.whenReady().then(() => {
+  createWindow();
+  app.on('activate', () => {
+    // On OS X it's common to re-create a window in the app when the
+    // dock icon is clicked and there are no other windows open.
+    if (BrowserWindow.getAllWindows().length === 0) {
+      createWindow();
+    }
+  });
+  // crawlerStart();
 });
-
-app.whenReady().then(createWindow);

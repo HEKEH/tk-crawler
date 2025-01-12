@@ -1,8 +1,5 @@
 import { randomBytes } from 'node:crypto';
-import {
-  getXBogus as _getXBogus,
-  init as webmssdkInit,
-} from 'tk-crack/webmssdk';
+import webmssdk from 'tk-crack/webmssdk';
 import xBogus from 'xbogus';
 import {
   getRandomArrayElement,
@@ -26,7 +23,7 @@ function initWebmssdk() {
     return;
   }
   webmssdkInitiated = true;
-  webmssdkInit({
+  webmssdk.init({
     aid: 1,
     isSDK: false,
     boe: false,
@@ -46,7 +43,7 @@ export function getXBogusNewVersion(
   if (body) {
     _body = typeof body === 'string' ? body : JSON.stringify(body);
   }
-  const res = _getXBogus(url, _body);
+  const res = webmssdk.getXBogus(url, _body);
   return res;
 }
 

@@ -1,2 +1,7 @@
-export function init(options: any): any;
-export function getXBogus(url: string, body?: string): string;
+function init(options: any): any;
+function getXBogus(url: string, body?: string): string;
+
+export default {
+  init,
+  getXBogus,
+};

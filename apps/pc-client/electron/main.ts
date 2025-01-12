@@ -3,7 +3,7 @@ import process from 'node:process';
 // import { createRequire } from 'node:module'
 import { app, BrowserWindow } from 'electron';
 import { RENDERER_DIST, VITE_DEV_SERVER_URL } from './config';
-// import { crawlerStart } from './crawler';
+import { crawlerStart } from './crawler';
 
 // const require = createRequire(import.meta.url)
 // const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -26,6 +26,8 @@ function createWindow() {
   win.webContents.on('did-finish-load', () => {
     win?.webContents.send('main-process-message', new Date().toLocaleString());
   });
+
+  // win.webContents.openDevTools({ mode: 'detach' });
 
   if (VITE_DEV_SERVER_URL) {
     win.loadURL(VITE_DEV_SERVER_URL);
@@ -54,5 +56,5 @@ app.whenReady().then(() => {
       createWindow();
     }
   });
-  // crawlerStart();
+  crawlerStart();
 });

@@ -1,6 +1,7 @@
 import { randomBytes } from 'node:crypto';
 import webmssdk from 'tk-crack/webmssdk';
-import xBogus from 'xbogus';
+import xBogus from 'tk-crack/xbogus-old';
+// import xBogus from 'xbogus';
 import {
   getRandomArrayElement,
   getRandomArrayElementWithWeight,

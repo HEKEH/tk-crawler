@@ -29,7 +29,15 @@ export default defineConfig(() => {
         fileName: format => `index.${format}.js`,
       },
       rollupOptions: {
-        external: [...Object.keys(pkg.dependencies || {}), /^node:/],
+        external: [
+          ...Object.keys(pkg.dependencies || {}),
+          /^node:/,
+          /^tk-crack\/*/,
+        ],
+        output: {
+          // 解决bug https://github.com/rollup/rollup/issues/5559
+          externalLiveBindings: false,
+        },
       },
       sourcemap: false,
     },

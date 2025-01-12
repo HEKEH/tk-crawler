@@ -24,7 +24,9 @@ export default defineConfig(({ mode }) => {
           alias,
         },
         build: {
+          minify: false,
           rollupOptions: {
+            // external: ['@tk-crawler/core'],
             output: {
               // 解决bug https://github.com/rollup/rollup/issues/5559
               externalLiveBindings: false,

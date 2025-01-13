@@ -1,10 +1,20 @@
-import * as process from 'node:process';
-import log from 'loglevel';
+interface Logger {
+  info: (message: any, ...args: any[]) => void;
+  error: (message: any, ...args: any[]) => void;
+  debug: (message: any, ...args: any[]) => void;
+  trace: (message: any, ...args: any[]) => void;
+  warn: (message: any, ...args: any[]) => void;
+}
 
-// 设置全局日志级别
-log.setLevel(process.env.NODE_ENV === 'production' ? 'debug' : 'debug');
+let logger: Logger | undefined;
 
-// 创建带前缀的 logger
-const logger = log.getLogger('TKCrawler');
+export function setLogger(_logger: Logger) {
+  logger = _logger;
+}
 
-export { logger };
+export function getLogger() {
+  if (!logger) {
+    throw new Error('Logger is not set');
+  }
+  return logger;
+}

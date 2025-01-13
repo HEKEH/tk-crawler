@@ -1,7 +1,7 @@
 // @see - https://www.electron.build/configuration/configuration
 {
   $schema: 'https://raw.githubusercontent.com/electron-userland/electron-builder/master/packages/app-builder-lib/scheme.json',
-  appId: 'com.wt.tk-live-crawler-pc',
+  appId: 'com.wt.tk-live-crawler-pc-client',
   asar: true,
   productName: 'TK Live Crawler',
   directories: {

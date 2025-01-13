@@ -1,6 +1,6 @@
 import type { AxiosRequestConfig } from 'axios';
 import axios from 'axios';
-import { logger } from '../../infra/logger';
+import { getLogger } from '../../infra/logger';
 
 interface CommonGetRequestParams {
   url: string;
@@ -17,16 +17,16 @@ export async function commonGetRequest<
       url,
       headers,
     };
-    logger.debug('[request] config:', config);
+    getLogger().debug('[request] config:', config);
     const { data } = await axios<ResponseData>(config);
     if (data && 'status_code' in data && data.status_code === 0) {
-      logger.debug('[response] success:', data);
+      getLogger().debug('[response] success:', data);
     } else {
-      logger.error('[response] business error:', data);
+      getLogger().error('[response] business error:', data);
     }
     return data;
   } catch (error) {
-    logger.error('[response] system error:', error);
+    getLogger().error('[response] system error:', error);
     throw error;
   }
 }
@@ -40,6 +40,7 @@ interface CommonPostRequestParams {
 export async function commonPostRequest<
   ResponseData extends { status_code: number; data?: any; message?: string },
 >({ url, headers, body }: CommonPostRequestParams): Promise<ResponseData> {
+  const logger = getLogger();
   try {
     const config: AxiosRequestConfig = {
       method: 'post',

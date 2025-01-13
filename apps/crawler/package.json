@@ -30,6 +30,7 @@
     "cross-env": "^7.0.3",
     "dotenv": "^16.4.7",
     "dotenv-cli": "^7.4.2",
+    "log4js": "^6.9.1",
     "pm2": "^5.4.3"
   },
   "devDependencies": {

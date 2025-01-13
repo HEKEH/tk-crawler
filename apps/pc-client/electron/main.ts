@@ -1,12 +1,16 @@
 import path from 'node:path';
 import process from 'node:process';
+import { setLogger } from '@tk-crawler/core';
 // import { createRequire } from 'node:module'
 import { app, BrowserWindow } from 'electron';
 import { RENDERER_DIST, VITE_DEV_SERVER_URL } from './config';
 import { crawlerStart } from './crawler';
+import { logger } from './infra/logger';
 
 // const require = createRequire(import.meta.url)
 // const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+setLogger(logger);
 
 process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL
   ? path.join(process.env.APP_ROOT, 'public')

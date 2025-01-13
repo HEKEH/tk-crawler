@@ -1,6 +1,6 @@
 import type { AxiosRequestConfig } from 'axios';
 import axios from 'axios';
-import { logger } from '../../infra/logger';
+import { getLogger } from '../../infra/logger';
 import { extractRegionFromHtml } from '../utils/extract-region';
 import { TIKTOK_URL } from './constants';
 
@@ -28,7 +28,7 @@ export async function getUserRegion({
       }
     } catch (error) {
       if (t === 0) {
-        logger.error('Error getting user region:', error);
+        getLogger().error('Error getting user region:', error);
       }
     }
   }

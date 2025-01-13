@@ -1,5 +1,5 @@
 import type { Region } from '../types/region';
-import { logger } from '../infra/logger';
+import { getLogger } from '../infra/logger';
 import { getUserRegion } from '../requests/live';
 import { type AnchorCheckInfo, batchCheckAnchor } from '../requests/live-admin';
 import { TEMP_COOKIE } from '../requests/live-admin/constants';
@@ -61,7 +61,7 @@ export default class UserCollection {
                 ? QualificationStatus.QUALIFIED
                 : QualificationStatus.UNQUALIFIED;
             } else {
-              logger.error('[triggerCheckUsers] User not found', {
+              getLogger().error('[triggerCheckUsers] User not found', {
                 anchor,
               });
             }
@@ -73,7 +73,7 @@ export default class UserCollection {
           /** 仍然丢回队列，等待下一次检查 */
           this._awaitedCheckedUsers.push(user);
         } else {
-          logger.info('找到一个可邀约主播', user);
+          getLogger().info('找到一个可邀约主播', user);
           this._allUsers.push(user);
         }
       }
@@ -101,7 +101,7 @@ export default class UserCollection {
         qualified: QualificationStatus.NOT_CHECKED,
       };
     } else {
-      logger.error('[addUser] Get user region failed', {
+      getLogger().error('[addUser] Get user region failed', {
         user,
       });
       this._allUserIds.delete(user.id);

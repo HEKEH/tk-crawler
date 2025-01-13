@@ -1,6 +1,7 @@
 import process from 'node:process';
-import { Crawler, logger } from '@tk-crawler/core';
+import { Crawler } from '@tk-crawler/core';
 import config from './config';
+import { logger } from './infra/logger';
 
 const { env } = process;
 logger.info('[env]', env.NODE_ENV);

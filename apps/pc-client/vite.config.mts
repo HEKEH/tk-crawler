@@ -1,9 +1,11 @@
+import type { AliasOptions, InlineConfig } from 'vite';
+import type { ElectronSimpleOptions } from 'vite-plugin-electron/simple';
 import { readFileSync } from 'node:fs';
 import path, { resolve } from 'node:path';
 import process from 'node:process';
 import vue from '@vitejs/plugin-vue';
-import { AliasOptions, defineConfig } from 'vite';
-import electron, { ElectronSimpleOptions } from 'vite-plugin-electron/simple';
+import { defineConfig } from 'vite';
+import electron from 'vite-plugin-electron/simple';
 import { createHtmlPlugin } from 'vite-plugin-html';
 
 // https://vitejs.dev/config/
@@ -20,6 +22,7 @@ export default defineConfig(({ mode }) => {
       // Shortcut of `build.lib.entry`.
       entry: 'electron/main.ts',
       vite: {
+        // assetsInclude: ['**/*.exe', '**/*.dll', '**/*.so', '**/*.node'],
         resolve: {
           alias,
         },
@@ -38,7 +41,7 @@ export default defineConfig(({ mode }) => {
         env: {
           envFile: `.env.${mode}`, // 指定环境文件名
         },
-      },
+      } as InlineConfig,
     },
     preload: {
       // Shortcut of `build.rollupOptions.input`.

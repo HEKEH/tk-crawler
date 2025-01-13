@@ -1,7 +1,7 @@
 import antfu from '@antfu/eslint-config';
 
-export default [
-  antfu({
+export default antfu(
+  {
     stylistic: true, // 启用样式规则
     vue: true,
     ignores: ['**/tk-crack'],
@@ -23,11 +23,11 @@ export default [
       'vue/html-closing-bracket-newline': 'off',
       'vue/html-indent': 'off',
     },
-  }),
+  },
   {
-    files: ['**/*.json', '**/*.jsonc'], // 包含 JSON 和 JSONC 文件
+    files: ['**/*.json', '**/*.json5'],
     rules: {
       'style/eol-last': 'off',
     },
   },
-];
+);

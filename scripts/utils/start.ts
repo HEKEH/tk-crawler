@@ -1,6 +1,6 @@
 import type { SpawnOptions } from 'node:child_process';
 import { spawn } from 'node:child_process';
-import * as process from 'node:process';
+import process from 'node:process';
 
 import { log, LogColor, logError } from './log';
 

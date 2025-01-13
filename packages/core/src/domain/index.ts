@@ -1,6 +1,6 @@
 import type { DrawerSubTab, TikTokQueryTokens } from '../requests/live';
 import { IntervalRunner } from '../infra/interval-runner';
-import { logger } from '../infra/logger';
+import { getLogger } from '../infra/logger';
 import { DRAWER_TABS_SCENE, getDrawerTabs, getFeed } from '../requests/live';
 import { ChannelId } from '../requests/live/constants';
 import {
@@ -16,8 +16,8 @@ import {
   setIntervalImmediate,
 } from '../utils';
 import UserCollection from './user-collection';
-import { batchCheckAnchor } from '../requests/live-admin';
-import { TEMP_COOKIE } from '../requests/live-admin/constants';
+// import { batchCheckAnchor } from '../requests/live-admin';
+// import { TEMP_COOKIE } from '../requests/live-admin/constants';
 
 const TOKEN_UPDATE_INTERVAL = 60000; // 60s更新一次
 
@@ -110,7 +110,7 @@ export class Crawler {
 
   private async _crawl() {
     try {
-      logger.trace('发起一轮新查询');
+      getLogger().debug('发起一轮新查询');
       const channelId = getRandomChannelId();
       const channelParams = getChannelParamsByChannelId(
         channelId,
@@ -139,7 +139,7 @@ export class Crawler {
         await this._userCollection.addUsers(users);
       }
     } catch (error) {
-      logger.error('[feed] error', error);
+      getLogger().error('[feed] error', error);
     }
   }
 
@@ -165,7 +165,7 @@ export class Crawler {
   }
 
   async start() {
-    logger.info('start crawler');
+    getLogger().info('start crawler');
     // kickofffupdates
     // mitchaustin10
     // mintyaxelive
@@ -184,7 +184,7 @@ export class Crawler {
   }
 
   stop() {
-    logger.info('stop crawler');
+    getLogger().info('stop crawler');
     Object.values(this._intervals).forEach(interval => {
       clearInterval(interval);
     });

@@ -1,9 +1,20 @@
 import path from 'node:path';
-import process from 'node:process';
-// import 'global-agent/bootstrap';
 
-// 启用系统代理
-// app.commandLine.appendSwitch('proxy-pac-url', 'auto d');
+import process from 'node:process';
+
+import { get as getSystemProxy } from 'get-system-proxy';
+
+import { bootstrap } from 'global-agent';
+
+export async function initProxy() {
+  const proxy = await getSystemProxy();
+  if (proxy) {
+    const proxyUrl = `${proxy.type}://${proxy.host}:${proxy.port}`;
+    process.env.GLOBAL_AGENT_HTTP_PROXY = proxyUrl;
+    process.env.GLOBAL_AGENT_HTTPS_PROXY = proxyUrl;
+    bootstrap();
+  }
+}
 
 process.env.NODE_ENV = process.defaultApp ? 'development' : 'production';
 

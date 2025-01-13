@@ -1,6 +1,6 @@
 /* eslint-disable perfectionist/sort-imports */
 // init-env需要最先运行
-import { RENDERER_DIST, VITE_DEV_SERVER_URL } from './init-env';
+import { initProxy, RENDERER_DIST, VITE_DEV_SERVER_URL } from './init-env';
 
 import path from 'node:path';
 import process from 'node:process';
@@ -54,7 +54,8 @@ app.on('window-all-closed', () => {
   }
 });
 
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
+  await initProxy();
   createWindow();
   app.on('activate', () => {
     // On OS X it's common to re-create a window in the app when the

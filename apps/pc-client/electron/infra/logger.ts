@@ -13,7 +13,9 @@ class Logger {
     const logDir = this.getLogDirectory();
 
     // 确保目录存在
-    fs.mkdirSync(logDir, { recursive: true });
+    if (!fs.existsSync(logDir)) {
+      fs.mkdirSync(logDir, { recursive: true });
+    }
 
     log4js.configure({
       // appenders: {
@@ -78,13 +80,12 @@ class Logger {
   private getLogDirectory(): string {
     const isProd = process.env.NODE_ENV === 'production';
     let basePath: string;
-    console.log(path.join(app.getPath('logs')));
 
     if (isProd) {
       // 生产环境使用系统标准日志目录
       if (process.platform === 'darwin') {
         // macOS: ~/Library/Logs/YourAppName
-        basePath = path.join(app.getPath('logs'), app.getName());
+        basePath = app.getPath('logs');
       } else if (process.platform === 'win32') {
         // Windows: %USERPROFILE%\AppData\Roaming\YourAppName\logs
         basePath = path.join(app.getPath('userData'), 'logs');

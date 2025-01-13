@@ -1,9 +1,12 @@
+/* eslint-disable perfectionist/sort-imports */
+// init-env需要最先运行
+import { RENDERER_DIST, VITE_DEV_SERVER_URL } from './init-env';
+
 import path from 'node:path';
 import process from 'node:process';
 import { setLogger } from '@tk-crawler/core';
 // import { createRequire } from 'node:module'
 import { app, BrowserWindow } from 'electron';
-import { RENDERER_DIST, VITE_DEV_SERVER_URL } from './config';
 import { crawlerStart } from './crawler';
 import { logger } from './infra/logger';
 

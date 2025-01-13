@@ -10,6 +10,7 @@ import { createHtmlPlugin } from 'vite-plugin-html';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
+  const isProduction = mode === 'production';
   const pkg = JSON.parse(
     readFileSync(new URL('./package.json', import.meta.url), 'utf8'),
   );
@@ -27,13 +28,9 @@ export default defineConfig(({ mode }) => {
           alias,
         },
         build: {
-          minify: false,
+          minify: isProduction,
           rollupOptions: {
             // external: ['@tk-crawler/core'],
-            // output: {
-            //   // 解决bug https://github.com/rollup/rollup/issues/5559
-            //   externalLiveBindings: false,
-            // },
           },
         },
         envDir: path.resolve(__dirname, '../..'), // 环境文件目录
@@ -69,5 +66,8 @@ export default defineConfig(({ mode }) => {
       }),
       (electron as any)(electronOptions),
     ],
+    build: {
+      minify: isProduction,
+    },
   };
 });

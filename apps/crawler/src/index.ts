@@ -1,5 +1,5 @@
 import process from 'node:process';
-import { Crawler } from '@tk-crawler/core';
+// import { Crawler } from '@tk-crawler/core';
 import config from './config';
 import { logger } from './infra/logger';
 
@@ -8,13 +8,13 @@ logger.info('[env]', env.NODE_ENV);
 logger.info('[port]', config.port);
 
 (async () => {
-  const crawler = new Crawler({
-    crawlerInterval: config.crawlerInterval,
-  });
+  // const crawler = new Crawler({
+  //   crawlerInterval: config.crawlerInterval,
+  // });
   process.on('SIGINT', () => {
-    crawler.stop();
+    // crawler.stop();
     process.exit(0);
   });
-  await crawler.start();
+  // await crawler.start();
   logger.info('Crawler start successfully');
 })();

@@ -5,7 +5,7 @@ import { app } from 'electron';
 import log4js from 'log4js';
 
 class Logger {
-  private static instance: Logger;
+  private static _instance: Logger | undefined;
   private logger: log4js.Logger;
 
   private constructor() {
@@ -102,10 +102,10 @@ class Logger {
   }
 
   public static getInstance(): Logger {
-    if (!Logger.instance) {
-      Logger.instance = new Logger();
+    if (!Logger._instance) {
+      Logger._instance = new Logger();
     }
-    return Logger.instance;
+    return Logger._instance;
   }
 
   public info(message: any, ...args: any[]): void {

@@ -1,9 +1,6 @@
 // 版本1.0.0.65
 
-var bytedAcrawlerExports = {
-  init: function () {},
-  getXBogus: function () {},
-};
+var bytedAcrawlerExports = {};
 
 (function (bytedAcrawlerExports) {
   function createFakeBrowserEnv() {

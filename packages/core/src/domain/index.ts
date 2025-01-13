@@ -16,6 +16,8 @@ import {
   setIntervalImmediate,
 } from '../utils';
 import UserCollection from './user-collection';
+import { batchCheckAnchor } from '../requests/live-admin';
+import { TEMP_COOKIE } from '../requests/live-admin/constants';
 
 const TOKEN_UPDATE_INTERVAL = 60000; // 60s更新一次
 
@@ -164,7 +166,6 @@ export class Crawler {
 
   async start() {
     logger.info('start crawler');
-    await this._run();
     // kickofffupdates
     // mitchaustin10
     // mintyaxelive
@@ -178,6 +179,8 @@ export class Crawler {
     //   ],
     //   cookie: TEMP_COOKIE,
     // });
+
+    await this._run();
   }
 
   stop() {

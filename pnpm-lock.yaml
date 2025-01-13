@@ -99,6 +99,12 @@ importers:
       '@tk-crawler/core':
         specifier: workspace:*
         version: link:../../packages/core
+      canvas:
+        specifier: ^3.0.1
+        version: 3.0.1
+      jsdom:
+        specifier: ^26.0.0
+        version: 26.0.0(canvas@3.0.1)
       vue:
         specifier: ^3.5.12
         version: 3.5.13(typescript@5.5.4)

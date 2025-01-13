@@ -34,10 +34,6 @@ export default defineConfig(() => {
           /^node:/,
           /^tk-crack\/*/,
         ],
-        output: {
-          // 解决bug https://github.com/rollup/rollup/issues/5559
-          externalLiveBindings: false,
-        },
       },
       sourcemap: false,
     },

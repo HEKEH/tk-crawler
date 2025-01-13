@@ -30,10 +30,10 @@ export default defineConfig(({ mode }) => {
           minify: false,
           rollupOptions: {
             // external: ['@tk-crawler/core'],
-            output: {
-              // 解决bug https://github.com/rollup/rollup/issues/5559
-              externalLiveBindings: false,
-            },
+            // output: {
+            //   // 解决bug https://github.com/rollup/rollup/issues/5559
+            //   externalLiveBindings: false,
+            // },
           },
         },
         envDir: path.resolve(__dirname, '../..'), // 环境文件目录

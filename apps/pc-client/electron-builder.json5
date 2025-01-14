@@ -10,6 +10,7 @@
   files: ['dist', 'dist-electron'],
   mac: {
     target: ['dmg'],
+    icon: 'build/icons/icon.icns',
     artifactName: '${productName}-Mac-${version}-Installer.${ext}',
   },
   win: {
@@ -19,6 +20,7 @@
         arch: ['x64'],
       },
     ],
+    icon: 'build/icons/icon.ico',
     artifactName: '${productName}-Windows-${version}-Setup.${ext}',
   },
   nsis: {
@@ -29,6 +31,7 @@
   },
   linux: {
     target: ['AppImage'],
+    icon: 'build/icons/icon.png',
     artifactName: '${productName}-Linux-${version}.${ext}',
   },
 }

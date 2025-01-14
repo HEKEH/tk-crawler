@@ -1,12 +1,14 @@
+import { vLoading } from 'element-plus';
 import { createApp } from 'vue';
 
 import App from './App.vue';
-import { addDefaultCrawlerSettingListener } from './listeners';
+import './styles/global.scss';
 import './style.css';
 
 function init() {
-  createApp(App).mount('#app');
-  addDefaultCrawlerSettingListener();
+  const app = createApp(App);
+  app.directive('loading', vLoading);
+  app.mount('#app');
 }
 
 init();

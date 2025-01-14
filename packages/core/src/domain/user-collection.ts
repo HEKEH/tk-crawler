@@ -1,4 +1,4 @@
-import type { Region } from '../types/region';
+import type { Region } from '@tk-crawler/shared';
 import { getLogger } from '../infra/logger';
 import { getUserRegion } from '../requests/live';
 import { type AnchorCheckInfo, batchCheckAnchor } from '../requests/live-admin';

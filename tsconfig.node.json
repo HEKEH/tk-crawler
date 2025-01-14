@@ -15,6 +15,7 @@
     "apps/pc-client/electron/**/*",
     "apps/pc-client/shared/**/*",
     "packages/core/**/*",
+    "packages/shared/**/*",
     "**/vite.config.*",
     ".husky/**/*"
   ],

@@ -1,5 +1,5 @@
+import type { Region } from '@tk-crawler/shared';
 import type { LANGUAGE } from '../constants';
-import type { Region } from './region';
 
 export type WithLng<T extends object> = T & { lng: LANGUAGE };
 

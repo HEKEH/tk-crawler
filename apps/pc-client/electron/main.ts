@@ -21,6 +21,8 @@ process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL
 async function main() {
   setLogger(logger);
   await app.whenReady();
+  await initProxy();
+  Bridge.getInstance().start();
   const viewManager = ViewManager.getInstance();
   await viewManager.createWindow();
 
@@ -40,8 +42,6 @@ async function main() {
       viewManager.destroy();
     }
   });
-  await initProxy();
-  Bridge.getInstance().start();
 }
 
 main();

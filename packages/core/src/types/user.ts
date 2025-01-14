@@ -1,4 +1,4 @@
-import type { Region } from './region';
+import type { Region } from '@tk-crawler/shared';
 
 export enum QualificationStatus {
   /** 未验证是否可以签约 */

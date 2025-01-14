@@ -9,7 +9,9 @@ export default defineConfig(() => {
     readFileSync(new URL('./package.json', import.meta.url), 'utf8'),
   );
 
-  const alias: AliasOptions = {};
+  const alias: AliasOptions = {
+    '@tk-crawler/shared': resolve(__dirname, '../shared/src'),
+  };
 
   const config: UserConfig = {
     plugins: [

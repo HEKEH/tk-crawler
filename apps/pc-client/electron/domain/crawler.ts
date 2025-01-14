@@ -1,14 +1,7 @@
-import type { LiveAnchorCrawlerSetting } from '@tk-crawler/core';
+import type { LiveAnchorCrawlerSettings } from '@tk-crawler/shared';
 import { LiveAnchorCrawler } from '@tk-crawler/core';
 import config from '../config';
 import { logger } from '../infra/logger';
-
-export const DEFAULT_LIVE_ANCHOR_CRAWLER_SETTING: LiveAnchorCrawlerSetting = {
-  region: 'all',
-  outdatedDays: 30,
-  queryLimitOneHour: 50,
-  queryLimitOneDay: 280,
-};
 
 export class Crawler {
   private static _instance: Crawler | null = null;
@@ -16,21 +9,12 @@ export class Crawler {
     crawlerInterval: config.crawlerInterval,
   });
 
-  private _setting: LiveAnchorCrawlerSetting =
-    DEFAULT_LIVE_ANCHOR_CRAWLER_SETTING;
-
   private constructor() {}
 
-  // TODO: 从配置文件中获取
-  async getCurrentLiveAnchorCrawlerSetting() {
-    return DEFAULT_LIVE_ANCHOR_CRAWLER_SETTING;
-  }
-
-  async start(settings: LiveAnchorCrawlerSetting) {
+  async start(settings: LiveAnchorCrawlerSettings) {
     this.stop();
-    this._setting = settings;
     this._liveAnchorCrawler.start({
-      settings: this._setting,
+      settings,
       onAnchorsCollected: anchors => {
         logger.info(anchors);
       },

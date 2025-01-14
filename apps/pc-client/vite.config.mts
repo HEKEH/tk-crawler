@@ -1,10 +1,12 @@
-import type { AliasOptions, InlineConfig } from 'vite';
+import type { AliasOptions, InlineConfig, PluginOption } from 'vite';
 import type { ElectronSimpleOptions } from 'vite-plugin-electron/simple';
 import { readFileSync } from 'node:fs';
 import path, { resolve } from 'node:path';
 import process from 'node:process';
 import vue from '@vitejs/plugin-vue';
+import vueJsx from '@vitejs/plugin-vue-jsx';
 import { defineConfig } from 'vite';
+import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js';
 import electron from 'vite-plugin-electron/simple';
 import { createHtmlPlugin } from 'vite-plugin-html';
 
@@ -16,6 +18,7 @@ export default defineConfig(({ mode }) => {
   );
   const alias: AliasOptions = {
     '@tk-crawler/core': resolve(__dirname, '../../packages/core/src'),
+    '@tk-crawler/shared': resolve(__dirname, '../../packages/shared/src'),
   };
 
   const electronOptions: ElectronSimpleOptions = {
@@ -57,6 +60,11 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [
       vue(),
+      vueJsx() as PluginOption,
+      cssInjectedByJsPlugin({
+        styleId: 'pc-client-style',
+        relativeCSSInjection: true, // for multiple format
+      }),
       createHtmlPlugin({
         inject: {
           data: {

@@ -1,4 +1,5 @@
 import { Crawler } from '../domain';
+import { initServices } from '../services';
 import { ViewManager } from '../view';
 
 /** 视图和爬虫之间的桥梁 */
@@ -8,14 +9,13 @@ export class Bridge {
 
   async start() {
     const crawler = Crawler.getInstance();
-    const currentSetting = await crawler.getCurrentLiveAnchorCrawlerSetting();
     ViewManager.getInstance().onLiveAnchorCrawlerSettingConfirmed(
-      currentSetting,
       // 一旦设置确认，则启动爬虫
       setting => {
         crawler.start(setting);
       },
     );
+    initServices();
   }
 
   static getInstance() {

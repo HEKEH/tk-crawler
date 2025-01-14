@@ -1,6 +1,6 @@
 import type { Region } from './region';
 
-export interface LiveAnchorCrawlerSetting {
+export interface LiveAnchorCrawlerSettings {
   region: Region | 'all';
   fansLimitLow?: number;
   fansLimitHigh?: number;

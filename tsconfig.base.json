@@ -5,7 +5,9 @@
     "rootDir": ".",
     "paths": {
       "@tk-crawler/core/*": ["packages/core/src/*"],
-      "@tk-crawler/core": ["packages/core/src/index.ts"]
+      "@tk-crawler/core": ["packages/core/src/index.ts"],
+      "@tk-crawler/shared/*": ["packages/shared/src/*"],
+      "@tk-crawler/shared": ["packages/shared/src/index.ts"]
     },
     "resolveJsonModule": true,
     "types": [],

@@ -1,5 +1,6 @@
+import type { LiveAnchorCrawlerSettings } from '@tk-crawler/shared';
 import type { DrawerSubTab, TikTokQueryTokens } from '../requests/live';
-import type { LiveAnchorCrawlerSetting, LiveRoomOwner } from '../types';
+import type { LiveRoomOwner } from '../types';
 import { IntervalRunner } from '../infra/interval-runner';
 import { getLogger } from '../infra/logger';
 import { DRAWER_TABS_SCENE, getDrawerTabs, getFeed } from '../requests/live';
@@ -30,7 +31,7 @@ export class LiveAnchorCrawler {
       | 'updateChannelSubTagsInterval']?: NodeJS.Timeout;
   } = {};
 
-  private _settings?: LiveAnchorCrawlerSetting;
+  private _settings?: LiveAnchorCrawlerSettings;
 
   private _isRunning = false;
 
@@ -180,7 +181,7 @@ export class LiveAnchorCrawler {
     settings,
     onAnchorsCollected,
   }: {
-    settings: LiveAnchorCrawlerSetting;
+    settings: LiveAnchorCrawlerSettings;
     onAnchorsCollected: (users: LiveRoomOwner[]) => void;
   }) {
     this.stop();

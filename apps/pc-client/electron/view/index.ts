@@ -1,9 +1,9 @@
-import type { LiveAnchorCrawlerSetting } from '@tk-crawler/core';
+import type { LiveAnchorCrawlerSettings } from '@tk-crawler/shared';
 import path from 'node:path';
 import process from 'node:process';
 import { BaseWindow, globalShortcut, ipcMain, WebContentsView } from 'electron';
 import { CUSTOM_EVENTS } from '../constants';
-import { RENDERER_DIST, VITE_DEV_SERVER_URL } from '../env';
+import { isDevelopment, RENDERER_DIST, VITE_DEV_SERVER_URL } from '../env';
 import { logger } from '../infra/logger';
 
 export class ViewManager {
@@ -47,13 +47,18 @@ export class ViewManager {
       //   'main-process-message',
       //   new Date().toLocaleString(),
       // );
-      // if (isDevelopment) {
+      if (isDevelopment) {
+        if (this._mainView?.webContents) {
+          this._mainView.webContents.openDevTools({
+            mode: 'right',
+          });
+        }
+      }
       globalShortcut.register('F12', () => {
         if (this._mainView?.webContents) {
           this._mainView.webContents.toggleDevTools();
         }
       });
-      // }
     });
     if (VITE_DEV_SERVER_URL) {
       await this._mainView.webContents.loadURL(VITE_DEV_SERVER_URL);
@@ -85,13 +90,12 @@ export class ViewManager {
   }
 
   onLiveAnchorCrawlerSettingConfirmed(
-    currentSetting: LiveAnchorCrawlerSetting,
-    callback: (setting: LiveAnchorCrawlerSetting) => void,
+    callback: (setting: LiveAnchorCrawlerSettings) => void,
   ) {
-    this._mainView?.webContents.send(
-      CUSTOM_EVENTS.LIVE_ANCHOR_CRAWLER_SETTING,
-      currentSetting,
-    );
+    // this._mainView?.webContents.send(
+    //   CUSTOM_EVENTS.LIVE_ANCHOR_CRAWLER_SETTING,
+    //   currentSetting,
+    // );
     ipcMain.on(
       CUSTOM_EVENTS.LIVE_ANCHOR_CRAWLER_SETTING_CONFIRMED,
       (_, settings) => {

@@ -1,4 +1,4 @@
-import { DefaultRegion, Region } from '../../types/region';
+import { DefaultRegion, Region } from '@tk-crawler/shared';
 import { BROWSER_NAME, BROWSER_VERSION, USER_AGENT } from '../constants';
 
 export const TIKTOK_URL = 'https://www.tiktok.com';

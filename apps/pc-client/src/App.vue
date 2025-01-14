@@ -1,30 +1,29 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue';
+import { computed, onBeforeUnmount } from 'vue';
+import Homepage from './sections/homepage.vue';
+import { provideGlobalStore } from './utils/vue';
+import 'element-plus/dist/index.css';
+
+const globalStore = provideGlobalStore();
+
+globalStore.init();
+const isLoading = computed(() => {
+  return globalStore.liveAnchorCrawlerSettings === null;
+});
+
+onBeforeUnmount(() => {
+  globalStore.clear();
+});
 </script>
 
 <template>
-  <div>
-    <a href="https://electron-vite.github.io" target="_blank">
-      <img src="/electron-vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
-  </div>
-  <HelloWorld msg="Vite + Vue" />
+  <div
+    v-if="isLoading"
+    v-loading="isLoading"
+    :style="{ width: '100%', height: '100%', overflow: 'hidden' }"
+    element-loading-text="加载中..."
+  />
+  <Homepage v-else />
 </template>
 
-<style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
-</style>
+<style scoped></style>

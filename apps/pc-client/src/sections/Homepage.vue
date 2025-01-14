@@ -1,13 +1,30 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import TopBar from './top-bar/index.vue';
 
-defineProps<{
-  msg?: string;
-}>();
+defineOptions({
+  name: 'Homepage',
+});
 </script>
 
 <template>
-  <div>Homepage</div>
+  <div class="homepage">
+    <TopBar />
+    <div class="body">123</div>
+  </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.homepage {
+  position: relative;
+  overflow: hidden;
+  margin-top: var(--top-bar-height);
+  width: 100%;
+  height: 100%;
+}
+.body {
+  height: calc(100% - var(--top-bar-height));
+  width: 100%;
+  overflow: hidden;
+  padding: 2rem;
+}
+</style>

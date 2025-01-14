@@ -1,8 +1,14 @@
 import type { LiveAnchorCrawlerSettings } from '@tk-crawler/shared';
 import { getLiveAnchorCrawlerSettings } from '../requests';
+import { Menu } from '../types';
 
 export default class GlobalStore {
+  private _currentMenu: Menu = Menu.Crawler;
   private _liveAnchorCrawlerSettings: LiveAnchorCrawlerSettings | null = null;
+
+  get currentMenu() {
+    return this._currentMenu;
+  }
 
   get liveAnchorCrawlerSettings() {
     return this._liveAnchorCrawlerSettings;
@@ -42,6 +48,10 @@ export default class GlobalStore {
     this._addEventListeners();
     const settings = await getLiveAnchorCrawlerSettings();
     this._setLiveAnchorCrawlerSettings(settings);
+  }
+
+  setCurrentMenu(menu: Menu) {
+    this._currentMenu = menu;
   }
 
   clear() {

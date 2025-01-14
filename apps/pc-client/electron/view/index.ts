@@ -33,7 +33,7 @@ export class ViewManager {
   async createWindow() {
     this._baseWindow = new BaseWindow({
       fullscreen: true,
-      icon: path.join(process.env.VITE_PUBLIC, 'electron-vite.svg'),
+      icon: path.join(process.env.VITE_PUBLIC, 'appicon.svg'),
     });
     this._mainView = new WebContentsView({
       webPreferences: {

@@ -11,7 +11,7 @@ export function provideGlobalStore() {
   return globalStore;
 }
 
-export function getGlobalStore(): GlobalStore {
+export function useGlobalStore(): GlobalStore {
   const globalStore = inject(GlobalStoreKey);
   if (!globalStore) {
     throw new Error(

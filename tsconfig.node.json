@@ -13,6 +13,7 @@
     "apps/server/**/*",
     "apps/crawler/**/*",
     "apps/pc-client/electron/**/*",
+    "apps/pc-client/shared/**/*",
     "packages/core/**/*",
     "**/vite.config.*",
     ".husky/**/*"

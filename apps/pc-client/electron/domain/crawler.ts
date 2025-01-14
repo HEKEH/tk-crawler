@@ -1,26 +1,50 @@
-import type { Region } from '@tk-crawler/core';
+import type { LiveAnchorCrawlerSetting } from '@tk-crawler/core';
 import { LiveAnchorCrawler } from '@tk-crawler/core';
 import config from '../config';
 import { logger } from '../infra/logger';
 
+export const DEFAULT_LIVE_ANCHOR_CRAWLER_SETTING: LiveAnchorCrawlerSetting = {
+  region: 'all',
+  outdatedDays: 30,
+  queryLimitOneHour: 50,
+  queryLimitOneDay: 280,
+};
+
 export class Crawler {
-  private _region: Region | 'all' = 'all';
+  private static _instance: Crawler | null = null;
   private _liveAnchorCrawler: LiveAnchorCrawler = new LiveAnchorCrawler({
     crawlerInterval: config.crawlerInterval,
   });
 
-  constructor() {}
+  private _setting: LiveAnchorCrawlerSetting =
+    DEFAULT_LIVE_ANCHOR_CRAWLER_SETTING;
 
-  setRegion(region: Region | 'all') {
-    this._region = region;
+  private constructor() {}
+
+  // TODO: 从配置文件中获取
+  async getCurrentLiveAnchorCrawlerSetting() {
+    return DEFAULT_LIVE_ANCHOR_CRAWLER_SETTING;
   }
 
-  async start() {
+  async start(settings: LiveAnchorCrawlerSetting) {
+    this.stop();
+    this._setting = settings;
     this._liveAnchorCrawler.start({
-      region: this._region,
+      settings: this._setting,
       onAnchorsCollected: anchors => {
         logger.info(anchors);
       },
     });
+  }
+
+  stop() {
+    this._liveAnchorCrawler.stop();
+  }
+
+  static getInstance() {
+    if (!this._instance) {
+      this._instance = new Crawler();
+    }
+    return this._instance;
   }
 }

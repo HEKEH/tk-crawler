@@ -1,14 +1,12 @@
-import { createApp, nextTick } from 'vue';
+import { createApp } from 'vue';
 
 import App from './App.vue';
+import { addDefaultCrawlerSettingListener } from './listeners';
 import './style.css';
 
-createApp(App).mount('#app');
+function init() {
+  createApp(App).mount('#app');
+  addDefaultCrawlerSettingListener();
+}
 
-nextTick(async () => {
-  window.ipcRenderer.on('main-process-message', (_event, message) => {
-    console.log(message);
-  });
-  // const v = await window.ipcRenderer.invoke('test', 'hello');
-  // console.log(v);
-});
+init();

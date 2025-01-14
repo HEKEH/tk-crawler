@@ -1,6 +1,5 @@
 import type { DrawerSubTab, TikTokQueryTokens } from '../requests/live';
-import type { LiveRoomOwner } from '../types';
-import type { Region } from '../types/region';
+import type { LiveAnchorCrawlerSetting, LiveRoomOwner } from '../types';
 import { IntervalRunner } from '../infra/interval-runner';
 import { getLogger } from '../infra/logger';
 import { DRAWER_TABS_SCENE, getDrawerTabs, getFeed } from '../requests/live';
@@ -31,8 +30,7 @@ export class LiveAnchorCrawler {
       | 'updateChannelSubTagsInterval']?: NodeJS.Timeout;
   } = {};
 
-  /** 爬取的地区，默认英国 */
-  private _region: Region | 'all' = 'all';
+  private _settings?: LiveAnchorCrawlerSetting;
 
   private _isRunning = false;
 
@@ -67,7 +65,7 @@ export class LiveAnchorCrawler {
   private async _updateChannelSubTags(scene: DRAWER_TABS_SCENE) {
     const queryId = this._queryId;
     const { data } = await getDrawerTabs({
-      region: this._region,
+      region: this._settings!.region,
       tokens: this._queryTokens,
       scene,
     });
@@ -134,7 +132,7 @@ export class LiveAnchorCrawler {
         ) as ChannelSubTagMap,
       );
       const feed = await getFeed({
-        region: this._region,
+        region: this._settings!.region,
         tokens: this._queryTokens,
         channelParams,
       });
@@ -179,10 +177,10 @@ export class LiveAnchorCrawler {
   }
 
   async start({
-    region,
+    settings,
     onAnchorsCollected,
   }: {
-    region: Region | 'all';
+    settings: LiveAnchorCrawlerSetting;
     onAnchorsCollected: (users: LiveRoomOwner[]) => void;
   }) {
     this.stop();
@@ -202,7 +200,7 @@ export class LiveAnchorCrawler {
     // });
     this._isRunning = true;
     this._queryId = Math.random();
-    this._region = region;
+    this._settings = settings;
     this._onAnchorsCollected = onAnchorsCollected;
     await this._run();
   }

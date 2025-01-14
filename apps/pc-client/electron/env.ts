@@ -16,7 +16,9 @@ export async function initProxy() {
   }
 }
 
-process.env.NODE_ENV = process.defaultApp ? 'development' : 'production';
+export const isDevelopment = process.defaultApp;
+export const isProduction = !isDevelopment;
+process.env.NODE_ENV = isDevelopment ? 'development' : 'production';
 
 // The built directory structure
 //

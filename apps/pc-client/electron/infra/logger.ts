@@ -3,6 +3,7 @@ import path from 'node:path';
 import process from 'node:process';
 import { app } from 'electron';
 import log4js from 'log4js';
+import { isDevelopment, isProduction } from '../env';
 
 class Logger {
   private static _instance: Logger | undefined;
@@ -69,7 +70,7 @@ class Logger {
             'daily', // daily文件记录所有日志
             'errorFilter', // error文件只记录错误日志
           ],
-          level: process.env.NODE_ENV === 'development' ? 'debug' : 'debug',
+          level: isDevelopment ? 'debug' : 'debug',
         },
       },
     });
@@ -78,10 +79,9 @@ class Logger {
   }
 
   private getLogDirectory(): string {
-    const isProd = process.env.NODE_ENV === 'production';
     let basePath: string;
 
-    if (isProd) {
+    if (isProduction) {
       // 生产环境使用系统标准日志目录
       if (process.platform === 'darwin') {
         // macOS: ~/Library/Logs/YourAppName

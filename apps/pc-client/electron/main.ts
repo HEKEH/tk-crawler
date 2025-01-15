@@ -8,8 +8,7 @@ import { setLogger } from '@tk-crawler/core';
 // import { createRequire } from 'node:module'
 import { app, BaseWindow } from 'electron';
 import { logger } from './infra/logger';
-import { ViewManager } from './view';
-import { Bridge } from './bridge';
+import { GlobalManager } from './domain';
 
 // const require = createRequire(import.meta.url)
 // const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -22,15 +21,14 @@ async function main() {
   setLogger(logger);
   await app.whenReady();
   await initProxy();
-  Bridge.getInstance().start();
-  const viewManager = ViewManager.getInstance();
-  await viewManager.createWindow();
+  const globalManager = GlobalManager.getInstance();
+  await globalManager.start();
 
   app.on('activate', async () => {
     // On OS X it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
     if (BaseWindow.getAllWindows().length === 0) {
-      await viewManager.createWindow();
+      await globalManager.start();
     }
   });
   // Quit when all windows are closed, except on macOS. There, it's common
@@ -39,7 +37,7 @@ async function main() {
   app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
       app.quit();
-      viewManager.destroy();
+      globalManager.destroy();
     }
   });
 }

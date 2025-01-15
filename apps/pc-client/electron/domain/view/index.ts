@@ -2,19 +2,18 @@ import type { LiveAnchorCrawlerSettings } from '@tk-crawler/shared';
 import path from 'node:path';
 import process from 'node:process';
 import { BaseWindow, globalShortcut, ipcMain, WebContentsView } from 'electron';
-import { CUSTOM_EVENTS } from '../constants';
-import { isDevelopment, RENDERER_DIST, VITE_DEV_SERVER_URL } from '../env';
-import { logger } from '../infra/logger';
+import { CUSTOM_EVENTS } from '../../constants';
+import { isDevelopment, RENDERER_DIST, VITE_DEV_SERVER_URL } from '../../env';
+import { logger } from '../../infra/logger';
 
 export class ViewManager {
-  private static _instance: ViewManager | undefined;
   private _baseWindow: BaseWindow | null = null;
 
   private _mainView: WebContentsView | null = null;
 
   // private _tkLiveManageView: BaseWindow | null = null;
 
-  private constructor() {}
+  constructor() {}
 
   private get baseWindow() {
     if (!this._baseWindow) {
@@ -106,12 +105,5 @@ export class ViewManager {
         callback(settings);
       },
     );
-  }
-
-  static getInstance() {
-    if (!this._instance) {
-      this._instance = new ViewManager();
-    }
-    return this._instance;
   }
 }

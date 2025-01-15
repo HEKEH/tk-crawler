@@ -19,7 +19,7 @@ defineOptions({
 <style scoped>
 .top-bar {
   position: fixed;
-  padding: 0 5rem;
+  padding: 0 4rem;
   top: 0;
   left: 0;
   width: 100%;

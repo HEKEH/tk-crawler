@@ -10,11 +10,11 @@ defineOptions({
 const Menus = [
   {
     key: Menu.Crawler,
-    name: '爬虫页',
+    name: '爬虫后台',
   },
   {
     key: Menu.Query,
-    name: '查询页',
+    name: '数据查询',
   },
 ];
 

@@ -2,8 +2,7 @@ import type { Region } from './region';
 
 export interface LiveAnchorCrawlerSettings {
   region: Region[] | 'all';
-  fansLimitLow?: number;
-  fansLimitHigh?: number;
+  fansLimit?: [number | undefined, number | undefined];
   /** 数据过期时间，单位：天。如果超过这个时间，则重新验证 */
   outdatedDays: number;
   /** 每小时查询次数限制 */

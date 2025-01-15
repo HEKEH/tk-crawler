@@ -133,7 +133,6 @@ export const REGION_OPTIONS = [
   { label: '所罗门群岛', value: Region.SB },
   { label: '索马里', value: Region.SO },
   { label: '塔吉克斯坦', value: Region.TJ },
-  { label: '台湾', value: Region.TW },
   { label: '泰国', value: Region.TH },
   { label: '坦桑尼亚', value: Region.TZ },
   { label: '汤加', value: Region.TO },

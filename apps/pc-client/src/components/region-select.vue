@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { Region } from '@tk-crawler/shared';
-import type { RegionPropsValue } from './region-select';
 import { ElOption, ElSelect } from 'element-plus';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { REGION_OPTIONS } from '../constants';
 
-export type SelectValue = (Region | 'all')[];
+type RegionPropsValue = Region[] | 'all';
+type SelectValue = (Region | 'all')[];
 
 defineOptions({
   name: 'RegionSelect',
@@ -26,20 +26,19 @@ const emit = defineEmits<{
   change: [value: RegionPropsValue];
 }>();
 
-function handleChange(value: SelectValue) {
-  let v: RegionPropsValue;
+function transToPropsValue(value: SelectValue): RegionPropsValue {
   const oldValue = props.modelValue;
   if (oldValue === 'all') {
-    v = value.filter(item => item !== 'all');
-  } else {
-    if (value.includes('all')) {
-      v = 'all';
-    } else {
-      v = value as Region[];
-    }
+    return value.filter(item => item !== 'all');
   }
-  emit('update:modelValue', v);
-  emit('change', v);
+  if (value.includes('all')) {
+    return 'all';
+  }
+  return value as Region[];
+}
+
+function handleChange(value: SelectValue) {
+  emit('change', transToPropsValue(value));
 }
 
 const value = computed<SelectValue>({
@@ -50,8 +49,22 @@ const value = computed<SelectValue>({
     return props.modelValue as Region[];
   },
   set(newValue: SelectValue) {
-    handleChange(newValue);
+    emit('update:modelValue', transToPropsValue(newValue));
   },
+});
+
+const filterText = ref<string>();
+
+function handleFilter(query: string) {
+  filterText.value = query;
+}
+
+const options = computed(() => {
+  const q = filterText.value?.trim();
+  if (!q) {
+    return REGION_OPTIONS;
+  }
+  return REGION_OPTIONS.filter(item => item.label.includes(q));
 });
 </script>
 
@@ -61,10 +74,12 @@ const value = computed<SelectValue>({
     v-model="value"
     :multiple="true"
     :placeholder="placeholder"
+    filterable
+    :filter-method="handleFilter"
     @change="handleChange"
   >
     <ElOption
-      v-for="option in REGION_OPTIONS"
+      v-for="option in options"
       :key="option.value"
       :label="option.label"
       :value="option.value"

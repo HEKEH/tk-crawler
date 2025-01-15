@@ -1,15 +1,25 @@
 <script setup lang="ts">
+import { computed } from 'vue';
+import { Menu } from '../types';
+import { useGlobalStore } from '../utils/vue';
+import ScrawlerManage from './scrawler-manage/index.vue';
 import TopBar from './top-bar/index.vue';
 
 defineOptions({
   name: 'Homepage',
+});
+const globalStore = useGlobalStore();
+const currentMenu = computed(() => {
+  return globalStore.currentMenu;
 });
 </script>
 
 <template>
   <div class="homepage">
     <TopBar />
-    <div class="body">123</div>
+    <div class="body">
+      <ScrawlerManage v-show="currentMenu === Menu.Crawler" />
+    </div>
   </div>
 </template>
 

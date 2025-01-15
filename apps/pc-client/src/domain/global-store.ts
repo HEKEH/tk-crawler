@@ -50,6 +50,11 @@ export default class GlobalStore {
     this._setLiveAnchorCrawlerSettings(settings);
   }
 
+  async submitLiveAnchorCrawlerSetting(setting: LiveAnchorCrawlerSettings) {
+    this._setLiveAnchorCrawlerSettings(setting);
+    console.log(setting, 'setting');
+  }
+
   setCurrentMenu(menu: Menu) {
     this._currentMenu = menu;
   }

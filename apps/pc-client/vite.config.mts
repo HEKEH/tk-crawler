@@ -77,5 +77,8 @@ export default defineConfig(({ mode }) => {
     build: {
       minify: isProduction,
     },
+    resolve: {
+      alias,
+    },
   };
 });

@@ -8,7 +8,7 @@ const globalStore = provideGlobalStore();
 
 globalStore.init();
 const isLoading = computed(() => {
-  return globalStore.liveAnchorCrawlerSettings === null;
+  return !globalStore.liveAnchorCrawlerSettings;
 });
 
 onBeforeUnmount(() => {

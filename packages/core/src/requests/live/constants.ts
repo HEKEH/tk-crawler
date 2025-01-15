@@ -64,6 +64,18 @@ export const COMMON_TIKTOK_QUERY = {
 
 export const TIKTOK_REGION_PARAMS_MAP = new Proxy(
   {
+    [Region.US]: {
+      headers: {
+        'accept-language': 'en-US,en;q=0.9',
+      },
+      params: {
+        region: Region.US,
+        tz_name: 'America/New_York',
+        browser_language: 'en-US',
+        app_language: 'en',
+        webcast_language: 'en',
+      },
+    },
     [Region.CN]: {
       headers: {
         'accept-language': 'zh-CN,zh;q=0.9',
@@ -96,7 +108,7 @@ export const TIKTOK_REGION_PARAMS_MAP = new Proxy(
       }
       const res = target[prop as keyof typeof target];
       if (!res) {
-        throw new Error(`Unsupported region: ${prop as string}`);
+        return target[DefaultRegion];
       }
       return res;
     },

@@ -2,7 +2,7 @@ import { Crawler } from './crawler';
 import { Services } from './services';
 import { ViewManager } from './view';
 
-/** 视图和爬虫的管理者 */
+/** 领域的总入口 */
 export class GlobalManager {
   private static _instance: GlobalManager | null = null;
 

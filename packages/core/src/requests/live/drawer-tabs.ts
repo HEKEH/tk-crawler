@@ -6,7 +6,7 @@ import { getXBogusOldVersion } from '../utils/params';
 import {
   COMMON_TIKTOK_HEADERS,
   COMMON_TIKTOK_QUERY,
-  TIKTOK_REGION_PARAMS_MAP,
+  getTiktokRegionParams,
   TIKTOK_WEBCAST_URL,
 } from './constants';
 
@@ -48,7 +48,7 @@ export async function getDrawerTabs({
   tokens,
   scene,
 }: WithRegion<{ tokens: TikTokQueryTokens; scene: DRAWER_TABS_SCENE }>) {
-  const { headers, params } = TIKTOK_REGION_PARAMS_MAP[region];
+  const { headers, params } = getTiktokRegionParams(region);
   const url = getUrl({
     baseUrl: TIKTOK_WEBCAST_URL,
     path: '/webcast/feed/drawer_tabs/',

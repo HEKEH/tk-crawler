@@ -1,10 +1,7 @@
-import type { LiveAnchorCrawlerSettings } from '@tk-crawler/shared';
 import path from 'node:path';
 import process from 'node:process';
-import { BaseWindow, globalShortcut, ipcMain, WebContentsView } from 'electron';
-import { CUSTOM_EVENTS } from '../../constants';
+import { BaseWindow, globalShortcut, WebContentsView } from 'electron';
 import { isDevelopment, RENDERER_DIST, VITE_DEV_SERVER_URL } from '../../env';
-import { logger } from '../../infra/logger';
 
 export class ViewManager {
   private _baseWindow: BaseWindow | null = null;
@@ -86,24 +83,5 @@ export class ViewManager {
     this._baseWindow?.removeAllListeners('resize');
     this._baseWindow?.close();
     this._baseWindow = null;
-  }
-
-  onLiveAnchorCrawlerSettingConfirmed(
-    callback: (setting: LiveAnchorCrawlerSettings) => void,
-  ) {
-    // this._mainView?.webContents.send(
-    //   CUSTOM_EVENTS.LIVE_ANCHOR_CRAWLER_SETTING,
-    //   currentSetting,
-    // );
-    ipcMain.on(
-      CUSTOM_EVENTS.LIVE_ANCHOR_CRAWLER_SETTING_CONFIRMED,
-      (_, settings) => {
-        logger.info(
-          CUSTOM_EVENTS.LIVE_ANCHOR_CRAWLER_SETTING_CONFIRMED,
-          settings,
-        );
-        callback(settings);
-      },
-    );
   }
 }

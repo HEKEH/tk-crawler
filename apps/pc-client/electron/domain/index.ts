@@ -15,16 +15,12 @@ export class GlobalManager {
   private constructor() {
     this._crawler = new Crawler();
     this._viewManager = new ViewManager();
-    this._services = new Services();
+    this._services = new Services({
+      crawler: this._crawler,
+    });
   }
 
   async start() {
-    this._viewManager.onLiveAnchorCrawlerSettingConfirmed(
-      // 一旦设置确认，则启动爬虫
-      setting => {
-        this._crawler.start(setting);
-      },
-    );
     this._services.init();
     await this._viewManager.createWindow();
   }

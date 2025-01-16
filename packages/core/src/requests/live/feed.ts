@@ -6,7 +6,7 @@ import { type ChannelParams, getXBogusOldVersion } from '../utils/params';
 import {
   COMMON_TIKTOK_HEADERS,
   COMMON_TIKTOK_QUERY,
-  TIKTOK_REGION_PARAMS_MAP,
+  getTiktokRegionParams,
   TIKTOK_WEBCAST_URL,
 } from './constants';
 
@@ -15,7 +15,7 @@ export async function getFeed({
   tokens,
   channelParams,
 }: WithRegion<{ tokens: TikTokQueryTokens; channelParams: ChannelParams }>) {
-  const { headers, params } = TIKTOK_REGION_PARAMS_MAP[region];
+  const { headers, params } = getTiktokRegionParams(region);
   const url = getUrl({
     baseUrl: TIKTOK_WEBCAST_URL,
     path: '/webcast/feed/',

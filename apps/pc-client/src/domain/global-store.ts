@@ -1,5 +1,8 @@
 import type { LiveAnchorCrawlerSettings } from '@tk-crawler/shared';
-import { getLiveAnchorCrawlerSettings } from '../requests';
+import {
+  getLiveAnchorCrawlerSettings,
+  submitLiveAnchorCrawlerSettings,
+} from '../requests';
 import { Menu } from '../types';
 
 export default class GlobalStore {
@@ -52,7 +55,10 @@ export default class GlobalStore {
 
   async submitLiveAnchorCrawlerSetting(setting: LiveAnchorCrawlerSettings) {
     this._setLiveAnchorCrawlerSettings(setting);
-    console.log(setting, 'setting');
+    const res = await submitLiveAnchorCrawlerSettings(setting);
+    if (res.success) {
+      // TODO
+    }
   }
 
   setCurrentMenu(menu: Menu) {

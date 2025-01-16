@@ -1,4 +1,4 @@
-import type { LiveAnchorCrawlerSettings } from '@tk-crawler/shared/types';
+import type { LiveAnchorCrawlerSettings } from '@tk-crawler/shared';
 
 const DEFAULT_LIVE_ANCHOR_CRAWLER_SETTING: LiveAnchorCrawlerSettings = {
   region: 'all',

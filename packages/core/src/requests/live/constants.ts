@@ -1,4 +1,5 @@
 import { DefaultRegion, Region } from '@tk-crawler/shared';
+import { getRandomArrayElement } from '../../utils';
 import { BROWSER_NAME, BROWSER_VERSION, USER_AGENT } from '../constants';
 
 export const TIKTOK_URL = 'https://www.tiktok.com';
@@ -127,3 +128,10 @@ export const TIKTOK_REGION_PARAMS_MAP = new Proxy(
     };
   };
 };
+
+export function getTiktokRegionParams(region: Region[] | 'all') {
+  if (region === 'all') {
+    return TIKTOK_REGION_PARAMS_MAP.all;
+  }
+  return TIKTOK_REGION_PARAMS_MAP[getRandomArrayElement(region) || 'all'];
+}

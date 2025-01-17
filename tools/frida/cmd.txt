@@ -1,0 +1,11 @@
+source frida-env/bin/activate
+
+// frida -U -l ./tiktok-ssl-pinning-bypass.js -f com.zhiliaoapp.musically
+frida -H 127.0.0.1:5555 -l ./tiktok-ssl-pinning-bypass.js -f com.zhiliaoapp.musically // com.ss.android.ugc.trill
+
+adb shell "killall frida-server"
+adb shell "/data/local/tmp/frida-server &"
+
+adb shell "pm list packages"
+
+adb shell "ps -ef | grep frida-server"

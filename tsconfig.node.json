@@ -16,6 +16,7 @@
     "apps/pc-client/shared/**/*",
     "packages/core/**/*",
     "packages/shared/**/*",
+    "packages/play/**/*",
     "**/vite.config.*",
     ".husky/**/*"
   ],

@@ -1,1 +1,1 @@
-export default function xbogus(url: string, body?: string): string;
+export default function xbogus(url: string, userAgent?: string): string;

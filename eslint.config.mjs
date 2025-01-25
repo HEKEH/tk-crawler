@@ -4,7 +4,7 @@ export default antfu(
   {
     stylistic: true, // 启用样式规则
     vue: true,
-    ignores: ['**/tk-crack'],
+    ignores: ['**/tk-crack', '**/play/request-result-demo'],
     rules: {
       'style/semi': 'off',
       'style/operator-linebreak': 'off',

@@ -23,7 +23,7 @@
 //   -H 'x-secsdk-csrf-token: 000100000001ef510b97d2d86eca640957d64528d35b29896d91cb3ee2bfa7eddbe7a8435a81181d096e8541b02d,a52d0e38feb176f744ecbba8a425a005' \
 //   --data-raw 'enter_source=recommend-suggested_others_photo&room_id=7462741084302445330'
 
-// 可以获得主播的 user_count like_count
+// 可以获得主播的 user_count like_count level
 
 const _ = {
   AnchorABMap: {},

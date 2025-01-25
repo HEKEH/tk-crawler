@@ -4,8 +4,8 @@ import { msToken, verifyFp } from '../mock/tokens';
 
 export default async function getLiveDiamondsTest() {
   const res = await getLiveDiamonds({
-    anchorId: '7282400309514028037',
-    roomId: '7463703863376972549',
+    anchorId: '7163827743665325057',
+    roomId: '7463782000441166600',
     tokens: {
       verifyFp,
       msToken,

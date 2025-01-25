@@ -268,11 +268,14 @@ importers:
         specifier: ^6.9.17
         version: 6.9.17
 
-  packages/demo:
+  packages/play:
     dependencies:
       '@tk-crawler/core':
         specifier: workspace:*
         version: link:../core
+      '@tk-crawler/shared':
+        specifier: workspace:*
+        version: link:../shared
       log4js:
         specifier: ^6.9.1
         version: 6.9.1

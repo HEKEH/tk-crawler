@@ -36,7 +36,7 @@ export async function commonGetRequest<
 interface CommonPostRequestParams {
   url: string;
   headers?: Record<string, string | undefined>;
-  body?: any;
+  body: any;
 }
 
 export async function commonPostRequest<
@@ -49,7 +49,7 @@ export async function commonPostRequest<
       maxBodyLength: Infinity,
       url,
       headers,
-      data: body,
+      data: typeof body !== 'string' ? JSON.stringify(body) : body,
     };
     logger.debug('[request] config:', config);
     const { data } = await axios<ResponseData>(config);

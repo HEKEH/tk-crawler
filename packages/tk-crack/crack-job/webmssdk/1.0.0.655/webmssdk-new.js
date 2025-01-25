@@ -2387,19 +2387,20 @@
                   // 返回栈顶值
                   executeStatus = 2;
                   result = stack[stackPointer--];
-                  // if (!consoleEnd) {
-                  //     if (
-                  //         typeof result === 'string' &&
-                  //         result.length === 28 &&
-                  //         funcStack[funcStack.length - 1]?.callee.bytecodeIndex === 113
-                  //     ) {
-                  //         console.log(
-                  //             'jsvmp func return:',
-                  //             funcStack[funcStack.length - 1],
-                  //             result,
-                  //         );
-                  //     }
-                  // }
+                  if (!consoleEnd) {
+                    if (
+                      typeof result === 'string' &&
+                      result.length === 28 &&
+                      funcStack[funcStack.length - 1]?.callee.bytecodeIndex ===
+                        113
+                    ) {
+                      console.error(
+                        'jsvmp func return:',
+                        funcStack[funcStack.length - 1],
+                        result,
+                      );
+                    }
+                  }
 
                   funcStack.pop();
                   return;

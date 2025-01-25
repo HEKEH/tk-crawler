@@ -2,7 +2,7 @@ import type { WithRegion } from '../../../types';
 import type { TikTokQueryTokens } from '../types';
 import { commonGetRequest } from '../../utils/common-request';
 import { getUrl } from '../../utils/get-url';
-import { getXBogusOldVersion } from '../../utils/params';
+import { getXBogus } from '../../utils/params';
 import {
   COMMON_TIKTOK_HEADERS,
   COMMON_TIKTOK_QUERY,
@@ -46,7 +46,7 @@ export async function getAnchorRankLeague({
       ...tokens,
     },
   });
-  const xBogus = getXBogusOldVersion(url);
+  const xBogus = getXBogus(url);
   const response = await commonGetRequest<LiveGiftListResponse>({
     url: `${url}&X-Bogus=${xBogus}`,
     headers: {

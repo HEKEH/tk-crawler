@@ -4,7 +4,7 @@ import { msToken, verifyFp } from '../mock/tokens';
 
 export default async function getAnchorInfoFromEnterTest() {
   const res = await getAnchorInfoFromEnter({
-    roomId: '7463782000441166600',
+    roomId: '7463917129595702036',
     tokens: {
       verifyFp,
       msToken,

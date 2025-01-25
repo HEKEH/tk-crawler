@@ -10,6 +10,7 @@ interface CommonGetRequestParams {
 export async function commonGetRequest<
   ResponseData extends { status_code: number; data?: any; message?: string },
 >({ url, headers }: CommonGetRequestParams): Promise<ResponseData> {
+  const logger = getLogger();
   try {
     const config: AxiosRequestConfig = {
       method: 'get',
@@ -17,16 +18,17 @@ export async function commonGetRequest<
       url,
       headers,
     };
-    getLogger().debug('[request] config:', config);
+    logger.debug('[request] config:', config);
+    // return {} as any;
     const { data } = await axios<ResponseData>(config);
     if (data && 'status_code' in data && data.status_code === 0) {
-      getLogger().debug('[response] success:', data);
+      // logger.debug('[response] success:', data);
     } else {
-      getLogger().error('[response] business error:', data);
+      logger.error('[response] business error:', data);
     }
     return data;
   } catch (error) {
-    getLogger().error('[response] system error:', error);
+    logger.error('[response] system error:', error);
     throw error;
   }
 }

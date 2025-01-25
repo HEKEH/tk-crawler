@@ -1,22 +1,22 @@
 import process from 'node:process';
-import { logger } from '@tk-crawler/core';
+// import { logger } from '@tk-crawler/core';
 
 const { env } = process;
 
 const port = env.CRAWLER_PORT;
 if (!port) {
-  logger.error('CRAWLER_PORT is required');
+  // logger.error('CRAWLER_PORT is required');
   process.exit(1);
 }
 const allowOrigin = env.ALLOW_ORIGIN;
 if (!allowOrigin) {
-  logger.error('ALLOW_ORIGIN is required');
+  // logger.error('ALLOW_ORIGIN is required');
   process.exit(1);
 }
 
 const crawlerInterval = env.CLIENT_CRAWLER_INTERVAL;
 if (!crawlerInterval) {
-  logger.error('CLIENT_CRAWLER_INTERVAL is required');
+  // logger.error('CLIENT_CRAWLER_INTERVAL is required');
   process.exit(1);
 }
 

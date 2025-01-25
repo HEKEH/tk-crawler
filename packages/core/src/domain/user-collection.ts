@@ -1,6 +1,6 @@
 import type { Region } from '@tk-crawler/shared';
 import { getLogger } from '../infra/logger';
-import { getUserRegion } from '../requests/live';
+import { getAnchorRegion } from '../requests/live';
 import { type AnchorCheckInfo, batchCheckAnchor } from '../requests/live-admin';
 import { TEMP_COOKIE } from '../requests/live-admin/constants';
 import { type CollectedUserInfo, QualificationStatus } from '../types';
@@ -93,7 +93,7 @@ export default class UserCollection {
     }
     this._allUserIds.add(user.id);
     let userInfo: CollectedUserInfo;
-    const region = await getUserRegion({ userDisplayId: user.display_id });
+    const region = await getAnchorRegion({ userDisplayId: user.display_id });
     if (region) {
       userInfo = {
         ...user,

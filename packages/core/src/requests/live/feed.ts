@@ -15,13 +15,14 @@ export async function getFeed({
   tokens,
   channelParams,
 }: WithRegion<{ tokens: TikTokQueryTokens; channelParams: ChannelParams }>) {
-  const { headers, params } = getTiktokRegionParams(region);
+  const { headers: regionHeaders, params: regionParams } =
+    getTiktokRegionParams(region);
   const url = getUrl({
     baseUrl: TIKTOK_WEBCAST_URL,
     path: '/webcast/feed/',
     params: {
       ...COMMON_TIKTOK_QUERY,
-      ...params,
+      ...regionParams,
       ...channelParams,
       ...tokens,
     },
@@ -31,7 +32,7 @@ export async function getFeed({
     url: `${url}&X-Bogus=${xBogus}`,
     headers: {
       ...COMMON_TIKTOK_HEADERS,
-      ...headers,
+      ...regionHeaders,
     },
   });
 }

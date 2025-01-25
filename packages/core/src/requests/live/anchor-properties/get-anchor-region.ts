@@ -1,10 +1,10 @@
 import type { AxiosRequestConfig } from 'axios';
 import axios from 'axios';
-import { getLogger } from '../../infra/logger';
-import { extractRegionFromHtml } from '../utils/extract-region';
-import { TIKTOK_URL } from './constants';
+import { getLogger } from '../../../infra/logger';
+import { extractRegionFromHtml } from '../../utils/extract-region';
+import { TIKTOK_URL } from '../constants';
 
-export async function getUserRegion({
+export async function getAnchorRegion({
   userDisplayId,
   retryTimes = 10,
 }: {

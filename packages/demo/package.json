@@ -1,0 +1,18 @@
+{
+  "name": "@tk-crawler/demo",
+  "version": "0.0.0",
+  "private": true,
+  "files": [],
+  "scripts": {
+    "preinstall": "npx only-allow pnpm",
+    "dev": "cross-env NODE_ENV=development dotenv -e ../../.env.development nodemon"
+  },
+  "dependencies": {
+    "@tk-crawler/core": "workspace:*",
+    "@tk-crawler/shared": "workspace:*",
+    "log4js": "^6.9.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}

@@ -150,13 +150,15 @@ var bytedAcrawlerExports = (function (e, t) {
 
     var jsvmpFunctionList = [];
 
+    var consoleEnd = true;
+
     var Eb = 'Ut';
     do
       switch (Eb) {
         case 'M5':
           (((((((((((((((((((((((((((((((((((((((((((((((((((initAndExecuteByteCode(
-            Z[40],
-            void Z[83],
+            215,
+            void 0,
             arguments,
             {
               get 1() {
@@ -206,7 +208,7 @@ var bytedAcrawlerExports = (function (e, t) {
               },
             },
           ),
-          initAndExecuteByteCode(Z[52], void Z[83], arguments, {
+          initAndExecuteByteCode(44, void 0, arguments, {
             get 0() {
               return Fe;
             },
@@ -226,7 +228,7 @@ var bytedAcrawlerExports = (function (e, t) {
               De = e;
             },
           }),
-          initAndExecuteByteCode(Z[55], void Z[83], arguments, {
+          initAndExecuteByteCode(247, void 0, arguments, {
             get 0() {
               return Ke;
             },
@@ -240,7 +242,7 @@ var bytedAcrawlerExports = (function (e, t) {
               Ce = e;
             },
           }),
-          initAndExecuteByteCode(Z[81], void Z[83], arguments, {
+          initAndExecuteByteCode(251, void 0, arguments, {
             get 0() {
               return mf;
             },
@@ -251,7 +253,7 @@ var bytedAcrawlerExports = (function (e, t) {
               Be = e;
             },
           }),
-          initAndExecuteByteCode(Z[73], void Z[83], arguments, {
+          initAndExecuteByteCode(255, void 0, arguments, {
             get 0() {
               return mf;
             },
@@ -266,7 +268,7 @@ var bytedAcrawlerExports = (function (e, t) {
             },
           })),
           (ze = Ae)),
-          (initAndExecuteByteCode(Z[29], void Z[83], arguments, {
+          (initAndExecuteByteCode(253, void 0, arguments, {
             get 0() {
               return Me;
             },
@@ -278,7 +280,7 @@ var bytedAcrawlerExports = (function (e, t) {
             },
           }),
           (xe = ye))),
-          (initAndExecuteByteCode(Z[62], void Z[83], arguments, {
+          (initAndExecuteByteCode(45, void 0, arguments, {
             get 0() {
               return we;
             },
@@ -293,7 +295,7 @@ var bytedAcrawlerExports = (function (e, t) {
             },
           }),
           (ue = ve))),
-          (initAndExecuteByteCode(Z[71], void Z[83], arguments, {
+          (initAndExecuteByteCode(257, void 0, arguments, {
             get 0() {
               return Fe;
             },
@@ -314,7 +316,7 @@ var bytedAcrawlerExports = (function (e, t) {
             },
           }),
           (se = te))),
-          (initAndExecuteByteCode(Z[74], void Z[83], arguments, {
+          (initAndExecuteByteCode(260, void 0, arguments, {
             get 0() {
               return Me;
             },
@@ -326,7 +328,7 @@ var bytedAcrawlerExports = (function (e, t) {
             },
           }),
           (qe = re))),
-          (initAndExecuteByteCode(Z[76], void Z[83], arguments, {
+          (initAndExecuteByteCode(262, void 0, arguments, {
             get 0() {
               return pe;
             },
@@ -335,27 +337,27 @@ var bytedAcrawlerExports = (function (e, t) {
             },
           }),
           (oe = pe))),
-          (ne = He(Z[82]))),
-          (me = He(Z[82]))),
-          (le = He(Z[82]))),
-          (ke = He(Z[82]))),
-          (je = He(Z[82]))),
-          (ie = !Z[59])),
-          (he = !Z[83])),
+          (ne = He(10))),
+          (me = He(10))),
+          (le = He(10))),
+          (ke = He(10))),
+          (je = He(10))),
+          (ie = !1)),
+          (he = !0)),
           (('complete' === document['readyState'] ||
           'interactive' === document['readyState']
-            ? (ie = !Z[83])
+            ? (ie = !0)
             : 'function' == typeof document['addEventListener'] &&
-              ((he = !Z[59]),
+              ((he = !1),
               document['addEventListener']('DOMContentLoaded', Ab40),
               document['addEventListener']('readystatechange', Ab75)),
-          he && (ie = !Z[83])),
-          (ge = !Z[59]))),
-          (fe = !Z[59])),
+          he && (ie = !0)),
+          (ge = !1))),
+          (fe = !1)),
           ((window &&
             window['addEventListener'] &&
             window['addEventListener']('beforeunload', Ab54),
-          initAndExecuteByteCode(Z[58], void Z[83], arguments, {
+          initAndExecuteByteCode(140, void 0, arguments, {
             get 0() {
               return He;
             },
@@ -381,7 +383,7 @@ var bytedAcrawlerExports = (function (e, t) {
               ce = e;
             },
           }),
-          initAndExecuteByteCode(Z[22], void Z[83], arguments, {
+          initAndExecuteByteCode(185, void 0, arguments, {
             get 0() {
               return mf;
             },
@@ -413,7 +415,7 @@ var bytedAcrawlerExports = (function (e, t) {
               _d = e;
             },
           }),
-          initAndExecuteByteCode(Z[46], void Z[83], arguments, {
+          initAndExecuteByteCode(58, void 0, arguments, {
             get 0() {
               return Ab52;
             },
@@ -436,7 +438,7 @@ var bytedAcrawlerExports = (function (e, t) {
               Yd = e;
             },
           }),
-          initAndExecuteByteCode(Z[64], void Z[83], arguments, {
+          initAndExecuteByteCode(143, void 0, arguments, {
             get 0() {
               return Zd;
             },
@@ -465,7 +467,7 @@ var bytedAcrawlerExports = (function (e, t) {
               Vd = e;
             },
           }),
-          initAndExecuteByteCode(Z[39], void Z[83], arguments, {
+          initAndExecuteByteCode(264, void 0, arguments, {
             get 0() {
               return Ab45;
             },
@@ -486,7 +488,7 @@ var bytedAcrawlerExports = (function (e, t) {
             },
           })),
           (Td = Ud))),
-          ((initAndExecuteByteCode(Z[87], void Z[83], arguments, {
+          ((initAndExecuteByteCode(244, void 0, arguments, {
             get 0() {
               return Ce;
             },
@@ -536,7 +538,7 @@ var bytedAcrawlerExports = (function (e, t) {
               Rd = e;
             },
           }),
-          initAndExecuteByteCode(Z[69], void Z[83], arguments, {
+          initAndExecuteByteCode(152, void 0, arguments, {
             get 0() {
               return mf;
             },
@@ -551,7 +553,7 @@ var bytedAcrawlerExports = (function (e, t) {
             },
           })),
           (Pd = Object.prototype['hasOwnProperty']))),
-          ((initAndExecuteByteCode(Z[57], void Z[83], arguments, {
+          ((initAndExecuteByteCode(49, void 0, arguments, {
             get 0() {
               return Ab62;
             },
@@ -586,7 +588,7 @@ var bytedAcrawlerExports = (function (e, t) {
               Ld = e;
             },
           }),
-          initAndExecuteByteCode(Z[2], void Z[83], arguments, {
+          initAndExecuteByteCode(188, void 0, arguments, {
             get 0() {
               return Re;
             },
@@ -643,8 +645,8 @@ var bytedAcrawlerExports = (function (e, t) {
             },
           })),
           (Id = Jd))),
-          (Hd = Z[14])),
-          ((initAndExecuteByteCode(Z[34], void Z[83], arguments, {
+          (Hd = 2654435769)),
+          ((initAndExecuteByteCode(229, void 0, arguments, {
             get 0() {
               return Gd;
             },
@@ -664,7 +666,7 @@ var bytedAcrawlerExports = (function (e, t) {
               Ed = e;
             },
           }),
-          initAndExecuteByteCode(Z[35], void Z[83], arguments, {
+          initAndExecuteByteCode(195, void 0, arguments, {
             get 0() {
               return mf;
             },
@@ -724,9 +726,9 @@ var bytedAcrawlerExports = (function (e, t) {
             },
           })),
           (yd = {}))),
-          (((yd['kHttp'] = Z[83]),
-          (yd['kWebsocket'] = Z[59]),
-          initAndExecuteByteCode(Z[19], void Z[83], arguments, {
+          (((yd['kHttp'] = 0),
+          (yd['kWebsocket'] = 1),
+          initAndExecuteByteCode(114, void 0, arguments, {
             get 0() {
               return Fe;
             },
@@ -756,7 +758,7 @@ var bytedAcrawlerExports = (function (e, t) {
             },
           })),
           (ud = Ab24))),
-          ((initAndExecuteByteCode(Z[45], void Z[83], arguments, {
+          ((initAndExecuteByteCode(239, void 0, arguments, {
             get 0() {
               return yd;
             },
@@ -800,8 +802,8 @@ var bytedAcrawlerExports = (function (e, t) {
               rd = e;
             },
           }),
-          (bytedAcrawlerExports['frontierSign'] = void Z[83]),
-          initAndExecuteByteCode(Z[65], void Z[83], arguments, {
+          (bytedAcrawlerExports['frontierSign'] = void 0),
+          initAndExecuteByteCode(106, void 0, arguments, {
             get 0() {
               return sd;
             },
@@ -848,8 +850,8 @@ var bytedAcrawlerExports = (function (e, t) {
               qd = e;
             },
           })),
-          (pd = 'xmst'))),
-          (initAndExecuteByteCode(Z[38], void Z[83], arguments, {
+          (msTokenKey = 'xmst'))),
+          (initAndExecuteByteCode(127, void 0, arguments, {
             get 0() {
               return Ab19;
             },
@@ -869,11 +871,11 @@ var bytedAcrawlerExports = (function (e, t) {
               nd = e;
             },
           }),
-          (md = He(Z[82])))),
-          (ld = Ab19(md, void Z[83], void Z[83], Ab63, void Z[83]))),
-          (kd = Z[50])),
-          (jd = Z[83])),
-          (initAndExecuteByteCode(Z[72], void Z[83], arguments, {
+          (md = He(10)))),
+          (ld = Ab19(md, void 0, void 0, Ab63, void 0))),
+          (kd = 200)),
+          (jd = 0)),
+          (initAndExecuteByteCode(224, void 0, arguments, {
             get 0() {
               return id;
             },
@@ -881,28 +883,28 @@ var bytedAcrawlerExports = (function (e, t) {
               id = e;
             },
           }),
-          (hd = [Z[32], Z[37], Z[9], Z[56]]))),
+          (hd = [1196819126, 600974999, 3863347763, 1451689750]))),
           (gd = [
-            Z[36],
-            Z[61],
-            Z[7],
-            Z[23],
-            Z[48],
-            Z[68],
-            Z[33],
-            Z[13],
-            Z[85],
-            Z[16],
-            Z[43],
-            Z[24],
-            Z[4] & Date['now'](),
-            Math['floor'](Z[70] * Math['random']()),
-            Math['floor'](Z[70] * Math['random']()),
-            Math['floor'](Z[70] * Math['random']()),
+            2517678443,
+            2718276124,
+            3212677781,
+            2633865432,
+            217618912,
+            2931180889,
+            1498001188,
+            2157053261,
+            211147047,
+            185100057,
+            2903579748,
+            3732962506,
+            4294967295 & Date['now'](),
+            Math['floor'](4294967296 * Math['random']()),
+            Math['floor'](4294967296 * Math['random']()),
+            Math['floor'](4294967296 * Math['random']()),
           ])),
-          (ed = Z[83])),
+          (ed = 0)),
           (dd = { rand: Ab69, seed: Ab67 })),
-          (initAndExecuteByteCode(Z[10], void Z[83], arguments, {
+          (initAndExecuteByteCode(129, void 0, arguments, {
             get 0() {
               return ud;
             },
@@ -947,7 +949,7 @@ var bytedAcrawlerExports = (function (e, t) {
             },
           }),
           ($c = { WEB_DEVICE_INFO: 8 }))),
-          (initAndExecuteByteCode(Z[18], void Z[83], arguments, {
+          (initAndExecuteByteCode(133, void 0, arguments, {
             get 0() {
               return mf;
             },
@@ -979,8 +981,8 @@ var bytedAcrawlerExports = (function (e, t) {
               Xc = e;
             },
           }),
-          (Wc = Z[30]))),
-          ((initAndExecuteByteCode(Z[6], void Z[83], arguments, {
+          (Wc = /\s*\(\)\s*{\s*\[\s*native\s+code\s*]\s*}\s*$/))),
+          ((initAndExecuteByteCode(136, void 0, arguments, {
             get 0() {
               return Wc;
             },
@@ -1009,7 +1011,7 @@ var bytedAcrawlerExports = (function (e, t) {
               Tc = e;
             },
           }),
-          initAndExecuteByteCode(Z[67], void Z[83], arguments, {
+          initAndExecuteByteCode(148, void 0, arguments, {
             get 0() {
               return Sc;
             },
@@ -1018,7 +1020,7 @@ var bytedAcrawlerExports = (function (e, t) {
             },
           })),
           (Rc = Sc))),
-          ((initAndExecuteByteCode(Z[47], void Z[83], arguments, {
+          ((initAndExecuteByteCode(156, void 0, arguments, {
             get 0() {
               return Ab77;
             },
@@ -1041,7 +1043,7 @@ var bytedAcrawlerExports = (function (e, t) {
               Pc = e;
             },
           }),
-          initAndExecuteByteCode(Z[54], void Z[83], arguments, {
+          initAndExecuteByteCode(202, void 0, arguments, {
             get 0() {
               return mf;
             },
@@ -1086,7 +1088,7 @@ var bytedAcrawlerExports = (function (e, t) {
               }
             );
           }))),
-          (initAndExecuteByteCode(Z[41], void Z[83], arguments, {
+          (initAndExecuteByteCode(53, void 0, arguments, {
             get 0() {
               return Mc;
             },
@@ -1104,7 +1106,7 @@ var bytedAcrawlerExports = (function (e, t) {
             },
           }),
           (Jc = {}))),
-          ((initAndExecuteByteCode(Z[60], void Z[83], arguments, {
+          ((initAndExecuteByteCode(160, void 0, arguments, {
             get 0() {
               return Ab19;
             },
@@ -1124,7 +1126,7 @@ var bytedAcrawlerExports = (function (e, t) {
               Hc = e;
             },
           }),
-          initAndExecuteByteCode(Z[53], void Z[83], arguments, {
+          initAndExecuteByteCode(162, void 0, arguments, {
             get 0() {
               return Ab19;
             },
@@ -1144,7 +1146,7 @@ var bytedAcrawlerExports = (function (e, t) {
               Fc = e;
             },
           }),
-          initAndExecuteByteCode(Z[51], void Z[83], arguments, {
+          initAndExecuteByteCode(164, void 0, arguments, {
             get 0() {
               return Ab19;
             },
@@ -1164,7 +1166,7 @@ var bytedAcrawlerExports = (function (e, t) {
               Dc = e;
             },
           }),
-          initAndExecuteByteCode(Z[17], void Z[83], arguments, {
+          initAndExecuteByteCode(167, void 0, arguments, {
             get 0() {
               return Ab19;
             },
@@ -1187,7 +1189,7 @@ var bytedAcrawlerExports = (function (e, t) {
               Bc = e;
             },
           }),
-          initAndExecuteByteCode(Z[84], void Z[83], arguments, {
+          initAndExecuteByteCode(169, void 0, arguments, {
             get 0() {
               return Ab19;
             },
@@ -1210,7 +1212,7 @@ var bytedAcrawlerExports = (function (e, t) {
               zc = e;
             },
           }),
-          initAndExecuteByteCode(Z[80], void Z[83], arguments, {
+          initAndExecuteByteCode(171, void 0, arguments, {
             get 0() {
               return Me;
             },
@@ -1239,7 +1241,7 @@ var bytedAcrawlerExports = (function (e, t) {
               wc = e;
             },
           }),
-          initAndExecuteByteCode(Z[1], void Z[83], arguments, {
+          initAndExecuteByteCode(173, void 0, arguments, {
             get 0() {
               return He;
             },
@@ -1265,7 +1267,7 @@ var bytedAcrawlerExports = (function (e, t) {
               tc = e;
             },
           }),
-          initAndExecuteByteCode(Z[25], void Z[83], arguments, {
+          initAndExecuteByteCode(175, void 0, arguments, {
             get 0() {
               return mf;
             },
@@ -1294,7 +1296,7 @@ var bytedAcrawlerExports = (function (e, t) {
               qc = e;
             },
           }),
-          initAndExecuteByteCode(Z[11], void Z[83], arguments, {
+          initAndExecuteByteCode(179, void 0, arguments, {
             get 0() {
               return He;
             },
@@ -1314,7 +1316,7 @@ var bytedAcrawlerExports = (function (e, t) {
               oc = e;
             },
           }),
-          initAndExecuteByteCode(Z[21], void Z[83], arguments, {
+          initAndExecuteByteCode(177, void 0, arguments, {
             get 0() {
               return He;
             },
@@ -1334,7 +1336,7 @@ var bytedAcrawlerExports = (function (e, t) {
               mc = e;
             },
           }),
-          initAndExecuteByteCode(Z[15], void Z[83], arguments, {
+          initAndExecuteByteCode(181, void 0, arguments, {
             get 0() {
               return He;
             },
@@ -1354,7 +1356,7 @@ var bytedAcrawlerExports = (function (e, t) {
               kc = e;
             },
           }),
-          initAndExecuteByteCode(Z[86], void Z[83], arguments, {
+          initAndExecuteByteCode(183, void 0, arguments, {
             get 0() {
               return He;
             },
@@ -1377,7 +1379,7 @@ var bytedAcrawlerExports = (function (e, t) {
               ic = e;
             },
           }),
-          initAndExecuteByteCode(Z[63], void Z[83], arguments, {
+          initAndExecuteByteCode(13, void 0, arguments, {
             get 0() {
               return mf;
             },
@@ -1415,10 +1417,10 @@ var bytedAcrawlerExports = (function (e, t) {
               return $c;
             },
             get 12() {
-              return Ab50;
+              return getLocalStorage;
             },
             get 13() {
-              return Ab11;
+              return setStorage;
             },
             get 14() {
               return Ab17;
@@ -1514,42 +1516,72 @@ var bytedAcrawlerExports = (function (e, t) {
               gc = e;
             },
           }),
-          initAndExecuteByteCode(Z[44], void Z[83], arguments, {
+          initAndExecuteByteCode(62, void 0, arguments, {
             get 0() {
-              return Id;
+              return function func62_0(...args) {
+                const res = Id.apply(this, args);
+                return res;
+              };
             },
             get 1() {
-              return Re;
+              return function func62_1(...args) {
+                const res = Re.apply(this, args);
+                return res;
+              };
             },
             get 2() {
-              return Se;
+              return function func62_2(...args) {
+                const res = Se.apply(this, args);
+                return res;
+              };
             },
             get 3() {
-              return Cd;
+              return function func62_3(...args) {
+                const res = Cd.apply(this, args);
+                return res;
+              };
             },
             get 4() {
-              return Fe;
+              return function func62_4(...args) {
+                const res = Fe.apply(this, args);
+                return res;
+              };
             },
             get 5() {
-              return De;
+              return function func62_5(...args) {
+                const res = De.apply(this, args);
+                return res;
+              };
             },
             get 6() {
-              return Ee;
+              return function func62_6(...args) {
+                const res = Ee.apply(this, args);
+                return res;
+              };
             },
             get 7() {
-              return qd;
+              return function func62_7(...args) {
+                const res = qd.apply(this, args);
+                return res;
+              };
             },
             get 8() {
-              return Ab33;
+              return setMsTokenStorage;
             },
             get 9() {
-              return hc;
+              return function func62_9(...args) {
+                const res = hc.apply(this, args);
+                return res;
+              };
             },
             get 10() {
               return Ab44;
             },
             get 11() {
-              return fc;
+              return function func62_11(...args) {
+                const res = fc.apply(this, args);
+                return res;
+              };
             },
             set 11(e) {
               fc = e;
@@ -1676,8 +1708,8 @@ var bytedAcrawlerExports = (function (e, t) {
             ae,
           ])),
           (Ub = function () {})),
-          (((bytedAcrawlerExports['setUserMode'] = void Z[83]),
-          initAndExecuteByteCode(Z[20], void Z[83], arguments, {
+          (((bytedAcrawlerExports['setUserMode'] = void 0),
+          initAndExecuteByteCode(4, void 0, arguments, {
             get 0() {
               return Se;
             },
@@ -1765,7 +1797,7 @@ var bytedAcrawlerExports = (function (e, t) {
                   return De;
                 },
                 get 14() {
-                  return Ab82;
+                  return getMsToken;
                 },
                 get 17() {
                   return gc;
@@ -1779,7 +1811,7 @@ var bytedAcrawlerExports = (function (e, t) {
               });
           })(),
           console['info']('.')),
-          (Rb = !Z[83]))),
+          (Rb = !0))),
           (Qb = function () {})),
           (Pb = function () {})),
           (Ob = function () {})),
@@ -1803,7 +1835,7 @@ var bytedAcrawlerExports = (function (e, t) {
           for (var Ib = 256; Ib < 280; ++Ib) lf[Ib] = 7;
           for (var Ib = 280; Ib < 288; ++Ib) lf[Ib] = 8;
           for (var Jb = new u8(32), Ib = 0; Ib < 32; ++Ib) Jb[Ib] = 5;
-          ((((((((((((af = kf(lf, Z[49], Z[59])), (_e = kf(Jb, Z[31], Z[59]))),
+          ((((((((((((af = kf(lf, 9, 1)), (_e = kf(Jb, 5, 1))),
           ($e = function (e) {
             for (var t = e[0], r = 1; r < e['length']; ++r)
               e[r] > t && (t = e[r]);
@@ -1996,9 +2028,9 @@ var bytedAcrawlerExports = (function (e, t) {
               ? We(r, da[3], c)
               : r['subarray'](da[3], c);
           })),
-          (et = new u8(Z[83]))),
+          (et = new u8(0))),
           (td = 'undefined' != typeof TextDecoder && new TextDecoder())),
-            (Te = Z[83]);
+            (Te = 0);
           Eb = '12';
           break;
         case '12':
@@ -2008,23 +2040,23 @@ var bytedAcrawlerExports = (function (e, t) {
           (((((constantsPool = []), (BytecodeDefinitions = [])),
           (funcToStackMap = new Map())),
           (Se = {
-            boe: !Z[59],
+            boe: !1,
             aid: 0,
-            dfp: !Z[59],
-            sdi: !Z[59],
-            initialized: !Z[59],
-            triggerUnload: !Z[59],
+            dfp: !1,
+            sdi: !1,
+            initialized: !1,
+            triggerUnload: !1,
             region: '',
             regionConf: { lastChanceUrl: '', reportUrls: [] },
             umode: 0,
-            v: !Z[59],
-            perf: !Z[59],
+            v: !1,
+            perf: !1,
             grecaptcha: {},
           })),
           (Re = {
             __version__: '2.11.0',
             feVersion: 2,
-            domNotValid: !Z[59],
+            domNotValid: !1,
             pushVersion: 'B4Z6wo',
             secInfoHeader: 'X-Mssdk-Info',
             googleRecaptcha: 'X-Mssdk-RC',
@@ -2983,8 +3015,8 @@ var bytedAcrawlerExports = (function (e, t) {
               }),
               (Db[0].prototype['hex'] = function () {
                 var n, r, t, e, ua;
-                return (
-                  (((((ua = [15, 16, 8, 28, 12, 20, 4, 24]),
+                var res =
+                  ((((((ua = [15, 16, 8, 28, 12, 20, 4, 24]),
                   (this['finalize'](), (e = this['h0']))),
                   (t = this['h1'])),
                   (r = this['h2'])),
@@ -3020,14 +3052,17 @@ var bytedAcrawlerExports = (function (e, t) {
                     yf[(n >> ua[5]) & ua[0]] +
                     yf[(n >> ua[1]) & ua[0]] +
                     yf[(n >> ua[3]) & ua[0]] +
-                    yf[(n >> ua[7]) & ua[0]]
-                );
+                    yf[(n >> ua[7]) & ua[0]]);
+                if (!consoleEnd) {
+                  console.log('md5 hex', undefined, res);
+                }
+                return res;
               }),
               (Db[0].prototype['toString'] = Db[0].prototype['hex']),
               (Db[0].prototype['digest'] = function () {
                 var n, r, t, e, va;
-                return (
-                  (((((va = [24, 16, 255, 8]),
+                var res =
+                  ((((((va = [24, 16, 255, 8]),
                   (this['finalize'](), (e = this['h0']))),
                   (t = this['h1'])),
                   (r = this['h2'])),
@@ -3049,8 +3084,11 @@ var bytedAcrawlerExports = (function (e, t) {
                     (n >> va[3]) & va[2],
                     (n >> va[1]) & va[2],
                     (n >> va[0]) & va[2],
-                  ]
-                );
+                  ]);
+                if (!consoleEnd) {
+                  console.log('md5 digest', undefined, res);
+                }
+                return res;
               }),
               (Db[0].prototype['array'] = Db[0].prototype['digest']),
               (Db[0].prototype['arrayBuffer'] = function () {
@@ -3277,21 +3315,20 @@ var bytedAcrawlerExports = (function (e, t) {
               r[a >> 2] |= e['charCodeAt'](a) << ((3 & a) << 3);
             return r;
           }
-          function Ab11(e, t) {
+          function setStorage(e, t) {
             try {
               window['localStorage'] && window.localStorage['setItem'](e, t);
             } catch (e) {}
           }
           function init(e) {
-            var wb;
-            return (
-              (wb = [0, 3]),
-              initAndExecuteByteCode(wb[1], void wb[0], arguments, {
-                get 8() {
-                  return Tb;
-                },
-              })
-            );
+            var wb = [0, 3];
+            var res = initAndExecuteByteCode(wb[1], void wb[0], arguments, {
+              get 8() {
+                return Tb;
+              },
+            });
+            consoleEnd = true;
+            return res;
           }
           function Ab13(e) {
             (this['name'] = 'ConfigException'), (this['message'] = e);
@@ -4068,6 +4105,9 @@ var bytedAcrawlerExports = (function (e, t) {
                       // if (typeof E === 'string' && E.length === 28) {
                       //     console.log('普通函数调用', K, N, W, E);
                       // }
+                      if (!consoleEnd) {
+                        console.log('普通函数调用', callee, N, calleeArgs, E);
+                      }
                       stack[++stackPointer] = E;
                     }
                     break;
@@ -4254,8 +4294,8 @@ var bytedAcrawlerExports = (function (e, t) {
                     // 函数调用结束，返回栈顶值
                     executeStatus = 2;
                     result = stack[stackPointer--];
-                    // const {callee, calleeArgs} =
-                    //     funcStack[funcStack.length - 1] || {};
+                    const { callee, calleeArgs } =
+                      funcStack[funcStack.length - 1] || {};
                     // if (
                     //     typeof result === 'string' &&
                     //     result.length === 28 &&
@@ -4270,6 +4310,21 @@ var bytedAcrawlerExports = (function (e, t) {
                     //         result,
                     //     );
                     // }
+                    // if (
+                    //     typeof result === 'string' &&
+                    //     result.length === 156
+                    // ) {
+                    //     console.error(
+                    //         'jsvmp func return:',
+                    //         callee,
+                    //         callee.name,
+                    //         calleeArgs,
+                    //         result,
+                    //     );
+                    // }
+                    if (!consoleEnd) {
+                      console.log('jsvmp函数调用:', callee, calleeArgs, result);
+                    }
                     funcStack.pop();
                     return;
                   }
@@ -4356,8 +4411,9 @@ var bytedAcrawlerExports = (function (e, t) {
             }
             return e;
           }
-          function Ab33(e) {
-            Ab11(pd, e);
+          function setMsTokenStorage(e) {
+            console.log('setMsTokenStorage', e);
+            setStorage(msTokenKey, e);
           }
           function Ab34(e, t, r) {
             for (var n = [], o = 0; o < r['length']; ++o)
@@ -4511,7 +4567,7 @@ var bytedAcrawlerExports = (function (e, t) {
               r += [t[n]] + '=' + e[t[n]] + '&';
             return r;
           }
-          function Ab50(e) {
+          function getLocalStorage(e) {
             var jb;
             jb = [null];
             try {
@@ -4888,9 +4944,9 @@ var bytedAcrawlerExports = (function (e, t) {
             const res = jsvmp(BytecodeDefinitions[bytecodeIndex], t, n, i);
             return res;
           }
-          function Ab82() {
+          function getMsToken() {
             var e;
-            return (e = Ab50(pd)), e || '';
+            return (e = getLocalStorage(msTokenKey)), e || '';
           }
           function Ab83(e) {
             var db;
@@ -5157,7 +5213,7 @@ var bytedAcrawlerExports = (function (e, t) {
             md,
             nd,
             od,
-            pd,
+            msTokenKey,
             qd,
             rd,
             sd,
@@ -5265,189 +5321,18 @@ var bytedAcrawlerExports = (function (e, t) {
             ff,
             gf,
             hf,
-            u8,
-            Z;
-          (((((((((((Z = [
-            17,
-            173,
-            188,
-            8,
-            4294967295,
-            6,
-            136,
-            3212677781,
-            12,
-            3863347763,
-            129,
-            179,
-            14,
-            2157053261,
-            2654435769,
-            181,
-            185100057,
-            167,
-            133,
-            114,
-            4,
-            177,
-            185,
-            2633865432,
-            3732962506,
-            175,
-            18,
-            2,
-            28,
-            253,
-            /\s*\(\)\s*{\s*\[\s*native\s+code\s*]\s*}\s*$/,
-            5,
-            1196819126,
-            1498001188,
-            229,
-            195,
-            2517678443,
-            600974999,
-            127,
-            264,
-            215,
-            53,
-            3,
-            2903579748,
-            62,
-            239,
-            58,
-            156,
-            217618912,
-            9,
-            200,
-            164,
-            44,
-            162,
-            202,
-            247,
-            1451689750,
-            49,
-            140,
-            1,
-            160,
-            2718276124,
-            45,
-            13,
-            143,
-            106,
-            258,
-            148,
-            2931180889,
-            152,
-            4294967296,
-            257,
-            224,
-            255,
-            260,
-            16,
-            262,
-            7,
-            15,
-            11,
-            171,
-            251,
-            10,
-            0,
-            169,
-            211147047,
-            183,
-            244,
-          ]),
-          (u8 = Uint8Array)),
-          (hf = Uint16Array)),
-          (gf = Int32Array)),
+            u8;
+          ((((((((((u8 = Uint8Array), (hf = Uint16Array)), (gf = Int32Array)),
           (ff = new u8([
-            Z[83],
-            Z[83],
-            Z[83],
-            Z[83],
-            Z[83],
-            Z[83],
-            Z[83],
-            Z[83],
-            Z[59],
-            Z[59],
-            Z[59],
-            Z[59],
-            Z[27],
-            Z[27],
-            Z[27],
-            Z[27],
-            Z[42],
-            Z[42],
-            Z[42],
-            Z[42],
-            Z[20],
-            Z[20],
-            Z[20],
-            Z[20],
-            Z[31],
-            Z[31],
-            Z[31],
-            Z[31],
-            Z[83],
-            Z[83],
-            Z[83],
-            Z[83],
+            0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4,
+            4, 5, 5, 5, 5, 0, 0, 0, 0,
           ]))),
           (ef = new u8([
-            Z[83],
-            Z[83],
-            Z[83],
-            Z[83],
-            Z[59],
-            Z[59],
-            Z[27],
-            Z[27],
-            Z[42],
-            Z[42],
-            Z[20],
-            Z[20],
-            Z[31],
-            Z[31],
-            Z[5],
-            Z[5],
-            Z[77],
-            Z[77],
-            Z[3],
-            Z[3],
-            Z[49],
-            Z[49],
-            Z[82],
-            Z[82],
-            Z[79],
-            Z[79],
-            Z[8],
-            Z[8],
-            Z[63],
-            Z[63],
-            Z[83],
-            Z[83],
+            0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9,
+            10, 10, 11, 11, 12, 12, 13, 13, 0, 0,
           ]))),
           (df = new u8([
-            Z[75],
-            Z[0],
-            Z[26],
-            Z[83],
-            Z[3],
-            Z[77],
-            Z[49],
-            Z[5],
-            Z[82],
-            Z[31],
-            Z[79],
-            Z[20],
-            Z[8],
-            Z[42],
-            Z[63],
-            Z[27],
-            Z[12],
-            Z[59],
-            Z[78],
+            16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15,
           ]))),
           (cf = function (e, t) {
             var o, $;
@@ -5460,10 +5345,10 @@ var bytedAcrawlerExports = (function (e, t) {
                 o[a] = ((a - r[n]) << 5) | n;
             return { b: r, r: o };
           })),
-          (_a = cf(ff, Z[27]))),
+          (_a = cf(ff, 2))),
           (fl = _a['b'])),
           (bf = _a['r'])),
-            ((fl[Z[28]] = Z[66]), (bf[Z[66]] = Z[28]));
+            ((fl[28] = 258), (bf[258] = 28));
           for (
             var _b = cf(ef, 0), fd = _b['b'], jf = new hf(32768), Ib = 0;
             Ib < 32768;

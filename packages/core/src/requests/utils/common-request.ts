@@ -1,6 +1,7 @@
 import type { AxiosRequestConfig } from 'axios';
 import axios from 'axios';
 import { getLogger } from '../../infra/logger';
+import { setMessageToken } from './ms-token';
 
 interface CommonGetRequestParams {
   url: string;
@@ -19,8 +20,10 @@ export async function commonGetRequest<
       headers,
     };
     logger.debug('[request] config:', config);
-    // return {} as any;
-    const { data } = await axios<ResponseData>(config);
+    const res = await axios<ResponseData>(config);
+    const { data, headers: responseHeader } = res;
+    const msToken = responseHeader['x-ms-token'];
+    setMessageToken(msToken);
     if (data && 'status_code' in data && data.status_code === 0) {
       // logger.debug('[response] success:', data);
     } else {
@@ -52,9 +55,12 @@ export async function commonPostRequest<
       data: typeof body !== 'string' ? JSON.stringify(body) : body,
     };
     logger.debug('[request] config:', config);
-    const { data } = await axios<ResponseData>(config);
+    const res = await axios<ResponseData>(config);
+    const { data, headers: responseHeader } = res;
+    const msToken = responseHeader['x-ms-token'];
+    setMessageToken(msToken);
     if (data && 'status_code' in data && data.status_code === 0) {
-      logger.debug('[response] success:', data);
+      // logger.debug('[response] success:', data);
     } else {
       logger.error('[response] business error:', data);
     }

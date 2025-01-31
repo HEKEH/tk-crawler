@@ -1,0 +1,22 @@
+let currentCookie =
+  'tt_csrf_token=rIVfXD0b-Z2NRtwhpqIsu41EdwDwZuvjfeaM; tt_chain_token=OKDmmlnPxp31hNukKy5NRw==; passport_csrf_token=54adee964987c315a6007dd41669f9f9; passport_csrf_token_default=54adee964987c315a6007dd41669f9f9; s_v_web_id=verify_m52hrc4l_v9BjnSlX_ktqz_47El_9BFS_HM7tZdDsReIb; _ga=GA1.1.74205259.1735046489; FPID=FPID2.2.jFNBr0YlmfhRbKfPsim1pJJdbBcnhoUaztc3AqqJ5UM%3D.1735046489; FPAU=1.2.1371985790.1735046489; csrfToken=qYlITCdN-By_oK8eCLyPdibdsqkyQ8J6oF4k; csrf_session_id=a52d0e38feb176f744ecbba8a425a005; _tt_enable_cookie=1; _fbp=fb.1.1736255175612.2064404046; tiktok_webapp_lang=zh-Hans; _ttp=2rqaAWvf61W3sdK4dU4SkfsymlG.tt.1; _ga_GZB380RXJX=GS1.1.1737599572.50.0.1737600387.0.0.2146739490; d_ticket=d2e070ddb61037c2af8ffb39c5f6399ab1b58; store-country-code=jp; store-country-code-src=uid; tt-target-idc=alisg; FPLC=yqAUXnbolg6Gf2P4mgzX86T%2BKCARsxotNFhbJKko1vaQwIzLgcayXaqrLu5Y9HmTQDE8hD9Fokx1SPNxTCpb7eDPRgLVbdMfbmYdGFhiNOxo3GxFZmpDusl%2BqR2JoQ%3D%3D; ak_bmsc=DEF792CF0027E5EA7E7B2D2A802D163D~000000000000000000000000000000~YAAQdVA7FwCtSLOUAQAAXraUuxpq1IlF4MBF2BJoi9RpykF847Dw9Umco4X3uwtjYHAqYv4FtrhvwGAiHlgbyg+K/JI3LUgf0hrAp1AHkQxj5T67+iOiqO664hLSOFl48M1eSnnkmw/2HEv3K3T7STllU1eomew4NdmZlWal/tsRPt25ggXZ7rAsV+xvNX5NvDjBCfDh6FY3mvXDAZ6ewjZm4lwA8QentufD+qcarMMTJ07jqbkwff+fZa7HGOmx2a7MPGe9/uhYcB2QIwGsqhgKGpyjruJKJyhllvWzHDILLYDYttMpbL5t1YhssCoTKfsOp2jlcrQHgkf8x/gqZKf2t9A2Kl4EDfLvdnFSQ4qY5S41JIOHi18guR/ftwBXrnC4GQEHS4KGOkI=; multi_sids=7451967190302032901%3A6b61a1ea1371d5c7d9f995896dbb2335; cmpl_token=AgQQAPOqF-RO0rdUWgrv4108_QstT75K_5A3YNmLjg; sid_guard=6b61a1ea1371d5c7d9f995896dbb2335%7C1738313916%7C15551999%7CWed%2C+30-Jul-2025+08%3A58%3A35+GMT; uid_tt=dc556bfb714651a36a14257c0afce366f726c22dcb0f8a9e834f7c8716101865; uid_tt_ss=dc556bfb714651a36a14257c0afce366f726c22dcb0f8a9e834f7c8716101865; sid_tt=6b61a1ea1371d5c7d9f995896dbb2335; sessionid=6b61a1ea1371d5c7d9f995896dbb2335; sessionid_ss=6b61a1ea1371d5c7d9f995896dbb2335; sid_ucp_v1=1.0.0-KGRhMDRjZThlYzIxZDQxZTkyY2Y4MGNkNDkwYWI0OGRhZDRhN2UzODAKGgiFiMa-1pWttWcQvKHyvAYYsws4AUDqB0gEEAMaBm1hbGl2YSIgNmI2MWExZWExMzcxZDVjN2Q5Zjk5NTg5NmRiYjIzMzU; ssid_ucp_v1=1.0.0-KGRhMDRjZThlYzIxZDQxZTkyY2Y4MGNkNDkwYWI0OGRhZDRhN2UzODAKGgiFiMa-1pWttWcQvKHyvAYYsws4AUDqB0gEEAMaBm1hbGl2YSIgNmI2MWExZWExMzcxZDVjN2Q5Zjk5NTg5NmRiYjIzMzU; store-idc=alisg; tt-target-idc-sign=HbeP9K5Y1xOX5kNAu3fG9fLhCpFwronT8wH0_HMrikGp84O4hn94HR0_B0_d76irKUdM1KAASMT8zHHOuW0xydRcMR2tFKBlBkX8ekQMZo-LRp5WDp5eKO69M8II0OcRH1WslE7XHHTqxuuTJC7QccQ4Lp1Ta4Lsk4obS0ti3ZmKy_-P0XVGzFaYzhx7brUTrmSKQuUjnyxIDLialCk2h5_ENvHbEanJbmFBxXgkdCF_TgdZbsSPwftBL3Kn2Zc9TpRAsFW6Fyrg26FYVFjx76-sgHpqXrGlLokCCaqIrJKTvSdI34J9CUOcaDNdfeu2XM4CoGfggvecL0z3n_b1cA58WRr1jSnyVhAn_g7w_SimtMFgWo0XhJCiFrQtrs8tN8n09WfS9usVnH2iwLPcDNnHUanhXKOu0eO2fbRxRRYDhoUA1u3lP3ET7LAehlEPkfVI28fbhgwC34KIuRdBrNUWuDKT7JIxQq7PQ-vmAn026zXvH-1VyBRAfBGcjFJo; bm_sv=E3110A716E9A2D7CEBB78A09962A8FFF~YAAQT1A7F/kGkJuUAQAAJHCVuxpXWFKsn+hBuZcoQcdqGLYNxCP/0IltrsmFryYlElC67ScfIjhTmXz2s+e3YCL0A3o5IWbwQKtl/6v5tdsnRx3L9ayanga7Lp3eLnbR0Lfa2B+CQ+RcFnqbvmck3fkpwD7xGau+AyGK/V8xLDD6zaI2vOwJzlyQ0ql8xD4rIinMxlbHDOFJi3NsDRkz5hWUC53zRYbdLqocZYl10l2dsRrLTeNoXyue6inLzVrQ~1; _ga_LWWPCY99PB=GS1.1.1738313872.45.1.1738313920.0.0.141049761; ttwid=1%7COTe74t2gzOYPJZub12kjBn7xcNFbGBBQbyx_GbPghUw%7C1738313921%7C64b9f49c5dd983e36a1a2ed93919b9a55a17836169e4eea303b64b2b75be8b71; msToken=oH2BpdW_PDVmAx66pawpZ7wi0eNATN05trI_AaeYBFFFPdtm1p_foaezaQz7CKjMmblXZlAkzyS0-iYA4I_-KbkysJQWgvf1XUMC9sCfrVSjSz3aXwCgEsfh12SEPYQp_cBNR0vtz7sB0w-8NkVtW5Gf2hm-; odin_tt=76cb9dfbc1026631516590ef1aca9d238ee2bb397e32e1a399566b2df78ee7d9085ef8f2ac86d9d7375241a3716ab45375237b583241b061bd574f8e749d61f1f298e1c58fe7d7d8835c7165f734ccb4';
+
+export function setCookie(cookie: string) {
+  currentCookie = cookie;
+}
+
+export function getCookie() {
+  return currentCookie;
+}
+
+export function getMsTokenFromCookie() {
+  const cookieArray = currentCookie.split(';').map(item => item.trim());
+  for (const item of cookieArray) {
+    const equalIndex = item.indexOf('=');
+    const key = item.slice(0, equalIndex);
+    if (key === 'msToken') {
+      return item.slice(equalIndex + 1);
+    }
+  }
+  return '';
+}

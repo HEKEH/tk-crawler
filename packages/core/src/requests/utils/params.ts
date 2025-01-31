@@ -3,12 +3,13 @@ import { randomBytes } from 'node:crypto';
 import webmssdk from 'tk-crack/webmssdk';
 // 用于tiktok
 import webmssdk170 from 'tk-crack/webmssdk-170';
-// import xBogus from 'tk-crack/xbogus-old';
+import xBogus from 'tk-crack/xbogus-old';
 // import xBogus from 'xbogus';
 import {
   getRandomArrayElement,
   getRandomArrayElementWithWeight,
 } from '../../utils';
+import { USER_AGENT } from '../constants';
 import { ChannelId } from '../live/constants';
 
 let webmssdk170Initiated = false;
@@ -156,6 +157,11 @@ export function getXBogus(
   url: string,
   body?: string | Record<string, any>,
 ): string {
+  if (!body) {
+    // get请求
+    return xBogus(url, USER_AGENT);
+  }
+  // post请求
   initWebmssdk170();
   let _body;
   if (body) {
@@ -163,7 +169,6 @@ export function getXBogus(
   }
   const query = url.includes('?') ? url.split('?')[1] || '' : '';
   const res = webmssdk170.getXBogus(query, _body);
-  console.log('getXBogus', query, _body, res);
   return res;
 }
 
@@ -196,17 +201,6 @@ export function getXBogusForTiktokLiveAdmin(
   }
   const res = webmssdk.getXBogus(url, _body);
   return res;
-}
-
-const MESSAGE_TOKEN_CHARS =
-  'ABCDEFGHIGKLMNOPQRSTUVWXYZabcdefghigklmnopqrstuvwxyz0123456789-_';
-export function getMessageToken() {
-  const randomValues = randomBytes(156);
-  const result = Array.from(
-    randomValues,
-    value => MESSAGE_TOKEN_CHARS[value % MESSAGE_TOKEN_CHARS.length],
-  ).join('');
-  return result;
 }
 
 const VERIFY_FP_CHARS =
@@ -301,3 +295,5 @@ export function getChannelParamsByChannelId(
       };
   }
 }
+
+export * from './ms-token';

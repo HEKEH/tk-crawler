@@ -1,14 +1,11 @@
 import { getAnchorRankLeague } from '@tk-crawler/core/requests/live';
 import logger from '../logger';
-import { msToken, verifyFp } from '../mock/tokens';
+import { getTokens } from '../mock/tokens';
 
 export default async function getAnchorRankLeagueTest() {
   const res = await getAnchorRankLeague({
     roomId: '7463782000441166600',
-    tokens: {
-      verifyFp,
-      msToken,
-    },
+    tokens: getTokens(),
     region: 'all',
   });
   logger.info(res, 'getAnchorRankLeagueTest');

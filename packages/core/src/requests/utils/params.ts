@@ -3,13 +3,11 @@ import { randomBytes } from 'node:crypto';
 import webmssdk from 'tk-crack/webmssdk';
 // 用于tiktok
 import webmssdk170 from 'tk-crack/webmssdk-170';
-import xBogus from 'tk-crack/xbogus-old';
-// import xBogus from 'xbogus';
+// import xBogus from 'tk-crack/xbogus-old';
 import {
   getRandomArrayElement,
   getRandomArrayElementWithWeight,
 } from '../../utils';
-import { USER_AGENT } from '../constants';
 import { ChannelId } from '../live/constants';
 
 let webmssdk170Initiated = false;
@@ -157,11 +155,10 @@ export function getXBogus(
   url: string,
   body?: string | Record<string, any>,
 ): string {
-  if (!body) {
-    // get请求
-    return xBogus(url, USER_AGENT);
-  }
-  // post请求
+  // if (!body) {
+  //   // get请求
+  //   return xBogus(url, USER_AGENT);
+  // }
   initWebmssdk170();
   let _body;
   if (body) {

@@ -1,4 +1,3 @@
-// import { LiveAnchorCrawler } from '@tk-crawler/core';
 import { ChannelId, getFeed } from '@tk-crawler/core/requests/live';
 import {
   type ChannelSubTagMap,
@@ -8,15 +7,6 @@ import { Region } from '@tk-crawler/shared/types';
 import { getTokens } from '../mock/tokens';
 
 export default async function getFeedTest() {
-  // const crawler = new LiveAnchorCrawler({
-  //   crawlerInterval: 1000,
-  // });
-  // crawler.start({
-  //   settings: {
-  //     region: 'all',
-  //   } as any,
-  //   onAnchorsCollected: () => {},
-  // });
   const channelId = ChannelId.GAMING;
   const channelParams = getChannelParamsByChannelId(
     channelId,
@@ -36,5 +26,6 @@ export default async function getFeedTest() {
     tokens: getTokens(),
     channelParams,
   });
+  console.log('feed=', feed);
   return feed;
 }

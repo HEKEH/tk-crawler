@@ -3439,6 +3439,15 @@
           return [];
         }
         function Ab24(e, t) {
+          if (
+            t &&
+            t.startsWith('Mozilla/') &&
+            globalThis &&
+            globalThis.$USER_AGENT
+          ) {
+            // 替换为正确的user-agent
+            t = globalThis.$USER_AGENT;
+          }
           var u, ib;
           ib = [0];
           for (var r, n = [], o = 0, a = '', i = 0; i < 256; i++) n[i] = i;

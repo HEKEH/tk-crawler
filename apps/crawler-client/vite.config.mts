@@ -66,21 +66,31 @@ export default defineConfig(({ mode }) => {
         relativeCSSInjection: true, // for multiple format
       }),
       createHtmlPlugin({
-        inject: {
-          data: {
-            title: pkg.description,
+        pages: [
+          {
+            filename: 'index.html',
+            template: 'index.html',
+            injectOptions: {
+              data: {
+                title: pkg.description,
+              },
+            },
           },
-        },
-        template: 'index.html',
+          {
+            filename: 'second.html',
+            template: 'second.html',
+          },
+        ],
       }),
       (electron as any)(electronOptions),
     ],
     build: {
       minify: isProduction,
-      outDir: 'dist/main',
+      outDir: 'dist',
       rollupOptions: {
         input: {
           main: path.resolve(__dirname, 'index.html'),
+          second: path.resolve(__dirname, 'second.html'),
         },
       },
     },

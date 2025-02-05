@@ -77,10 +77,12 @@ export class ViewManager {
       });
     });
     if (VITE_DEV_SERVER_URL) {
-      await this._mainView.webContents.loadURL(VITE_DEV_SERVER_URL);
+      await this._mainView.webContents.loadURL(
+        `${VITE_DEV_SERVER_URL}index.html`,
+      );
     } else {
       await this._mainView.webContents.loadFile(
-        path.join(RENDERER_DIST, 'main', 'index.html'),
+        path.join(RENDERER_DIST, 'index.html'),
       );
     }
     this._baseWindow.contentView.addChildView(this._mainView);

@@ -1,6 +1,7 @@
 import path from 'node:path';
 import process from 'node:process';
 import { BaseWindow, globalShortcut, WebContentsView } from 'electron';
+import { CUSTOM_EVENTS } from '../../constants';
 import { isDevelopment, RENDERER_DIST, VITE_DEV_SERVER_URL } from '../../env';
 import { saveTiktokCookie } from '../services/cookie';
 import { TkLoginPageWindow } from './tk-login-page-window';
@@ -40,6 +41,7 @@ export class ViewManager {
 
   async submitCookies(cookies: [string, string][]) {
     saveTiktokCookie(cookies);
+    this.mainView.webContents.send(CUSTOM_EVENTS.TIKTOK_COOKIE_UPDATED);
   }
 
   async createWindow() {
@@ -77,9 +79,8 @@ export class ViewManager {
     if (VITE_DEV_SERVER_URL) {
       await this._mainView.webContents.loadURL(VITE_DEV_SERVER_URL);
     } else {
-      // win.loadFile('dist/index.html')
       await this._mainView.webContents.loadFile(
-        path.join(RENDERER_DIST, 'index.html'),
+        path.join(RENDERER_DIST, 'main', 'index.html'),
       );
     }
     this._baseWindow.contentView.addChildView(this._mainView);

@@ -1,4 +1,5 @@
 // import type { LiveAnchorCrawlerSettings } from '@tk-crawler/shared';
+import { CUSTOM_EVENTS } from '../constants';
 import {
   // getLiveAnchorCrawlerSettings,
   // submitLiveAnchorCrawlerSettings,
@@ -54,10 +55,10 @@ export default class GlobalStore {
   }
 
   private _addEventListeners() {
-    // this._addEventListener(
-    //   CUSTOM_EVENTS.LIVE_ANCHOR_CRAWLER_SETTING,
-    //   (_, settings) => this._setLiveAnchorCrawlerSettings(settings),
-    // );
+    this._addEventListener(CUSTOM_EVENTS.TIKTOK_COOKIE_UPDATED, () => {
+      console.log('tiktok cookie updated');
+      this._checkTiktokCookieValid();
+    });
   }
 
   private _removeEventListeners() {
@@ -65,6 +66,12 @@ export default class GlobalStore {
       window.ipcRenderer.off(event, listener);
     });
     this._eventListeners = [];
+  }
+
+  private async _checkTiktokCookieValid() {
+    this._isInitialized = false;
+    this._isTiktokCookieValid = await checkTiktokCookieValid();
+    this._isInitialized = true;
   }
 
   async init() {

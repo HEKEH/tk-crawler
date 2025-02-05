@@ -71,11 +71,18 @@ export default defineConfig(({ mode }) => {
             title: pkg.description,
           },
         },
+        template: 'index.html',
       }),
       (electron as any)(electronOptions),
     ],
     build: {
       minify: isProduction,
+      outDir: 'dist/main',
+      rollupOptions: {
+        input: {
+          main: path.resolve(__dirname, 'index.html'),
+        },
+      },
     },
     resolve: {
       alias,

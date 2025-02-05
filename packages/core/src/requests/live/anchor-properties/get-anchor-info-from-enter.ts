@@ -2,7 +2,7 @@ import type { NumberString } from '@tk-crawler/shared';
 import type { WithRegion } from '../../../types';
 import type { TikTokQueryTokens } from '../types';
 import { commonPostRequest } from '../../utils/common-request';
-import { getCookie } from '../../utils/cookie';
+import { getTiktokCookie } from '../../utils/cookie';
 import { getUrl } from '../../utils/get-url';
 import { getXBogus } from '../../utils/params';
 import {
@@ -55,7 +55,7 @@ export async function getAnchorInfoFromEnter({
     headers: {
       ...COMMON_TIKTOK_HEADERS,
       ...regionHeaders,
-      cookie: getCookie(),
+      cookie: getTiktokCookie(),
     },
     body,
   });

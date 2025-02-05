@@ -14,6 +14,8 @@
     "apps/crawler/**/*",
     "apps/pc-client/electron/**/*",
     "apps/pc-client/shared/**/*",
+    "apps/crawler-client/electron/**/*",
+    "apps/crawler-client/shared/**/*",
     "packages/core/**/*",
     "packages/shared/**/*",
     "packages/play/**/*",

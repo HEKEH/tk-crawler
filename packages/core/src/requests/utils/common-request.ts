@@ -6,11 +6,16 @@ import { setMessageToken } from './ms-token';
 interface CommonGetRequestParams {
   url: string;
   headers?: Record<string, string | undefined>;
+  shouldCheckResponse?: boolean;
 }
 
 export async function commonGetRequest<
-  ResponseData extends { status_code: number; data?: any; message?: string },
->({ url, headers }: CommonGetRequestParams): Promise<ResponseData> {
+  ResponseData extends { status_code?: number; data?: any; message?: string },
+>({
+  url,
+  headers,
+  shouldCheckResponse = true,
+}: CommonGetRequestParams): Promise<ResponseData> {
   const logger = getLogger();
   try {
     const config: AxiosRequestConfig = {
@@ -22,12 +27,14 @@ export async function commonGetRequest<
     logger.debug('[request] config:', config);
     const res = await axios<ResponseData>(config);
     const { data, headers: responseHeader } = res;
-    const msToken = responseHeader['x-ms-token'];
-    setMessageToken(msToken);
-    if (data && 'status_code' in data && data.status_code === 0) {
-      // logger.debug('[response] success:', data);
-    } else {
-      logger.error('[response] business error:', data);
+    if (shouldCheckResponse) {
+      if (data && 'status_code' in data && data.status_code === 0) {
+        const msToken = responseHeader['x-ms-token'];
+        setMessageToken(msToken);
+        // logger.debug('[response] success:', data);
+      } else {
+        logger.error('[response] business error:', data);
+      }
     }
     return data;
   } catch (error) {
@@ -40,11 +47,17 @@ interface CommonPostRequestParams {
   url: string;
   headers?: Record<string, string | undefined>;
   body: any;
+  shouldCheckResponse?: boolean;
 }
 
 export async function commonPostRequest<
   ResponseData extends { status_code: number; data?: any; message?: string },
->({ url, headers, body }: CommonPostRequestParams): Promise<ResponseData> {
+>({
+  url,
+  headers,
+  body,
+  shouldCheckResponse = true,
+}: CommonPostRequestParams): Promise<ResponseData> {
   const logger = getLogger();
   try {
     const config: AxiosRequestConfig = {
@@ -57,12 +70,15 @@ export async function commonPostRequest<
     logger.debug('[request] config:', config);
     const res = await axios<ResponseData>(config);
     const { data, headers: responseHeader } = res;
-    const msToken = responseHeader['x-ms-token'];
-    setMessageToken(msToken);
-    if (data && 'status_code' in data && data.status_code === 0) {
-      // logger.debug('[response] success:', data);
-    } else {
-      logger.error('[response] business error:', data);
+
+    if (shouldCheckResponse) {
+      if (data && 'status_code' in data && data.status_code === 0) {
+        const msToken = responseHeader['x-ms-token'];
+        setMessageToken(msToken);
+        // logger.debug('[response] success:', data);
+      } else {
+        logger.error('[response] business error:', data);
+      }
     }
     return data;
   } catch (error) {

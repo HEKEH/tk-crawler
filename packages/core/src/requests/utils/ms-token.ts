@@ -13,12 +13,12 @@ const MESSAGE_TOKEN_CHARS =
   'ABCDEFGHIGKLMNOPQRSTUVWXYZabcdefghigklmnopqrstuvwxyz0123456789-_';
 export function getMessageToken() {
   if (msTokenFromResponse) {
-    console.log(msTokenFromResponse, 'msTokenFromResponse');
+    // console.log(msTokenFromResponse, 'msTokenFromResponse');
     return msTokenFromResponse;
   }
   const tokenFromCookie = getMsTokenFromCookie();
   if (tokenFromCookie) {
-    console.log(tokenFromCookie, 'msTokenFromCookie');
+    // console.log(tokenFromCookie, 'msTokenFromCookie');
     return tokenFromCookie;
   }
   const randomValues = randomBytes(155);

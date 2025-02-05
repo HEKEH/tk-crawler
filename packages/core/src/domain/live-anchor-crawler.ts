@@ -8,10 +8,9 @@ import { ChannelId } from '../requests/live/constants';
 import {
   type ChannelSubTagMap,
   getChannelParamsByChannelId,
-  getMessageToken,
   getRandomChannelId,
-  getVerifyFp,
 } from '../requests/utils/params';
+import { getQueryTokens } from '../requests/utils/query-tokens';
 import {
   getRandomArrayElementWithWeight,
   setIntervalImmediate,
@@ -59,8 +58,7 @@ export class LiveAnchorCrawler {
   }
 
   private _updateTokens() {
-    this._queryTokens.verifyFp = getVerifyFp();
-    this._queryTokens.msToken = getMessageToken();
+    this._queryTokens = getQueryTokens();
   }
 
   private async _updateChannelSubTags(scene: DRAWER_TABS_SCENE) {

@@ -4,7 +4,7 @@ import { getTokens } from '../mock/tokens';
 
 export default async function getAnchorInfoFromEnterTest() {
   const res = await getAnchorInfoFromEnter({
-    roomId: '7465971365347969813',
+    roomId: '7466991585306151687',
     tokens: getTokens(),
     region: 'all',
   });

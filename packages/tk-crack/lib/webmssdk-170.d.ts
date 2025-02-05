@@ -1,6 +1,3 @@
-declare function init(options: any): any;
-declare function getXBogus(url: string, body?: string): string;
-
 declare module 'tk-crack/webmssdk-170' {
   interface WebMsSDK {
     init(options: any): any;

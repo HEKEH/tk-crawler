@@ -14,6 +14,7 @@
     "apps/server/**",
     "apps/crawler/**",
     "apps/pc-client/electron/**",
+    "apps/crawler-client/electron/**",
     "packages/core/**",
     "packages/play/**",
     "**/node_modules/**",

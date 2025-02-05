@@ -9,7 +9,7 @@ export function submitLiveAnchorCrawlerSettings(
   settings: LiveAnchorCrawlerSettings,
 ) {
   return window.ipcRenderer.invoke(
-    CUSTOM_EVENTS.LIVE_ANCHOR_CRAWLER_SETTING,
+    CUSTOM_EVENTS.SUBMIT_LIVE_ANCHOR_CRAWLER_SETTING,
     settings,
   );
 }

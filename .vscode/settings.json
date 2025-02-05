@@ -21,8 +21,8 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "never"
+    "source.fixAll.eslint": "explicit"
   },
-  "cSpell.words": [],
+  "cSpell.words": ["tiktok"],
   "terminal.integrated.scrollback": 10000
 }

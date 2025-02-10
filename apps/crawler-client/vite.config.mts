@@ -77,8 +77,8 @@ export default defineConfig(({ mode }) => {
             },
           },
           {
-            filename: 'second.html',
-            template: 'second.html',
+            filename: 'login-tiktok-help.html',
+            template: 'login-tiktok-help.html',
           },
         ],
       }),
@@ -90,7 +90,10 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         input: {
           main: path.resolve(__dirname, 'index.html'),
-          second: path.resolve(__dirname, 'second.html'),
+          'login-tiktok-help': path.resolve(
+            __dirname,
+            'login-tiktok-help.html',
+          ),
         },
       },
     },

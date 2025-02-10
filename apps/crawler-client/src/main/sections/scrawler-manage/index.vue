@@ -27,7 +27,12 @@ async function stop() {
       v-if="!globalStore.isTiktokCookieValid"
       @login-tiktok="loginTiktok"
     />
-    <ControlButtons v-else @start="start" @stop="stop" />
+    <ControlButtons
+      v-else
+      :is-scrawling="globalStore.isCrawling"
+      @start="start"
+      @stop="stop"
+    />
   </div>
 </template>
 

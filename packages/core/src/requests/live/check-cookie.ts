@@ -41,6 +41,7 @@ export async function checkTiktokCookieValid({
       ...regionHeaders,
       cookie: getTiktokCookie(),
     },
+    shouldCheckResponse: false,
   });
   return response.message === 'success';
 }

@@ -5,6 +5,10 @@ defineOptions({
   name: 'ControlButtons',
 });
 
+const props = defineProps({
+  isScrawling: Boolean,
+});
+
 const emit = defineEmits<{
   (e: 'start'): void;
   (e: 'stop'): void;
@@ -21,10 +25,15 @@ async function stop() {
 
 <template>
   <div class="controller-button-container">
-    <ElButton style="margin-top: 1rem" type="primary" @click.prevent="start">
-      开始爬取数据
+    <ElButton
+      :disabled="props.isScrawling"
+      type="primary"
+      :loading="props.isScrawling"
+      @click.prevent="start"
+    >
+      {{ props.isScrawling ? '正在爬取数据' : '开始爬取数据' }}
     </ElButton>
-    <ElButton style="margin-top: 1rem" @click.prevent="stop">
+    <ElButton :disabled="!props.isScrawling" @click.prevent="stop">
       停止爬取数据
     </ElButton>
   </div>
@@ -34,8 +43,8 @@ async function stop() {
 .controller-button-container {
   position: relative;
   display: flex;
-  flex-direction: column;
   align-items: center;
+  justify-content: center;
   width: 100%;
   /* max-width: 600px; */
   column-gap: 20px;

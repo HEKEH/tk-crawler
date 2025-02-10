@@ -155,6 +155,9 @@ export class TkLoginPageWindow {
     this._tkLoginPageView = new WebContentsView();
     this._loginStatus = LOGIN_TIKTOK_STATUS.loading;
     try {
+      this._tkLoginPageView.webContents.setUserAgent(
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+      );
       // 加载目标网页
       await this._tkLoginPageView.webContents.loadURL(TK_LOGIN_PAGE_URL);
       if (currentOpenTurnId !== this._openTurnId) {

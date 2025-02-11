@@ -10,11 +10,17 @@ export function syncTiktokCookie() {
   if (!existsSync(cookiePath)) {
     return;
   }
-  const cookie = readFileSync(cookiePath, 'utf-8');
-  const cookieObject = JSON.parse(cookie) as [string, string][];
-  const cookieString = cookieObject
-    .map(([key, value]) => `${key}=${value}`)
-    .join('; ');
+  let cookie = readFileSync(cookiePath, 'utf-8');
+  cookie = cookie.trim();
+  let cookieString: string;
+  if (cookie.startsWith('[')) {
+    const cookieObject = JSON.parse(cookie) as [string, string][];
+    cookieString = cookieObject
+      .map(([key, value]) => `${key}=${value}`)
+      .join('; ');
+  } else {
+    cookieString = cookie;
+  }
   setTiktokCookie(cookieString);
 }
 
@@ -28,7 +34,10 @@ export function saveTiktokCookie(cookies: [string, string][]) {
     if (!existsSync(dir)) {
       mkdirSync(dir, { recursive: true });
     }
-    writeFileSync(cookiePath, JSON.stringify(cookies));
+    const cookieString = cookies
+      .map(([key, value]) => `${key}=${value}`)
+      .join('; ');
+    writeFileSync(cookiePath, cookieString);
   } catch (error) {
     logger.error('Failed to save cookie file:', error);
     return;

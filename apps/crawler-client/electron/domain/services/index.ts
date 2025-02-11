@@ -1,8 +1,10 @@
+import type { CommonResult } from '@tk-crawler/shared';
 import type { Crawler } from '../crawler';
 import type { ViewManager } from '../view';
 import { checkTiktokCookieValid, getQueryTokens } from '@tk-crawler/core';
 import { ipcMain } from 'electron';
 import { CUSTOM_EVENTS } from '../../constants';
+import { logger } from '../../infra/logger';
 import { syncTiktokCookie } from './cookie';
 
 export class Services {
@@ -19,6 +21,36 @@ export class Services {
     this._viewManager = viewManager;
   }
 
+  private async _startCrawl(): Promise<CommonResult<void>> {
+    try {
+      await this._crawler.start();
+      return {
+        success: true,
+      };
+    } catch (error) {
+      logger.error('Failed to start live anchor crawl', error);
+      return {
+        success: false,
+        message: error instanceof Error ? error.message : 'Unknown error',
+      };
+    }
+  }
+
+  private _stopCrawl() {
+    try {
+      this._crawler.stop();
+      return {
+        success: true,
+      };
+    } catch (error) {
+      logger.error('Failed to stop live anchor crawl', error);
+      return {
+        success: false,
+        message: error instanceof Error ? error.message : 'Unknown error',
+      };
+    }
+  }
+
   init() {
     syncTiktokCookie();
     ipcMain.handle(CUSTOM_EVENTS.CHECK_COOKIE_VALIDITY, async () => {
@@ -28,8 +60,14 @@ export class Services {
       });
       return isCookieValid;
     });
-    ipcMain.handle(CUSTOM_EVENTS.OPEN_TIKTOK_LOGIN_PAGE, async () => {
-      this._viewManager.openTkLoginPage();
+    ipcMain.handle(CUSTOM_EVENTS.OPEN_TIKTOK_LOGIN_PAGE, () => {
+      return this._viewManager.openTkLoginPage();
+    });
+    ipcMain.handle(CUSTOM_EVENTS.START_LIVE_ANCHOR_CRAWL, () => {
+      return this._startCrawl();
+    });
+    ipcMain.handle(CUSTOM_EVENTS.STOP_LIVE_ANCHOR_CRAWL, () => {
+      return this._stopCrawl();
     });
   }
 

@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount } from 'vue';
+import { ElNotification } from 'element-plus';
+import { computed, onBeforeUnmount, onErrorCaptured } from 'vue';
 import Homepage from './sections/homepage.vue';
 import { provideGlobalStore } from './utils/vue';
 import 'element-plus/dist/index.css';
@@ -13,6 +14,13 @@ const isLoading = computed(() => {
 
 onBeforeUnmount(() => {
   globalStore.clear();
+});
+onErrorCaptured(e => {
+  ElNotification.error({
+    message: typeof e === 'string' ? e : (e as Error).message,
+  });
+  console.error(e);
+  return false;
 });
 </script>
 

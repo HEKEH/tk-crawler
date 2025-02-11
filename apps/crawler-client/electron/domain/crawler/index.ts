@@ -1,7 +1,5 @@
-import type { LiveAnchorCrawlerSettings } from '@tk-crawler/shared';
 import { LiveAnchorCrawler } from '@tk-crawler/core';
 import config from '../../config';
-import { logger } from '../../infra/logger';
 
 export class Crawler {
   private _liveAnchorCrawler: LiveAnchorCrawler = new LiveAnchorCrawler({
@@ -10,17 +8,19 @@ export class Crawler {
 
   constructor() {}
 
-  async start(settings: LiveAnchorCrawlerSettings) {
+  async start() {
     this.stop();
-    this._liveAnchorCrawler.start({
-      settings,
-      onAnchorsCollected: anchors => {
-        logger.info(anchors);
-      },
-    });
+    console.log('Crawler start');
+    // this._liveAnchorCrawler.start({
+    //   settings,
+    //   onAnchorsCollected: anchors => {
+    //     logger.info(anchors);
+    //   },
+    // });
   }
 
   stop() {
+    console.log('Crawler stop');
     this._liveAnchorCrawler.stop();
   }
 }

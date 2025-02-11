@@ -1,10 +1,9 @@
-// import type { LiveAnchorCrawlerSettings } from '@tk-crawler/shared';
 import { CUSTOM_EVENTS } from '../constants';
 import {
-  // getLiveAnchorCrawlerSettings,
-  // submitLiveAnchorCrawlerSettings,
   checkTiktokCookieValid,
   openTiktokLoginPage,
+  startLiveAnchorCrawl,
+  stopLiveAnchorCrawl,
 } from '../services';
 import { Menu } from '../types';
 
@@ -15,8 +14,6 @@ export default class GlobalStore {
 
   private _isTiktokCookieValid: boolean = false;
   private _isCrawling: boolean = false;
-
-  // private _liveAnchorCrawlerSettings: LiveAnchorCrawlerSettings | null = null;
 
   get currentMenu() {
     return this._currentMenu;
@@ -34,17 +31,9 @@ export default class GlobalStore {
     return this._isTiktokCookieValid;
   }
 
-  // get liveAnchorCrawlerSettings() {
-  //   return this._liveAnchorCrawlerSettings;
-  // }
-
   private _eventListeners: Array<
     [string, (event: Electron.IpcRendererEvent, ...args: any[]) => void]
   > = [];
-
-  // private _setLiveAnchorCrawlerSettings(settings: LiveAnchorCrawlerSettings) {
-  //   this._liveAnchorCrawlerSettings = settings;
-  // }
 
   private _addEventListener(
     event: string,
@@ -78,17 +67,7 @@ export default class GlobalStore {
     this._addEventListeners();
     this._isTiktokCookieValid = await checkTiktokCookieValid();
     this._isInitialized = true;
-    // const settings = await getLiveAnchorCrawlerSettings();
-    // this._setLiveAnchorCrawlerSettings(settings);
   }
-
-  // async submitLiveAnchorCrawlerSetting(setting: LiveAnchorCrawlerSettings) {
-  //   this._setLiveAnchorCrawlerSettings(setting);
-  //   const res = await submitLiveAnchorCrawlerSettings(setting);
-  //   if (res.success) {
-  //     // TODO
-  //   }
-  // }
 
   async loginTiktok() {
     await openTiktokLoginPage();
@@ -96,10 +75,19 @@ export default class GlobalStore {
 
   async start() {
     this._isCrawling = true;
+    const result = await startLiveAnchorCrawl();
+    if (!result.success) {
+      this._isCrawling = false;
+      throw new Error(result.message);
+    }
   }
 
   async stop() {
     this._isCrawling = false;
+    const result = await stopLiveAnchorCrawl();
+    if (!result.success) {
+      throw new Error(result.message);
+    }
   }
 
   setCurrentMenu(menu: Menu) {
@@ -107,7 +95,6 @@ export default class GlobalStore {
   }
 
   clear() {
-    // this._liveAnchorCrawlerSettings = null;
     this._removeEventListeners();
   }
 }

@@ -1,5 +1,5 @@
 import type { DrawerSubTab, TikTokQueryTokens } from '../requests/live';
-import type { LiveRoomOwner } from '../types';
+import type { RawAnchorParam } from './anchor-pool';
 import { IntervalRunner } from '../infra/interval-runner';
 import { getLogger } from '../infra/logger';
 import { DRAWER_TABS_SCENE, getDrawerTabs, getFeed } from '../requests/live';
@@ -14,8 +14,7 @@ import {
   getRandomArrayElementWithWeight,
   setIntervalImmediate,
 } from '../utils';
-// import { batchCheckAnchor } from '../requests/live-admin';
-// import { TEMP_COOKIE } from '../requests/live-admin/constants';
+import AnchorPool from './anchor-pool';
 
 const TOKEN_UPDATE_INTERVAL = 60000; // 60s更新一次
 
@@ -35,11 +34,7 @@ export class LiveAnchorCrawler {
 
   private _queryId: number = Math.random();
 
-  private _onAnchorsCollected: (users: LiveRoomOwner[]) => void = () => {};
-
-  // private _userCollection = new UserCollection({
-  //   regions: this._region === 'all' ? 'all' : [this._region],
-  // });
+  private _anchorPool = new AnchorPool();
 
   private _queryTokens: TikTokQueryTokens = {
     verifyFp: '',
@@ -58,6 +53,7 @@ export class LiveAnchorCrawler {
 
   private _updateTokens() {
     this._queryTokens = getQueryTokens();
+    this._anchorPool.updateQueryTokens(this._queryTokens);
   }
 
   private async _updateChannelSubTags(scene: DRAWER_TABS_SCENE) {
@@ -139,14 +135,19 @@ export class LiveAnchorCrawler {
         return;
       }
       if (feed.data) {
-        const anchors = feed.data.map(item => item.data?.owner).filter(Boolean);
-        // .map(user => ({
-        //   id: user.id_str,
-        //   display_id: user.display_id,
-        //   nickname: user.nickname,
-        //   bio_description: user.bio_description,
-        // }));
-        this._onAnchorsCollected(anchors);
+        const anchorInfos: RawAnchorParam[] = [];
+        for (const item of feed.data) {
+          const user = item.data?.owner;
+          if (user) {
+            const roomId = item.data.id_str;
+            anchorInfos.push({
+              id: user.id_str,
+              display_id: user.display_id,
+              room_id: roomId,
+            });
+          }
+        }
+        await this._anchorPool.addAnchors(anchorInfos);
       }
     } catch (error) {
       getLogger().error('[feed] error', error);
@@ -174,29 +175,11 @@ export class LiveAnchorCrawler {
     });
   }
 
-  async start({
-    onAnchorsCollected,
-  }: {
-    onAnchorsCollected: (users: LiveRoomOwner[]) => void;
-  }) {
+  async start() {
     this.stop();
     getLogger().info('start live anchor crawler');
-    // kickofffupdates
-    // mitchaustin10
-    // mintyaxelive
-    // paul_mcnally_
-    // await batchCheckAnchor({
-    //   displayIds: [
-    //     'kickofffupdates',
-    //     'mitchaustin10',
-    //     'mintyaxelive',
-    //     'paul_mcnally_',
-    //   ],
-    //   cookie: TEMP_COOKIE,
-    // });
     this._isRunning = true;
     this._queryId = Math.random();
-    this._onAnchorsCollected = onAnchorsCollected;
     await this._run();
   }
 

@@ -12,6 +12,20 @@ export interface BatchCheckAnchorParams {
   cookie: string;
 }
 
+// kickofffupdates
+// mitchaustin10
+// mintyaxelive
+// paul_mcnally_
+// await batchCheckAnchor({
+//   displayIds: [
+//     'kickofffupdates',
+//     'mitchaustin10',
+//     'mintyaxelive',
+//     'paul_mcnally_',
+//   ],
+//   cookie: TEMP_COOKIE,
+// });
+
 /** 获取主播的签约状态 */
 export function batchCheckAnchor({
   displayIds,

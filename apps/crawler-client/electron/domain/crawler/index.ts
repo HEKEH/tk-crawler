@@ -9,18 +9,10 @@ export class Crawler {
   constructor() {}
 
   async start() {
-    this.stop();
-    console.log('Crawler start');
-    // this._liveAnchorCrawler.start({
-    //   settings,
-    //   onAnchorsCollected: anchors => {
-    //     logger.info(anchors);
-    //   },
-    // });
+    await this._liveAnchorCrawler.start();
   }
 
   stop() {
-    console.log('Crawler stop');
     this._liveAnchorCrawler.stop();
   }
 }

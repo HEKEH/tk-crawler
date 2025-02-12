@@ -38,6 +38,16 @@ export interface LiveEnterResponse {
   message?: string;
 }
 
+export interface GetAnchorInfoFromEnterResult {
+  status_code: number;
+  data?: {
+    level: number;
+    user_count: number;
+    follower_count: number;
+  };
+  message?: string;
+}
+
 export async function getAnchorInfoFromEnter({
   region,
   tokens,
@@ -45,7 +55,7 @@ export async function getAnchorInfoFromEnter({
 }: WithRegion<{
   tokens: TikTokQueryTokens;
   roomId: string;
-}>) {
+}>): Promise<GetAnchorInfoFromEnterResult> {
   const { headers: regionHeaders, params: regionParams } =
     getTiktokRegionParams(region);
   const url = getUrl({
@@ -55,7 +65,7 @@ export async function getAnchorInfoFromEnter({
       ...COMMON_TIKTOK_QUERY,
       ...regionParams,
       ...tokens,
-      user_is_login: 'true',
+      user_is_login: 'false',
     },
   });
   const body = `enter_source=recommend-suggested_others_photo&room_id=${roomId}`;
@@ -72,17 +82,19 @@ export async function getAnchorInfoFromEnter({
   if (response.status_code === 0 && response.data) {
     const { owner, user_count } = response.data;
     const { badge_list } = owner;
-    const { privilege_log_extra } = badge_list[0];
-    const { level } = privilege_log_extra;
+    const { level } = badge_list[0]?.privilege_log_extra || {};
     return {
       status_code: 0,
       data: {
-        level: Number(level),
+        level: level ? Number(level) : 0,
         user_count,
         follower_count: owner.follow_info.follower_count,
         // like_count,
       },
     };
   }
-  return response;
+  return {
+    status_code: response.status_code,
+    message: response.message,
+  };
 }

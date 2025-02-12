@@ -28,6 +28,14 @@ export interface OnlineAudienceResponse {
   message?: string;
 }
 
+export interface GetLiveDiamondsResult {
+  status_code: number;
+  data?: {
+    diamonds: number;
+  };
+  message?: string;
+}
+
 export async function getLiveDiamonds({
   region,
   tokens,
@@ -69,8 +77,11 @@ export async function getLiveDiamonds({
     }, 0);
     return {
       status_code: 0,
-      data: diamonds,
+      data: { diamonds },
     };
   }
-  return response;
+  return {
+    status_code: response.status_code,
+    message: response.message,
+  };
 }

@@ -70,7 +70,7 @@ class Logger {
             'daily', // daily文件记录所有日志
             'errorFilter', // error文件只记录错误日志
           ],
-          level: isDevelopment ? 'debug' : 'debug',
+          level: isDevelopment ? 'info' : 'info',
         },
       },
     });

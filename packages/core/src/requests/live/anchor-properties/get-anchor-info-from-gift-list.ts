@@ -30,15 +30,24 @@ export interface LiveGiftListResponse {
   message?: string;
 }
 
-/** 获取主播直播段位 */
-export async function getAnchorRankLeagueAndRegion({
+export interface GetAnchorInfoFromGiftListResult {
+  status_code: number;
+  data?: {
+    anchor_ranking_league: string;
+    region: Region;
+  };
+  message?: string;
+}
+
+/** 获取主播直播段位、地区 */
+export async function getAnchorInfoFromGiftList({
   region,
   tokens,
   roomId,
 }: WithRegion<{
   tokens: TikTokQueryTokens;
   roomId: string;
-}>) {
+}>): Promise<GetAnchorInfoFromGiftListResult> {
   const { headers: regionHeaders, params: regionParams } =
     getTiktokRegionParams(region);
   const url = getUrl({
@@ -70,5 +79,8 @@ export async function getAnchorRankLeagueAndRegion({
       data: { anchor_ranking_league: anchorRankLeague, region },
     };
   }
-  return response;
+  return {
+    status_code: response.status_code,
+    message: response.message,
+  };
 }

@@ -1,4 +1,3 @@
-import type { LiveAnchorCrawlerSettings } from '@tk-crawler/shared';
 import type { DrawerSubTab, TikTokQueryTokens } from '../requests/live';
 import type { LiveRoomOwner } from '../types';
 import { IntervalRunner } from '../infra/interval-runner';
@@ -30,7 +29,7 @@ export class LiveAnchorCrawler {
       | 'updateChannelSubTagsInterval']?: NodeJS.Timeout;
   } = {};
 
-  private _settings?: LiveAnchorCrawlerSettings;
+  // private _settings?: LiveAnchorCrawlerSettings;
 
   private _isRunning = false;
 
@@ -64,7 +63,7 @@ export class LiveAnchorCrawler {
   private async _updateChannelSubTags(scene: DRAWER_TABS_SCENE) {
     const queryId = this._queryId;
     const { data } = await getDrawerTabs({
-      region: this._settings!.region,
+      region: 'all',
       tokens: this._queryTokens,
       scene,
     });
@@ -131,7 +130,7 @@ export class LiveAnchorCrawler {
         ) as ChannelSubTagMap,
       );
       const feed = await getFeed({
-        region: this._settings!.region,
+        region: 'all',
         tokens: this._queryTokens,
         channelParams,
       });
@@ -176,10 +175,8 @@ export class LiveAnchorCrawler {
   }
 
   async start({
-    settings,
     onAnchorsCollected,
   }: {
-    settings: LiveAnchorCrawlerSettings;
     onAnchorsCollected: (users: LiveRoomOwner[]) => void;
   }) {
     this.stop();
@@ -199,7 +196,6 @@ export class LiveAnchorCrawler {
     // });
     this._isRunning = true;
     this._queryId = Math.random();
-    this._settings = settings;
     this._onAnchorsCollected = onAnchorsCollected;
     await this._run();
   }

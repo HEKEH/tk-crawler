@@ -12,18 +12,28 @@ import {
   TIKTOK_WEBCAST_URL,
 } from '../constants';
 
-interface FanRank {
-  rank: NumberString;
-  score: NumberString;
-}
-
 export interface LiveEnterResponse {
   status_code: number;
   extra?: {
     now: number;
   };
   data?: {
-    ranks: FanRank[];
+    /** 直播间人数 */
+    user_count: number;
+    /** 直播间点赞数 */
+    like_count: number;
+    owner: {
+      follow_info: {
+        follower_count: number;
+      };
+      badge_list: [
+        {
+          privilege_log_extra: {
+            level: NumberString;
+          };
+        },
+      ];
+    };
   };
   message?: string;
 }
@@ -59,5 +69,20 @@ export async function getAnchorInfoFromEnter({
     },
     body,
   });
+  if (response.status_code === 0 && response.data) {
+    const { owner, user_count } = response.data;
+    const { badge_list } = owner;
+    const { privilege_log_extra } = badge_list[0];
+    const { level } = privilege_log_extra;
+    return {
+      status_code: 0,
+      data: {
+        level: Number(level),
+        user_count,
+        follower_count: owner.follow_info.follower_count,
+        // like_count,
+      },
+    };
+  }
   return response;
 }

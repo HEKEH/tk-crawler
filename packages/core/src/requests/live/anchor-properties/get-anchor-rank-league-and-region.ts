@@ -1,3 +1,4 @@
+import type { Region } from '@tk-crawler/shared';
 import type { WithRegion } from '../../../types';
 import type { TikTokQueryTokens } from '../types';
 import { commonGetRequest } from '../../utils/common-request';
@@ -16,6 +17,9 @@ export interface LiveGiftListResponse {
     now: number;
   };
   data?: {
+    pages: {
+      region: Region | '';
+    }[];
     gifts_info: {
       gift_gallery_info: {
         anchor_ranking_league: string;
@@ -26,7 +30,8 @@ export interface LiveGiftListResponse {
   message?: string;
 }
 
-export async function getAnchorRankLeague({
+/** 获取主播直播段位 */
+export async function getAnchorRankLeagueAndRegion({
   region,
   tokens,
   roomId,
@@ -55,11 +60,14 @@ export async function getAnchorRankLeague({
     },
   });
   if (response.status_code === 0) {
-    const anchorRankLeague =
-      response.data?.gifts_info?.gift_gallery_info?.anchor_ranking_league;
+    const anchorRankLeague = response.data?.gifts_info?.gift_gallery_info
+      ?.anchor_ranking_league as string;
+    const region = response.data?.pages
+      .map(page => page.region)
+      .find(Boolean) as Region;
     return {
       status_code: 0,
-      data: anchorRankLeague,
+      data: { anchor_ranking_league: anchorRankLeague, region },
     };
   }
   return response;

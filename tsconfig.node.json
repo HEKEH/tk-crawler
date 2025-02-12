@@ -20,7 +20,8 @@
     "packages/shared/**/*",
     "packages/play/**/*",
     "**/vite.config.*",
-    ".husky/**/*"
+    ".husky/**/*",
+    "backup/request-result-demo"
   ],
   "exclude": ["**/dist", "**/node_modules/**"]
 }

@@ -4,6 +4,7 @@ import { getLogger } from '../../../infra/logger';
 import { extractRegionFromHtml } from '../../utils/extract-region';
 import { TIKTOK_URL } from '../constants';
 
+/** @deprecated */
 export async function getAnchorRegion({
   userDisplayId,
   retryTimes = 10,

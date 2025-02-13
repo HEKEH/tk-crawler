@@ -16,7 +16,7 @@ import {
 } from '../utils';
 import AnchorPool from './anchor-pool';
 
-const TOKEN_UPDATE_INTERVAL = 60000; // 60s更新一次
+const TOKEN_UPDATE_INTERVAL = 5000; // 5s更新一次
 
 const UPDATE_CHANNEL_SUB_TAGS_INTERVAL = 300000; // 5分钟更新一次
 

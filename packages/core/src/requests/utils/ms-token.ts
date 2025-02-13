@@ -1,10 +1,12 @@
 import { randomBytes } from 'node:crypto';
+import { getLogger } from '@tk-crawler/core/infra/logger';
 import { getMsTokenFromCookie } from './cookie';
 
 let msTokenFromResponse = '';
 
 export function setMessageToken(token: string) {
   if (token) {
+    getLogger().info('setMessageToken', token);
     msTokenFromResponse = token;
   }
 }

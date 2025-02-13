@@ -41,7 +41,7 @@ export interface LiveEnterResponse {
 export interface GetAnchorInfoFromEnterResult {
   status_code: number;
   data?: {
-    level: number;
+    level?: number;
     user_count: number;
     follower_count: number;
   };
@@ -86,7 +86,7 @@ export async function getAnchorInfoFromEnter({
     return {
       status_code: 0,
       data: {
-        level: level ? Number(level) : 0,
+        level: level ? Number(level) : undefined,
         user_count,
         follower_count: owner.follow_info.follower_count,
         // like_count,

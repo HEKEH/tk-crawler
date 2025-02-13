@@ -7,6 +7,7 @@ interface CommonGetRequestParams {
   url: string;
   headers?: Record<string, string | undefined>;
   shouldCheckResponse?: boolean;
+  shouldUpdateMsToken?: boolean;
 }
 
 export async function commonGetRequest<
@@ -15,6 +16,7 @@ export async function commonGetRequest<
   url,
   headers,
   shouldCheckResponse = true,
+  shouldUpdateMsToken = true,
 }: CommonGetRequestParams): Promise<ResponseData> {
   const logger = getLogger();
   try {
@@ -29,8 +31,10 @@ export async function commonGetRequest<
     const { data, headers: responseHeader } = res;
     if (shouldCheckResponse) {
       if (data && 'status_code' in data && data.status_code === 0) {
-        const msToken = responseHeader['x-ms-token'];
-        setMessageToken(msToken);
+        if (shouldUpdateMsToken) {
+          const msToken = responseHeader['x-ms-token'];
+          setMessageToken(msToken);
+        }
         // logger.debug('[response] success:', data);
       } else {
         logger.error('[response] business error:', data);
@@ -48,6 +52,7 @@ interface CommonPostRequestParams {
   headers?: Record<string, string | undefined>;
   body: any;
   shouldCheckResponse?: boolean;
+  shouldUpdateMsToken?: boolean;
 }
 
 export async function commonPostRequest<
@@ -57,6 +62,7 @@ export async function commonPostRequest<
   headers,
   body,
   shouldCheckResponse = true,
+  shouldUpdateMsToken = true,
 }: CommonPostRequestParams): Promise<ResponseData> {
   const logger = getLogger();
   try {
@@ -73,8 +79,10 @@ export async function commonPostRequest<
 
     if (shouldCheckResponse) {
       if (data && 'status_code' in data && data.status_code === 0) {
-        const msToken = responseHeader['x-ms-token'];
-        setMessageToken(msToken);
+        if (shouldUpdateMsToken) {
+          const msToken = responseHeader['x-ms-token'];
+          setMessageToken(msToken);
+        }
         // logger.debug('[response] success:', data);
       } else {
         logger.error('[response] business error:', data);

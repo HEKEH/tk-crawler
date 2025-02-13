@@ -66,5 +66,6 @@ export async function getDrawerTabs({
       ...COMMON_TIKTOK_HEADERS,
       ...headers,
     },
+    shouldUpdateMsToken: false,
   });
 }

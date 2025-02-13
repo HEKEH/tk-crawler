@@ -1,7 +1,7 @@
 import type { Region } from '@tk-crawler/shared';
 import type { TikTokQueryTokens } from '../requests/live';
 import type { CollectedAnchorInfo } from '../types';
-import { TaskQueue } from '@tk-crawler/shared';
+import { FrequencyLimitTaskQueue } from '@tk-crawler/shared';
 import { getLogger } from '../infra/logger';
 import {
   getAnchorInfoFromEnter,
@@ -19,7 +19,11 @@ export default class AnchorPool {
   private _anchorId2TimestampMap: Map<string, number> = new Map();
   private _allAnchors: CollectedAnchorInfo[] = [];
 
-  private _taskQueue: TaskQueue = new TaskQueue(1);
+  private _taskQueue: FrequencyLimitTaskQueue = new FrequencyLimitTaskQueue({
+    frequencyLimit: 20,
+    onlyOneTask: true,
+    taskInterval: 1000,
+  });
 
   private _queryTokens: TikTokQueryTokens | undefined;
 
@@ -62,24 +66,23 @@ export default class AnchorPool {
   private async _completeAnchorInfo(
     anchor: RawAnchorParam,
   ): Promise<CollectedAnchorInfo> {
-    const queryTokens = this._queryTokens;
-    if (!queryTokens) {
+    if (!this._queryTokens) {
       throw new Error('queryTokens is not set');
     }
     const [enterInfo, giftListInfo, liveDiamondsInfo] = await Promise.all([
       getAnchorInfoFromEnter({
         region: this._region,
-        tokens: queryTokens,
+        tokens: this._queryTokens,
         roomId: anchor.room_id,
       }),
       getAnchorInfoFromGiftList({
         region: this._region,
-        tokens: queryTokens,
+        tokens: this._queryTokens,
         roomId: anchor.room_id,
       }),
       getLiveDiamonds({
         region: this._region,
-        tokens: queryTokens,
+        tokens: this._queryTokens,
         anchorId: anchor.id,
         roomId: anchor.room_id,
       }),
@@ -101,8 +104,8 @@ export default class AnchorPool {
       follower_count: enterInfoData.follower_count,
       audience_count: enterInfoData.user_count,
       current_diamond: liveDiamondsInfoData.diamonds,
-      last_diamond: liveDiamondsInfoData.diamonds,
-      highest_diamond: liveDiamondsInfoData.diamonds,
+      // last_diamond: liveDiamondsInfoData.diamonds,
+      // highest_diamond: liveDiamondsInfoData.diamonds,
       level: enterInfoData.level,
       rank_league: giftListInfoData.anchor_ranking_league,
     };

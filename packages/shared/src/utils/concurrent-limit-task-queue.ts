@@ -4,7 +4,8 @@ interface QueueItem<T = any> {
   reject: (error: any) => void;
 }
 
-export class TaskQueue {
+/** 并发数限制 */
+export class ConcurrentLimitTaskQueue {
   private _limit: number;
 
   private _running = 0;

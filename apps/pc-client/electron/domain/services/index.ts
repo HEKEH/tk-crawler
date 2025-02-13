@@ -17,8 +17,8 @@ export class Services {
     );
     ipcMain.handle(
       CUSTOM_EVENTS.SUBMIT_LIVE_ANCHOR_CRAWLER_SETTING,
-      async (_, settings) => {
-        await this._crawler.start(settings);
+      async () => {
+        await this._crawler.start();
         return {
           success: true,
         };

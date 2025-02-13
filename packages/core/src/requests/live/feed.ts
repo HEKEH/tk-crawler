@@ -34,5 +34,6 @@ export async function getFeed({
       ...COMMON_TIKTOK_HEADERS,
       ...regionHeaders,
     },
+    shouldUpdateMsToken: false,
   });
 }

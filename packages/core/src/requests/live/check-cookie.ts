@@ -42,6 +42,7 @@ export async function checkTiktokCookieValid({
       cookie: getTiktokCookie(),
     },
     shouldCheckResponse: false,
+    shouldUpdateMsToken: false,
   });
   return response.message === 'success';
 }

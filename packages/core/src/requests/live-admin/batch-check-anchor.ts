@@ -1,7 +1,10 @@
 import type { BatchCheckAnchorResponse } from './types';
 import { commonPostRequest } from '../utils/common-request';
 import { getUrl } from '../utils/get-url';
-import { getMessageToken, getXBogusForTiktokLiveAdmin } from '../utils/params';
+import {
+  getInformalMessageToken,
+  getXBogusForTiktokLiveAdmin,
+} from '../utils/params';
 import {
   COMMON_TIKTOK_LIVE_ADMIN_HEADERS,
   TIKTOK_LIVE_ADMIN_URL,
@@ -42,7 +45,7 @@ export function batchCheckAnchor({
     baseUrl: TIKTOK_LIVE_ADMIN_URL,
     path: '/creators/live/union_platform_api/agency/union_invite/batch_check_anchor/',
     params: {
-      msToken: getMessageToken(),
+      msToken: getInformalMessageToken(),
     },
   });
   const xBogus = getXBogusForTiktokLiveAdmin(url, body);

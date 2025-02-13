@@ -55,6 +55,17 @@ export interface FeedItem {
         SD2: string;
         SD1: string;
       };
+      live_core_sdk_data?: {
+        pull_data?: {
+          stream_data?: string;
+          options: {
+            default_quality: {
+              name: string;
+              sdk_key: string;
+            };
+          };
+        };
+      };
       stream_size_width: number;
       stream_size_height: number;
     };

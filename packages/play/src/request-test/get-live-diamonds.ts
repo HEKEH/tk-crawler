@@ -4,8 +4,8 @@ import { getTokens } from '../mock/tokens';
 
 export default async function getLiveDiamondsTest() {
   const res = await getLiveDiamonds({
-    anchorId: '6530620800969605121',
-    roomId: '7465886902487698197',
+    anchorId: '7234397258057319426',
+    roomId: '7470749521309108999',
     tokens: getTokens(),
     region: 'all',
   });

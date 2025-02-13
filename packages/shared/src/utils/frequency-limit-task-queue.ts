@@ -36,7 +36,13 @@ export class FrequencyLimitTaskQueue {
 
   private _cleanOldTimestamps() {
     const oneMinuteAgo = Date.now() - 60000;
-    this._timestamps = this._timestamps.filter(t => t > oneMinuteAgo);
+    let i = 0;
+    while (i < this._timestamps.length && this._timestamps[i] <= oneMinuteAgo) {
+      i++;
+    }
+    if (i > 0) {
+      this._timestamps = this._timestamps.slice(i);
+    }
   }
 
   private async _processQueue() {

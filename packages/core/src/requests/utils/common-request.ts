@@ -1,7 +1,7 @@
 import type { AxiosRequestConfig } from 'axios';
 import axios from 'axios';
 import { getLogger } from '../../infra/logger';
-import { setMessageToken } from './ms-token';
+import { saveResponseMessageToken } from './ms-token';
 
 interface CommonGetRequestParams {
   url: string;
@@ -16,7 +16,7 @@ export async function commonGetRequest<
   url,
   headers,
   shouldCheckResponse = true,
-  shouldUpdateMsToken = true,
+  shouldUpdateMsToken = false,
 }: CommonGetRequestParams): Promise<ResponseData> {
   const logger = getLogger();
   try {
@@ -33,7 +33,7 @@ export async function commonGetRequest<
       if (data && 'status_code' in data && data.status_code === 0) {
         if (shouldUpdateMsToken) {
           const msToken = responseHeader['x-ms-token'];
-          setMessageToken(msToken);
+          saveResponseMessageToken(msToken);
         }
         // logger.debug('[response] success:', data);
       } else {
@@ -62,7 +62,7 @@ export async function commonPostRequest<
   headers,
   body,
   shouldCheckResponse = true,
-  shouldUpdateMsToken = true,
+  shouldUpdateMsToken = false,
 }: CommonPostRequestParams): Promise<ResponseData> {
   const logger = getLogger();
   try {
@@ -81,7 +81,7 @@ export async function commonPostRequest<
       if (data && 'status_code' in data && data.status_code === 0) {
         if (shouldUpdateMsToken) {
           const msToken = responseHeader['x-ms-token'];
-          setMessageToken(msToken);
+          saveResponseMessageToken(msToken);
         }
         // logger.debug('[response] success:', data);
       } else {

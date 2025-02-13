@@ -3,13 +3,12 @@ import type { TikTokQueryTokens } from '../requests/live';
 import type { CollectedAnchorInfo } from '../types';
 import { FrequencyLimitTaskQueue } from '@tk-crawler/shared';
 import { getLogger } from '../infra/logger';
-import {
-  getAnchorInfoFromEnter,
-  getAnchorInfoFromGiftList,
-  getLiveDiamonds,
-} from '../requests/live';
+import { getAnchorInfoFromGiftList, getLiveDiamonds } from '../requests/live';
 
-export type RawAnchorParam = Pick<CollectedAnchorInfo, 'id' | 'display_id'> & {
+export type RawAnchorParam = Pick<
+  CollectedAnchorInfo,
+  'id' | 'display_id' | 'follower_count' | 'audience_count' | 'level'
+> & {
   room_id: string;
 };
 
@@ -20,9 +19,9 @@ export default class AnchorPool {
   private _allAnchors: CollectedAnchorInfo[] = [];
 
   private _taskQueue: FrequencyLimitTaskQueue = new FrequencyLimitTaskQueue({
-    frequencyLimit: 20,
-    onlyOneTask: true,
-    taskInterval: 1000,
+    frequencyLimit: 99,
+    onlyOneTask: false,
+    // taskInterval: 1000,
   });
 
   private _queryTokens: TikTokQueryTokens | undefined;
@@ -58,7 +57,11 @@ export default class AnchorPool {
   }
 
   async addAnchors(anchors: RawAnchorParam[]) {
-    anchors.forEach(anchor => {
+    anchors.forEach(async anchor => {
+      if (await this._shouldIgnoreAnchor(anchor.id)) {
+        return;
+      }
+      await this._recordAnchorId(anchor.id);
       this._taskQueue.addTask(() => this._addAnchor(anchor));
     });
   }
@@ -69,12 +72,7 @@ export default class AnchorPool {
     if (!this._queryTokens) {
       throw new Error('queryTokens is not set');
     }
-    const [enterInfo, giftListInfo, liveDiamondsInfo] = await Promise.all([
-      getAnchorInfoFromEnter({
-        region: this._region,
-        tokens: this._queryTokens,
-        roomId: anchor.room_id,
-      }),
+    const [giftListInfo, liveDiamondsInfo] = await Promise.all([
       getAnchorInfoFromGiftList({
         region: this._region,
         tokens: this._queryTokens,
@@ -87,35 +85,26 @@ export default class AnchorPool {
         roomId: anchor.room_id,
       }),
     ]);
-    if (
-      enterInfo.status_code !== 0 ||
-      giftListInfo.status_code !== 0 ||
-      liveDiamondsInfo.status_code !== 0
-    ) {
+    if (giftListInfo.status_code !== 0 || liveDiamondsInfo.status_code !== 0) {
       throw new Error('Failed to get anchor info');
     }
-    const enterInfoData = enterInfo.data!;
     const giftListInfoData = giftListInfo.data!;
     const liveDiamondsInfoData = liveDiamondsInfo.data!;
     return {
       id: anchor.id,
       display_id: anchor.display_id,
       region: giftListInfoData.region,
-      follower_count: enterInfoData.follower_count,
-      audience_count: enterInfoData.user_count,
+      follower_count: anchor.follower_count,
+      audience_count: anchor.audience_count,
+      level: anchor.level,
       current_diamond: liveDiamondsInfoData.diamonds,
       // last_diamond: liveDiamondsInfoData.diamonds,
       // highest_diamond: liveDiamondsInfoData.diamonds,
-      level: enterInfoData.level,
       rank_league: giftListInfoData.anchor_ranking_league,
     };
   }
 
   private async _addAnchor(anchor: RawAnchorParam) {
-    if (await this._shouldIgnoreAnchor(anchor.id)) {
-      return;
-    }
-    await this._recordAnchorId(anchor.id);
     try {
       const anchorInfo = await this._completeAnchorInfo(anchor);
       await this._saveAnchor(anchorInfo);

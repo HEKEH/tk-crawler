@@ -1,7 +1,8 @@
 import type { CommonResult } from '@tk-crawler/shared';
 import type { Crawler } from '../crawler';
 import type { ViewManager } from '../view';
-import { checkTiktokCookieValid, getQueryTokens } from '@tk-crawler/core';
+import { checkTiktokCookieValid, getMsTokenFromCookie } from '@tk-crawler/core';
+import { getVerifyFp } from '@tk-crawler/core/requests/utils/params';
 import { ipcMain } from 'electron';
 import { CUSTOM_EVENTS } from '../../constants';
 import { logger } from '../../infra/logger';
@@ -54,9 +55,11 @@ export class Services {
   init() {
     syncTiktokCookie();
     ipcMain.handle(CUSTOM_EVENTS.CHECK_COOKIE_VALIDITY, async () => {
-      const queryTokens = getQueryTokens();
       const isCookieValid = await checkTiktokCookieValid({
-        tokens: queryTokens,
+        tokens: {
+          verifyFp: getVerifyFp(),
+          msToken: getMsTokenFromCookie(),
+        },
       });
       return isCookieValid;
     });

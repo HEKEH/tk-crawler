@@ -4,7 +4,7 @@ import { getMsTokenFromCookie } from './cookie';
 
 let msTokenFromResponse = '';
 
-export function setMessageToken(token: string) {
+export function saveResponseMessageToken(token: string) {
   if (token) {
     getLogger().info('setMessageToken', token);
     msTokenFromResponse = token;
@@ -13,7 +13,19 @@ export function setMessageToken(token: string) {
 
 const MESSAGE_TOKEN_CHARS =
   'ABCDEFGHIGKLMNOPQRSTUVWXYZabcdefghigklmnopqrstuvwxyz0123456789-_';
-export function getMessageToken() {
+
+/** 非正式的 msToken */
+export function getInformalMessageToken() {
+  const randomValues = randomBytes(155);
+  const result = `${Array.from(
+    randomValues,
+    value => MESSAGE_TOKEN_CHARS[value % MESSAGE_TOKEN_CHARS.length],
+  ).join('')}=`;
+  return result;
+}
+
+/** 正式的 msToken */
+export function getFormalMessageToken() {
   if (msTokenFromResponse) {
     // console.log(msTokenFromResponse, 'msTokenFromResponse');
     return msTokenFromResponse;
@@ -23,10 +35,5 @@ export function getMessageToken() {
     // console.log(tokenFromCookie, 'msTokenFromCookie');
     return tokenFromCookie;
   }
-  const randomValues = randomBytes(155);
-  const result = `${Array.from(
-    randomValues,
-    value => MESSAGE_TOKEN_CHARS[value % MESSAGE_TOKEN_CHARS.length],
-  ).join('')}=`;
-  return result;
+  return getInformalMessageToken();
 }

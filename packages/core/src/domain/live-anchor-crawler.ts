@@ -140,10 +140,22 @@ export class LiveAnchorCrawler {
           const user = item.data?.owner;
           if (user) {
             const roomId = item.data.id_str;
+            const streamDataStr =
+              item.data.stream_url?.live_core_sdk_data?.pull_data?.stream_data;
+            const streamData = streamDataStr
+              ? JSON.parse(streamDataStr)
+              : undefined;
+            // 这个字段并不是真正的主播等级
+            const level = streamData?.common?.peer_anchor_level as
+              | number
+              | undefined;
             anchorInfos.push({
               id: user.id_str,
               display_id: user.display_id,
               room_id: roomId,
+              follower_count: user.follow_info.follower_count,
+              level,
+              audience_count: item.data.user_count,
             });
           }
         }

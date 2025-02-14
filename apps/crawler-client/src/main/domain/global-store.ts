@@ -1,5 +1,6 @@
 import type { AnchorScrawledMessage } from '@tk-crawler/shared';
 import { MessageCenter } from '@tk-crawler/shared';
+import { markRaw } from 'vue';
 import { CrawlerViewMessage, CUSTOM_EVENTS } from '../constants';
 import {
   checkTiktokCookieValid,
@@ -18,11 +19,13 @@ export default class GlobalStore {
   private _isTiktokCookieValid: boolean = false;
   private _isCrawling: boolean = false;
 
-  private _notificationQueue = new MessageQueue({
-    messageOffset: 200,
-  });
+  private _notificationQueue = markRaw(
+    new MessageQueue({
+      messageOffset: 200,
+    }),
+  );
 
-  readonly messageCenter = new MessageCenter();
+  readonly messageCenter = markRaw(new MessageCenter());
 
   get currentMenu() {
     return this._currentMenu;

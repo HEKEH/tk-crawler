@@ -34,6 +34,13 @@ export class FrequencyLimitTaskQueue {
     });
   }
 
+  clear() {
+    this._queue = [];
+    this._timestamps = [];
+    this._isProcessing = false;
+    this._currentlyRunning = false;
+  }
+
   private _cleanOldTimestamps() {
     const oneMinuteAgo = Date.now() - 60000;
     let i = 0;

@@ -209,7 +209,7 @@ export class LiveAnchorCrawler {
 
   async start() {
     this.stop();
-    this._anchorPool.cookieReset();
+    this._anchorPool.start();
     getLogger().info('start live anchor crawler');
     this._isRunning = true;
     this._queryId = Math.random();
@@ -226,6 +226,7 @@ export class LiveAnchorCrawler {
       clearInterval(interval);
     });
     this._crawlIntervalRunner.stop();
+    this._anchorPool.stop();
   }
 
   clear() {

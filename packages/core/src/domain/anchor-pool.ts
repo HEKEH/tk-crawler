@@ -1,6 +1,10 @@
-import type { MessageCenter, Region } from '@tk-crawler/shared';
+import type {
+  AnchorScrawledMessage,
+  CollectedAnchorInfo,
+  MessageCenter,
+  Region,
+} from '@tk-crawler/shared';
 import type { TikTokQueryTokens } from '../requests/live';
-import type { CollectedAnchorInfo } from '../types';
 import { CrawlerMessage, FrequencyLimitTaskQueue } from '@tk-crawler/shared';
 import { getLogger } from '../infra/logger';
 import { getAnchorInfoFromGiftList, getLiveDiamonds } from '../requests/live';
@@ -11,6 +15,12 @@ export type RawAnchorParam = Pick<
 > & {
   room_id: string;
 };
+
+class StopScrawlError extends Error {
+  constructor() {
+    super('Stop scrawl');
+  }
+}
 
 /** 当前主播的集合 */
 export default class AnchorPool {
@@ -24,7 +34,7 @@ export default class AnchorPool {
     // taskInterval: 1000,
   });
 
-  private _cookieOutdated = false;
+  private _stopped = true;
 
   private _queryTokens: TikTokQueryTokens | undefined;
 
@@ -35,12 +45,17 @@ export default class AnchorPool {
   }
 
   private _onCookieOutdated() {
-    this._cookieOutdated = true;
+    this._stopped = true;
     this._messageCenter.emit(CrawlerMessage.TIKTOK_COOKIE_OUTDATED);
   }
 
-  cookieReset() {
-    this._cookieOutdated = false;
+  start() {
+    this._stopped = false;
+  }
+
+  stop() {
+    this._stopped = true;
+    this._taskQueue.clear();
   }
 
   private async _shouldIgnoreAnchor(anchorId: string): Promise<boolean> {
@@ -66,17 +81,21 @@ export default class AnchorPool {
 
   /** 保存到数据库 */
   private async _saveAnchor(anchor: CollectedAnchorInfo) {
+    if (this._stopped) {
+      throw new StopScrawlError();
+    }
     // TODO: 保存到数据库
     getLogger().info('[saveAnchor] Save anchor info', { anchor });
+    const data: AnchorScrawledMessage = { anchor };
+    this._messageCenter.emit(CrawlerMessage.ANCHOR_SCRAWLED, data);
     this._allAnchors.push(anchor);
   }
 
   async addAnchors(anchors: RawAnchorParam[]) {
+    if (this._stopped) {
+      return;
+    }
     anchors.forEach(async anchor => {
-      if (await this._shouldIgnoreAnchor(anchor.id)) {
-        return;
-      }
-      await this._recordAnchorId(anchor.id);
       this._taskQueue.addTask(() => this._addAnchor(anchor));
     });
   }
@@ -109,6 +128,9 @@ export default class AnchorPool {
         roomId: anchor.room_id,
       }),
     ]);
+    if (this._stopped) {
+      throw new StopScrawlError();
+    }
     this._checkStatusCode(giftListInfo.status_code);
     this._checkStatusCode(liveDiamondsInfo.status_code);
     const giftListInfoData = giftListInfo.data!;
@@ -129,17 +151,22 @@ export default class AnchorPool {
 
   private async _addAnchor(anchor: RawAnchorParam) {
     try {
-      if (this._cookieOutdated) {
-        await this._deleteAnchorIdRecord(anchor.id);
+      if (this._stopped) {
         return;
       }
+      if (await this._shouldIgnoreAnchor(anchor.id)) {
+        return;
+      }
+      await this._recordAnchorId(anchor.id);
       const anchorInfo = await this._completeAnchorInfo(anchor);
       await this._saveAnchor(anchorInfo);
     } catch (error) {
-      getLogger().error('[addAnchor] Add anchor info failed', {
-        anchor,
-        error,
-      });
+      if (!(error instanceof StopScrawlError)) {
+        getLogger().error('[addAnchor] Add anchor info failed', {
+          anchor,
+          error,
+        });
+      }
       await this._deleteAnchorIdRecord(anchor.id);
     }
   }

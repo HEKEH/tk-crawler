@@ -11,7 +11,7 @@ export class MessageCenter {
     }
   }
 
-  addListener<T>(event: string, listener: (data?: T) => void): Subscription {
+  addListener<T>(event: string, listener: (data: T) => void): Subscription {
     let subject = this._subjects.get(event);
     if (!subject) {
       subject = new Subject<T>();

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ElButton, ElInput } from 'element-plus';
 import { ref } from 'vue';
+import { LOGIN_TIKTOK_HELP_EVENTS } from '../../../shared/constants';
 
 defineOptions({
   name: 'MainView',
@@ -9,12 +10,15 @@ defineOptions({
 const cookie = ref<string>('');
 
 function onLoginSuccess() {
-  console.log('onLoginSuccess');
+  window.ipcRenderer.invoke(LOGIN_TIKTOK_HELP_EVENTS.LOGIN_SUCCESS);
 }
 
 function onSubmitCookie() {
   const cookieValue = cookie.value.trim();
-  console.log('onSubmitCookie', cookieValue);
+  window.ipcRenderer.invoke(
+    LOGIN_TIKTOK_HELP_EVENTS.SUBMIT_COOKIES,
+    cookieValue,
+  );
 }
 </script>
 

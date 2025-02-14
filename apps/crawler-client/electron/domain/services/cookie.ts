@@ -24,7 +24,7 @@ export function syncTiktokCookie() {
   setTiktokCookie(cookieString);
 }
 
-export function saveTiktokCookie(cookies: [string, string][]) {
+export function saveTiktokCookie(cookies: [string, string][] | string) {
   const cookiePath = getTiktokCookiePath();
   if (!cookiePath) {
     throw new Error('Cookie path is not set');
@@ -34,19 +34,13 @@ export function saveTiktokCookie(cookies: [string, string][]) {
     if (!existsSync(dir)) {
       mkdirSync(dir, { recursive: true });
     }
-    const cookieString = cookies
-      .map(([key, value]) => `${key}=${value}`)
-      .join('; ');
+    const cookieString =
+      typeof cookies === 'string'
+        ? cookies
+        : cookies.map(([key, value]) => `${key}=${value}`).join('; ');
     writeFileSync(cookiePath, cookieString);
+    setTiktokCookie(cookieString);
   } catch (error) {
     logger.error('Failed to save cookie file:', error);
-    return;
   }
-
-  // Save cookies to file
-  writeFileSync(cookiePath, JSON.stringify(cookies));
-  const cookieString = cookies
-    .map(([key, value]) => `${key}=${value}`)
-    .join('; ');
-  setTiktokCookie(cookieString);
 }

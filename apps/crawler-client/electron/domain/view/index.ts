@@ -62,7 +62,7 @@ export class ViewManager {
     return this._tkLoginPageWindow;
   }
 
-  async submitCookies(cookies: [string, string][]) {
+  async submitCookies(cookies: [string, string][] | string) {
     saveTiktokCookie(cookies);
     this.mainView.webContents.send(CUSTOM_EVENTS.TIKTOK_COOKIE_UPDATED);
   }
@@ -90,10 +90,6 @@ export class ViewManager {
 
     // Test active push message to Renderer-process.
     this._mainView.webContents.on('did-finish-load', () => {
-      // this._mainView?.webContents.send(
-      //   'main-process-message',
-      //   new Date().toLocaleString(),
-      // );
       if (isDevelopment) {
         if (this._mainView?.webContents) {
           this._mainView.webContents.openDevTools({

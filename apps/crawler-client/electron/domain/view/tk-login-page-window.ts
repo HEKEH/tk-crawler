@@ -1,6 +1,10 @@
 import path from 'node:path';
 import { BaseWindow, ipcMain, WebContentsView } from 'electron';
-import { LOGIN_TIKTOK_HELP_EVENTS, LOGIN_TIKTOK_STATUS } from '../../constants';
+import {
+  LOGIN_HELP_WIDTH,
+  LOGIN_TIKTOK_HELP_EVENTS,
+  LOGIN_TIKTOK_STATUS,
+} from '../../constants';
 import { isDevelopment, RENDERER_DIST, VITE_DEV_SERVER_URL } from '../../env';
 import { logger } from '../../infra/logger';
 
@@ -53,8 +57,29 @@ export class TkLoginPageWindow {
 
   private _onResize() {
     const bounds = this._tkLoginPageWindow!.getBounds();
-    this._loginHelpView?.setBounds(bounds);
-    this._tkLoginPageView?.setBounds(bounds);
+    if (this._loginStatus === LOGIN_TIKTOK_STATUS.opened) {
+      this._loginHelpView?.setBounds({
+        x: 0,
+        y: 0,
+        width: LOGIN_HELP_WIDTH,
+        height: bounds.height,
+      });
+      this._tkLoginPageView?.setBounds({
+        x: LOGIN_HELP_WIDTH,
+        y: 0,
+        width: bounds.width - LOGIN_HELP_WIDTH,
+        height: bounds.height,
+      });
+    } else {
+      const viewBounds = {
+        x: 0,
+        y: 0,
+        width: bounds.width,
+        height: bounds.height,
+      };
+      this._loginHelpView?.setBounds(viewBounds);
+      this._tkLoginPageView?.setBounds(viewBounds);
+    }
   }
 
   private _watchLoginSuccess(): void {
@@ -176,8 +201,9 @@ export class TkLoginPageWindow {
         }
       }
       this._tkLoginPageWindow.contentView.addChildView(this._tkLoginPageView);
-      this._watchLoginSuccess();
+      this._loginStatus = LOGIN_TIKTOK_STATUS.opened;
       this._onResize();
+      this._watchLoginSuccess();
     } catch (error) {
       if ((error as any)?.code === 'ERR_CONNECTION_TIMED_OUT') {
         logger.error('Open tiktok login page timeout:', error);
@@ -186,6 +212,7 @@ export class TkLoginPageWindow {
         logger.error('Open tiktok login page error:', error);
         this._loginStatus = LOGIN_TIKTOK_STATUS.fail;
       }
+      this._onResize();
     }
   }
 
@@ -225,6 +252,7 @@ export class TkLoginPageWindow {
   }
 
   close() {
+    this._loginStatus = LOGIN_TIKTOK_STATUS.stateless;
     ipcMain.removeHandler(LOGIN_TIKTOK_HELP_EVENTS.GET_LOGIN_TIKTOK_STATUS);
     ipcMain.removeHandler(
       LOGIN_TIKTOK_HELP_EVENTS.RETRY_OPEN_TIKTOK_LOGIN_PAGE,

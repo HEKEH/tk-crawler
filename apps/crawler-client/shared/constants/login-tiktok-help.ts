@@ -8,4 +8,7 @@ export enum LOGIN_TIKTOK_STATUS {
   loading = 'loading',
   timeout = 'timeout',
   fail = 'fail',
+  opened = 'opened',
 }
+
+export const LOGIN_HELP_WIDTH = 350;

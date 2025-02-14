@@ -5,6 +5,7 @@ import {
   LOGIN_TIKTOK_HELP_EVENTS,
   LOGIN_TIKTOK_STATUS,
 } from '../main/constants';
+import MainView from './sections/main-view.vue';
 import 'element-plus/dist/index.css';
 
 const loginStatus = ref(LOGIN_TIKTOK_STATUS.stateless);
@@ -28,23 +29,21 @@ function onRetry() {
 
 <template>
   <div
-    v-if="loginStatus === LOGIN_TIKTOK_STATUS.loading"
-    v-loading="true"
+    v-loading="loginStatus === LOGIN_TIKTOK_STATUS.loading"
     class="container"
     element-loading-text="加载中..."
-  />
-  <div
-    v-else-if="loginStatus === LOGIN_TIKTOK_STATUS.timeout"
-    class="container"
   >
-    <div class="tip-text">
-      请求超时，请检查是否开启VPN，且VPN是否开启了全局代理
-    </div>
-    <ElButton type="primary" @click="onRetry">点击重试</ElButton>
-  </div>
-  <div v-else-if="loginStatus === LOGIN_TIKTOK_STATUS.fail" class="container">
-    <div class="tip-text">打开登录页失败，请检查网络</div>
-    <ElButton type="primary" @click="onRetry">点击重试</ElButton>
+    <template v-if="loginStatus === LOGIN_TIKTOK_STATUS.timeout">
+      <div class="tip-text">
+        请求超时，请检查是否开启VPN，且VPN是否开启了全局代理
+      </div>
+      <ElButton type="primary" @click="onRetry">点击重试</ElButton>
+    </template>
+    <template v-else-if="loginStatus === LOGIN_TIKTOK_STATUS.fail">
+      <div class="tip-text">打开登录页失败，请检查网络</div>
+      <ElButton type="primary" @click="onRetry">点击重试</ElButton>
+    </template>
+    <MainView v-else-if="loginStatus === LOGIN_TIKTOK_STATUS.opened" />
   </div>
 </template>
 
@@ -57,7 +56,7 @@ function onRetry() {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  row-gap: 10px;
+  row-gap: 20px;
 }
 .tip-text {
   color: var(--el-color-primary);

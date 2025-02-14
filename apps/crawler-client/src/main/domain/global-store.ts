@@ -1,3 +1,4 @@
+import type { AnchorScrawledMessage } from '@tk-crawler/shared';
 import { MessageCenter } from '@tk-crawler/shared';
 import { CrawlerViewMessage, CUSTOM_EVENTS } from '../constants';
 import {
@@ -7,6 +8,7 @@ import {
   stopLiveAnchorCrawl,
 } from '../services';
 import { Menu } from '../types';
+import { MessageQueue } from './message-queue';
 
 export default class GlobalStore {
   private _currentMenu: Menu = Menu.Crawler;
@@ -15,6 +17,10 @@ export default class GlobalStore {
 
   private _isTiktokCookieValid: boolean = false;
   private _isCrawling: boolean = false;
+
+  private _notificationQueue = new MessageQueue({
+    messageOffset: 200,
+  });
 
   readonly messageCenter = new MessageCenter();
 
@@ -54,6 +60,15 @@ export default class GlobalStore {
       this.messageCenter.emit(CrawlerViewMessage.TIKTOK_COOKIE_OUTDATED);
       this._isTiktokCookieValid = false;
     });
+    this._addEventListener(
+      CUSTOM_EVENTS.ANCHOR_SCRAWLED,
+      (_, data: AnchorScrawledMessage) => {
+        this._notificationQueue.showMessage({
+          message: `抓取到主播${data.anchor.display_id}的信息`,
+          type: 'success',
+        });
+      },
+    );
   }
 
   private _removeEventListeners() {

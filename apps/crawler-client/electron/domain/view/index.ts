@@ -1,7 +1,8 @@
+import type { AnchorScrawledMessage, MessageCenter } from '@tk-crawler/shared';
 import type { Subscription } from 'rxjs';
 import path from 'node:path';
 import process from 'node:process';
-import { CrawlerMessage, type MessageCenter } from '@tk-crawler/shared';
+import { CrawlerMessage } from '@tk-crawler/shared';
 import { BaseWindow, globalShortcut, WebContentsView } from 'electron';
 import { CUSTOM_EVENTS } from '../../constants';
 import { isDevelopment, RENDERER_DIST, VITE_DEV_SERVER_URL } from '../../env';
@@ -27,6 +28,14 @@ export class ViewManager {
         CrawlerMessage.TIKTOK_COOKIE_OUTDATED,
         () => {
           this._onCookieOutdated();
+        },
+      ),
+    );
+    this._subscriptions.push(
+      this._messageCenter.addListener(
+        CrawlerMessage.ANCHOR_SCRAWLED,
+        (data: AnchorScrawledMessage) => {
+          this._onAnchorScrawled(data);
         },
       ),
     );
@@ -60,6 +69,10 @@ export class ViewManager {
 
   private _onCookieOutdated() {
     this.mainView.webContents.send(CUSTOM_EVENTS.TIKTOK_COOKIE_OUTDATED);
+  }
+
+  private _onAnchorScrawled(data: AnchorScrawledMessage) {
+    this.mainView.webContents.send(CUSTOM_EVENTS.ANCHOR_SCRAWLED, data);
   }
 
   async createWindow() {

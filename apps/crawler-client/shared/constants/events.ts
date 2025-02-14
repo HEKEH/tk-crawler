@@ -7,4 +7,5 @@ export const CUSTOM_EVENTS = {
   START_LIVE_ANCHOR_CRAWL: 'start-live-anchor-crawl',
   STOP_LIVE_ANCHOR_CRAWL: 'stop-live-anchor-crawl',
   TIKTOK_COOKIE_OUTDATED: 'tiktok-cookie-outdated',
+  ANCHOR_SCRAWLED: 'anchor-scrawled',
 };

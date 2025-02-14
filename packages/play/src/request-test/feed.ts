@@ -26,6 +26,5 @@ export default async function getFeedTest() {
     tokens: getTokens(),
     channelParams,
   });
-  console.log('feed=', feed);
   return feed;
 }

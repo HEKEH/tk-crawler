@@ -1,4 +1,5 @@
-import { CUSTOM_EVENTS } from '../constants';
+import { MessageCenter } from '@tk-crawler/shared';
+import { CrawlerViewMessage, CUSTOM_EVENTS } from '../constants';
 import {
   checkTiktokCookieValid,
   openTiktokLoginPage,
@@ -14,6 +15,8 @@ export default class GlobalStore {
 
   private _isTiktokCookieValid: boolean = false;
   private _isCrawling: boolean = false;
+
+  readonly messageCenter = new MessageCenter();
 
   get currentMenu() {
     return this._currentMenu;
@@ -45,8 +48,11 @@ export default class GlobalStore {
 
   private _addEventListeners() {
     this._addEventListener(CUSTOM_EVENTS.TIKTOK_COOKIE_UPDATED, () => {
-      console.log('tiktok cookie updated');
       this._checkTiktokCookieValid();
+    });
+    this._addEventListener(CUSTOM_EVENTS.TIKTOK_COOKIE_OUTDATED, () => {
+      this.messageCenter.emit(CrawlerViewMessage.TIKTOK_COOKIE_OUTDATED);
+      this._isTiktokCookieValid = false;
     });
   }
 

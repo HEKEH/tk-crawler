@@ -6,4 +6,5 @@ export const CUSTOM_EVENTS = {
   TIKTOK_COOKIE_UPDATED: 'tiktok-cookie-updated',
   START_LIVE_ANCHOR_CRAWL: 'start-live-anchor-crawl',
   STOP_LIVE_ANCHOR_CRAWL: 'stop-live-anchor-crawl',
+  TIKTOK_COOKIE_OUTDATED: 'tiktok-cookie-outdated',
 };

@@ -1,5 +1,7 @@
+import type { Subscription } from 'rxjs';
 import type { DrawerSubTab, TikTokQueryTokens } from '../requests/live';
 import type { RawAnchorParam } from './anchor-pool';
+import { CrawlerMessage, type MessageCenter } from '@tk-crawler/shared';
 import { IntervalRunner } from '../infra/interval-runner';
 import { getLogger } from '../infra/logger';
 import { DRAWER_TABS_SCENE, getDrawerTabs, getFeed } from '../requests/live';
@@ -10,6 +12,7 @@ import {
   getRandomChannelId,
 } from '../requests/utils/params';
 import { getQueryTokens } from '../requests/utils/query-tokens';
+
 import {
   getRandomArrayElementWithWeight,
   setIntervalImmediate,
@@ -34,7 +37,7 @@ export class LiveAnchorCrawler {
 
   private _queryId: number = Math.random();
 
-  private _anchorPool = new AnchorPool();
+  private _anchorPool: AnchorPool;
 
   private _queryTokens: TikTokQueryTokens = {
     verifyFp: '',
@@ -47,8 +50,25 @@ export class LiveAnchorCrawler {
 
   private _crawlerInterval: number;
 
-  constructor(props: { crawlerInterval: number }) {
+  private _messageCenter: MessageCenter;
+
+  private _onCookieOutdatedSubscription: Subscription;
+
+  constructor(props: {
+    crawlerInterval: number;
+    messageCenter: MessageCenter;
+  }) {
     this._crawlerInterval = props.crawlerInterval;
+    this._messageCenter = props.messageCenter;
+    this._anchorPool = new AnchorPool({
+      messageCenter: this._messageCenter,
+    });
+    this._onCookieOutdatedSubscription = this._messageCenter.addListener(
+      CrawlerMessage.TIKTOK_COOKIE_OUTDATED,
+      () => {
+        this.stop();
+      },
+    );
   }
 
   private _updateTokens() {
@@ -189,6 +209,7 @@ export class LiveAnchorCrawler {
 
   async start() {
     this.stop();
+    this._anchorPool.cookieReset();
     getLogger().info('start live anchor crawler');
     this._isRunning = true;
     this._queryId = Math.random();
@@ -205,5 +226,10 @@ export class LiveAnchorCrawler {
       clearInterval(interval);
     });
     this._crawlIntervalRunner.stop();
+  }
+
+  clear() {
+    this._onCookieOutdatedSubscription.unsubscribe();
+    this.stop();
   }
 }

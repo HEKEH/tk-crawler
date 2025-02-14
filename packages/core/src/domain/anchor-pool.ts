@@ -1,7 +1,7 @@
-import type { Region } from '@tk-crawler/shared';
+import type { MessageCenter, Region } from '@tk-crawler/shared';
 import type { TikTokQueryTokens } from '../requests/live';
 import type { CollectedAnchorInfo } from '../types';
-import { FrequencyLimitTaskQueue } from '@tk-crawler/shared';
+import { CrawlerMessage, FrequencyLimitTaskQueue } from '@tk-crawler/shared';
 import { getLogger } from '../infra/logger';
 import { getAnchorInfoFromGiftList, getLiveDiamonds } from '../requests/live';
 
@@ -24,9 +24,24 @@ export default class AnchorPool {
     // taskInterval: 1000,
   });
 
+  private _cookieOutdated = false;
+
   private _queryTokens: TikTokQueryTokens | undefined;
 
-  constructor() {}
+  private _messageCenter: MessageCenter;
+
+  constructor(props: { messageCenter: MessageCenter }) {
+    this._messageCenter = props.messageCenter;
+  }
+
+  private _onCookieOutdated() {
+    this._cookieOutdated = true;
+    this._messageCenter.emit(CrawlerMessage.TIKTOK_COOKIE_OUTDATED);
+  }
+
+  cookieReset() {
+    this._cookieOutdated = false;
+  }
 
   private async _shouldIgnoreAnchor(anchorId: string): Promise<boolean> {
     // TODO 从redis中获取记录来进行判断
@@ -66,6 +81,15 @@ export default class AnchorPool {
     });
   }
 
+  private _checkStatusCode(statusCode: number) {
+    if (statusCode !== 0) {
+      if (statusCode === 20003) {
+        this._onCookieOutdated();
+      }
+      throw new Error('Failed to get anchor info');
+    }
+  }
+
   private async _completeAnchorInfo(
     anchor: RawAnchorParam,
   ): Promise<CollectedAnchorInfo> {
@@ -85,9 +109,8 @@ export default class AnchorPool {
         roomId: anchor.room_id,
       }),
     ]);
-    if (giftListInfo.status_code !== 0 || liveDiamondsInfo.status_code !== 0) {
-      throw new Error('Failed to get anchor info');
-    }
+    this._checkStatusCode(giftListInfo.status_code);
+    this._checkStatusCode(liveDiamondsInfo.status_code);
     const giftListInfoData = giftListInfo.data!;
     const liveDiamondsInfoData = liveDiamondsInfo.data!;
     return {
@@ -106,6 +129,10 @@ export default class AnchorPool {
 
   private async _addAnchor(anchor: RawAnchorParam) {
     try {
+      if (this._cookieOutdated) {
+        await this._deleteAnchorIdRecord(anchor.id);
+        return;
+      }
       const anchorInfo = await this._completeAnchorInfo(anchor);
       await this._saveAnchor(anchorInfo);
     } catch (error) {

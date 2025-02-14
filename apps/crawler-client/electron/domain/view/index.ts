@@ -1,5 +1,7 @@
+import type { Subscription } from 'rxjs';
 import path from 'node:path';
 import process from 'node:process';
+import { CrawlerMessage, type MessageCenter } from '@tk-crawler/shared';
 import { BaseWindow, globalShortcut, WebContentsView } from 'electron';
 import { CUSTOM_EVENTS } from '../../constants';
 import { isDevelopment, RENDERER_DIST, VITE_DEV_SERVER_URL } from '../../env';
@@ -14,9 +16,21 @@ export class ViewManager {
 
   private _tkLoginPageWindow: TkLoginPageWindow | null = null;
 
-  // private _tkLiveManageView: BaseWindow | null = null;
+  private _messageCenter: MessageCenter;
 
-  constructor() {}
+  private _subscriptions: Subscription[] = [];
+
+  constructor(props: { messageCenter: MessageCenter }) {
+    this._messageCenter = props.messageCenter;
+    this._subscriptions.push(
+      this._messageCenter.addListener(
+        CrawlerMessage.TIKTOK_COOKIE_OUTDATED,
+        () => {
+          this._onCookieOutdated();
+        },
+      ),
+    );
+  }
 
   private get baseWindow() {
     if (!this._baseWindow) {
@@ -42,6 +56,10 @@ export class ViewManager {
   async submitCookies(cookies: [string, string][]) {
     saveTiktokCookie(cookies);
     this.mainView.webContents.send(CUSTOM_EVENTS.TIKTOK_COOKIE_UPDATED);
+  }
+
+  private _onCookieOutdated() {
+    this.mainView.webContents.send(CUSTOM_EVENTS.TIKTOK_COOKIE_OUTDATED);
   }
 
   async createWindow() {
@@ -94,7 +112,15 @@ export class ViewManager {
     await this.tkLoginPageWindow.open();
   }
 
+  private _clearSubscriptions() {
+    this._subscriptions.forEach(subscription => {
+      subscription.unsubscribe();
+    });
+    this._subscriptions = [];
+  }
+
   destroy() {
+    this._clearSubscriptions();
     this._baseWindow?.removeAllListeners('resize');
     this._baseWindow?.close();
     this._baseWindow = null;

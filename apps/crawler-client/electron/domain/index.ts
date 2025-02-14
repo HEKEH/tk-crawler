@@ -1,3 +1,4 @@
+import { MessageCenter } from '@tk-crawler/shared';
 import { Crawler } from './crawler';
 import { Services } from './services';
 import { ViewManager } from './view';
@@ -6,6 +7,8 @@ import { ViewManager } from './view';
 export class GlobalManager {
   private static _instance: GlobalManager | null = null;
 
+  private _messageCenter: MessageCenter;
+
   private _crawler: Crawler;
 
   private _viewManager: ViewManager;
@@ -13,8 +16,13 @@ export class GlobalManager {
   private _services: Services;
 
   private constructor() {
-    this._crawler = new Crawler();
-    this._viewManager = new ViewManager();
+    this._messageCenter = new MessageCenter();
+    this._crawler = new Crawler({
+      messageCenter: this._messageCenter,
+    });
+    this._viewManager = new ViewManager({
+      messageCenter: this._messageCenter,
+    });
     this._services = new Services({
       crawler: this._crawler,
       viewManager: this._viewManager,
@@ -27,9 +35,10 @@ export class GlobalManager {
   }
 
   destroy() {
-    this._crawler.stop();
+    this._crawler.clear();
     this._viewManager.destroy();
     this._services.destroy();
+    this._messageCenter.clear();
   }
 
   static getInstance() {

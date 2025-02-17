@@ -8,11 +8,15 @@ if (!crawlerInterval) {
   process.exit(1);
 }
 
+// @ts-expect-error vite使用
+export const CLIENT_OWN_SERVER_URL = import.meta.env.CLIENT_OWN_SERVER_URL;
+if (!CLIENT_OWN_SERVER_URL) {
+  logger.error('CLIENT_OWN_SERVER_URL is required');
+  process.exit(1);
+}
+
 const config = {
   crawlerInterval: Number.parseInt(crawlerInterval, 10),
-  /** mongodb url */
-  // mongoDBUrl: env.MONGO_DB_URL || 'mongodb://localhost:27017/yx-chat',
-  // adminUser: env.ADMIN_USER,
-  // adminPassword: env.ADMIN_PASSWORD,
+  ownServerUrl: CLIENT_OWN_SERVER_URL,
 };
 export default config;

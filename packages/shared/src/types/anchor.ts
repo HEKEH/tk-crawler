@@ -11,7 +11,7 @@ export enum QualificationStatus {
 
 /** 被收集的主播信息 */
 export interface CollectedAnchorInfo {
-  id: string;
+  user_id: string;
   display_id: string;
   // nickname: string;
   region: Region;

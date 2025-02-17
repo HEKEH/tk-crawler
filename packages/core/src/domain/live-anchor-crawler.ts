@@ -170,7 +170,7 @@ export class LiveAnchorCrawler {
               | number
               | undefined;
             anchorInfos.push({
-              id: anchor.id_str,
+              user_id: anchor.id_str,
               display_id: anchor.display_id,
               room_id: roomId,
               follower_count: anchor.follow_info.follower_count,

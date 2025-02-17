@@ -8,10 +8,11 @@ import type { TikTokQueryTokens } from '../requests/live';
 import { CrawlerMessage, FrequencyLimitTaskQueue } from '@tk-crawler/shared';
 import { getLogger } from '../infra/logger';
 import { getAnchorInfoFromGiftList, getLiveDiamonds } from '../requests/live';
+import { shouldUpdateAnchor } from '../requests/own-server';
 
 export type RawAnchorParam = Pick<
   CollectedAnchorInfo,
-  | 'id'
+  | 'user_id'
   | 'display_id'
   | 'follower_count'
   | 'audience_count'
@@ -64,15 +65,8 @@ export default class AnchorPool {
     this._taskQueue.clear();
   }
 
-  private async _shouldIgnoreAnchor(anchorId: string): Promise<boolean> {
-    // TODO 从redis中获取记录来进行判断
-    if (!this._anchorId2TimestampMap.has(anchorId)) {
-      return false;
-    }
-    const timestamp = this._anchorId2TimestampMap.get(anchorId)!;
-    const now = Date.now();
-    // 一小时之内爬到过就不更新
-    return now - timestamp < 1000 * 60 * 60;
+  private _shouldUpdateAnchor(anchorId: string): Promise<boolean> {
+    return shouldUpdateAnchor({ anchor_id: anchorId });
   }
 
   private async _recordAnchorId(anchorId: string) {
@@ -130,7 +124,7 @@ export default class AnchorPool {
       getLiveDiamonds({
         region: this._region,
         tokens: this._queryTokens,
-        anchorId: anchor.id,
+        anchorId: anchor.user_id,
         roomId: anchor.room_id,
       }),
     ]);
@@ -142,7 +136,7 @@ export default class AnchorPool {
     const giftListInfoData = giftListInfo.data!;
     const liveDiamondsInfoData = liveDiamondsInfo.data!;
     return {
-      id: anchor.id,
+      user_id: anchor.user_id,
       display_id: anchor.display_id,
       region: giftListInfoData.region,
       follower_count: anchor.follower_count,
@@ -162,10 +156,10 @@ export default class AnchorPool {
       if (this._stopped) {
         return;
       }
-      if (await this._shouldIgnoreAnchor(anchor.id)) {
+      if (!(await this._shouldUpdateAnchor(anchor.user_id))) {
         return;
       }
-      await this._recordAnchorId(anchor.id);
+      await this._recordAnchorId(anchor.user_id);
       const anchorInfo = await this._completeAnchorInfo(anchor);
       await this._saveAnchor(anchorInfo);
     } catch (error) {
@@ -175,7 +169,7 @@ export default class AnchorPool {
           error,
         });
       }
-      await this._deleteAnchorIdRecord(anchor.id);
+      await this._deleteAnchorIdRecord(anchor.user_id);
     }
   }
 

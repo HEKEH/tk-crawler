@@ -1,3 +1,4 @@
+export * from './config';
 export * from './domain';
 export * from './infra/logger';
 export * from './requests/live';

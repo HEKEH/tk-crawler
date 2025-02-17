@@ -1,4 +1,6 @@
+import { setConfig } from '@tk-crawler/core';
 import { MessageCenter } from '@tk-crawler/shared';
+import config from '../config';
 import { Crawler } from './crawler';
 import { Services } from './services';
 import { ViewManager } from './view';
@@ -30,6 +32,9 @@ export class GlobalManager {
   }
 
   async start() {
+    setConfig({
+      ownServerUrl: config.ownServerUrl,
+    });
     this._services.init();
     await this._viewManager.createWindow();
   }

@@ -11,7 +11,7 @@ export async function requestWrapMiddleware(ctx: Context, next: Next) {
     if (ctx.status === 200) {
       const body = ctx.body;
       ctx.body = {
-        status: RESPONSE_CODE.SUCCESS,
+        status_code: RESPONSE_CODE.SUCCESS,
         data: body,
       };
     }
@@ -20,7 +20,7 @@ export async function requestWrapMiddleware(ctx: Context, next: Next) {
     if (error instanceof AssertionError || error instanceof BusinessError) {
       ctx.status = 200;
       ctx.body = {
-        status: RESPONSE_CODE.BIZ_ERROR,
+        status_code: RESPONSE_CODE.BIZ_ERROR,
         message: ctx.t(error.message),
       };
       logger.error(`[logId: ${ctx.logId}] [Business Error]`, error);
@@ -28,7 +28,7 @@ export async function requestWrapMiddleware(ctx: Context, next: Next) {
     }
     ctx.status = 500;
     ctx.body = {
-      status: RESPONSE_CODE.SERVER_ERROR,
+      status_code: RESPONSE_CODE.SERVER_ERROR,
       message: ctx.t('An unexpected error occurred'),
     };
     // Log the actual error for debugging purposes

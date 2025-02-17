@@ -12,6 +12,7 @@ export async function initProxy() {
     const proxyUrl = `${proxy.type}://${proxy.host}:${proxy.port}`;
     process.env.GLOBAL_AGENT_HTTP_PROXY = proxyUrl;
     process.env.GLOBAL_AGENT_HTTPS_PROXY = proxyUrl;
+    process.env.GLOBAL_AGENT_NO_PROXY = 'localhost,127.0.0.1,::1,.local';
     bootstrap();
   }
 }

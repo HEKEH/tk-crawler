@@ -12,7 +12,6 @@
   "include": ["packages", "apps", "backup/request-result-demo"],
   "exclude": [
     "apps/server/**",
-    "apps/crawler/**",
     "apps/pc-client/electron/**",
     "apps/crawler-client/electron/**",
     "packages/core/**",

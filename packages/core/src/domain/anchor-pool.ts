@@ -11,7 +11,13 @@ import { getAnchorInfoFromGiftList, getLiveDiamonds } from '../requests/live';
 
 export type RawAnchorParam = Pick<
   CollectedAnchorInfo,
-  'id' | 'display_id' | 'follower_count' | 'audience_count' | 'level'
+  | 'id'
+  | 'display_id'
+  | 'follower_count'
+  | 'audience_count'
+  | 'level'
+  | 'has_commerce_goods'
+  | 'tag'
 > & {
   room_id: string;
 };
@@ -146,6 +152,8 @@ export default class AnchorPool {
       // last_diamond: liveDiamondsInfoData.diamonds,
       // highest_diamond: liveDiamondsInfoData.diamonds,
       rank_league: giftListInfoData.anchor_ranking_league,
+      has_commerce_goods: anchor.has_commerce_goods,
+      tag: anchor.tag,
     };
   }
 

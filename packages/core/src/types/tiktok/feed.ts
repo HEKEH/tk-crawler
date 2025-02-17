@@ -71,6 +71,15 @@ export interface FeedItem {
     };
     owner: LiveRoomOwner;
     has_commerce_goods: boolean;
+    hashtag: {
+      id: number;
+      title: string;
+      image: {
+        url_list: string[];
+        uri: string;
+        avg_color: string;
+      };
+    };
     room_auth: {
       Chat: boolean;
       Gift: boolean;

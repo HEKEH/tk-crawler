@@ -157,8 +157,8 @@ export class LiveAnchorCrawler {
       if (feed.data) {
         const anchorInfos: RawAnchorParam[] = [];
         for (const item of feed.data) {
-          const user = item.data?.owner;
-          if (user) {
+          const anchor = item.data?.owner;
+          if (anchor) {
             const roomId = item.data.id_str;
             const streamDataStr =
               item.data.stream_url?.live_core_sdk_data?.pull_data?.stream_data;
@@ -170,12 +170,14 @@ export class LiveAnchorCrawler {
               | number
               | undefined;
             anchorInfos.push({
-              id: user.id_str,
-              display_id: user.display_id,
+              id: anchor.id_str,
+              display_id: anchor.display_id,
               room_id: roomId,
-              follower_count: user.follow_info.follower_count,
+              follower_count: anchor.follow_info.follower_count,
               level,
               audience_count: item.data.user_count,
+              has_commerce_goods: item.data.has_commerce_goods,
+              tag: item.data.hashtag?.title,
             });
           }
         }

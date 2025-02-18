@@ -10,6 +10,24 @@ export interface ShouldUpdateAnchorRequest {
   anchor_id: string;
 }
 
+export interface RecordAnchorCrawlRequest {
+  anchor_id: string;
+}
+
+export interface RecordAnchorCrawlResponse {
+  status_code: RESPONSE_CODE;
+  message?: string;
+}
+
+export interface DeleteAnchorCrawlRecordRequest {
+  anchor_id: string;
+}
+
+export interface DeleteAnchorCrawlRecordResponse {
+  status_code: RESPONSE_CODE;
+  message?: string;
+}
+
 /** 1: 需要更新 0: 不需要更新 */
 export type ShouldUpdateAnchorResponseData = 1 | 0;
 

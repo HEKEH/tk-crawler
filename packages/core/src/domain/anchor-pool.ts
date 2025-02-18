@@ -12,7 +12,12 @@ import {
 } from '@tk-crawler/shared';
 import { getLogger } from '../infra/logger';
 import { getAnchorInfoFromGiftList, getLiveDiamonds } from '../requests/live';
-import { shouldUpdateAnchor, updateAnchor } from '../requests/own-server';
+import {
+  deleteAnchorCrawlRecord,
+  recordAnchorCrawl,
+  shouldUpdateAnchor,
+  updateAnchor,
+} from '../requests/own-server';
 
 export type RawAnchorParam = Pick<
   CollectedAnchorInfo,
@@ -72,14 +77,13 @@ export default class AnchorPool {
     return shouldUpdateAnchor({ anchor_id: anchorId });
   }
 
-  private async _recordAnchorId(anchorId: string) {
-    // TODO 存储到redis
-    this._anchorId2TimestampMap.set(anchorId, Date.now());
+  private async _recordAnchorCrawl(anchorId: string) {
+    await recordAnchorCrawl({ anchor_id: anchorId });
   }
 
   /** 删除主播id的缓存记录 */
-  private async _deleteAnchorIdRecord(anchorId: string) {
-    this._anchorId2TimestampMap.delete(anchorId);
+  private async _deleteAnchorCrawlRecord(anchorId: string) {
+    await deleteAnchorCrawlRecord({ anchor_id: anchorId });
   }
 
   /** 保存到数据库 */
@@ -169,7 +173,7 @@ export default class AnchorPool {
       if (!(await this._shouldUpdateAnchor(anchor.user_id))) {
         return;
       }
-      await this._recordAnchorId(anchor.user_id);
+      await this._recordAnchorCrawl(anchor.user_id);
       const anchorInfo = await this._completeAnchorInfo(anchor);
       await this._saveAnchor(anchorInfo);
     } catch (error) {
@@ -178,12 +182,12 @@ export default class AnchorPool {
           anchor,
           error,
         });
+        this._messageCenter.emit(
+          CrawlerMessage.REQUEST_ERROR,
+          getRequestErrorType(error),
+        );
       }
-      this._messageCenter.emit(
-        CrawlerMessage.REQUEST_ERROR,
-        getRequestErrorType(error),
-      );
-      await this._deleteAnchorIdRecord(anchor.user_id);
+      await this._deleteAnchorCrawlRecord(anchor.user_id);
     }
   }
 

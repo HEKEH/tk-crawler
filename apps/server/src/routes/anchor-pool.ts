@@ -8,6 +8,16 @@ anchorPoolRouter.get(
   AnchorPoolController.shouldUpdateAnchor,
 );
 
+anchorPoolRouter.post(
+  '/record-anchor-crawl',
+  AnchorPoolController.recordAnchorCrawl,
+);
+
+anchorPoolRouter.post(
+  '/delete-anchor-crawl-record',
+  AnchorPoolController.deleteAnchorCrawlRecord,
+);
+
 anchorPoolRouter.post('/update-anchor', AnchorPoolController.updateAnchor);
 
 export default anchorPoolRouter;

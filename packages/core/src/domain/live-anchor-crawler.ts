@@ -2,6 +2,7 @@ import type { Subscription } from 'rxjs';
 import type { DrawerSubTab, TikTokQueryTokens } from '../requests/live';
 import type { RawAnchorParam } from './anchor-pool';
 import { CrawlerMessage, type MessageCenter } from '@tk-crawler/shared';
+import { tiktokRequestErrorHandler } from '@tk-crawler/shared';
 import { IntervalRunner } from '../infra/interval-runner';
 import { getLogger } from '../infra/logger';
 import { DRAWER_TABS_SCENE, getDrawerTabs, getFeed } from '../requests/live';
@@ -11,8 +12,8 @@ import {
   getChannelParamsByChannelId,
   getRandomChannelId,
 } from '../requests/utils/params';
-import { getQueryTokens } from '../requests/utils/query-tokens';
 
+import { getQueryTokens } from '../requests/utils/query-tokens';
 import {
   getRandomArrayElementWithWeight,
   setIntervalImmediate,
@@ -77,57 +78,64 @@ export class LiveAnchorCrawler {
   }
 
   private async _updateChannelSubTags(scene: DRAWER_TABS_SCENE) {
-    const queryId = this._queryId;
-    const { data } = await getDrawerTabs({
-      region: 'all',
-      tokens: this._queryTokens,
-      scene,
-    });
-    const outdated = queryId !== this._queryId;
-    if (outdated) {
-      return;
-    }
-    if (data) {
-      const updateMap = (channelId: ChannelId, subTab: DrawerSubTab) => {
-        const findItem = this._channelSubTagsMap[channelId]!.find(
-          item => item.tag === subTab.tab_type,
-        );
-        if (!findItem) {
-          this._channelSubTagsMap[channelId]!.push({
-            tag: subTab.tab_type,
-            weight: subTab.viewer_count, // 根据观众数作为权重
-          });
-        } else {
-          findItem.weight = subTab.viewer_count; // 更新权重
-        }
-      };
-      for (const tab of data) {
-        if (tab.tab_type === 'gaming' || tab.tab_type === 'lifestyle') {
-          // gaming对应1111006
-          const channelId =
-            tab.tab_type === 'gaming'
-              ? ChannelId.GAMING_WITH_TAG
-              : ChannelId.LIFESTYLE_WITH_TAG;
-          if (!this._channelSubTagsMap[channelId]) {
-            this._channelSubTagsMap[channelId] = [];
+    try {
+      const queryId = this._queryId;
+      const { data } = await tiktokRequestErrorHandler(
+        getDrawerTabs({
+          region: 'all',
+          tokens: this._queryTokens,
+          scene,
+        }),
+        this._messageCenter,
+      );
+      const outdated = queryId !== this._queryId;
+      if (outdated) {
+        return;
+      }
+      if (data) {
+        const updateMap = (channelId: ChannelId, subTab: DrawerSubTab) => {
+          const findItem = this._channelSubTagsMap[channelId]!.find(
+            item => item.tag === subTab.tab_type,
+          );
+          if (!findItem) {
+            this._channelSubTagsMap[channelId]!.push({
+              tag: subTab.tab_type,
+              weight: subTab.viewer_count, // 根据观众数作为权重
+            });
+          } else {
+            findItem.weight = subTab.viewer_count; // 更新权重
           }
-
-          for (const subTab of tab.sub_tabs) {
-            updateMap(channelId, subTab);
-          }
-        } else {
-          for (const subTab of tab.sub_tabs) {
+        };
+        for (const tab of data) {
+          if (tab.tab_type === 'gaming' || tab.tab_type === 'lifestyle') {
+            // gaming对应1111006
             const channelId =
-              subTab.rank_type === 'hot_game'
+              tab.tab_type === 'gaming'
                 ? ChannelId.GAMING_WITH_TAG
                 : ChannelId.LIFESTYLE_WITH_TAG;
             if (!this._channelSubTagsMap[channelId]) {
               this._channelSubTagsMap[channelId] = [];
             }
-            updateMap(channelId, subTab);
+
+            for (const subTab of tab.sub_tabs) {
+              updateMap(channelId, subTab);
+            }
+          } else {
+            for (const subTab of tab.sub_tabs) {
+              const channelId =
+                subTab.rank_type === 'hot_game'
+                  ? ChannelId.GAMING_WITH_TAG
+                  : ChannelId.LIFESTYLE_WITH_TAG;
+              if (!this._channelSubTagsMap[channelId]) {
+                this._channelSubTagsMap[channelId] = [];
+              }
+              updateMap(channelId, subTab);
+            }
           }
         }
       }
+    } catch (error) {
+      getLogger().error('[updateChannelSubTags] error', error);
     }
   }
 
@@ -145,11 +153,14 @@ export class LiveAnchorCrawler {
           ]),
         ) as ChannelSubTagMap,
       );
-      const feed = await getFeed({
-        region: 'all',
-        tokens: this._queryTokens,
-        channelParams,
-      });
+      const feed = await tiktokRequestErrorHandler(
+        getFeed({
+          region: 'all',
+          tokens: this._queryTokens,
+          channelParams,
+        }),
+        this._messageCenter,
+      );
       const outdated = queryId !== this._queryId;
       if (outdated) {
         return;

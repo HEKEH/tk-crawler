@@ -21,10 +21,10 @@ async function retry() {
 
 const text = computed(() => {
   if (props.cookieValidStatus === IsCookieValidResultStatus.ECONNRESET) {
-    return '连接Tiktok失败，请检查网络，例如是否开启VPN，且VPN是否开启了全局代理';
+    return '连接Tiktok失败，请检查网络，例如是否开启了VPN，且VPN是否开启了全局代理';
   }
   if (props.cookieValidStatus === IsCookieValidResultStatus.TIMEOUT) {
-    return '连接Tiktok超时，请检查网络，例如是否开启VPN，且VPN是否开启了全局代理';
+    return '连接Tiktok超时，请检查网络，例如是否开启了VPN，且VPN是否开启了全局代理';
   }
   return '请求Tiktok接口失败，请检查网络';
 });

@@ -75,12 +75,15 @@ export default class GlobalStore {
         });
       },
     );
-    this._addEventListener(CUSTOM_EVENTS.TIKTOK_REQUEST_ECONNRESET, () => {
-      this._notificationQueue.showMessage({
-        message: `请求失败，请检查是否开启VPN，且VPN是否开启了全局代理`,
-        type: 'error',
-      });
-    });
+    this._addEventListener(
+      CUSTOM_EVENTS.TIKTOK_REQUEST_ECONNRESET_OR_TIMEOUT,
+      () => {
+        this._notificationQueue.showMessage({
+          message: `请求失败，请检查网络是否有异常，例如是否开启了VPN，且VPN是否开启了全局代理`,
+          type: 'error',
+        });
+      },
+    );
   }
 
   private _removeEventListeners() {

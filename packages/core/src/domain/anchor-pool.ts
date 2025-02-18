@@ -5,7 +5,11 @@ import type {
   Region,
 } from '@tk-crawler/shared';
 import type { TikTokQueryTokens } from '../requests/live';
-import { CrawlerMessage, FrequencyLimitTaskQueue } from '@tk-crawler/shared';
+import {
+  CrawlerMessage,
+  FrequencyLimitTaskQueue,
+  isTiktokRequestEconnresetOrTimeout,
+} from '@tk-crawler/shared';
 import { getLogger } from '../infra/logger';
 import { getAnchorInfoFromGiftList, getLiveDiamonds } from '../requests/live';
 import { shouldUpdateAnchor } from '../requests/own-server';
@@ -168,6 +172,11 @@ export default class AnchorPool {
           anchor,
           error,
         });
+      }
+      if (isTiktokRequestEconnresetOrTimeout(error)) {
+        this._messageCenter.emit(
+          CrawlerMessage.TIKTOK_REQUEST_ECONNRESET_OR_TIMEOUT,
+        );
       }
       await this._deleteAnchorIdRecord(anchor.user_id);
     }

@@ -41,9 +41,9 @@ export class ViewManager {
     );
     this._subscriptions.push(
       this._messageCenter.addListener(
-        CrawlerMessage.TIKTOK_REQUEST_ECONNRESET,
+        CrawlerMessage.TIKTOK_REQUEST_ECONNRESET_OR_TIMEOUT,
         () => {
-          this._onRequestTimeout();
+          this._onRequestEconnresetOrTimeout();
         },
       ),
     );
@@ -83,8 +83,10 @@ export class ViewManager {
     this.mainView.webContents.send(CUSTOM_EVENTS.ANCHOR_SCRAWLED, data);
   }
 
-  private _onRequestTimeout() {
-    this.mainView.webContents.send(CUSTOM_EVENTS.TIKTOK_REQUEST_ECONNRESET);
+  private _onRequestEconnresetOrTimeout() {
+    this.mainView.webContents.send(
+      CUSTOM_EVENTS.TIKTOK_REQUEST_ECONNRESET_OR_TIMEOUT,
+    );
   }
 
   async createWindow() {

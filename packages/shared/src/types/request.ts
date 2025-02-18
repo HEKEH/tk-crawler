@@ -11,12 +11,17 @@ export interface ShouldUpdateAnchorRequest {
 }
 
 /** 1: 需要更新 0: 不需要更新 */
-export type UpdateAnchorResponseData = 1 | 0;
+export type ShouldUpdateAnchorResponseData = 1 | 0;
 
-export interface UpdateAnchorResponse {
+export interface ShouldUpdateAnchorResponse {
   status_code: RESPONSE_CODE;
-  data?: UpdateAnchorResponseData;
+  data?: ShouldUpdateAnchorResponseData;
   message?: string;
 }
 
 export type UpdateAnchorRequest = CollectedAnchorInfo;
+
+export interface UpdateAnchorResponse {
+  status_code: RESPONSE_CODE;
+  message?: string;
+}

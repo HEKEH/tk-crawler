@@ -53,5 +53,6 @@ export function batchCheckAnchor({
     url: `${url}&X-Bogus=${xBogus}`,
     headers,
     body,
+    transformBodyToString: true,
   });
 }

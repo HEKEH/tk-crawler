@@ -6,7 +6,15 @@ import { BusinessError } from '../utils';
 
 export async function requestWrapMiddleware(ctx: Context, next: Next) {
   try {
-    logger.info(`[logId: ${ctx.logId}] [Request]`, ctx.request);
+    const logData: any = {
+      method: ctx.request.method,
+      url: ctx.request.url,
+      headers: ctx.request.headers,
+    };
+    if (ctx.request.method === 'POST') {
+      logData.body = ctx.request.body;
+    }
+    logger.info(`[logId: ${ctx.logId}] [Request]`, logData);
     await next();
     if (ctx.status === 200) {
       const body = ctx.body;

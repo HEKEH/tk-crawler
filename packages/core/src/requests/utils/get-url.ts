@@ -7,8 +7,11 @@ export function getUrl({
 }: {
   baseUrl: string;
   path: string;
-  params: Record<string, string | number | undefined>;
+  params?: Record<string, string | number | undefined>;
 }) {
+  if (!params) {
+    return `${baseUrl}${path}`;
+  }
   const queryString = qs.stringify(params);
   return `${baseUrl}${path}?${queryString}`;
 }

@@ -12,7 +12,7 @@ import {
 } from '@tk-crawler/shared';
 import { getLogger } from '../infra/logger';
 import { getAnchorInfoFromGiftList, getLiveDiamonds } from '../requests/live';
-import { shouldUpdateAnchor } from '../requests/own-server';
+import { shouldUpdateAnchor, updateAnchor } from '../requests/own-server';
 
 export type RawAnchorParam = Pick<
   CollectedAnchorInfo,
@@ -37,7 +37,6 @@ class StopScrawlError extends Error {
 export default class AnchorPool {
   private _region: Region[] | 'all' = 'all';
   private _anchorId2TimestampMap: Map<string, number> = new Map();
-  private _allAnchors: CollectedAnchorInfo[] = [];
 
   private _taskQueue: FrequencyLimitTaskQueue = new FrequencyLimitTaskQueue({
     frequencyLimit: 99,
@@ -88,11 +87,18 @@ export default class AnchorPool {
     if (this._stopped) {
       throw new StopScrawlError();
     }
-    // TODO: 保存到数据库
-    getLogger().info('[saveAnchor] Save anchor info', { anchor });
+    getLogger().info('[SaveAnchor] To save anchor info:', { anchor });
+    const response = await updateAnchor(anchor);
+    if (response.status_code !== 0) {
+      throw new Error(
+        `[SaveAnchor] Failed to save anchor [${anchor.display_id}]: ${response.message}`,
+      );
+    }
+    getLogger().info(
+      `[SaveAnchor] Anchor info save success: ${anchor.display_id}`,
+    );
     const data: AnchorScrawledMessage = { anchor };
     this._messageCenter.emit(CrawlerMessage.ANCHOR_SCRAWLED, data);
-    this._allAnchors.push(anchor);
   }
 
   async addAnchors(anchors: RawAnchorParam[]) {

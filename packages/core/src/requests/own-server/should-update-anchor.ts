@@ -1,6 +1,6 @@
 import type {
   ShouldUpdateAnchorRequest,
-  UpdateAnchorResponse,
+  ShouldUpdateAnchorResponse,
 } from '@tk-crawler/shared';
 import { getConfig } from '../../config';
 import { commonGetRequest } from '../utils/common-request';
@@ -14,7 +14,7 @@ export async function shouldUpdateAnchor(
     path: '/anchor-pool/should-update-anchor',
     params: data as unknown as Record<string, string>,
   });
-  const response = await commonGetRequest<UpdateAnchorResponse>({
+  const response = await commonGetRequest<ShouldUpdateAnchorResponse>({
     url,
   });
   return response.data === 1;

@@ -78,6 +78,7 @@ export async function getAnchorInfoFromEnter({
       cookie: getTiktokCookie(),
     },
     body,
+    transformBodyToString: true,
     shouldUpdateMsToken: true,
   });
   if (response.status_code === 0 && response.data) {

@@ -51,6 +51,7 @@ interface CommonPostRequestParams {
   url: string;
   headers?: Record<string, string | undefined>;
   body: any;
+  transformBodyToString?: boolean;
   shouldCheckResponse?: boolean;
   shouldUpdateMsToken?: boolean;
 }
@@ -61,17 +62,22 @@ export async function commonPostRequest<
   url,
   headers,
   body,
+  transformBodyToString = false,
   shouldCheckResponse = true,
   shouldUpdateMsToken = false,
 }: CommonPostRequestParams): Promise<ResponseData> {
   const logger = getLogger();
   try {
+    let queryData = body;
+    if (transformBodyToString) {
+      queryData = typeof body !== 'string' ? JSON.stringify(body) : body;
+    }
     const config: AxiosRequestConfig = {
       method: 'post',
       maxBodyLength: Infinity,
       url,
       headers,
-      data: typeof body !== 'string' ? JSON.stringify(body) : body,
+      data: queryData,
     };
     logger.debug('[request] config:', config);
     const res = await axios<ResponseData>(config);

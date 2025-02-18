@@ -22,6 +22,7 @@ export default antfu(
       'vue/singleline-html-element-content-newline': 'off',
       'vue/html-closing-bracket-newline': 'off',
       'vue/html-indent': 'off',
+      'vue/operator-linebreak': 'off',
     },
   },
   {

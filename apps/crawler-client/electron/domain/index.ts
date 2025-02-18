@@ -26,6 +26,7 @@ export class GlobalManager {
       messageCenter: this._messageCenter,
     });
     this._services = new Services({
+      messageCenter: this._messageCenter,
       crawler: this._crawler,
       viewManager: this._viewManager,
     });

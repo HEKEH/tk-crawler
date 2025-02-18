@@ -17,6 +17,7 @@ export default defineConfig(({ mode }) => {
     readFileSync(new URL('./package.json', import.meta.url), 'utf8'),
   );
   const alias: AliasOptions = {
+    '@tk-crawler-client/shared': resolve(__dirname, 'shared'),
     '@tk-crawler/core': resolve(__dirname, '../../packages/core/src'),
     '@tk-crawler/shared': resolve(__dirname, '../../packages/shared/src'),
   };

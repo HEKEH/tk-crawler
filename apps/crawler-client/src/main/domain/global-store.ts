@@ -1,4 +1,5 @@
 import type { AnchorScrawledMessage } from '@tk-crawler/shared';
+import { IsCookieValidResultStatus } from '@tk-crawler-client/shared';
 import { MessageCenter } from '@tk-crawler/shared';
 import { markRaw } from 'vue';
 import { CrawlerViewMessage, CUSTOM_EVENTS } from '../constants';
@@ -16,7 +17,9 @@ export default class GlobalStore {
 
   private _isInitialized: boolean = false;
 
-  private _isTiktokCookieValid: boolean = false;
+  private _tiktokCookieValidStatus: IsCookieValidResultStatus =
+    IsCookieValidResultStatus.FAILED;
+
   private _isCrawling: boolean = false;
 
   private _notificationQueue = markRaw(
@@ -39,8 +42,8 @@ export default class GlobalStore {
     return this._isCrawling;
   }
 
-  get isTiktokCookieValid() {
-    return this._isTiktokCookieValid;
+  get tiktokCookieValidStatus() {
+    return this._tiktokCookieValidStatus;
   }
 
   private _eventListeners: Array<
@@ -56,12 +59,12 @@ export default class GlobalStore {
   }
 
   private _addEventListeners() {
-    this._addEventListener(CUSTOM_EVENTS.TIKTOK_COOKIE_UPDATED, () => {
-      this._checkTiktokCookieValid();
+    this._addEventListener(CUSTOM_EVENTS.TIKTOK_COOKIE_UPDATED, async () => {
+      await this.checkTiktokCookieValid();
     });
     this._addEventListener(CUSTOM_EVENTS.TIKTOK_COOKIE_OUTDATED, () => {
       this.messageCenter.emit(CrawlerViewMessage.TIKTOK_COOKIE_OUTDATED);
-      this._isTiktokCookieValid = false;
+      this._tiktokCookieValidStatus = IsCookieValidResultStatus.FAILED;
     });
     this._addEventListener(
       CUSTOM_EVENTS.ANCHOR_SCRAWLED,
@@ -72,6 +75,12 @@ export default class GlobalStore {
         });
       },
     );
+    this._addEventListener(CUSTOM_EVENTS.TIKTOK_REQUEST_ECONNRESET, () => {
+      this._notificationQueue.showMessage({
+        message: `请求失败，请检查是否开启VPN，且VPN是否开启了全局代理`,
+        type: 'error',
+      });
+    });
   }
 
   private _removeEventListeners() {
@@ -81,16 +90,15 @@ export default class GlobalStore {
     this._eventListeners = [];
   }
 
-  private async _checkTiktokCookieValid() {
+  async checkTiktokCookieValid() {
     this._isInitialized = false;
-    this._isTiktokCookieValid = await checkTiktokCookieValid();
+    this._tiktokCookieValidStatus = await checkTiktokCookieValid();
     this._isInitialized = true;
   }
 
   async init() {
     this._addEventListeners();
-    this._isTiktokCookieValid = await checkTiktokCookieValid();
-    this._isInitialized = true;
+    await this.checkTiktokCookieValid();
   }
 
   async loginTiktok() {

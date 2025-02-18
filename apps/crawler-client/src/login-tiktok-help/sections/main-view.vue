@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import { LOGIN_TIKTOK_HELP_EVENTS } from '@tk-crawler-client/shared';
 import { ElButton, ElInput } from 'element-plus';
 import { ref } from 'vue';
-import { LOGIN_TIKTOK_HELP_EVENTS } from '../../../shared/constants';
 
 defineOptions({
   name: 'MainView',

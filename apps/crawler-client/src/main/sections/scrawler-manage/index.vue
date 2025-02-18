@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { IsCookieValidResultStatus } from '@tk-crawler-client/shared';
 import { useGlobalStore } from '../../utils/vue';
 import ControlButtons from './control-buttons.vue';
+import CookieCheckErrorView from './cookie-check-error-view.vue';
 import CookieNotValidView from './cookie-not-valid-view.vue';
 
 defineOptions({
@@ -11,6 +13,10 @@ const globalStore = useGlobalStore();
 
 async function loginTiktok() {
   await globalStore.loginTiktok();
+}
+
+async function retryCheckCookieValid() {
+  await globalStore.checkTiktokCookieValid();
 }
 
 async function start() {
@@ -24,8 +30,18 @@ async function stop() {
 <template>
   <div class="scrawler-manage">
     <CookieNotValidView
-      v-if="!globalStore.isTiktokCookieValid"
+      v-if="
+        globalStore.tiktokCookieValidStatus === IsCookieValidResultStatus.FAILED
+      "
       @login-tiktok="loginTiktok"
+    />
+    <CookieCheckErrorView
+      v-else-if="
+        globalStore.tiktokCookieValidStatus !==
+        IsCookieValidResultStatus.SUCCESS
+      "
+      :cookie-valid-status="globalStore.tiktokCookieValidStatus"
+      @retry="retryCheckCookieValid"
     />
     <ControlButtons
       v-else

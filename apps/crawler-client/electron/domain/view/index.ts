@@ -1,4 +1,8 @@
-import type { AnchorScrawledMessage, MessageCenter } from '@tk-crawler/shared';
+import type {
+  AnchorScrawledMessage,
+  MessageCenter,
+  RequestErrorType,
+} from '@tk-crawler/shared';
 import type { Subscription } from 'rxjs';
 import path from 'node:path';
 import process from 'node:process';
@@ -41,9 +45,9 @@ export class ViewManager {
     );
     this._subscriptions.push(
       this._messageCenter.addListener(
-        CrawlerMessage.TIKTOK_REQUEST_ECONNRESET_OR_TIMEOUT,
-        () => {
-          this._onRequestEconnresetOrTimeout();
+        CrawlerMessage.REQUEST_ERROR,
+        (errorType: RequestErrorType) => {
+          this._onRequestError(errorType);
         },
       ),
     );
@@ -83,10 +87,8 @@ export class ViewManager {
     this.mainView.webContents.send(CUSTOM_EVENTS.ANCHOR_SCRAWLED, data);
   }
 
-  private _onRequestEconnresetOrTimeout() {
-    this.mainView.webContents.send(
-      CUSTOM_EVENTS.TIKTOK_REQUEST_ECONNRESET_OR_TIMEOUT,
-    );
+  private _onRequestError(errorType: RequestErrorType) {
+    this.mainView.webContents.send(CUSTOM_EVENTS.REQUEST_ERROR, errorType);
   }
 
   async createWindow() {

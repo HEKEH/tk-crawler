@@ -1,6 +1,6 @@
 import type { AnchorScrawledMessage } from '@tk-crawler/shared';
 import { IsCookieValidResultStatus } from '@tk-crawler-client/shared';
-import { MessageCenter } from '@tk-crawler/shared';
+import { MessageCenter, RequestErrorType } from '@tk-crawler/shared';
 import { markRaw } from 'vue';
 import { CrawlerViewMessage, CUSTOM_EVENTS } from '../constants';
 import {
@@ -76,10 +76,20 @@ export default class GlobalStore {
       },
     );
     this._addEventListener(
-      CUSTOM_EVENTS.TIKTOK_REQUEST_ECONNRESET_OR_TIMEOUT,
-      () => {
+      CUSTOM_EVENTS.REQUEST_ERROR,
+      (_, errorType: RequestErrorType) => {
+        let message: string;
+        if (errorType === RequestErrorType.TIKTOK_REQUEST_ECONNRESET) {
+          message =
+            '连接失败，请检查网络是否有异常，例如是否开启了VPN，且VPN是否开启了全局代理';
+        } else if (errorType === RequestErrorType.TIKTOK_REQUEST_TIMEOUT) {
+          message =
+            '请求超时，请检查网络是否有异常，例如是否开启了VPN，且VPN是否开启了全局代理';
+        } else {
+          message = '请求失败，请检查网络是否有异常';
+        }
         this._notificationQueue.showMessage({
-          message: `请求失败，请检查网络是否有异常，例如是否开启了VPN，且VPN是否开启了全局代理`,
+          message,
           type: 'error',
         });
       },

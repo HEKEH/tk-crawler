@@ -1,8 +1,22 @@
 import type { MessageCenter } from './message-center';
-import { CrawlerMessage } from '../types';
+import { CrawlerMessage, RequestErrorType } from '../types';
 
-export function isTiktokRequestEconnresetOrTimeout(error: any) {
-  return error?.code === 'ETIMEDOUT' || error?.code === 'ECONNRESET';
+export function isTiktokRequestEconnreset(error: any) {
+  return error?.code === 'ECONNRESET';
+}
+
+export function isTiktokRequestTimeout(error: any) {
+  return error?.code === 'ETIMEDOUT';
+}
+
+export function getRequestErrorType(error: any) {
+  if (isTiktokRequestEconnreset(error)) {
+    return RequestErrorType.TIKTOK_REQUEST_ECONNRESET;
+  }
+  if (isTiktokRequestTimeout(error)) {
+    return RequestErrorType.TIKTOK_REQUEST_TIMEOUT;
+  }
+  return RequestErrorType.NORMAL_REQUEST_ERROR;
 }
 
 export function tiktokRequestErrorHandler<T>(
@@ -10,9 +24,10 @@ export function tiktokRequestErrorHandler<T>(
   messageCenter: MessageCenter,
 ) {
   return requestPromise.catch(error => {
-    if (isTiktokRequestEconnresetOrTimeout(error)) {
-      messageCenter.emit(CrawlerMessage.TIKTOK_REQUEST_ECONNRESET_OR_TIMEOUT);
-    }
+    messageCenter.emit(
+      CrawlerMessage.REQUEST_ERROR,
+      getRequestErrorType(error),
+    );
     throw error;
   });
 }

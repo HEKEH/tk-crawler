@@ -8,7 +8,7 @@ import type { TikTokQueryTokens } from '../requests/live';
 import {
   CrawlerMessage,
   FrequencyLimitTaskQueue,
-  isTiktokRequestEconnresetOrTimeout,
+  getRequestErrorType,
 } from '@tk-crawler/shared';
 import { getLogger } from '../infra/logger';
 import { getAnchorInfoFromGiftList, getLiveDiamonds } from '../requests/live';
@@ -179,11 +179,10 @@ export default class AnchorPool {
           error,
         });
       }
-      if (isTiktokRequestEconnresetOrTimeout(error)) {
-        this._messageCenter.emit(
-          CrawlerMessage.TIKTOK_REQUEST_ECONNRESET_OR_TIMEOUT,
-        );
-      }
+      this._messageCenter.emit(
+        CrawlerMessage.REQUEST_ERROR,
+        getRequestErrorType(error),
+      );
       await this._deleteAnchorIdRecord(anchor.user_id);
     }
   }

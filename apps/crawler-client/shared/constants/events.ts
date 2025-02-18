@@ -8,6 +8,6 @@ export const CUSTOM_EVENTS = {
   STOP_LIVE_ANCHOR_CRAWL: 'stop-live-anchor-crawl',
   TIKTOK_COOKIE_OUTDATED: 'tiktok-cookie-outdated',
   ANCHOR_SCRAWLED: 'anchor-scrawled',
-  // 一般是vpn问题
-  TIKTOK_REQUEST_ECONNRESET_OR_TIMEOUT: 'tiktok-request-econnreset-or-timeout',
+  // 请求错误，一般是vpn问题
+  REQUEST_ERROR: 'request-error',
 };

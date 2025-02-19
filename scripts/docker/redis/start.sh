@@ -23,5 +23,7 @@ create_volume_if_not_exists() {
 
 create_volume_if_not_exists tk-crawler-redis-${ENV}
 
+export IMAGE_VERSION=0.0.1
+
 # 使用对应的docker-compose文件启动服务
 docker-compose -p tk-crawler-redis-${ENV} -f docker-compose.yml -f docker-compose.${ENV}.yml --env-file ${ENV_FILE} up -d

@@ -2,7 +2,7 @@ services:
   redis:
     build: .
     container_name: ${CONTAINER_NAME}
-    image: tk-crawler/custom-redis:latest
+    image: tk-crawler/custom-redis:${IMAGE_VERSION}
     environment:
       - REDIS_USERNAME=${REDIS_USERNAME}
       - REDIS_PASSWORD=${REDIS_PASSWORD}

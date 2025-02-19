@@ -9,7 +9,9 @@
       "@tk-crawler/shared/*": ["packages/shared/src/*"],
       "@tk-crawler/shared": ["packages/shared/src/index.ts"],
       "@tk-crawler-client/shared/*": ["apps/crawler-client/shared/*"],
-      "@tk-crawler-client/shared": ["apps/crawler-client/shared/index.ts"]
+      "@tk-crawler-client/shared": ["apps/crawler-client/shared/index.ts"],
+      "@tk-crawler/script-tools/*": ["packages/script-tools/src/*"],
+      "@tk-crawler/script-tools": ["packages/script-tools/src/index.ts"]
     },
     "resolveJsonModule": true,
     "types": [],

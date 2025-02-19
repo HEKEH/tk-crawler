@@ -14,7 +14,9 @@
     "build": "cross-env turbo build",
     "lint": "eslint",
     "prepare": "husky install",
-    "preinstall": "npx only-allow pnpm"
+    "preinstall": "npx only-allow pnpm",
+    "redis:start:dev": "cross-env ./scripts/docker/redis/start.sh development",
+    "redis:start:prod": "cross-env ./scripts/docker/redis/start.sh production"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^3.12.0",

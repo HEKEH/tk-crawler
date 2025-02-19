@@ -1,0 +1,16 @@
+services:
+  redis:
+    build: .
+    container_name: ${CONTAINER_NAME}
+    image: tk-crawler/custom-redis:latest
+    environment:
+      - REDIS_USERNAME=${REDIS_USERNAME}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_MEMORY_LIMIT=${REDIS_MEMORY_LIMIT}
+      - LOG_LEVEL=${LOG_LEVEL}
+    ports:
+      - '${REDIS_PORT}:6379'
+    # deploy:
+    #   resources:
+    #     limits:
+    #       memory: ${REDIS_MEMORY_LIMIT}

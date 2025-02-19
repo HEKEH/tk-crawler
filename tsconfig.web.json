@@ -16,6 +16,7 @@
     "apps/crawler-client/electron/**",
     "packages/core/**",
     "packages/play/**",
+    "packages/script-tools/**",
     "**/node_modules/**",
     "**/dist/**",
     "**/vite.config.*"

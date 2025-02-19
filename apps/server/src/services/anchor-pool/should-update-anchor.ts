@@ -4,8 +4,8 @@ import type {
 } from '@tk-crawler/shared';
 import { anchorId2TimestampMap } from './to-delete';
 
-const UPDATE_INTERVAL = 1000 * 60 * 60;
 // 一小时之内爬到过就不更新
+const UPDATE_INTERVAL = 1000 * 60 * 60;
 
 export async function shouldUpdateAnchor({
   anchor_id,

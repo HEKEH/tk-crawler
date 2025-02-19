@@ -1,6 +1,6 @@
-import type { ProjectConfig } from './utils';
+import type { ProjectConfig } from '@tk-crawler/script-tools';
 import { join } from 'node:path';
-import { LogColor, startProjects } from './utils';
+import { LogColor, startProjects } from '@tk-crawler/script-tools';
 
 /** Projects start order */
 const projects: Array<ProjectConfig | Array<ProjectConfig>> = [

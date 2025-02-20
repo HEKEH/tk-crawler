@@ -3,19 +3,19 @@ import type {
   ShouldUpdateAnchorResponse,
 } from '@tk-crawler/shared';
 import { getConfig } from '../../config';
-import { commonGetRequest } from '../utils/common-request';
+import { commonPostRequest } from '../utils/common-request';
 import { getUrl } from '../utils/get-url';
 
-export async function shouldUpdateAnchor(
+/** 判断主播是否需要更新，同时把当前需要更新的主播记录在redis缓存中，防止重复更新导致资源浪费 */
+export function shouldUpdateAnchors(
   data: ShouldUpdateAnchorRequest,
-): Promise<boolean> {
+): Promise<ShouldUpdateAnchorResponse> {
   const url = getUrl({
     baseUrl: getConfig().ownServerUrl,
     path: '/anchor-pool/should-update-anchor',
-    params: data as unknown as Record<string, string>,
   });
-  const response = await commonGetRequest<ShouldUpdateAnchorResponse>({
+  return commonPostRequest<ShouldUpdateAnchorResponse>({
     url,
+    body: data,
   });
-  return response.data === 1;
 }

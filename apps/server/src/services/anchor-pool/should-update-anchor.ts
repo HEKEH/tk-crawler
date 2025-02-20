@@ -1,6 +1,7 @@
-import type {
-  ShouldUpdateAnchorRequest,
-  ShouldUpdateAnchorResponseData,
+import {
+  type ShouldUpdateAnchorRequest,
+  type ShouldUpdateAnchorResponseData,
+  ShouldUpdateAnchorResult,
 } from '@tk-crawler/shared';
 import { anchorId2TimestampMap } from './to-delete';
 
@@ -8,13 +9,21 @@ import { anchorId2TimestampMap } from './to-delete';
 const UPDATE_INTERVAL = 1000 * 60 * 60;
 
 export async function shouldUpdateAnchor({
-  anchor_id,
+  anchor_ids,
 }: ShouldUpdateAnchorRequest): Promise<ShouldUpdateAnchorResponseData> {
+  const result: ShouldUpdateAnchorResponseData = {};
   // TODO 从redis中获取记录来进行判断
-  if (!anchorId2TimestampMap.has(anchor_id)) {
-    return 1;
-  }
-  const timestamp = anchorId2TimestampMap.get(anchor_id)!;
   const now = Date.now();
-  return now - timestamp < UPDATE_INTERVAL ? 0 : 1;
+  for (const anchor_id of anchor_ids) {
+    if (
+      !anchorId2TimestampMap.has(anchor_id) ||
+      now - anchorId2TimestampMap.get(anchor_id)! > UPDATE_INTERVAL
+    ) {
+      result[anchor_id] = ShouldUpdateAnchorResult.NEED_UPDATE;
+      anchorId2TimestampMap.set(anchor_id, now);
+    } else {
+      result[anchor_id] = ShouldUpdateAnchorResult.NO_NEED_UPDATE;
+    }
+  }
+  return result;
 }

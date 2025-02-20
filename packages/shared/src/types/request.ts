@@ -7,7 +7,23 @@ export enum RESPONSE_CODE {
 }
 
 export interface ShouldUpdateAnchorRequest {
-  anchor_id: string;
+  anchor_ids: string[];
+}
+
+export enum ShouldUpdateAnchorResult {
+  NEED_UPDATE = 1,
+  NO_NEED_UPDATE = 0,
+}
+
+export type ShouldUpdateAnchorResponseData = Record<
+  string,
+  ShouldUpdateAnchorResult
+>;
+
+export interface ShouldUpdateAnchorResponse {
+  status_code: RESPONSE_CODE;
+  data?: ShouldUpdateAnchorResponseData;
+  message?: string;
 }
 
 export interface RecordAnchorCrawlRequest {
@@ -25,15 +41,6 @@ export interface DeleteAnchorCrawlRecordRequest {
 
 export interface DeleteAnchorCrawlRecordResponse {
   status_code: RESPONSE_CODE;
-  message?: string;
-}
-
-/** 1: 需要更新 0: 不需要更新 */
-export type ShouldUpdateAnchorResponseData = 1 | 0;
-
-export interface ShouldUpdateAnchorResponse {
-  status_code: RESPONSE_CODE;
-  data?: ShouldUpdateAnchorResponseData;
   message?: string;
 }
 

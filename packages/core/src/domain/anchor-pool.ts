@@ -9,13 +9,14 @@ import {
   CrawlerMessage,
   FrequencyLimitTaskQueue,
   getRequestErrorType,
+  ShouldUpdateAnchorResult,
 } from '@tk-crawler/shared';
 import { getLogger } from '../infra/logger';
 import { getAnchorInfoFromGiftList, getLiveDiamonds } from '../requests/live';
 import {
   deleteAnchorCrawlRecord,
   recordAnchorCrawl,
-  shouldUpdateAnchor,
+  shouldUpdateAnchors,
   updateAnchor,
 } from '../requests/own-server';
 
@@ -73,8 +74,8 @@ export default class AnchorPool {
     this._taskQueue.clear();
   }
 
-  private _shouldUpdateAnchor(anchorId: string): Promise<boolean> {
-    return shouldUpdateAnchor({ anchor_id: anchorId });
+  private _shouldUpdateAnchors(anchorIds: string[]) {
+    return shouldUpdateAnchors({ anchor_ids: anchorIds });
   }
 
   private async _recordAnchorCrawl(anchorId: string) {
@@ -109,9 +110,29 @@ export default class AnchorPool {
     if (this._stopped) {
       return;
     }
-    anchors.forEach(async anchor => {
-      this._taskQueue.addTask(() => this._addAnchor(anchor));
-    });
+    try {
+      const shouldUpdateAnchorIdsResponse = await this._shouldUpdateAnchors(
+        anchors.map(anchor => anchor.user_id),
+      );
+      if (shouldUpdateAnchorIdsResponse.status_code !== 0) {
+        return;
+      }
+      const shouldUpdateData = shouldUpdateAnchorIdsResponse.data!;
+      anchors.forEach(anchor => {
+        if (
+          shouldUpdateData[anchor.user_id] ===
+          ShouldUpdateAnchorResult.NEED_UPDATE
+        ) {
+          this._taskQueue.addTask(() => this._addAnchor(anchor));
+        }
+      });
+    } catch (error) {
+      getLogger().error('[addAnchors] error', error);
+      this._messageCenter.emit(
+        CrawlerMessage.REQUEST_ERROR,
+        getRequestErrorType(error),
+      );
+    }
   }
 
   private _checkStatusCode(statusCode: number) {
@@ -168,12 +189,8 @@ export default class AnchorPool {
   private async _addAnchor(anchor: RawAnchorParam) {
     try {
       if (this._stopped) {
-        return;
+        throw new StopScrawlError();
       }
-      if (!(await this._shouldUpdateAnchor(anchor.user_id))) {
-        return;
-      }
-      await this._recordAnchorCrawl(anchor.user_id);
       const anchorInfo = await this._completeAnchorInfo(anchor);
       await this._saveAnchor(anchorInfo);
     } catch (error) {

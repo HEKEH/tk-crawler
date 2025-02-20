@@ -3,7 +3,7 @@ import AnchorPoolController from '../controllers/anchor-pool';
 
 const anchorPoolRouter = new Router({ prefix: '/anchor-pool' });
 
-anchorPoolRouter.get(
+anchorPoolRouter.post(
   '/should-update-anchor',
   AnchorPoolController.shouldUpdateAnchor,
 );

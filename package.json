@@ -10,13 +10,13 @@
     "pnpm": ">= 8"
   },
   "scripts": {
-    "dev": "cross-env ts-node scripts/dev-start.ts",
+    "dev": "cross-env ts-node --project ./tsconfig.node.json --files -r tsconfig-paths/register ./scripts/dev-start.ts",
     "build": "cross-env turbo build",
     "lint": "eslint",
     "prepare": "husky install",
     "preinstall": "npx only-allow pnpm",
-    "redis:start:dev": "cross-env ./scripts/docker/redis/start.sh development",
-    "redis:start:prod": "cross-env ./scripts/docker/redis/start.sh production"
+    "redis:start:dev": "cross-env ts-node --project ./tsconfig.node.json --files -r tsconfig-paths/register ./scripts/docker/redis/start.ts development",
+    "redis:start:prod": "cross-env ts-node --project ./tsconfig.node.json --files -r tsconfig-paths/register ./scripts/docker/redis/start.ts production"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^3.12.0",

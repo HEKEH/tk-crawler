@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# deprecated, 使用start.ts代替，拥有更好的跨平台支持
+
 cd "$(dirname "$0")"
 
 ENV=${1:-development}

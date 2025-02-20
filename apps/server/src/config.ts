@@ -15,6 +15,20 @@ if (!allowOrigin) {
   process.exit(1);
 }
 
+const redisHost = env.REDIS_HOST;
+const redisPort = env.REDIS_PORT;
+const redisPassword = env.REDIS_PASSWORD;
+// username 可选
+const redisUsername = env.REDIS_USERNAME;
+if (
+  !redisHost ||
+  !(redisPort && Number.parseInt(redisPort, 10)) ||
+  !redisPassword
+) {
+  logger.error('REDIS_HOST, REDIS_PORT, REDIS_PASSWORD is required');
+  process.exit(1);
+}
+
 const defaultLanguage = env.DEFAULT_LANGUAGE;
 
 const config = {
@@ -22,10 +36,10 @@ const config = {
   port: Number.parseInt(port, 10),
   allowOrigin,
   defaultLanguage,
-  /** mongodb url */
-  // mongoDBUrl: env.MONGO_DB_URL || 'mongodb://localhost:27017/yx-chat',
-  // adminUser: env.ADMIN_USER,
-  // adminPassword: env.ADMIN_PASSWORD,
+  redisHost,
+  redisPort: Number.parseInt(redisPort, 10),
+  redisPassword,
+  redisUsername,
 
   /** jwt salt */
   jwtSecret: env.JWT_SECRET || 'yx-tkc-jwt-0',

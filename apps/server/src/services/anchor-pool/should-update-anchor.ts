@@ -3,27 +3,28 @@ import {
   type ShouldUpdateAnchorResponseData,
   ShouldUpdateAnchorResult,
 } from '@tk-crawler/shared';
-import { anchorId2TimestampMap } from './to-delete';
-
-// 一小时之内爬到过就不更新
-const UPDATE_INTERVAL = 1000 * 60 * 60;
+import { ANCHOR_CRAWL_OUTDATE_TIME } from './constants';
+import { anchorCrawlRecordRedisNamespace } from './redis-namespaces';
 
 export async function shouldUpdateAnchor({
   anchor_ids,
 }: ShouldUpdateAnchorRequest): Promise<ShouldUpdateAnchorResponseData> {
   const result: ShouldUpdateAnchorResponseData = {};
-  // TODO 从redis中获取记录来进行判断
-  const now = Date.now();
-  for (const anchor_id of anchor_ids) {
-    if (
-      !anchorId2TimestampMap.has(anchor_id) ||
-      now - anchorId2TimestampMap.get(anchor_id)! > UPDATE_INTERVAL
-    ) {
-      result[anchor_id] = ShouldUpdateAnchorResult.NEED_UPDATE;
-      anchorId2TimestampMap.set(anchor_id, now);
-    } else {
-      result[anchor_id] = ShouldUpdateAnchorResult.NO_NEED_UPDATE;
+  const crawlRecord = await anchorCrawlRecordRedisNamespace.mget(anchor_ids);
+  const toRecordIds: Array<string> = [];
+  anchor_ids.forEach((anchor_id, index) => {
+    const record = crawlRecord[index];
+    result[anchor_id] = record
+      ? ShouldUpdateAnchorResult.NO_NEED_UPDATE
+      : ShouldUpdateAnchorResult.NEED_UPDATE;
+    if (!record) {
+      toRecordIds.push(anchor_id);
     }
-  }
+  });
+  /** 记录开始爬取的时间 */
+  await anchorCrawlRecordRedisNamespace.mset(
+    toRecordIds.map(id => [id, 1]),
+    ANCHOR_CRAWL_OUTDATE_TIME,
+  );
   return result;
 }

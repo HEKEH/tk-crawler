@@ -1,10 +1,9 @@
 import type { RecordAnchorCrawlRequest } from '@tk-crawler/shared';
-import { anchorId2TimestampMap } from './to-delete';
+import { ANCHOR_CRAWL_OUTDATE_TIME } from './constants';
+import { anchorCrawlRecordRedisNamespace } from './redis-namespaces';
 
 export async function recordAnchorCrawl({
   anchor_id,
 }: RecordAnchorCrawlRequest) {
-  // TODO redis
-  const now = Date.now();
-  anchorId2TimestampMap.set(anchor_id, now);
+  anchorCrawlRecordRedisNamespace.set(anchor_id, 1, ANCHOR_CRAWL_OUTDATE_TIME);
 }

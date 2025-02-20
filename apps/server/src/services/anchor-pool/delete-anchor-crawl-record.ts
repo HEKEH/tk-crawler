@@ -1,9 +1,8 @@
 import type { DeleteAnchorCrawlRecordRequest } from '@tk-crawler/shared';
-import { anchorId2TimestampMap } from './to-delete';
+import { anchorCrawlRecordRedisNamespace } from './redis-namespaces';
 
 export async function deleteAnchorCrawlRecord({
   anchor_id,
 }: DeleteAnchorCrawlRecordRequest) {
-  // TODO redis
-  anchorId2TimestampMap.delete(anchor_id);
+  await anchorCrawlRecordRedisNamespace.del(anchor_id);
 }

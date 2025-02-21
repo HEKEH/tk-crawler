@@ -1,22 +1,56 @@
+import type { ExecOptions } from 'node:child_process';
 import { exec } from 'node:child_process';
 import { access, readFile, stat, writeFile } from 'node:fs/promises';
+import { platform } from 'node:os';
 import process from 'node:process';
 import { promisify } from 'node:util';
 import { log, logError } from '@tk-crawler/script-tools';
 
-const execAsync = promisify(exec);
-
 interface Config {
   env: string;
   envFile: string;
-  imageName: string;
   lastBuildFile: string;
-  imageVersion: string;
 }
 
-const IMAGE_VERSION = '0.0.1';
-
+// --- 换项目时需要修改的部分 ---
 const PROJECT_NAME = 'tk-crawler-redis';
+const IMAGE_NAME = 'tk-crawler/custom-redis';
+const IMAGE_VERSION = '0.0.1';
+// 重新构建需要检查的关键文件
+const FilesToCheckForRebuild = [
+  'Dockerfile',
+  'docker-entrypoint.sh',
+  'redis.template.conf',
+  'docker-compose.build.yml',
+  'start.ts',
+];
+function getVolumeSettings(
+  env: string,
+): { envKey: string; volumeName: string }[] {
+  return [{ envKey: 'VOLUME_NAME', volumeName: `${PROJECT_NAME}-${env}` }];
+}
+// --- 换项目时需要修改的部分 ---
+
+const execAsync = promisify(exec);
+
+const isWindows = platform() === 'win32';
+
+// 根据平台配置 exec 选项
+function getExecOptions(): ExecOptions {
+  return {
+    // Windows 上隐藏命令窗口
+    windowsHide: isWindows,
+  };
+}
+
+async function execCommand(command: string): Promise<string> {
+  try {
+    const { stdout } = await execAsync(command, getExecOptions());
+    return stdout.trim();
+  } catch (error) {
+    throw new Error(`Command failed: ${command}\n${error}`);
+  }
+}
 
 async function fileExists(file: string): Promise<boolean> {
   try {
@@ -27,7 +61,26 @@ async function fileExists(file: string): Promise<boolean> {
   }
 }
 
+async function imageExists(): Promise<boolean> {
+  try {
+    const imageName = `${IMAGE_NAME}:${IMAGE_VERSION}`;
+    await execCommand(`docker image inspect ${imageName}`);
+    return true;
+  } catch {
+    // 如果命令执行失败（镜像不存在），返回 false
+    return false;
+  }
+}
+
 async function needRebuild(config: Config): Promise<boolean> {
+  if (!(await imageExists())) {
+    log({
+      projectName: PROJECT_NAME,
+      message: 'Image not found, rebuild needed',
+    });
+    return true;
+  }
+
   const { lastBuildFile } = config;
 
   // 检查构建记录文件是否存在
@@ -44,17 +97,7 @@ async function needRebuild(config: Config): Promise<boolean> {
       await readFile(lastBuildFile, 'utf-8'),
     );
 
-    // 需要检查的关键文件
-    const filesToCheck = [
-      'Dockerfile',
-      'docker-entrypoint.sh',
-      'redis.template.conf',
-      'docker-compose.yml',
-      'start.ts',
-      config.envFile,
-    ];
-
-    for (const file of filesToCheck) {
+    for (const file of FilesToCheckForRebuild) {
       if (await fileExists(file)) {
         const stats = await stat(file);
         if (stats.mtimeMs / 1000 > lastBuildTime) {
@@ -83,7 +126,7 @@ async function needRebuild(config: Config): Promise<boolean> {
 
 async function createVolumeIfNotExists(volumeName: string): Promise<void> {
   try {
-    await execAsync(`docker volume inspect ${volumeName}`);
+    await execCommand(`docker volume inspect ${volumeName}`);
     log({
       projectName: PROJECT_NAME,
       message: `Volume ${volumeName} already exists`,
@@ -93,7 +136,7 @@ async function createVolumeIfNotExists(volumeName: string): Promise<void> {
       projectName: PROJECT_NAME,
       message: `Creating volume: ${volumeName}`,
     });
-    await execAsync(`docker volume create ${volumeName}`);
+    await execCommand(`docker volume create ${volumeName}`);
   }
 }
 
@@ -107,10 +150,9 @@ async function main() {
     const config: Config = {
       env,
       envFile: `.env.${env}`,
-      imageName: 'tk-crawler/custom-redis',
-      lastBuildFile: `.last_build_${env}`,
-      imageVersion: IMAGE_VERSION,
+      lastBuildFile: '.last_build',
     };
+    process.env.IMAGE_NAME = IMAGE_NAME;
     process.env.IMAGE_VERSION = IMAGE_VERSION;
 
     // 检查环境文件是否存在
@@ -118,10 +160,15 @@ async function main() {
       throw new Error(`Error: ${config.envFile} file not found`);
     }
 
+    const CONTAINER_NAME = `${PROJECT_NAME}-${config.env}`;
+    process.env.CONTAINER_NAME = CONTAINER_NAME;
+
     // 创建 volume
-    const VOLUME_NAME = `tk-crawler-redis-${config.env}`;
-    await createVolumeIfNotExists(VOLUME_NAME);
-    process.env.VOLUME_NAME = VOLUME_NAME;
+    const volumeSettings = getVolumeSettings(config.env);
+    for (const { envKey, volumeName } of volumeSettings) {
+      await createVolumeIfNotExists(volumeName);
+      process.env[envKey] = volumeName;
+    }
 
     // 检查是否需要重新构建
     if (await needRebuild(config)) {
@@ -129,9 +176,7 @@ async function main() {
         projectName: PROJECT_NAME,
         message: 'Building new image...',
       });
-      await execAsync(
-        `docker-compose -p tk-crawler-redis-${config.env} -f docker-compose.yml --env-file ${config.envFile} build`,
-      );
+      await execCommand(`docker-compose -f docker-compose.build.yml build`);
       // 记录构建时间
       await writeFile(
         config.lastBuildFile,
@@ -149,8 +194,8 @@ async function main() {
       projectName: PROJECT_NAME,
       message: 'Starting services...',
     });
-    await execAsync(
-      `docker-compose -p tk-crawler-redis-${config.env} -f docker-compose.yml --env-file ${config.envFile} up -d`,
+    await execCommand(
+      `docker-compose -p ${CONTAINER_NAME} -f docker-compose.run.yml --env-file ${config.envFile} up -d`,
     );
 
     log({

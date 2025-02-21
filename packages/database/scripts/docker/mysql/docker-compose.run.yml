@@ -1,8 +1,5 @@
 services:
   mysql:
-    build:
-      context: .
-      dockerfile: Dockerfile
     container_name: ${CONTAINER_NAME}
     image: tk-crawler/custom-mysql:${IMAGE_VERSION}
     restart: unless-stopped
@@ -65,10 +62,10 @@ services:
 volumes:
   mysql_data:
     external: true
-    name: ${CONTAINER_NAME}-data
+    name: ${DATA_VOLUME_NAME}
   mysql_logs:
     external: true
-    name: ${CONTAINER_NAME}-logs
+    name: ${LOGS_VOLUME_NAME}
 # networks:
 #   mysql_network:
 #     driver: bridge

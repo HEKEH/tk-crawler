@@ -1,0 +1,6 @@
+services:
+  mysql:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: tk-crawler/custom-mysql:${IMAGE_VERSION}

@@ -1,0 +1,6 @@
+services:
+  redis:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}

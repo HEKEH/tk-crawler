@@ -1,12 +1,25 @@
-#!/bin/sh
-set -e # 遇到错误立即退出
+set -e
 
-while ! mysqladmin ping -h"localhost" --silent; do
+# 创建临时配置文件
+cat >/tmp/mysql.cnf <<EOF
+[client]
+user=root
+password=${MYSQL_ROOT_PASSWORD}
+EOF
+
+# 设置配置文件权限
+chmod 600 /tmp/mysql.cnf
+
+while ! mysqladmin --defaults-file=/tmp/mysql.cnf ping -h"localhost" --silent; do
   sleep 1
 done
 
-# 创建healthcheck用户
-mysql -uroot -p"${MYSQL_ROOT_PASSWORD}" <<-EOSQL
-    CREATE USER 'healthcheck'@'localhost' IDENTIFIED BY '${MYSQL_HEALTHCHECK_PASSWORD}';
+# 使用 caching_sha2_password 认证插件创建用户
+mysql --defaults-file=/tmp/mysql.cnf <<-EOSQL
+    CREATE USER IF NOT EXISTS 'healthcheck'@'localhost'
+    IDENTIFIED WITH caching_sha2_password BY '${MYSQL_HEALTHCHECK_PASSWORD}';
     GRANT USAGE ON *.* TO 'healthcheck'@'localhost';
 EOSQL
+
+# 删除临时配置文件
+rm -f /tmp/mysql.cnf

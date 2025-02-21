@@ -52,6 +52,10 @@ export function logError({
   color?: LogColor;
   message: unknown;
 }): void {
+  if (message instanceof Error) {
+    console.error(message);
+    return;
+  }
   const formattedMessage = formatMessage(message);
 
   if (formattedMessage.toLowerCase().includes('warning')) {

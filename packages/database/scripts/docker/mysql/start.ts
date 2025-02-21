@@ -1,10 +1,14 @@
 import type { ExecOptions } from 'node:child_process';
 import { exec } from 'node:child_process';
+import { existsSync } from 'node:fs';
 import { access, readFile, stat, writeFile } from 'node:fs/promises';
 import { platform } from 'node:os';
+import { join } from 'node:path';
 import process from 'node:process';
 import { promisify } from 'node:util';
 import { log, logError } from '@tk-crawler/script-tools';
+import { config } from 'dotenv';
+import { generateCertificates } from './generate-certs';
 
 interface Config {
   env: string;
@@ -35,6 +39,19 @@ function getVolumeSettings(
     },
   ];
 }
+function loadEnvFile(env: string): void {
+  const envFile = join(__dirname, `.env.${env}`);
+  const result = config({ path: envFile });
+
+  if (result.error) {
+    throw new Error(`Error loading ${envFile}: ${result.error.message}`);
+  }
+}
+
+function getCertDir(env: string): string {
+  return join(__dirname, `../../../data/mysql-certs-${env}`);
+}
+
 // --- 换项目时需要修改的部分 ---
 
 const execAsync = promisify(exec);
@@ -150,21 +167,34 @@ async function main() {
   try {
     // 切换到脚本所在目录
     process.chdir(__dirname);
-
     const env = process.argv[2] || 'development';
-
     const config: Config = {
       env,
       envFile: `.env.${env}`,
       lastBuildFile: '.last_build',
     };
-    process.env.IMAGE_NAME = IMAGE_NAME;
-    process.env.IMAGE_VERSION = IMAGE_VERSION;
 
     // 检查环境文件是否存在
     if (!(await fileExists(config.envFile))) {
       throw new Error(`Error: ${config.envFile} file not found`);
     }
+
+    loadEnvFile(env);
+    const certDir = getCertDir(env);
+    if (!existsSync(certDir)) {
+      generateCertificates(certDir, {
+        ca: process.env.MYSQL_CERT_SEED_CA,
+        server: process.env.MYSQL_CERT_SEED_SERVER,
+        client: process.env.MYSQL_CERT_SEED_CLIENT,
+      });
+      log({
+        projectName: PROJECT_NAME,
+        message: 'SSL certificates generated successfully',
+      });
+    }
+
+    process.env.IMAGE_NAME = IMAGE_NAME;
+    process.env.IMAGE_VERSION = IMAGE_VERSION;
 
     const CONTAINER_NAME = `${PROJECT_NAME}-${config.env}`;
     process.env.CONTAINER_NAME = CONTAINER_NAME;
@@ -209,6 +239,7 @@ async function main() {
       message: 'Services started successfully',
     });
   } catch (error) {
+    console.error(error);
     logError({
       projectName: PROJECT_NAME,
       message: error,

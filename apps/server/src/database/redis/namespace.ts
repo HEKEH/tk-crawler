@@ -38,14 +38,14 @@ export class RedisNamespace {
     await redisClient.del(this.getKey(key));
   }
 
-  // 获取该命名空间下的所有键
+  /** 获取该命名空间下的所有键 */
   async keys(): Promise<string[]> {
     const keys = await redisClient.keys(`${this._prefix}:*`);
     // 移除前缀返回纯键名
     return keys.map(key => key.replace(`${this._prefix}:`, ''));
   }
 
-  // 删除该命名空间下的所有键
+  /** 删除该命名空间下的所有键 */
   async clear(): Promise<void> {
     const keys = await redisClient.keys(`${this._prefix}:*`);
     if (keys.length > 0) {

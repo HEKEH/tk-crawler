@@ -18,6 +18,7 @@
     "packages/core/**",
     "packages/play/**",
     "packages/script-tools/**",
+    "packages/database/**",
     "**/node_modules/**",
     "**/dist/**",
     "**/vite.config.*"

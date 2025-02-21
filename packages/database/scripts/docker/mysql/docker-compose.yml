@@ -1,0 +1,74 @@
+services:
+  mysql:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ${CONTAINER_NAME}
+    image: tk-crawler/custom-mysql:${IMAGE_VERSION}
+    restart: unless-stopped
+    environment:
+      # 基本配置
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: tk_crawler_mysql
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+
+      # 时区
+      TZ: Asia/Shanghai
+
+      # 一些基本系统变量
+      MYSQL_MAX_CONNECTIONS: 1000
+      MYSQL_CONNECT_TIMEOUT: 5
+
+      # 日志相关
+      MYSQL_LOG_ERROR_VERBOSITY: 2
+      MYSQL_SLOW_QUERY_LOG: 1
+      MYSQL_LONG_QUERY_TIME: 2
+
+      # SQL模式
+      MYSQL_SQL_MODE: 'STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION'
+
+      # 自定义健康检查
+      MYSQL_HEALTHCHECK_PASSWORD: ${MYSQL_HEALTHCHECK_PASSWORD}
+    ports:
+      - '${MYSQL_PORT}:3306'
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - mysql_logs:/var/log/mysql
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'mysqladmin',
+          'ping',
+          '-h',
+          'localhost',
+          '-u',
+          'healthcheck',
+          '--password=${MYSQL_HEALTHCHECK_PASSWORD}',
+        ]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 30s
+    # networks:
+    #   - mysql_network
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+volumes:
+  mysql_data:
+    external: true
+    name: ${CONTAINER_NAME}-data
+  mysql_logs:
+    external: true
+    name: ${CONTAINER_NAME}-logs
+# networks:
+#   mysql_network:
+#     driver: bridge

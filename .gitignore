@@ -25,3 +25,6 @@ dist-ssr
 backup
 
 .env.production
+
+.last_build_development
+.last_build_production

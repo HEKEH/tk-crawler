@@ -34,10 +34,7 @@ function execCommand(command: string): void {
 
 // 证书配置
 const CERT_CONFIG = {
-  validity: {
-    notBefore: '20250201000000Z', // Feb 1, 2025
-    notAfter: '20350201000000Z', // Feb 1, 2035
-  },
+  days: 3650, // 10 years
   serial: 1000,
   subject: {
     country: 'SG',
@@ -48,54 +45,16 @@ const CERT_CONFIG = {
   },
 };
 
-// 使用种子生成确定性的私钥
-function generateDeterministicKey(seed: string, outputFile: string): void {
-  // 使用平台无关的临时文件路径
-  const randFile = join(process.cwd(), '.tmp-rand.bin');
-
-  try {
-    // 使用单个确定性命令生成随机数据
-    execCommand(
-      `echo "${seed}" | openssl dgst -sha512 -binary > "${randFile}"`,
-    );
-
-    // 使用固定参数生成私钥
-    execCommand(
-      `openssl genrsa -out "${outputFile}" ` +
-        `-rand "${randFile}" ` +
-        `-f4 ` + // 使用固定的公钥指数
-        `2048`,
-    );
-  } finally {
-    // 清理临时文件
-    if (existsSync(randFile)) {
-      rmSync(randFile);
-    }
-  }
-}
-
 function getSubjectString(cn: string): string {
   const { country, state, locality, organization, organizationalUnit } =
     CERT_CONFIG.subject;
   return `/C=${country}/ST=${state}/L=${locality}/O=${organization}/OU=${organizationalUnit}/CN=${cn}`;
 }
 
-/** 生成确定性证书，seeds保证唯一性 */
-function generateCertificates(
-  certDir: string,
-  seeds: {
-    ca?: string;
-    server?: string;
-    client?: string;
-  },
-): void {
+function generateCertificates(certDir: string): void {
   checkOpenSSL();
 
   try {
-    if (!seeds.ca || !seeds.server || !seeds.client) {
-      throw new Error('Missing seeds for CA, server, or client');
-    }
-
     if (!existsSync(certDir)) {
       mkdirSync(certDir, { recursive: true });
     }
@@ -108,19 +67,18 @@ function generateCertificates(
     const CLIENT_CSR = join(certDir, 'client-req.pem');
     const CLIENT_CERT = join(certDir, 'client-cert.pem');
 
-    // 生成 CA 证书
-    generateDeterministicKey(seeds.ca, CA_KEY);
+    // Generate CA key and certificate
+    execCommand(`openssl genrsa -out "${CA_KEY}" 2048`);
     execCommand(
       `openssl req -new -x509 -nodes ` +
         `-key "${CA_KEY}" -out "${CA_CERT}" ` +
         `-subj "${getSubjectString('TK-Crawler-MySQL-CA')}" ` +
         `-set_serial ${CERT_CONFIG.serial} ` +
-        `-not_before "${CERT_CONFIG.validity.notBefore}" ` +
-        `-not_after "${CERT_CONFIG.validity.notAfter}"`,
+        `-days ${CERT_CONFIG.days}`,
     );
 
-    // 生成服务器证书
-    generateDeterministicKey(seeds.server, SERVER_KEY);
+    // Generate server certificate
+    execCommand(`openssl genrsa -out "${SERVER_KEY}" 2048`);
     execCommand(
       `openssl req -new -nodes ` +
         `-key "${SERVER_KEY}" -out "${SERVER_CSR}" ` +
@@ -131,12 +89,11 @@ function generateCertificates(
         `-CA "${CA_CERT}" -CAkey "${CA_KEY}" ` +
         `-out "${SERVER_CERT}" ` +
         `-set_serial ${CERT_CONFIG.serial + 1} ` +
-        `-not_before "${CERT_CONFIG.validity.notBefore}" ` +
-        `-not_after "${CERT_CONFIG.validity.notAfter}"`,
+        `-days ${CERT_CONFIG.days}`,
     );
 
-    // 生成客户端证书
-    generateDeterministicKey(seeds.client, CLIENT_KEY);
+    // Generate client certificate
+    execCommand(`openssl genrsa -out "${CLIENT_KEY}" 2048`);
     execCommand(
       `openssl req -new -nodes ` +
         `-key "${CLIENT_KEY}" -out "${CLIENT_CSR}" ` +
@@ -147,11 +104,10 @@ function generateCertificates(
         `-CA "${CA_CERT}" -CAkey "${CA_KEY}" ` +
         `-out "${CLIENT_CERT}" ` +
         `-set_serial ${CERT_CONFIG.serial + 2} ` +
-        `-not_before "${CERT_CONFIG.validity.notBefore}" ` +
-        `-not_after "${CERT_CONFIG.validity.notAfter}"`,
+        `-days ${CERT_CONFIG.days}`,
     );
 
-    // 设置文件权限（非 Windows 系统）
+    // Set file permissions (non-Windows systems)
     if (!isWindows) {
       execCommand(`chmod 644 "${CA_CERT}" "${SERVER_CERT}" "${CLIENT_CERT}"`);
       execCommand(`chmod 600 "${CA_KEY}" "${SERVER_KEY}" "${CLIENT_KEY}"`);

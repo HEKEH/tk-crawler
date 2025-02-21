@@ -190,11 +190,7 @@ async function main() {
     loadEnvFile(env);
     const absoluteCertDir = join(__dirname, config.certDir);
     if (!existsSync(absoluteCertDir)) {
-      generateCertificates(absoluteCertDir, {
-        ca: process.env.MYSQL_CERT_SEED_CA,
-        server: process.env.MYSQL_CERT_SEED_SERVER,
-        client: process.env.MYSQL_CERT_SEED_CLIENT,
-      });
+      generateCertificates(absoluteCertDir);
       log({
         projectName: PROJECT_NAME,
         message: 'SSL certificates generated successfully',

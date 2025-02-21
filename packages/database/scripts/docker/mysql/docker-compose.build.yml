@@ -3,4 +3,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: tk-crawler/custom-mysql:${IMAGE_VERSION}
+      args:
+        CERT_DIR: ${CERT_DIR}
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}

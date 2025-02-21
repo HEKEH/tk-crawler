@@ -13,12 +13,16 @@ import { generateCertificates } from './generate-certs';
 interface Config {
   env: string;
   envFile: string;
+  imageName: string;
   lastBuildFile: string;
+  certDir: string;
 }
 
 // --- 换项目时需要修改的部分 ---
 const PROJECT_NAME = 'tk-crawler-mysql';
-const IMAGE_NAME = 'tk-crawler/custom-mysql';
+function getImageName(env: string): string {
+  return `tk-crawler/custom-mysql-${env}`;
+}
 const IMAGE_VERSION = '0.0.1';
 // 重新构建需要检查的关键文件
 const FilesToCheckForRebuild = [
@@ -49,7 +53,7 @@ function loadEnvFile(env: string): void {
 }
 
 function getCertDir(env: string): string {
-  return join(__dirname, `../../../certs/mysql/${env}`);
+  return `certs/${env}`;
 }
 
 // --- 换项目时需要修改的部分 ---
@@ -84,10 +88,9 @@ async function fileExists(file: string): Promise<boolean> {
   }
 }
 
-async function imageExists(): Promise<boolean> {
+async function imageExists(imageName: string): Promise<boolean> {
   try {
-    const imageName = `${IMAGE_NAME}:${IMAGE_VERSION}`;
-    await execCommand(`docker image inspect ${imageName}`);
+    await execCommand(`docker image inspect ${imageName}:${IMAGE_VERSION}`);
     return true;
   } catch {
     // 如果命令执行失败（镜像不存在），返回 false
@@ -96,7 +99,7 @@ async function imageExists(): Promise<boolean> {
 }
 
 async function needRebuild(config: Config): Promise<boolean> {
-  if (!(await imageExists())) {
+  if (!(await imageExists(config.imageName))) {
     log({
       projectName: PROJECT_NAME,
       message: 'Image not found, rebuild needed',
@@ -171,7 +174,9 @@ async function main() {
     const config: Config = {
       env,
       envFile: `.env.${env}`,
-      lastBuildFile: '.last_build',
+      lastBuildFile: `.last_build_${env}`,
+      imageName: getImageName(env),
+      certDir: getCertDir(env),
     };
 
     // 检查环境文件是否存在
@@ -180,9 +185,9 @@ async function main() {
     }
 
     loadEnvFile(env);
-    const certDir = getCertDir(env);
-    if (!existsSync(certDir)) {
-      generateCertificates(certDir, {
+    const absoluteCertDir = join(__dirname, config.certDir);
+    if (!existsSync(absoluteCertDir)) {
+      generateCertificates(absoluteCertDir, {
         ca: process.env.MYSQL_CERT_SEED_CA,
         server: process.env.MYSQL_CERT_SEED_SERVER,
         client: process.env.MYSQL_CERT_SEED_CLIENT,
@@ -193,8 +198,9 @@ async function main() {
       });
     }
 
-    process.env.IMAGE_NAME = IMAGE_NAME;
+    process.env.IMAGE_NAME = config.imageName;
     process.env.IMAGE_VERSION = IMAGE_VERSION;
+    process.env.CERT_DIR = config.certDir;
 
     const CONTAINER_NAME = `${PROJECT_NAME}-${config.env}`;
     process.env.CONTAINER_NAME = CONTAINER_NAME;

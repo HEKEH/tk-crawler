@@ -35,7 +35,7 @@ function execCommand(command: string): void {
 // 证书配置
 const CERT_CONFIG = {
   validity: {
-    days: 3650, // 10年有效期
+    notAfter: '20350101000000Z', // Jan 1, 2035
   },
   serial: 1000,
   subject: {
@@ -108,10 +108,10 @@ function generateCertificates(
     generateDeterministicKey(seeds.ca, CA_KEY);
     execCommand(
       `openssl req -new -x509 -nodes ` +
-        `-days ${CERT_CONFIG.validity.days} ` +
         `-key "${CA_KEY}" -out "${CA_CERT}" ` +
         `-subj "${getSubjectString('TK-Crawler-MySQL-CA')}" ` +
-        `-set_serial ${CERT_CONFIG.serial}`,
+        `-set_serial ${CERT_CONFIG.serial} ` +
+        `-not_after "${CERT_CONFIG.validity.notAfter}"`,
     );
 
     // 生成服务器证书
@@ -123,10 +123,10 @@ function generateCertificates(
     );
     execCommand(
       `openssl x509 -req -in "${SERVER_CSR}" ` +
-        `-days ${CERT_CONFIG.validity.days} ` +
         `-CA "${CA_CERT}" -CAkey "${CA_KEY}" ` +
         `-out "${SERVER_CERT}" ` +
-        `-set_serial ${CERT_CONFIG.serial + 1}`,
+        `-set_serial ${CERT_CONFIG.serial + 1} ` +
+        `-not_after "${CERT_CONFIG.validity.notAfter}"`,
     );
 
     // 生成客户端证书
@@ -138,10 +138,10 @@ function generateCertificates(
     );
     execCommand(
       `openssl x509 -req -in "${CLIENT_CSR}" ` +
-        `-days ${CERT_CONFIG.validity.days} ` +
         `-CA "${CA_CERT}" -CAkey "${CA_KEY}" ` +
         `-out "${CLIENT_CERT}" ` +
-        `-set_serial ${CERT_CONFIG.serial + 2}`,
+        `-set_serial ${CERT_CONFIG.serial + 2} ` +
+        `-not_after "${CERT_CONFIG.validity.notAfter}"`,
     );
 
     // 设置文件权限（非 Windows 系统）

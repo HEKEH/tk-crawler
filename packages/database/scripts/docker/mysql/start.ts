@@ -49,7 +49,7 @@ function loadEnvFile(env: string): void {
 }
 
 function getCertDir(env: string): string {
-  return join(__dirname, `../../../data/mysql-certs-${env}`);
+  return join(__dirname, `../../../certs/mysql/${env}`);
 }
 
 // --- 换项目时需要修改的部分 ---

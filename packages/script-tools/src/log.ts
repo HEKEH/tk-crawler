@@ -14,7 +14,7 @@ export enum LogColor {
 
 function formatMessage(message: unknown | unknown[]): string {
   return typeof message === 'object'
-    ? JSON.stringify(message)
+    ? JSON.stringify(message, null, 2)
     : String(message);
 }
 

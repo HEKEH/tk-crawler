@@ -8,9 +8,15 @@ services:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
       - REDIS_MEMORY_LIMIT=${REDIS_MEMORY_LIMIT}
       - LOG_LEVEL=${LOG_LEVEL}
+    volumes:
+      - redis_data:/data
     ports:
       - '${REDIS_PORT}:6379'
     # deploy:
     #   resources:
     #     limits:
     #       memory: ${REDIS_MEMORY_LIMIT}
+volumes:
+  redis_data:
+    external: true
+    name: ${VOLUME_NAME}

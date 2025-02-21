@@ -51,7 +51,6 @@ async function needRebuild(config: Config): Promise<boolean> {
       'redis.template.conf',
       'docker-compose.yml',
       'start.ts',
-      `docker-compose.${config.env}.yml`,
       config.envFile,
     ];
 
@@ -120,8 +119,9 @@ async function main() {
     }
 
     // 创建 volume
-    const volumeName = `tk-crawler-redis-${config.env}`;
-    await createVolumeIfNotExists(volumeName);
+    const VOLUME_NAME = `tk-crawler-redis-${config.env}`;
+    await createVolumeIfNotExists(VOLUME_NAME);
+    process.env.VOLUME_NAME = VOLUME_NAME;
 
     // 检查是否需要重新构建
     if (await needRebuild(config)) {
@@ -130,7 +130,7 @@ async function main() {
         message: 'Building new image...',
       });
       await execAsync(
-        `docker-compose -p tk-crawler-redis-${config.env} -f docker-compose.yml -f docker-compose.${config.env}.yml --env-file ${config.envFile} build`,
+        `docker-compose -p tk-crawler-redis-${config.env} -f docker-compose.yml --env-file ${config.envFile} build`,
       );
       // 记录构建时间
       await writeFile(
@@ -150,7 +150,7 @@ async function main() {
       message: 'Starting services...',
     });
     await execAsync(
-      `docker-compose -p tk-crawler-redis-${config.env} -f docker-compose.yml -f docker-compose.${config.env}.yml --env-file ${config.envFile} up -d`,
+      `docker-compose -p tk-crawler-redis-${config.env} -f docker-compose.yml --env-file ${config.envFile} up -d`,
     );
 
     log({

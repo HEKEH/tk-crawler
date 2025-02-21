@@ -1,8 +1,0 @@
-services:
-  redis:
-    volumes:
-      - tk-crawler-redis-development:/data
-
-volumes:
-  tk-crawler-redis-development:
-    external: true

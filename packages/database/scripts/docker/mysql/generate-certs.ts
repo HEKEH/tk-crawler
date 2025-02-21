@@ -35,7 +35,8 @@ function execCommand(command: string): void {
 // 证书配置
 const CERT_CONFIG = {
   validity: {
-    notAfter: '20350101000000Z', // Jan 1, 2035
+    notBefore: '20250201000000Z', // Feb 1, 2025
+    notAfter: '20350201000000Z', // Feb 1, 2035
   },
   serial: 1000,
   subject: {
@@ -49,24 +50,27 @@ const CERT_CONFIG = {
 
 // 使用种子生成确定性的私钥
 function generateDeterministicKey(seed: string, outputFile: string): void {
-  // 创建一个固定的随机源文件
-  const randFile = '/tmp/rand.bin';
+  // 使用平台无关的临时文件路径
+  const randFile = join(process.cwd(), '.tmp-rand.bin');
 
   try {
-    // 使用种子生成固定的随机数据
+    // 使用单个确定性命令生成随机数据
     execCommand(
-      `(echo "${seed}" | openssl dgst -sha512 -binary && ` +
-        `echo "${seed}" | openssl dgst -sha384 -binary && ` +
-        `echo "${seed}" | openssl dgst -sha256 -binary) > "${randFile}"`,
+      `echo "${seed}" | openssl dgst -sha512 -binary > "${randFile}"`,
     );
 
-    // 使用固定的随机源生成私钥
+    // 使用固定参数生成私钥
     execCommand(
-      `openssl genrsa -out "${outputFile}" ` + `-rand "${randFile}" 2048`,
+      `openssl genrsa -out "${outputFile}" ` +
+        `-rand "${randFile}" ` +
+        `-f4 ` + // 使用固定的公钥指数
+        `2048`,
     );
   } finally {
     // 清理临时文件
-    execCommand(`rm -f "${randFile}"`);
+    if (existsSync(randFile)) {
+      rmSync(randFile);
+    }
   }
 }
 
@@ -111,6 +115,7 @@ function generateCertificates(
         `-key "${CA_KEY}" -out "${CA_CERT}" ` +
         `-subj "${getSubjectString('TK-Crawler-MySQL-CA')}" ` +
         `-set_serial ${CERT_CONFIG.serial} ` +
+        `-not_before "${CERT_CONFIG.validity.notBefore}" ` +
         `-not_after "${CERT_CONFIG.validity.notAfter}"`,
     );
 
@@ -126,6 +131,7 @@ function generateCertificates(
         `-CA "${CA_CERT}" -CAkey "${CA_KEY}" ` +
         `-out "${SERVER_CERT}" ` +
         `-set_serial ${CERT_CONFIG.serial + 1} ` +
+        `-not_before "${CERT_CONFIG.validity.notBefore}" ` +
         `-not_after "${CERT_CONFIG.validity.notAfter}"`,
     );
 
@@ -141,6 +147,7 @@ function generateCertificates(
         `-CA "${CA_CERT}" -CAkey "${CA_KEY}" ` +
         `-out "${CLIENT_CERT}" ` +
         `-set_serial ${CERT_CONFIG.serial + 2} ` +
+        `-not_before "${CERT_CONFIG.validity.notBefore}" ` +
         `-not_after "${CERT_CONFIG.validity.notAfter}"`,
     );
 

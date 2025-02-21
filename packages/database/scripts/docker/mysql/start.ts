@@ -25,13 +25,16 @@ function getImageName(env: string): string {
 }
 const IMAGE_VERSION = '0.0.1';
 // 重新构建需要检查的关键文件
-const FilesToCheckForRebuild = [
-  'Dockerfile',
-  'docker-entrypoint.sh',
-  'my.conf',
-  'docker-compose.build.yml',
-  'start.ts',
-];
+function getFilesToCheckForRebuild(envFile: string) {
+  return [
+    'Dockerfile',
+    'docker-entrypoint.sh',
+    'my.conf',
+    'docker-compose.build.yml',
+    'start.ts',
+    envFile,
+  ];
+}
 function getVolumeSettings(
   env: string,
 ): { envKey: string; volumeName: string }[] {
@@ -123,7 +126,7 @@ async function needRebuild(config: Config): Promise<boolean> {
       await readFile(lastBuildFile, 'utf-8'),
     );
 
-    for (const file of FilesToCheckForRebuild) {
+    for (const file of getFilesToCheckForRebuild(config.envFile)) {
       if (await fileExists(file)) {
         const stats = await stat(file);
         if (stats.mtimeMs / 1000 > lastBuildTime) {

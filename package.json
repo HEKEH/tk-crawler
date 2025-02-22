@@ -14,7 +14,11 @@
     "build": "cross-env turbo build",
     "lint": "eslint",
     "prepare": "husky install",
-    "preinstall": "npx only-allow pnpm"
+    "preinstall": "npx only-allow pnpm",
+    "redis:docker-start:dev": "cross-env ts-node --project ./tsconfig.node.json --files -r tsconfig-paths/register ./scripts/docker/redis/start.ts development",
+    "redis:docker-start:prod": "cross-env ts-node --project ./tsconfig.node.json --files -r tsconfig-paths/register ./scripts/docker/redis/start.ts production",
+    "mysql:docker-start:dev": "cross-env ts-node --project ./tsconfig.node.json --files -r tsconfig-paths/register ./scripts/docker/mysql/start.ts development",
+    "mysql:docker-start:prod": "cross-env ts-node --project ./tsconfig.node.json --files -r tsconfig-paths/register ./scripts/docker/mysql/start.ts production"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^3.12.0",

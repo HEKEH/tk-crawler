@@ -4,11 +4,7 @@
   "private": true,
   "files": [],
   "scripts": {
-    "preinstall": "npx only-allow pnpm",
-    "redis:start:dev": "cross-env ts-node --project ../../tsconfig.node.json --files -r tsconfig-paths/register ./scripts/docker/redis/start.ts development",
-    "redis:start:prod": "cross-env ts-node --project ../../tsconfig.node.json --files -r tsconfig-paths/register ./scripts/docker/redis/start.ts production",
-    "mysql:start:dev": "cross-env ts-node --project ../../tsconfig.node.json --files -r tsconfig-paths/register ./scripts/docker/mysql/start.ts development",
-    "mysql:start:prod": "cross-env ts-node --project ../../tsconfig.node.json --files -r tsconfig-paths/register ./scripts/docker/mysql/start.ts production"
+    "preinstall": "npx only-allow pnpm"
   },
   "dependencies": {
     "@tk-crawler/shared": "workspace:*"

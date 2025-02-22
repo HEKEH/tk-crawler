@@ -10,5 +10,7 @@
     "mysql:start:dev": "cross-env ts-node --project ../../tsconfig.node.json --files -r tsconfig-paths/register ./scripts/docker/mysql/start.ts development",
     "mysql:start:prod": "cross-env ts-node --project ../../tsconfig.node.json --files -r tsconfig-paths/register ./scripts/docker/mysql/start.ts production"
   },
-  "dependencies": {}
+  "dependencies": {
+    "@tk-crawler/shared": "workspace:*"
+  }
 }

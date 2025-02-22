@@ -1,3 +1,6 @@
-import { RedisNamespace } from '../../database/redis';
+import { redisClient, RedisNamespace } from '@tk-crawler/database';
 
-export const anchorCrawlRecordRedisNamespace = new RedisNamespace('a-c-r');
+export const anchorCrawlRecordRedisNamespace = new RedisNamespace(
+  redisClient,
+  'a-c-r',
+);

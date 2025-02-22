@@ -1,6 +1,5 @@
 import Redis from 'ioredis';
-import config from '../../config';
-import { logger } from '../../infra/logger';
+import { getLogger } from '../infra';
 
 export class RedisClient {
   private static instance: RedisClient;
@@ -15,7 +14,15 @@ export class RedisClient {
 
   private constructor() {}
 
-  async connect(timeout: number = 5000): Promise<void> {
+  async connect(
+    config: {
+      redisHost: string;
+      redisPort: number;
+      redisUsername?: string;
+      redisPassword: string;
+    },
+    timeout: number = 5000,
+  ): Promise<void> {
     if (!this._client) {
       this._client = new Redis({
         host: config.redisHost,
@@ -31,12 +38,12 @@ export class RedisClient {
       // 创建连接Promise
       const connectionPromise = new Promise<void>((resolve, reject) => {
         this._client!.once('ready', () => {
-          logger.info('Redis Client Connected and Ready');
+          getLogger().info('Redis Client Connected and Ready');
           resolve();
         });
 
         this._client!.once('error', err => {
-          logger.error('Redis Client Error:', err);
+          getLogger().error('Redis Client Error:', err);
           reject(err);
         });
       });
@@ -52,7 +59,7 @@ export class RedisClient {
         // 等待连接成功或超时
         await Promise.race([connectionPromise, timeoutPromise]);
         this._client.on('error', err => {
-          logger.error('Redis Client Error:', err);
+          getLogger().error('Redis Client Error:', err);
         });
       } catch (error) {
         // 清理连接
@@ -77,7 +84,7 @@ export class RedisClient {
     try {
       return await this.client.get(key);
     } catch (error) {
-      logger.error('Redis GET Error:', error);
+      getLogger().error('Redis GET Error:', error);
       throw error;
     }
   }
@@ -89,7 +96,7 @@ export class RedisClient {
       }
       return await this.client.mget(keys);
     } catch (error) {
-      logger.error('Redis MGET Error:', error);
+      getLogger().error('Redis MGET Error:', error);
       throw error;
     }
   }
@@ -101,7 +108,7 @@ export class RedisClient {
       const data = Object.fromEntries(keyValuePairs);
       await this.client.mset(data);
     } catch (error) {
-      logger.error('Redis MSET Error:', error);
+      getLogger().error('Redis MSET Error:', error);
       throw error;
     }
   }
@@ -126,7 +133,7 @@ export class RedisClient {
       // 执行管道
       await pipeline.exec();
     } catch (error) {
-      logger.error('Redis MSET with TTL Error:', error);
+      getLogger().error('Redis MSET with TTL Error:', error);
       throw error;
     }
   }
@@ -152,7 +159,7 @@ export class RedisClient {
         await this.client.set(key, value);
       }
     } catch (error) {
-      logger.error('Redis SET Error:', error);
+      getLogger().error('Redis SET Error:', error);
       throw error;
     }
   }
@@ -162,7 +169,7 @@ export class RedisClient {
     try {
       await this.client.del(...keys);
     } catch (error) {
-      logger.error('Redis DEL Error:', error);
+      getLogger().error('Redis DEL Error:', error);
       throw error;
     }
   }
@@ -171,7 +178,7 @@ export class RedisClient {
     try {
       return await this.client.keys(pattern);
     } catch (error) {
-      logger.error('Redis KEYS Error:', error);
+      getLogger().error('Redis KEYS Error:', error);
       throw error;
     }
   }

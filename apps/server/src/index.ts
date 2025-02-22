@@ -1,7 +1,10 @@
 import process from 'node:process';
+import {
+  redisClient,
+  setLogger as setDatabaseLogger,
+} from '@tk-crawler/database';
 import initApp from './app';
 import config from './config';
-import { redisClient } from './database/redis';
 import { logger } from './infra/logger';
 
 const { env } = process;
@@ -11,7 +14,8 @@ logger.info('[port]', config.port);
 (async () => {
   logger.info('server start');
   try {
-    await redisClient.connect();
+    setDatabaseLogger(logger);
+    await redisClient.connect(config);
   } catch (error) {
     logger.error('Redis Client Error:', error);
     process.exit(1);

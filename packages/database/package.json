@@ -4,9 +4,13 @@
   "private": true,
   "files": [],
   "scripts": {
-    "preinstall": "npx only-allow pnpm"
+    "preinstall": "npx only-allow pnpm && pnpm prisma:generate",
+    "prisma:generate": "cross-env prisma generate --schema ./src/mysql/prisma/schema.prisma",
+    "prisma:migrate": "cross-env dotenv -e .env.development -- prisma migrate dev --schema src/mysql/prisma/schema.prisma"
   },
   "dependencies": {
-    "@tk-crawler/shared": "workspace:*"
+    "@prisma/client": "^6.4.1",
+    "@tk-crawler/shared": "workspace:*",
+    "prisma": "^6.4.1"
   }
 }

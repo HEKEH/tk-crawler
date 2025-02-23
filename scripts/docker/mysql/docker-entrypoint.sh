@@ -19,6 +19,14 @@ mysql --defaults-file=/tmp/mysql.cnf <<-EOSQL
     CREATE USER IF NOT EXISTS 'healthcheck'@'localhost'
     IDENTIFIED WITH caching_sha2_password BY '${MYSQL_HEALTHCHECK_PASSWORD}';
     GRANT USAGE ON *.* TO 'healthcheck'@'localhost';
+    -- 创建影子数据库
+    CREATE DATABASE IF NOT EXISTS tk_crawler_mysql;
+    CREATE DATABASE IF NOT EXISTS tk_crawler_mysql_shadow;
+
+    -- 授予用户权限
+    GRANT ALL PRIVILEGES ON tk_crawler_mysql.* TO '${MYSQL_USER}'@'%';
+    GRANT ALL PRIVILEGES ON tk_crawler_mysql_shadow.* TO '${MYSQL_USER}'@'%';
+    FLUSH PRIVILEGES;
 EOSQL
 
 # 删除临时配置文件

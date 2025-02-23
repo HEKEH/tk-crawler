@@ -66,6 +66,7 @@ function generateCertificates(certDir: string): void {
     const CLIENT_KEY = join(certDir, 'client-key.pem');
     const CLIENT_CSR = join(certDir, 'client-req.pem');
     const CLIENT_CERT = join(certDir, 'client-cert.pem');
+    const CLIENT_IDENTITY = join(certDir, 'client-identity.p12');
 
     // Generate CA key and certificate
     execCommand(`openssl genrsa -out "${CA_KEY}" 2048`);
@@ -105,6 +106,10 @@ function generateCertificates(certDir: string): void {
         `-out "${CLIENT_CERT}" ` +
         `-set_serial ${CERT_CONFIG.serial + 2} ` +
         `-days ${CERT_CONFIG.days}`,
+    );
+
+    execCommand(
+      `openssl pkcs12 -export -out "${CLIENT_IDENTITY}" -inkey "${CLIENT_KEY}" -in "${CLIENT_CERT}"  -passout pass:your_password`,
     );
 
     // Set file permissions (non-Windows systems)

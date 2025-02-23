@@ -8,7 +8,6 @@
       "@tk-crawler/core": ["packages/core/src/index.ts"],
       "@tk-crawler/shared/*": ["packages/shared/src/*"],
       "@tk-crawler/shared": ["packages/shared/src/index.ts"],
-      "@tk-crawler/database/scripts/*": ["packages/database/scripts/*"],
       "@tk-crawler/database/*": ["packages/database/src/*"],
       "@tk-crawler/database": ["packages/database/src/index.ts"],
       "@tk-crawler-client/shared/*": ["apps/crawler-client/shared/*"],

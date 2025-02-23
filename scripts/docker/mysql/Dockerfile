@@ -14,13 +14,13 @@ RUN chown mysql:mysql /etc/mysql/conf.d/my.cnf
 
 # Create the destination directory
 RUN mkdir -p /etc/mysql/certs
-# 复制证书文件
-COPY ${CERT_DIR}/ca-cert.pem /etc/mysql/certs/
-COPY ${CERT_DIR}/server-cert.pem /etc/mysql/certs/
-COPY ${CERT_DIR}/server-key.pem /etc/mysql/certs/
+# # 复制证书文件
+# COPY ${CERT_DIR}/ca-cert.pem /etc/mysql/certs/
+# COPY ${CERT_DIR}/server-cert.pem /etc/mysql/certs/
+# COPY ${CERT_DIR}/server-key.pem /etc/mysql/certs/
 
-# 设置证书文件权限
-RUN chown -R mysql:mysql /etc/mysql/certs && chmod 644 /etc/mysql/certs/ca-cert.pem && chmod 644 /etc/mysql/certs/server-cert.pem && chmod 600 /etc/mysql/certs/server-key.pem
+# # 设置证书文件权限
+# RUN chown -R mysql:mysql /etc/mysql/certs && chmod 644 /etc/mysql/certs/ca-cert.pem && chmod 644 /etc/mysql/certs/server-cert.pem && chmod 600 /etc/mysql/certs/server-key.pem
 
 COPY docker-entrypoint.sh /docker-entrypoint-initdb.d/
 RUN chmod +x /docker-entrypoint-initdb.d/docker-entrypoint.sh

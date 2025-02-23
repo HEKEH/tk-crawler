@@ -1,0 +1,17 @@
+datasource db {
+  provider          = "mysql"
+  url               = env("MYSQL_DATABASE_URL")
+  shadowDatabaseUrl = env("MYSQL_DATABASE_SHADOW_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../../../node_modules/.prisma/client"
+}
+
+model Anchor {
+  user_id    String   @id
+  display_id String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}

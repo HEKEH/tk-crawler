@@ -46,8 +46,7 @@ function getVolumeSettings(
     },
   ];
 }
-function loadEnvFile(env: string): void {
-  const envFile = join(__dirname, `.env.${env}`);
+function loadEnvFile(envFile: string): void {
   const result = config({ path: envFile });
 
   if (result.error) {
@@ -176,7 +175,7 @@ async function main() {
     const env = process.argv[2] || 'development';
     const config: Config = {
       env,
-      envFile: `.env.${env}`,
+      envFile: `../../../.env.${env}`,
       lastBuildFile: `.last_build_${env}`,
       imageName: getImageName(env),
       certDir: getCertDir(env),
@@ -187,10 +186,13 @@ async function main() {
       throw new Error(`Error: ${config.envFile} file not found`);
     }
 
-    loadEnvFile(env);
+    loadEnvFile(config.envFile);
     const absoluteCertDir = join(__dirname, config.certDir);
     if (!existsSync(absoluteCertDir)) {
-      generateCertificates(absoluteCertDir);
+      generateCertificates(
+        absoluteCertDir,
+        process.env.PKCS12_IDENTITY_PASSWORD!,
+      );
       log({
         projectName: PROJECT_NAME,
         message: 'SSL certificates generated successfully',

@@ -51,7 +51,13 @@ function getSubjectString(cn: string): string {
   return `/C=${country}/ST=${state}/L=${locality}/O=${organization}/OU=${organizationalUnit}/CN=${cn}`;
 }
 
-function generateCertificates(certDir: string): void {
+function generateCertificates(
+  certDir: string,
+  pkcs12IdentityPassword: string,
+): void {
+  if (!pkcs12IdentityPassword) {
+    throw new Error('PKCS12_IDENTITY_PASSWORD is not set');
+  }
   checkOpenSSL();
 
   try {
@@ -108,13 +114,16 @@ function generateCertificates(certDir: string): void {
         `-days ${CERT_CONFIG.days}`,
     );
 
+    // 这是为prisma client 生成证书。加 -legacy 是为了解决这个报错: https://stackoverflow.com/questions/70431528/mac-verification-failed-during-pkcs12-import-wrong-password-azure-devops
     execCommand(
-      `openssl pkcs12 -export -out "${CLIENT_IDENTITY}" -inkey "${CLIENT_KEY}" -in "${CLIENT_CERT}"  -passout pass:your_password`,
+      `openssl pkcs12 -export -legacy -out "${CLIENT_IDENTITY}" -inkey "${CLIENT_KEY}" -in "${CLIENT_CERT}"  -passout pass:${pkcs12IdentityPassword}`,
     );
 
     // Set file permissions (non-Windows systems)
     if (!isWindows) {
-      execCommand(`chmod 644 "${CA_CERT}" "${SERVER_CERT}" "${CLIENT_CERT}"`);
+      execCommand(
+        `chmod 644 "${CA_CERT}" "${SERVER_CERT}" "${CLIENT_CERT}" "${CLIENT_IDENTITY}"`,
+      );
       execCommand(`chmod 600 "${CA_KEY}" "${SERVER_KEY}" "${CLIENT_KEY}"`);
     }
   } catch (error) {

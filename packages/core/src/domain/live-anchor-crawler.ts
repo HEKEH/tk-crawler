@@ -184,7 +184,7 @@ export class LiveAnchorCrawler {
               user_id: anchor.id_str,
               display_id: anchor.display_id,
               room_id: roomId,
-              follower_count: anchor.follow_info.follower_count,
+              follower_count: anchor.follow_info.follower_count ?? 0,
               level: level ?? null,
               audience_count: item.data.user_count ?? null,
               has_commerce_goods: item.data.has_commerce_goods ?? null,

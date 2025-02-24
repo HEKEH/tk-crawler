@@ -70,17 +70,17 @@ export class MysqlClient {
         CURRENT_TIMESTAMP(0)
       )
       ON DUPLICATE KEY UPDATE
-        highest_diamond = GREATEST(${current_diamond}, COALESCE(highest_diamond, 0)),
-        -- 如果房间id发生变化，则更新last_diamond
-        last_diamond = IF(room_id != ${room_id}, current_diamond, last_diamond),
-        user_id = ${user_id},
         display_id = ${display_id},
         room_id = ${room_id},
         region = ${region},
         follower_count = ${follower_count},
         audience_count = ${audience_count},
         level = ${level},
-        current_diamond = ${current_diamond},
+        -- 因为current_diamond的计算方式是有问题的，总是会小于或等于真实的钻石数，所以如果之前的current_diamond较大，则不更新
+        current_diamond = IF(room_id != ${room_id}, ${current_diamond}, GREATEST(${current_diamond}, current_diamond)),
+        -- 如果房间id发生变化，则更新last_diamond
+        last_diamond = IF(room_id != ${room_id}, current_diamond, last_diamond),
+        highest_diamond = GREATEST(${current_diamond}, highest_diamond),
         rank_league = ${rank_league},
         has_commerce_goods = ${has_commerce_goods},
         tag = ${tag},

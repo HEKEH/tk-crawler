@@ -3,15 +3,18 @@
   "version": "0.0.0",
   "private": true,
   "files": [],
+  "config": {
+    "tsNodeConfig": "--project ../../tsconfig.node.json --files -r tsconfig-paths/register"
+  },
   "scripts": {
     "preinstall": "npx only-allow pnpm && pnpm prisma:generate",
-    "redis:docker-start:dev": "cross-env ts-node --project ../../tsconfig.node.json --files -r tsconfig-paths/register ./scripts/docker/redis/start.ts development",
-    "redis:docker-start:prod": "cross-env ts-node --project ../../tsconfig.node.json --files -r tsconfig-paths/register ./scripts/docker/redis/start.ts production",
-    "mysql:docker-start:dev": "cross-env ts-node --project ../../tsconfig.node.json --files -r tsconfig-paths/register ./scripts/docker/mysql/start.ts development",
-    "mysql:docker-start:prod": "cross-env ts-node --project ../../tsconfig.node.json --files -r tsconfig-paths/register ./scripts/docker/mysql/start.ts production",
+    "redis:docker-start:dev": "cross-env ts-node $npm_package_config_tsNodeConfig ./scripts/docker/redis/start.ts development",
+    "redis:docker-start:prod": "cross-env ts-node $npm_package_config_tsNodeConfig ./scripts/docker/redis/start.ts production",
+    "mysql:docker-start:dev": "cross-env ts-node $npm_package_config_tsNodeConfig ./scripts/docker/mysql/start.ts development",
+    "mysql:docker-start:prod": "cross-env ts-node $npm_package_config_tsNodeConfig ./scripts/docker/mysql/start.ts production",
     "prisma:generate": "cross-env prisma generate --schema ./src/mysql/prisma/schema.prisma",
-    "prisma:migrate": "cross-env dotenv -e .env.development -- prisma migrate dev --schema src/mysql/prisma/schema.prisma",
-    "prisma:deploy:prod": "cross-env dotenv -e .env.production -- prisma migrate deploy --schema src/mysql/prisma/schema.prisma",
+    "prisma:migrate": "cross-env dotenv -e .env.development -- ts-node $npm_package_config_tsNodeConfig ./scripts/prisma/migrate.ts",
+    "prisma:deploy:prod": "cross-env dotenv -e .env.production -- ts-node $npm_package_config_tsNodeConfig ./scripts/prisma/migrate.ts",
     "debug:env": "cross-env dotenv -e .env.development -- node -e \"console.log(process.env.MYSQL_DATABASE_URL)\""
   },
   "dependencies": {

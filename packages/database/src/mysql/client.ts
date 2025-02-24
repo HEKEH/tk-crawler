@@ -24,6 +24,7 @@ export class MysqlClient {
   }
 
   async updateAnchor(data: UpdateAnchorRequest) {
+    // 因为查询较为复杂，所以使用原生sql
     const {
       user_id,
       display_id,

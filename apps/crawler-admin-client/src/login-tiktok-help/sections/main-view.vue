@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { LOGIN_TIKTOK_HELP_EVENTS } from '@tk-crawler-client/shared';
+import { LOGIN_TIKTOK_HELP_EVENTS } from '@tk-crawler-admin-client/shared';
 import { ElButton, ElInput } from 'element-plus';
 import { ref } from 'vue';
 

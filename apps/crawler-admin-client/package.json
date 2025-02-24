@@ -1,7 +1,7 @@
 {
-  "name": "tk-live-crawler-client",
+  "name": "tk-live-crawler-admin-client",
   "version": "0.0.1",
-  "description": "TK Live Crawler Client",
+  "description": "TK Live Crawler Admin Client",
   "main": "dist-electron/main.js",
   "scripts": {
     "dev": "vite",

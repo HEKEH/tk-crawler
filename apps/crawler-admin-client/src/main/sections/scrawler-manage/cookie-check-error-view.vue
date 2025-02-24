@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { IsCookieValidResultStatus } from '@tk-crawler-client/shared';
+import { IsCookieValidResultStatus } from '@tk-crawler-admin-client/shared';
 import { ElButton } from 'element-plus';
 import { computed } from 'vue';
 

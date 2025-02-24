@@ -17,7 +17,7 @@ export default defineConfig(({ mode }) => {
     readFileSync(new URL('./package.json', import.meta.url), 'utf8'),
   );
   const alias: AliasOptions = {
-    '@tk-crawler-client/shared': resolve(__dirname, 'shared'),
+    '@tk-crawler-admin-client/shared': resolve(__dirname, 'shared'),
     '@tk-crawler/core': resolve(__dirname, '../../packages/core/src'),
     '@tk-crawler/shared': resolve(__dirname, '../../packages/shared/src'),
   };
@@ -63,7 +63,7 @@ export default defineConfig(({ mode }) => {
       vue(),
       vueJsx() as PluginOption,
       cssInjectedByJsPlugin({
-        styleId: 'crawler-client-style',
+        styleId: 'crawler-admin-client-style',
         relativeCSSInjection: true, // for multiple format
       }),
       createHtmlPlugin({

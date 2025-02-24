@@ -10,8 +10,12 @@
       "@tk-crawler/shared": ["packages/shared/src/index.ts"],
       "@tk-crawler/database/*": ["packages/database/src/*"],
       "@tk-crawler/database": ["packages/database/src/index.ts"],
-      "@tk-crawler-client/shared/*": ["apps/crawler-client/shared/*"],
-      "@tk-crawler-client/shared": ["apps/crawler-client/shared/index.ts"],
+      "@tk-crawler-admin-client/shared/*": [
+        "apps/crawler-admin-client/shared/*"
+      ],
+      "@tk-crawler-admin-client/shared": [
+        "apps/crawler-admin-client/shared/index.ts"
+      ],
       "@tk-crawler/script-tools/*": ["packages/script-tools/src/*"],
       "@tk-crawler/script-tools": ["packages/script-tools/src/index.ts"]
     },

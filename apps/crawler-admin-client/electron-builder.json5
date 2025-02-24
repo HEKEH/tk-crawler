@@ -1,9 +1,9 @@
 // @see - https://www.electron.build/configuration/configuration
 {
   $schema: 'https://raw.githubusercontent.com/electron-userland/electron-builder/master/packages/app-builder-lib/scheme.json',
-  appId: 'com.wt.tk-live-crawler-client',
+  appId: 'com.wt.tk-live-crawler-admin-client',
   asar: true,
-  productName: 'TK Live Crawler Client',
+  productName: 'TK Live Crawler Admin Client',
   directories: {
     output: 'release/${version}',
   },
@@ -12,6 +12,7 @@
     target: ['dmg'],
     icon: 'build/icons/icon.icns',
     artifactName: '${productName}-Mac-${version}-Installer.${ext}',
+    displayName: 'TK直播爬虫管理端',
   },
   win: {
     target: [
@@ -28,6 +29,7 @@
     perMachine: false,
     allowToChangeInstallationDirectory: true,
     deleteAppDataOnUninstall: false,
+    displayName: 'TK直播爬虫管理端',
   },
   linux: {
     target: ['AppImage'],

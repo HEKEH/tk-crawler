@@ -1,7 +1,7 @@
 import type { CommonResult, MessageCenter } from '@tk-crawler/shared';
 import type { Crawler } from '../crawler';
 import type { ViewManager } from '../view';
-import { IsCookieValidResultStatus } from '@tk-crawler-client/shared';
+import { IsCookieValidResultStatus } from '@tk-crawler-admin-client/shared';
 import { checkTiktokCookieValid, getMsTokenFromCookie } from '@tk-crawler/core';
 import { getVerifyFp } from '@tk-crawler/core/requests/utils/params';
 import { ipcMain } from 'electron';

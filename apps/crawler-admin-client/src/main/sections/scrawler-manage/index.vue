@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { IsCookieValidResultStatus } from '@tk-crawler-client/shared';
+import { IsCookieValidResultStatus } from '@tk-crawler-admin-client/shared';
 import { useGlobalStore } from '../../utils/vue';
 import ControlButtons from './control-buttons.vue';
 import CookieCheckErrorView from './cookie-check-error-view.vue';

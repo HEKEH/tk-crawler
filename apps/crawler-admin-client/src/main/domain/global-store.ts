@@ -1,5 +1,5 @@
 import type { AnchorScrawledMessage } from '@tk-crawler/shared';
-import { IsCookieValidResultStatus } from '@tk-crawler-client/shared';
+import { IsCookieValidResultStatus } from '@tk-crawler-admin-client/shared';
 import { MessageCenter, RequestErrorType } from '@tk-crawler/shared';
 import { markRaw } from 'vue';
 import { CrawlerViewMessage, CUSTOM_EVENTS } from '../constants';

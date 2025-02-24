@@ -28,6 +28,7 @@ export class MysqlClient {
     const {
       user_id,
       display_id,
+      room_id,
       region,
       follower_count,
       audience_count,
@@ -41,6 +42,7 @@ export class MysqlClient {
       INSERT INTO Anchor (
         user_id,
         display_id,
+        room_id,
         region,
         follower_count,
         audience_count,
@@ -55,6 +57,7 @@ export class MysqlClient {
       VALUES (
         ${user_id},
         ${display_id},
+        ${room_id},
         ${region},
         ${follower_count},
         ${audience_count},
@@ -68,9 +71,11 @@ export class MysqlClient {
       )
       ON DUPLICATE KEY UPDATE
         highest_diamond = GREATEST(${current_diamond}, COALESCE(highest_diamond, 0)),
-        last_diamond = current_diamond,
+        -- 如果房间id发生变化，则更新last_diamond
+        last_diamond = IF(room_id != ${room_id}, current_diamond, last_diamond),
         user_id = ${user_id},
         display_id = ${display_id},
+        room_id = ${room_id},
         region = ${region},
         follower_count = ${follower_count},
         audience_count = ${audience_count},

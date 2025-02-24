@@ -10,8 +10,9 @@ generator client {
 }
 
 model Anchor {
-  user_id            BigInt   @id
+  user_id            BigInt   @id @db.UnsignedBigInt
   display_id         String   @unique @db.VarChar(40)
+  room_id            BigInt   @db.UnsignedBigInt
   region             String   @db.Char(2) // 限制为2个字符
   follower_count     Int      @db.UnsignedInt
   audience_count     Int?     @db.UnsignedInt

@@ -24,6 +24,7 @@ export type RawAnchorParam = Pick<
   CollectedAnchorInfo,
   | 'user_id'
   | 'display_id'
+  | 'room_id'
   | 'follower_count'
   | 'audience_count'
   | 'level'
@@ -173,6 +174,7 @@ export default class AnchorPool {
     return {
       user_id: anchor.user_id,
       display_id: anchor.display_id,
+      room_id: anchor.room_id,
       region: giftListInfoData.region,
       follower_count: anchor.follower_count,
       audience_count: anchor.audience_count,

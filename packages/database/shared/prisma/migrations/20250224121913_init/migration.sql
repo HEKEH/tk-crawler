@@ -1,7 +1,8 @@
 -- CreateTable
 CREATE TABLE `Anchor` (
-    `user_id` BIGINT NOT NULL,
+    `user_id` BIGINT UNSIGNED NOT NULL,
     `display_id` VARCHAR(40) NOT NULL,
+    `room_id` BIGINT UNSIGNED NOT NULL,
     `region` CHAR(2) NOT NULL,
     `follower_count` INTEGER UNSIGNED NOT NULL,
     `audience_count` INTEGER UNSIGNED NULL,

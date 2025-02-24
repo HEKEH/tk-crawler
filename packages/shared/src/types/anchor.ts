@@ -13,6 +13,7 @@ export enum QualificationStatus {
 export interface CollectedAnchorInfo {
   user_id: string;
   display_id: string;
+  room_id: string;
   // nickname: string;
   region: Region;
   follower_count: number;

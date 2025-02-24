@@ -6,24 +6,24 @@ datasource db {
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../../../node_modules/.prisma/client"
+  output   = "../../node_modules/.prisma/client"
 }
 
 model Anchor {
   user_id            BigInt   @id
-  display_id         String   @unique @db.VarChar(30)
+  display_id         String   @unique @db.VarChar(40)
   region             String   @db.Char(2) // 限制为2个字符
   follower_count     Int      @db.UnsignedInt
-  audience_count     Int      @db.UnsignedInt
+  audience_count     Int?     @db.UnsignedInt
   current_diamond    Int      @db.UnsignedInt
   last_diamond       Int?     @db.UnsignedInt
-  highest_diamond    Int?     @db.UnsignedInt
-  rank_league        String   @db.Char(2) // 限制为2个字符
+  highest_diamond    Int      @db.UnsignedInt
+  rank_league        String?  @db.Char(2) // 限制为2个字符
   level              Int?     @db.UnsignedTinyInt
   has_commerce_goods Boolean?
   tag                String?  @db.VarChar(20)
-  created_at         DateTime @default(now())
-  updated_at         DateTime @updatedAt
+  created_at         DateTime @default(now()) @db.DateTime(0)
+  updated_at         DateTime @updatedAt @db.DateTime(0)
 
   @@index([region])
   @@index([follower_count])

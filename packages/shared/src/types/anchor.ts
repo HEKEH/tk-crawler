@@ -17,23 +17,22 @@ export interface CollectedAnchorInfo {
   region: Region;
   follower_count: number;
   /** 直播间人数 */
-  audience_count: number;
+  audience_count: number | null;
   // /** 直播间点赞数 */
   // like_count: number;
   /** 当前钻石 */
   current_diamond: number;
-  /** 上次钻石 */
-  last_diamond?: number;
-  /** 历史最高钻石 */
-  highest_diamond?: number;
+  // /** 上次钻石 */
+  // last_diamond?: number;
+  // /** 历史最高钻石 */
+  // highest_diamond?: number;
   /** 主播等级 */
-  level?: number;
+  level: number | null;
   /** 主播直播段位 */
-  rank_league: string;
-  live_label?: string;
+  rank_league: string | null;
   /** 是否有商品，由此判断是否带货主播 */
-  has_commerce_goods?: boolean;
-  tag?: string;
+  has_commerce_goods: boolean | null;
+  tag: string | null;
   // /** 是否可以签约 */
   // qualified: QualificationStatus;
 }

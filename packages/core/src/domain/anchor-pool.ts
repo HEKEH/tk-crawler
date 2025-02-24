@@ -180,7 +180,7 @@ export default class AnchorPool {
       current_diamond: liveDiamondsInfoData.diamonds,
       // last_diamond: liveDiamondsInfoData.diamonds,
       // highest_diamond: liveDiamondsInfoData.diamonds,
-      rank_league: giftListInfoData.anchor_ranking_league,
+      rank_league: giftListInfoData.anchor_ranking_league ?? null,
       has_commerce_goods: anchor.has_commerce_goods,
       tag: anchor.tag,
     };

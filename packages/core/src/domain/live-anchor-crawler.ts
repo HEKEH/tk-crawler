@@ -185,10 +185,10 @@ export class LiveAnchorCrawler {
               display_id: anchor.display_id,
               room_id: roomId,
               follower_count: anchor.follow_info.follower_count,
-              level,
-              audience_count: item.data.user_count,
-              has_commerce_goods: item.data.has_commerce_goods,
-              tag: item.data.hashtag?.title,
+              level: level ?? null,
+              audience_count: item.data.user_count ?? null,
+              has_commerce_goods: item.data.has_commerce_goods ?? null,
+              tag: item.data.hashtag?.title ?? null,
             });
           }
         }

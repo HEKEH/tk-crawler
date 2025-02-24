@@ -202,6 +202,12 @@ importers:
 
   apps/server:
     dependencies:
+      '@tk-crawler/database':
+        specifier: workspace:*
+        version: link:../../packages/database
+      '@tk-crawler/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
       assert:
         specifier: ^2.1.0
         version: 2.1.0
@@ -257,9 +263,6 @@ importers:
         specifier: ^1.0.15
         version: 1.0.15
     devDependencies:
-      '@tk-crawler/shared':
-        specifier: workspace:*
-        version: link:../../packages/shared
       '@types/bcryptjs':
         specifier: ^2.4.6
         version: 2.4.6

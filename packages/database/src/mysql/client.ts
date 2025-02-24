@@ -1,5 +1,6 @@
+import type { UpdateAnchorRequest } from '@tk-crawler/shared';
 import process from 'node:process';
-import { PrismaClient } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
 import { getLogger } from '../infra';
 import { loadMysqlEnvironment } from './environment';
 
@@ -20,6 +21,66 @@ export class MysqlClient {
       MysqlClient._instance = new MysqlClient();
     }
     return MysqlClient._instance;
+  }
+
+  async updateAnchor(data: UpdateAnchorRequest) {
+    const {
+      user_id,
+      display_id,
+      region,
+      follower_count,
+      audience_count,
+      level,
+      current_diamond,
+      rank_league,
+      has_commerce_goods,
+      tag,
+    } = data;
+    const sql = Prisma.sql`
+      INSERT INTO Anchor (
+        user_id,
+        display_id,
+        region,
+        follower_count,
+        audience_count,
+        level,
+        current_diamond,
+        rank_league,
+        has_commerce_goods,
+        tag,
+        highest_diamond,
+        updated_at
+      )
+      VALUES (
+        ${user_id},
+        ${display_id},
+        ${region},
+        ${follower_count},
+        ${audience_count},
+        ${level},
+        ${current_diamond},
+        ${rank_league},
+        ${has_commerce_goods},
+        ${tag},
+        ${current_diamond},
+        CURRENT_TIMESTAMP(0)
+      )
+      ON DUPLICATE KEY UPDATE
+        highest_diamond = GREATEST(${current_diamond}, COALESCE(highest_diamond, 0)),
+        last_diamond = current_diamond,
+        user_id = ${user_id},
+        display_id = ${display_id},
+        region = ${region},
+        follower_count = ${follower_count},
+        audience_count = ${audience_count},
+        level = ${level},
+        current_diamond = ${current_diamond},
+        rank_league = ${rank_league},
+        has_commerce_goods = ${has_commerce_goods},
+        tag = ${tag},
+        updated_at = CURRENT_TIMESTAMP(0)
+    `;
+    await this.prismaClient.$executeRaw(sql);
   }
 
   async connect() {

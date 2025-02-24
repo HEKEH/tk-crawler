@@ -10,8 +10,24 @@ generator client {
 }
 
 model Anchor {
-  user_id    String   @id
-  display_id String
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  user_id            BigInt   @id
+  display_id         String   @unique @db.VarChar(30)
+  region             String   @db.Char(2) // 限制为2个字符
+  follower_count     Int      @db.UnsignedInt
+  audience_count     Int      @db.UnsignedInt
+  current_diamond    Int      @db.UnsignedInt
+  last_diamond       Int?     @db.UnsignedInt
+  highest_diamond    Int?     @db.UnsignedInt
+  rank_league        String   @db.Char(2) // 限制为2个字符
+  level              Int?     @db.UnsignedTinyInt
+  has_commerce_goods Boolean?
+  tag                String?  @db.VarChar(20)
+  created_at         DateTime @default(now())
+  updated_at         DateTime @updatedAt
+
+  @@index([region])
+  @@index([follower_count])
+  @@index([highest_diamond])
+  @@index([rank_league])
+  @@index([level])
 }

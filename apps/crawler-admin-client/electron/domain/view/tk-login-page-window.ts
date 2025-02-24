@@ -153,7 +153,7 @@ export class TkLoginPageWindow {
     if (!this._loginHelpView) {
       this._loginHelpView = new WebContentsView({
         webPreferences: {
-          preload: path.join(__dirname, 'preload.mjs'),
+          preload: path.join(__dirname, 'preload.js'),
         },
       });
       if (VITE_DEV_SERVER_URL) {

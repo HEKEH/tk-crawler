@@ -98,7 +98,7 @@ export class ViewManager {
     });
     this._mainView = new WebContentsView({
       webPreferences: {
-        preload: path.join(__dirname, 'preload.mjs'),
+        preload: path.join(__dirname, 'preload.js'),
       },
     });
 

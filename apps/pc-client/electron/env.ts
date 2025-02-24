@@ -27,7 +27,7 @@ process.env.NODE_ENV = isDevelopment ? 'development' : 'production';
 // │ │
 // │ ├─┬ dist-electron
 // │ │ ├── main.js
-// │ │ └── preload.mjs
+// │ │ └── preload.js
 // │
 process.env.APP_ROOT = path.join(__dirname, '..');
 

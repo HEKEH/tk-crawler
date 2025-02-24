@@ -2,7 +2,7 @@ import { existsSync } from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
 
-export async function getPrismaEnv() {
+export function loadPrismaEnv() {
   try {
     // 获取项目根目录路径
     const rootDir = path.resolve(__dirname, '../../');

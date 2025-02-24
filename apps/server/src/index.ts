@@ -3,6 +3,7 @@ import {
   redisClient,
   setLogger as setDatabaseLogger,
 } from '@tk-crawler/database';
+import { mysqlClient } from '@tk-crawler/database/mysql';
 import initApp from './app';
 import config from './config';
 import { logger } from './infra/logger';
@@ -15,7 +16,7 @@ logger.info('[port]', config.port);
   logger.info('server start');
   try {
     setDatabaseLogger(logger);
-    await redisClient.connect(config);
+    await Promise.all([redisClient.connect(config), mysqlClient.connect()]);
   } catch (error) {
     logger.error('Redis Client Error:', error);
     process.exit(1);

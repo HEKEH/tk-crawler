@@ -30,5 +30,4 @@ model Anchor {
   @@index([follower_count])
   @@index([highest_diamond])
   @@index([rank_league])
-  @@index([level])
 }

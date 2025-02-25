@@ -166,6 +166,23 @@ tiktok爬虫爬取的基础信息
 - INDEX (org_id)
 - INDEX (org_user_id)
 
+### 已建联状态表(anchor_connect)
+
+表中的每一行代表一个在该机构已建联的用户
+
+| 字段名     | 字段类型        | 必填 | 说明     |
+| ---------- | --------------- | ---- | -------- |
+| id         | BIGINT UNSIGNED | 是   | 主键     |
+| org_id     | BIGINT UNSIGNED | 是   | 机构ID   |
+| anchor_id  | BIGINT UNSIGNED | 是   | 主播ID   |
+| created_at | DATETIME        | 是   | 创建时间 |
+| updated_at | DATETIME        | 是   | 更新时间 |
+
+索引:
+
+- INDEX (org_id)
+- INDEX (anchor_id)
+
 ## TODO: 数据分配
 
 将查询到的数据分配给机构，根据机构的地区和上传的Live Admin User数量来分配

@@ -1,6 +1,8 @@
-# 1-主播相关
+# 数据库表结构
 
-## 主播基础信息表(anchor)
+## 1-主播相关
+
+### 主播基础信息表(anchor)
 
 tiktok爬虫爬取的基础信息
 
@@ -31,51 +33,139 @@ tiktok爬虫爬取的基础信息
 - INDEX (highest_diamond)
 - INDEX (rank_league)
 
-# 2-主播验证相关
+## 2-主播验证相关
 
-## 主播验证用户密码表
+用于在live admin的验证主播是否可邀约
 
-用于在live_admin的验证是否可邀约
+### Live Admin用户表(live_admin_user)
 
-# 3-产品用户相关
+| 字段名             | 字段类型        | 必填 | 说明                                                       |
+| ------------------ | --------------- | ---- | ---------------------------------------------------------- |
+| id                 | BIGINT UNSIGNED | 是   | 主键                                                       |
+| username           | VARCHAR(24)     | 是   | 用户名，唯一                                               |
+| password           | VARCHAR(128)    | 是   | 密码。前端加密传输，后端进一步加密后入库，后端可解密为原文 |
+| org_id             | BIGINT UNSIGNED | 是   | 所属机构ID，关联organization表的id                         |
+| status             | TINYINT         | 是   | 状态：1-正常，0-禁用                                       |
+| max_query_per_hour | INT UNSIGNED    | 否   | 每小时最大查询次数, 默认50次。当前查询次数通过redis记录    |
+| max_query_per_day  | INT UNSIGNED    | 否   | 每天最大查询次数，默认280次。当前查询次数通过redis记录     |
+| created_at         | DATETIME        | 是   | 创建时间                                                   |
+| updated_at         | DATETIME        | 是   | 更新时间                                                   |
 
-## 机构表(organization)
+索引:
 
-| 字段名               | 字段类型     | 必填 | 说明                 |
-| -------------------- | ------------ | ---- | -------------------- |
-| id                   | BIGINT       | 是   | 主键                 |
-| org_id               | VARCHAR(50)  | 是   | 机构编码，唯一       |
-| name                 | VARCHAR(100) | 是   | 机构名称，唯一       |
-| membership_expire_at | DATETIME     | 否   | 会员到期时间         |
-| status               | TINYINT      | 是   | 状态：1-正常，0-禁用 |
-| remark               | VARCHAR(500) | 否   | 备注                 |
-| created_at           | DATETIME     | 是   | 创建时间             |
-| updated_at           | DATETIME     | 是   | 更新时间             |
+- INDEX (org_id)
 
-## 机构用户表(org_user)
+### Live Admin用户地区关联表(live_admin_user_region_relation)
 
-| 字段名        | 字段类型     | 必填 | 说明                         |
-| ------------- | ------------ | ---- | ---------------------------- |
-| id            | BIGINT       | 是   | 主键                         |
-| org_id        | BIGINT       | 是   | 关联机构ID                   |
-| username      | VARCHAR(50)  | 是   | 登录名称，唯一               |
-| display_name  | VARCHAR(50)  | 是   | 显示名称                     |
-| password      | VARCHAR(128) | 是   | 密码（加密后的）             |
-| email         | VARCHAR(50)  | 否   | 邮箱，唯一                   |
-| mobile        | VARCHAR(20)  | 否   | 手机号码，唯一               |
-| role_id       | BIGINT       | 是   | 角色ID: 1-管理员，2-普通用户 |
-| status        | TINYINT      | 是   | 状态：1-正常，0-禁用         |
-| last_login_at | DATETIME     | 否   | 最后登录时间                 |
-| remark        | VARCHAR(500) | 否   | 备注                         |
-| created_at    | DATETIME     | 是   | 创建时间                     |
-| updated_at    | DATETIME     | 是   | 更新时间                     |
+| 字段名  | 字段类型        | 必填 | 说明                      |
+| ------- | --------------- | ---- | ------------------------- |
+| id      | BIGINT UNSIGNED | 是   | 主键                      |
+| user_id | BIGINT UNSIGNED | 是   | 关联live_admin_user表的id |
+| region  | VARCHAR(2)      | 是   | 地区                      |
 
-## 机构地区关联表(org_region_relation)
+索引:
+
+- INDEX (user_id)
+- INDEX (region)
+
+约束:
+
+(user_id, region) 作为唯一约束
+
+### live admin 邀约验证数据表(anchor_invite_check)
+
+| 字段名         | 字段类型        | 必填 | 说明                                                           |
+| -------------- | --------------- | ---- | -------------------------------------------------------------- |
+| id             | BIGINT UNSIGNED | 是   | 主键                                                           |
+| anchor_id      | BIGINT UNSIGNED | 是   | 主播ID, 唯一，关联anchor表的user_id                            |
+| checked_at     | DATETIME        | 是   | 验证时间                                                       |
+| checked_by     | BIGINT UNSIGNED | 是   | 验证人ID, 关联live_admin_user表的id                            |
+| checked_result | TINYINT         | 是   | 验证结果：1-可邀约，0-不可邀约                                 |
+| invite_type    | INT             | 是   | 邀约方式，编码和tiktok一致：3-普通邀约，4-金票邀约，0-不可邀约 |
+| created_at     | DATETIME        | 是   | 创建时间                                                       |
+| updated_at     | DATETIME        | 是   | 更新时间                                                       |
+| region         | VARCHAR(2)      | 是   | 地区，主播所属的地区。这个字段是为了加快查询速度而加的冗余字段 |
+
+索引:
+
+- INDEX (checked_by)
+- INDEX (checked_result)
+- INDEX (region)
+
+## 3-产品用户相关
+
+### 机构表(organization)
+
+| 字段名               | 字段类型        | 必填 | 说明                 |
+| -------------------- | --------------- | ---- | -------------------- |
+| id                   | BIGINT UNSIGNED | 是   | 主键，机构id         |
+| name                 | VARCHAR(100)    | 是   | 机构名称，唯一       |
+| membership_expire_at | DATETIME        | 否   | 会员到期时间         |
+| status               | TINYINT         | 是   | 状态：1-正常，0-禁用 |
+| remark               | VARCHAR(200)    | 否   | 备注                 |
+| created_at           | DATETIME        | 是   | 创建时间             |
+| updated_at           | DATETIME        | 是   | 更新时间             |
+
+### 机构用户表(org_user)
+
+| 字段名       | 字段类型        | 必填 | 说明                         |
+| ------------ | --------------- | ---- | ---------------------------- |
+| id           | BIGINT UNSIGNED | 是   | 主键                         |
+| org_id       | BIGINT UNSIGNED | 是   | 关联机构ID                   |
+| username     | VARCHAR(50)     | 是   | 登录名称，唯一               |
+| display_name | VARCHAR(50)     | 是   | 显示名称                     |
+| password     | VARCHAR(128)    | 是   | 密码（加密后的）             |
+| email        | VARCHAR(50)     | 否   | 邮箱，唯一                   |
+| mobile       | VARCHAR(20)     | 否   | 手机号码，唯一               |
+| role_id      | INT             | 是   | 角色ID: 1-管理员，2-普通用户 |
+| status       | TINYINT         | 是   | 状态：1-正常，0-禁用         |
+| remark       | VARCHAR(200)    | 否   | 备注                         |
+| created_at   | DATETIME        | 是   | 创建时间                     |
+| updated_at   | DATETIME        | 是   | 更新时间                     |
+
+索引:
+
+- INDEX (org_id)
+
+### 机构地区关联表(org_region_relation)
 
 一个机构最多关联n个地区，n待定
 
-| 字段名 | 字段类型   | 必填 | 说明   |
-| ------ | ---------- | ---- | ------ |
-| id     | BIGINT     | 是   | 主键   |
-| org_id | BIGINT     | 是   | 机构ID |
-| region | VARCHAR(2) | 是   | 地区   |
+| 字段名 | 字段类型        | 必填 | 说明   |
+| ------ | --------------- | ---- | ------ |
+| id     | BIGINT UNSIGNED | 是   | 主键   |
+| org_id | BIGINT UNSIGNED | 是   | 机构ID |
+| region | VARCHAR(2)      | 是   | 地区   |
+
+索引:
+
+- INDEX (org_id)
+- INDEX (region)
+
+约束:
+
+(org_id, region) 作为唯一约束
+
+### 任务分配表(task_assign)
+
+| 字段名      | 字段类型        | 必填 | 说明                                       |
+| ----------- | --------------- | ---- | ------------------------------------------ |
+| id          | BIGINT UNSIGNED | 是   | 主键                                       |
+| org_id      | BIGINT UNSIGNED | 是   | 机构ID, 关联organization表的id             |
+| anchor_id   | BIGINT UNSIGNED | 是   | 主播ID, 关联anchor表的user_id              |
+| org_user_id | BIGINT UNSIGNED | 是   | 被分配任务的机构用户ID，关联org_user表的id |
+| created_at  | DATETIME        | 是   | 创建时间                                   |
+| updated_at  | DATETIME        | 是   | 更新时间                                   |
+
+约束:
+
+(org_id, anchor_id) 作为唯一约束
+
+索引:
+
+- INDEX (org_id)
+- INDEX (org_user_id)
+
+## TODO: 数据分配
+
+将查询到的数据分配给机构，根据机构的地区和上传的Live Admin User数量来分配

@@ -171,15 +171,18 @@ export class LiveAnchorCrawler {
           const anchor = item.data?.owner;
           if (anchor) {
             const roomId = item.data.id_str;
-            const streamDataStr =
-              item.data.stream_url?.live_core_sdk_data?.pull_data?.stream_data;
-            const streamData = streamDataStr
-              ? JSON.parse(streamDataStr)
-              : undefined;
+            // const streamDataStr =
+            //   item.data.stream_url?.live_core_sdk_data?.pull_data?.stream_data;
+            // const streamData = streamDataStr
+            //   ? JSON.parse(streamDataStr)
+            //   : undefined;
             // 这个字段并不是真正的主播等级
-            const level = streamData?.common?.peer_anchor_level as
-              | number
-              | undefined;
+            // const level = streamData?.common?.peer_anchor_level as
+            //   | number
+            //   | undefined;
+
+            // 无法获取主播等级，暂时设置为0
+            const level = 0;
             anchorInfos.push({
               user_id: anchor.id_str,
               display_id: anchor.display_id,

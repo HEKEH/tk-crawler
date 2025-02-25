@@ -67,7 +67,7 @@ export class MysqlClient {
         ${has_commerce_goods},
         ${tag},
         ${current_diamond},
-        CURRENT_TIMESTAMP(0)
+        CURRENT_TIMESTAMP(3)
       )
       ON DUPLICATE KEY UPDATE
         display_id = ${display_id},
@@ -84,7 +84,7 @@ export class MysqlClient {
         rank_league = ${rank_league},
         has_commerce_goods = ${has_commerce_goods},
         tag = ${tag},
-        updated_at = CURRENT_TIMESTAMP(0)
+        updated_at = CURRENT_TIMESTAMP(3)
     `;
     await this.prismaClient.$executeRaw(sql);
   }

@@ -16,8 +16,10 @@ async function retry() {
 
 <template>
   <div class="network-error-view">
-    <div>无法访问Tiktok，请检查是否开启VPN，且VPN是否开启了全局代理</div>
-    <ElButton type="primary" @click.prevent="retry"> 重新检查网络 </ElButton>
+    <div class="tip-text">
+      无法访问Tiktok，请检查是否开启VPN，且VPN是否开启了系统代理
+    </div>
+    <ElButton type="primary" @click.prevent="retry">重新检查网络</ElButton>
   </div>
 </template>
 
@@ -27,8 +29,14 @@ async function retry() {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   width: 100%;
-  padding: 20px;
+  height: 100%;
   row-gap: 20px;
+}
+.tip-text {
+  color: var(--el-color-info);
+  font-size: 20px;
+  font-weight: 500;
 }
 </style>

@@ -173,7 +173,7 @@ export class TkLoginPageWindow {
   private _closeLoginView() {
     if (this._tkLoginPageView) {
       const webContents = this._tkLoginPageView.webContents;
-      webContents.debugger.detach();
+      // webContents.debugger.detach();
       webContents.close();
       this._tkLoginPageWindow?.contentView.removeChildView(
         this._tkLoginPageView,

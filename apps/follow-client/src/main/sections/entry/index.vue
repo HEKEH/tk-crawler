@@ -13,11 +13,12 @@ const globalStore = useGlobalStore();
 const content = ref('');
 
 async function handleSubmit() {
-  const userIds = content.value
+  let userIds = content.value
     .trim()
     .split('\n')
     .map(id => id.trim())
     .filter(id => id);
+  userIds = [...new Set(userIds)];
   if (userIds.length > MAX_INPUT_COUNT) {
     ElMessage.error(`最多支持${MAX_INPUT_COUNT}个用户ID`);
     return;

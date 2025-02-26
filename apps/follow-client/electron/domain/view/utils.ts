@@ -20,4 +20,7 @@ export function bindViewToWindowBounds(
   };
   setBounds();
   window.on('resize', setBounds);
+  return () => {
+    window.removeListener('resize', setBounds);
+  };
 }

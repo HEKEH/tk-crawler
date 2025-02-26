@@ -10,13 +10,7 @@ import { logger } from '../../infra/logger';
 
 const TK_LOGIN_PAGE_URL = 'https://www.tiktok.com/login';
 
-interface TkPagesWindowContext {
-  // submitCookies: (cookies: [string, string][] | string) => Promise<void>;
-}
-
 export class TkPagesWindow {
-  private _context: TkPagesWindowContext;
-
   private _tkPagesWindow: BaseWindow | null = null;
 
   private _tkPagesView: WebContentsView | null = null;
@@ -28,24 +22,7 @@ export class TkPagesWindow {
 
   private _openTurnId: number = 0;
 
-  constructor(props: { context: TkPagesWindowContext }) {
-    this._context = props.context;
-  }
-
-  private async _getCookies(): Promise<Electron.Cookie[]> {
-    if (!this._tkPagesView) {
-      return [];
-    }
-
-    const session = this._tkPagesView.webContents.session;
-    try {
-      const cookies = await session.cookies.get({});
-      return cookies;
-    } catch (error) {
-      console.error('Failed to get cookies:', error);
-      throw error;
-    }
-  }
+  constructor() {}
 
   private _setStatus(status: TIKTOK_PAGES_STATUS) {
     this._status = status;

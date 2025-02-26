@@ -80,6 +80,10 @@ export default defineConfig(({ mode }) => {
             filename: 'tiktok-pages-help.html',
             template: 'tiktok-pages-help.html',
           },
+          {
+            filename: 'login-tiktok-help.html',
+            template: 'login-tiktok-help.html',
+          },
         ],
       }),
       (electron as any)(electronOptions),

@@ -1,43 +1,38 @@
 import { MessageCenter } from '@tk-crawler/shared';
-import { MainPageManagement } from './crawler';
 import { Services } from './services';
-import { ViewManager } from './view';
+import { ViewsManager } from './view';
 
 /** 领域的总入口 */
 export class GlobalManager {
   private static _instance: GlobalManager | null = null;
 
   private _messageCenter: MessageCenter;
-
-  private _mainPageManagement: MainPageManagement;
-
-  private _viewManager: ViewManager;
+  private _viewsManager: ViewsManager;
 
   private _services: Services;
 
   private constructor() {
     this._messageCenter = new MessageCenter();
-    this._mainPageManagement = new MainPageManagement({
-      messageCenter: this._messageCenter,
-    });
-    this._viewManager = new ViewManager({
+    // this._mainPageManagement = new MainPageManagement({
+    //   messageCenter: this._messageCenter,
+    // });
+    this._viewsManager = new ViewsManager({
       messageCenter: this._messageCenter,
     });
     this._services = new Services({
       messageCenter: this._messageCenter,
-      mainPageManagement: this._mainPageManagement,
-      viewManager: this._viewManager,
+      viewManager: this._viewsManager,
     });
   }
 
   async start() {
     this._services.init();
-    await this._viewManager.createWindow();
+    await this._viewsManager.show();
   }
 
   destroy() {
-    this._mainPageManagement.clear();
-    this._viewManager.destroy();
+    // this._mainPageManagement.clear();
+    this._viewsManager.destroy();
     this._services.destroy();
     this._messageCenter.clear();
   }

@@ -1,2 +1,2 @@
 export * from './events';
-export * from './login-tiktok-help';
+export * from './tiktok-pages-help';

@@ -11,7 +11,7 @@ import { BaseWindow, globalShortcut, WebContentsView } from 'electron';
 import { CUSTOM_EVENTS } from '../../constants';
 import { isDevelopment, RENDERER_DIST, VITE_DEV_SERVER_URL } from '../../env';
 import { saveTiktokCookie } from '../services/cookie';
-import { TkLoginPageWindow } from './tk-login-page-window';
+import { TkLoginPageWindow } from './tk-pages-window';
 import { bindViewToWindowBounds } from './utils';
 
 export class ViewManager {

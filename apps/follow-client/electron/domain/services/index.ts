@@ -1,9 +1,6 @@
 import type { MainPageManagement } from '../crawler';
 import type { ViewManager } from '../view';
-import {
-  checkNetwork,
-  type MessageCenter,
-} from '@tk-crawler/shared';
+import { checkNetwork, type MessageCenter } from '@tk-crawler/shared';
 import { CheckNetworkResultType, TK_URL } from '@tk-follow-client/shared';
 import { ipcMain } from 'electron';
 import { CUSTOM_EVENTS } from '../../constants';
@@ -76,9 +73,13 @@ export class Services {
   }
 
   init() {
-    this._addEventHandler(CUSTOM_EVENTS.OPEN_TIKTOK_PAGES, () => {
-      return this._viewManager.openTkPages();
-    });
+    this._addEventHandler(
+      CUSTOM_EVENTS.START_EXECUTE,
+      (_, userIds: string[]) => {
+        logger.info('[startExecute]', userIds);
+        return this._viewManager.startExecute();
+      },
+    );
     this._addEventHandler(CUSTOM_EVENTS.CHECK_NETWORK, async () => {
       const res = await checkNetwork(TK_URL);
       logger.info('[checkNetwork]', res);

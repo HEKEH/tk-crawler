@@ -8,42 +8,40 @@ import {
 import MainView from './sections/main-view.vue';
 import 'element-plus/dist/index.css';
 
-const loginStatus = ref(TIKTOK_PAGES_STATUS.stateless);
-async function updateLoginStatus() {
+const status = ref(TIKTOK_PAGES_STATUS.stateless);
+async function updateStatus() {
   const status = await window.ipcRenderer.invoke(
     TIKTOK_PAGES_HELP_EVENTS.GET_LOGIN_TIKTOK_STATUS,
   );
-  loginStatus.value = status;
+  status.value = status;
 }
-updateLoginStatus();
-const intervalId = setInterval(updateLoginStatus, 100);
+updateStatus();
+const intervalId = setInterval(updateStatus, 100);
 onBeforeUnmount(() => {
   clearInterval(intervalId);
 });
 function onRetry() {
-  window.ipcRenderer.invoke(
-    TIKTOK_PAGES_HELP_EVENTS.RETRY_OPEN_TIKTOK_LOGIN_PAGE,
-  );
+  window.ipcRenderer.invoke(TIKTOK_PAGES_HELP_EVENTS.RETRY_OPEN_TIKTOK_PAGE);
 }
 </script>
 
 <template>
   <div
-    v-loading="loginStatus === TIKTOK_PAGES_STATUS.loading"
+    v-loading="status === TIKTOK_PAGES_STATUS.loading"
     class="container"
     element-loading-text="加载中..."
   >
-    <template v-if="loginStatus === TIKTOK_PAGES_STATUS.timeout">
+    <template v-if="status === TIKTOK_PAGES_STATUS.timeout">
       <div class="tip-text">
         请求超时，请检查是否开启VPN，且VPN是否开启了全局代理
       </div>
       <ElButton type="primary" @click="onRetry">点击重试</ElButton>
     </template>
-    <template v-else-if="loginStatus === TIKTOK_PAGES_STATUS.fail">
+    <template v-else-if="status === TIKTOK_PAGES_STATUS.fail">
       <div class="tip-text">打开登录页失败，请检查网络</div>
       <ElButton type="primary" @click="onRetry">点击重试</ElButton>
     </template>
-    <MainView v-else-if="loginStatus === TIKTOK_PAGES_STATUS.opened" />
+    <MainView v-else-if="status === TIKTOK_PAGES_STATUS.opened" />
   </div>
 </template>
 

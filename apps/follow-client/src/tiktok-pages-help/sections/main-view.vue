@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { TIKTOK_PAGES_HELP_EVENTS } from '@tk-follow-client/shared';
 import { ElButton, ElInput } from 'element-plus';
 import { ref } from 'vue';
 
@@ -9,25 +8,11 @@ defineOptions({
 
 const cookie = ref<string>('');
 
-function onLoginSuccess() {
-  window.ipcRenderer.invoke(TIKTOK_PAGES_HELP_EVENTS.LOGIN_SUCCESS);
-}
-
-function onSubmitCookie() {
-  const cookieValue = cookie.value.trim();
-  window.ipcRenderer.invoke(
-    TIKTOK_PAGES_HELP_EVENTS.SUBMIT_COOKIES,
-    cookieValue,
-  );
-}
+function onSubmit() {}
 </script>
 
 <template>
   <div class="main-view-container">
-    <div class="block">
-      <div class="description">请在完成登录后点击下方按钮</div>
-      <ElButton type="primary" @click="onLoginSuccess">已登录成功</ElButton>
-    </div>
     <div class="block">
       <div class="description">
         若登录遇到问题，可以手动粘贴cookie后点击提交
@@ -39,12 +24,8 @@ function onSubmitCookie() {
         :rows="20"
         resize="none"
       />
-      <ElButton
-        type="primary"
-        :disabled="!cookie.trim()"
-        @click="onSubmitCookie"
-      >
-        提交Cookie
+      <ElButton type="primary" :disabled="!cookie.trim()" @click="onSubmit">
+        提交
       </ElButton>
     </div>
   </div>

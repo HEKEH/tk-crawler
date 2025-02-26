@@ -99,7 +99,7 @@ export class ViewManager {
     this._baseWindow.show();
   }
 
-  async openTkPages() {
+  async startExecute() {
     await this.tkPagesWindow.open();
   }
 

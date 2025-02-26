@@ -299,7 +299,7 @@ export class TkPagesWindow {
       },
     );
     this._addEventHandler(
-      TIKTOK_PAGES_HELP_EVENTS.RETRY_OPEN_TIKTOK_LOGIN_PAGE,
+      TIKTOK_PAGES_HELP_EVENTS.RETRY_OPEN_TIKTOK_PAGE,
       async () => {
         await this._reopenLoginView();
       },

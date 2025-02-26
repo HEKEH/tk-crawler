@@ -2,7 +2,7 @@ import { MessageCenter, RequestErrorType } from '@tk-crawler/shared';
 import { CheckNetworkResultType } from '@tk-follow-client/shared';
 import { markRaw } from 'vue';
 import { CUSTOM_EVENTS } from '../constants';
-import { checkNetwork, openTkPages } from '../services';
+import { checkNetwork, startExecute } from '../services';
 import { Menu } from '../types';
 import { MessageQueue } from './message-queue';
 
@@ -91,11 +91,9 @@ export default class GlobalStore {
     this._isInitialized = true;
   }
 
-  async openTKPages() {
-    await openTkPages();
+  async startExecute(userIds: string[]) {
+    await startExecute(userIds);
   }
-
-  async start() {}
 
   async stop() {}
 

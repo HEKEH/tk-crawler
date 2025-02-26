@@ -1,2 +1,2 @@
 export * from './check-network';
-export * from './open-tiktok-pages';
+export * from './start-execute';

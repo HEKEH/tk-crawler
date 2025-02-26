@@ -19,6 +19,7 @@
     "apps/follow-client/shared/**/*",
     "packages/core/**/*",
     "packages/shared/**/*",
+    "packages/biz-shared/**/*",
     "packages/play/**/*",
     "packages/script-tools/**/*",
     "packages/database/**/*",

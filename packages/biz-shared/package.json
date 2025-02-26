@@ -1,0 +1,10 @@
+{
+  "name": "@tk-crawler/biz-shared",
+  "version": "0.0.0",
+  "private": true,
+  "files": [],
+  "scripts": {
+    "preinstall": "npx only-allow pnpm"
+  },
+  "dependencies": {}
+}

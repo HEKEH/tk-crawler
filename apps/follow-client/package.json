@@ -1,16 +1,12 @@
 {
-  "name": "tk-live-crawler-admin-client",
+  "name": "tk-follow-client",
   "version": "0.0.1",
-  "description": "TK Live Crawler Admin Client",
+  "description": "TK Follow Client",
   "main": "dist-electron/main.js",
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc && vite build && electron-builder",
     "preview": "vite preview"
-  },
-  "dependencies": {
-    "canvas": "^3.0.1",
-    "jsdom": "^26.0.0"
   },
   "devDependencies": {
     "@tk-crawler/core": "workspace:*",

@@ -16,6 +16,8 @@
       "@tk-crawler-admin-client/shared": [
         "apps/crawler-admin-client/shared/index.ts"
       ],
+      "@tk-follow-client/shared/*": ["apps/follow-client/shared/*"],
+      "@tk-follow-client/shared": ["apps/follow-client/shared/index.ts"],
       "@tk-crawler/script-tools/*": ["packages/script-tools/src/*"],
       "@tk-crawler/script-tools": ["packages/script-tools/src/index.ts"]
     },

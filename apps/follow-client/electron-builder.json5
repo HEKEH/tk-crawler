@@ -1,0 +1,39 @@
+// @see - https://www.electron.build/configuration/configuration
+{
+  $schema: 'https://raw.githubusercontent.com/electron-userland/electron-builder/master/packages/app-builder-lib/scheme.json',
+  appId: 'com.wt.tk-follow-client',
+  asar: true,
+  productName: 'TK Follow Client',
+  directories: {
+    output: 'release/${version}',
+  },
+  files: ['dist', 'dist-electron'],
+  mac: {
+    target: ['dmg'],
+    icon: 'build/icons/icon.icns',
+    artifactName: '${productName}-Mac-${version}-Installer.${ext}',
+    displayName: 'TK自动关注客户端',
+  },
+  win: {
+    target: [
+      {
+        target: 'nsis',
+        arch: ['x64'],
+      },
+    ],
+    icon: 'build/icons/icon.ico',
+    artifactName: '${productName}-Windows-${version}-Setup.${ext}',
+  },
+  nsis: {
+    oneClick: false,
+    perMachine: false,
+    allowToChangeInstallationDirectory: true,
+    deleteAppDataOnUninstall: false,
+    displayName: 'TK自动关注客户端',
+  },
+  linux: {
+    target: ['AppImage'],
+    icon: 'build/icons/icon.png',
+    artifactName: '${productName}-Linux-${version}.${ext}',
+  },
+}

@@ -18,6 +18,9 @@ export class GlobalManager {
     // });
     this._viewsManager = new ViewsManager({
       messageCenter: this._messageCenter,
+      onClose: () => {
+        this.destroy();
+      },
     });
     this._services = new Services({
       messageCenter: this._messageCenter,
@@ -27,6 +30,7 @@ export class GlobalManager {
 
   async start() {
     this._services.init();
+    this._viewsManager.init();
     await this._viewsManager.show();
   }
 

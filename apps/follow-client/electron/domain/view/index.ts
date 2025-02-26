@@ -9,13 +9,13 @@ import { MainView } from './main-view';
 import { TKLoginView } from './tk-login-view';
 
 export class ViewsManager {
-  private _baseWindow: BaseWindow;
+  private _baseWindow: BaseWindow | null = null;
 
   private _currentView: IView | null = null;
 
-  private _mainView: MainView;
+  private _mainView: MainView | null = null;
 
-  private _tkLoginView: TKLoginView;
+  private _tkLoginView: TKLoginView | null = null;
 
   private _tkPagesWindow: TkPagesWindow | null = null;
 
@@ -23,11 +23,17 @@ export class ViewsManager {
 
   private _subscriptions: Subscription[] = [];
 
+  private _onClose: () => void;
+
   private _userIds: string[] = [];
   private _executeIndex: number = 0;
 
-  constructor(props: { messageCenter: MessageCenter }) {
+  constructor(props: { messageCenter: MessageCenter; onClose: () => void }) {
     this._messageCenter = props.messageCenter;
+    this._onClose = props.onClose;
+  }
+
+  init() {
     this._baseWindow = new BaseWindow({
       fullscreen: true,
       icon: path.join(process.env.VITE_PUBLIC, 'appicon.svg'),
@@ -39,12 +45,13 @@ export class ViewsManager {
     this._tkLoginView = new TKLoginView({
       parentWindow: this._baseWindow,
     });
+    this._baseWindow.on('close', this._onClose);
   }
 
   async show() {
     this._currentView = this._mainView;
-    await this._mainView.show();
-    this._baseWindow.show();
+    await this._mainView?.show();
+    this._baseWindow?.show();
   }
 
   private _closeCurrentView() {
@@ -66,7 +73,7 @@ export class ViewsManager {
   async startExecute(userIds: string[]) {
     this._userIds = userIds;
     this._executeIndex = 0;
-    await this._changeView(this._tkLoginView);
+    await this._changeView(this._tkLoginView!);
   }
 
   private _clearSubscriptions() {
@@ -78,19 +85,27 @@ export class ViewsManager {
 
   close() {
     this._closeCurrentView();
-    this._baseWindow.close();
+    if (this._baseWindow?.isVisible()) {
+      this._baseWindow.close();
+    }
   }
 
-  get allViews() {
+  private get allViews() {
     return [this._mainView, this._tkLoginView];
   }
 
   destroy() {
     this._clearSubscriptions();
-    this._currentView = null;
     this.allViews.forEach(view => {
-      view.destroy();
+      view?.destroy();
     });
-    this._baseWindow.close();
+    this._baseWindow?.removeAllListeners();
+    if (this._baseWindow?.isVisible()) {
+      this._baseWindow.close();
+    }
+    this._currentView = null;
+    this._baseWindow = null;
+    this._mainView = null;
+    this._tkLoginView = null;
   }
 }

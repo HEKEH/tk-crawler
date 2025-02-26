@@ -1,26 +1,18 @@
-import type { AnchorScrawledMessage } from '@tk-crawler/shared';
 import { MessageCenter, RequestErrorType } from '@tk-crawler/shared';
-import { IsCookieValidResultStatus } from '@tk-follow-client/shared';
+import { CheckNetworkResultType } from '@tk-follow-client/shared';
 import { markRaw } from 'vue';
-import { CrawlerViewMessage, CUSTOM_EVENTS } from '../constants';
-import {
-  checkTiktokCookieValid,
-  openTiktokLoginPage,
-  startLiveAnchorCrawl,
-  stopLiveAnchorCrawl,
-} from '../services';
+import { CUSTOM_EVENTS } from '../constants';
+import { checkNetwork, openTkPages } from '../services';
 import { Menu } from '../types';
 import { MessageQueue } from './message-queue';
 
 export default class GlobalStore {
-  private _currentMenu: Menu = Menu.Crawler;
+  private _currentMenu: Menu = Menu.Entry;
 
   private _isInitialized: boolean = false;
 
-  private _tiktokCookieValidStatus: IsCookieValidResultStatus =
-    IsCookieValidResultStatus.FAILED;
-
-  private _isCrawling: boolean = false;
+  private _networkStatus: CheckNetworkResultType =
+    CheckNetworkResultType.SUCCESS;
 
   private _notificationQueue = markRaw(
     new MessageQueue({
@@ -38,12 +30,8 @@ export default class GlobalStore {
     return this._isInitialized;
   }
 
-  get isCrawling() {
-    return this._isCrawling;
-  }
-
-  get tiktokCookieValidStatus() {
-    return this._tiktokCookieValidStatus;
+  get networkStatus() {
+    return this._networkStatus;
   }
 
   private _eventListeners: Array<
@@ -59,22 +47,6 @@ export default class GlobalStore {
   }
 
   private _addEventListeners() {
-    this._addEventListener(CUSTOM_EVENTS.TIKTOK_COOKIE_UPDATED, async () => {
-      await this.checkTiktokCookieValid();
-    });
-    this._addEventListener(CUSTOM_EVENTS.TIKTOK_COOKIE_OUTDATED, () => {
-      this.messageCenter.emit(CrawlerViewMessage.TIKTOK_COOKIE_OUTDATED);
-      this._tiktokCookieValidStatus = IsCookieValidResultStatus.FAILED;
-    });
-    this._addEventListener(
-      CUSTOM_EVENTS.ANCHOR_SCRAWLED,
-      (_, data: AnchorScrawledMessage) => {
-        this._notificationQueue.showMessage({
-          message: `抓取到主播${data.anchor.display_id}的信息`,
-          type: 'success',
-        });
-      },
-    );
     this._addEventListener(
       CUSTOM_EVENTS.REQUEST_ERROR,
       (_, errorType: RequestErrorType) => {
@@ -103,37 +75,29 @@ export default class GlobalStore {
     this._eventListeners = [];
   }
 
-  async checkTiktokCookieValid() {
+  private async _checkNetwork() {
+    this._networkStatus = await checkNetwork();
+  }
+
+  async retryCheckNetwork() {
     this._isInitialized = false;
-    this._tiktokCookieValidStatus = await checkTiktokCookieValid();
+    await this._checkNetwork();
     this._isInitialized = true;
   }
 
   async init() {
     this._addEventListeners();
-    await this.checkTiktokCookieValid();
+    await this._checkNetwork();
+    this._isInitialized = true;
   }
 
-  async loginTiktok() {
-    await openTiktokLoginPage();
+  async openTKPages() {
+    await openTkPages();
   }
 
-  async start() {
-    this._isCrawling = true;
-    const result = await startLiveAnchorCrawl();
-    if (!result.success) {
-      this._isCrawling = false;
-      throw new Error(result.message);
-    }
-  }
+  async start() {}
 
-  async stop() {
-    this._isCrawling = false;
-    const result = await stopLiveAnchorCrawl();
-    if (!result.success) {
-      throw new Error(result.message);
-    }
-  }
+  async stop() {}
 
   setCurrentMenu(menu: Menu) {
     this._currentMenu = menu;

@@ -1,11 +1,11 @@
-export const LOGIN_TIKTOK_HELP_EVENTS = {
+export const TIKTOK_PAGES_HELP_EVENTS = {
   GET_LOGIN_TIKTOK_STATUS: 'get-login-tiktok-status',
   RETRY_OPEN_TIKTOK_LOGIN_PAGE: 'retry-open-tiktok-login-page',
   LOGIN_SUCCESS: 'login-success',
   SUBMIT_COOKIES: 'submit-cookies',
 };
 
-export enum LOGIN_TIKTOK_STATUS {
+export enum TIKTOK_PAGES_STATUS {
   stateless = 'stateless',
   loading = 'loading',
   timeout = 'timeout',
@@ -13,4 +13,4 @@ export enum LOGIN_TIKTOK_STATUS {
   opened = 'opened',
 }
 
-export const LOGIN_HELP_WIDTH = 350;
+export const TIKTOK_PAGES_HELP_WIDTH = 350;

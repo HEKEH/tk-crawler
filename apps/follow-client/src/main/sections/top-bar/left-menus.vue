@@ -9,8 +9,8 @@ defineOptions({
 
 const Menus = [
   {
-    key: Menu.Crawler,
-    name: '爬虫后台',
+    key: Menu.Entry,
+    name: '主页',
   },
 ];
 

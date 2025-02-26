@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { LOGIN_TIKTOK_HELP_EVENTS } from '@tk-follow-client/shared';
+import { TIKTOK_PAGES_HELP_EVENTS } from '@tk-follow-client/shared';
 import { ElButton, ElInput } from 'element-plus';
 import { ref } from 'vue';
 
@@ -10,13 +10,13 @@ defineOptions({
 const cookie = ref<string>('');
 
 function onLoginSuccess() {
-  window.ipcRenderer.invoke(LOGIN_TIKTOK_HELP_EVENTS.LOGIN_SUCCESS);
+  window.ipcRenderer.invoke(TIKTOK_PAGES_HELP_EVENTS.LOGIN_SUCCESS);
 }
 
 function onSubmitCookie() {
   const cookieValue = cookie.value.trim();
   window.ipcRenderer.invoke(
-    LOGIN_TIKTOK_HELP_EVENTS.SUBMIT_COOKIES,
+    TIKTOK_PAGES_HELP_EVENTS.SUBMIT_COOKIES,
     cookieValue,
   );
 }

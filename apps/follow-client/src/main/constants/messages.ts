@@ -1,3 +1,1 @@
-export enum CrawlerViewMessage {
-  TIKTOK_COOKIE_OUTDATED = 'TIKTOK_COOKIE_OUTDATED',
-}
+export enum CrawlerViewMessage {}

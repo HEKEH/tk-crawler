@@ -1,9 +1,4 @@
-export enum IsCookieValidResultStatus {
+export enum CheckNetworkResultType {
   SUCCESS = 'success',
-  FAILED = 'failed',
-  ECONNRESET = 'econnreset',
-  TIMEOUT = 'timeout',
-  OTHER_ERROR = 'other_error',
+  ERROR = 'error',
 }
-
-export type IsCookieValidResult = IsCookieValidResultStatus;

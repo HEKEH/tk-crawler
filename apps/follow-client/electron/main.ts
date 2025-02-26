@@ -4,10 +4,8 @@ import { initProxy, RENDERER_DIST, VITE_DEV_SERVER_URL } from './env';
 
 import path from 'node:path';
 import process from 'node:process';
-import { setLogger } from '@tk-crawler/core';
 // import { createRequire } from 'node:module'
 import { app, BaseWindow } from 'electron';
-import { logger } from './infra/logger';
 import { GlobalManager } from './domain';
 
 // const require = createRequire(import.meta.url)
@@ -18,7 +16,6 @@ process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL
   : RENDERER_DIST;
 
 async function main() {
-  setLogger(logger);
   await app.whenReady();
   await initProxy();
   const globalManager = GlobalManager.getInstance();

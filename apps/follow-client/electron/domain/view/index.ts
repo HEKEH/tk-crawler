@@ -1,8 +1,4 @@
-import type {
-  AnchorScrawledMessage,
-  MessageCenter,
-  RequestErrorType,
-} from '@tk-crawler/shared';
+import type { MessageCenter, RequestErrorType } from '@tk-crawler/shared';
 import type { Subscription } from 'rxjs';
 import path from 'node:path';
 import process from 'node:process';
@@ -10,8 +6,7 @@ import { CrawlerMessage } from '@tk-crawler/shared';
 import { BaseWindow, globalShortcut, WebContentsView } from 'electron';
 import { CUSTOM_EVENTS } from '../../constants';
 import { isDevelopment, RENDERER_DIST, VITE_DEV_SERVER_URL } from '../../env';
-import { saveTiktokCookie } from '../services/cookie';
-import { TkLoginPageWindow } from './tk-pages-window';
+import { TkPagesWindow } from './tk-pages-window';
 import { bindViewToWindowBounds } from './utils';
 
 export class ViewManager {
@@ -19,7 +14,7 @@ export class ViewManager {
 
   private _mainView: WebContentsView | null = null;
 
-  private _tkLoginPageWindow: TkLoginPageWindow | null = null;
+  private _tkPagesWindow: TkPagesWindow | null = null;
 
   private _messageCenter: MessageCenter;
 
@@ -27,22 +22,6 @@ export class ViewManager {
 
   constructor(props: { messageCenter: MessageCenter }) {
     this._messageCenter = props.messageCenter;
-    this._subscriptions.push(
-      this._messageCenter.addListener(
-        CrawlerMessage.TIKTOK_COOKIE_OUTDATED,
-        () => {
-          this._onCookieOutdated();
-        },
-      ),
-    );
-    this._subscriptions.push(
-      this._messageCenter.addListener(
-        CrawlerMessage.ANCHOR_SCRAWLED,
-        (data: AnchorScrawledMessage) => {
-          this._onAnchorScrawled(data);
-        },
-      ),
-    );
     this._subscriptions.push(
       this._messageCenter.addListener(
         CrawlerMessage.REQUEST_ERROR,
@@ -67,24 +46,11 @@ export class ViewManager {
     return this._mainView;
   }
 
-  private get tkLoginPageWindow() {
-    if (!this._tkLoginPageWindow) {
-      throw new Error('TkLoginPageWindow is not initialized');
+  private get tkPagesWindow() {
+    if (!this._tkPagesWindow) {
+      throw new Error('TkPagesWindow is not initialized');
     }
-    return this._tkLoginPageWindow;
-  }
-
-  async submitCookies(cookies: [string, string][] | string) {
-    saveTiktokCookie(cookies);
-    this.mainView.webContents.send(CUSTOM_EVENTS.TIKTOK_COOKIE_UPDATED);
-  }
-
-  private _onCookieOutdated() {
-    this.mainView.webContents.send(CUSTOM_EVENTS.TIKTOK_COOKIE_OUTDATED);
-  }
-
-  private _onAnchorScrawled(data: AnchorScrawledMessage) {
-    this.mainView.webContents.send(CUSTOM_EVENTS.ANCHOR_SCRAWLED, data);
+    return this._tkPagesWindow;
   }
 
   private _onRequestError(errorType: RequestErrorType) {
@@ -102,7 +68,7 @@ export class ViewManager {
       },
     });
 
-    this._tkLoginPageWindow = new TkLoginPageWindow({ context: this });
+    this._tkPagesWindow = new TkPagesWindow({ context: this });
 
     // Test active push message to Renderer-process.
     this._mainView.webContents.on('did-finish-load', () => {
@@ -133,8 +99,8 @@ export class ViewManager {
     this._baseWindow.show();
   }
 
-  async openTkLoginPage() {
-    await this.tkLoginPageWindow.open();
+  async openTkPages() {
+    await this.tkPagesWindow.open();
   }
 
   private _clearSubscriptions() {
@@ -150,6 +116,6 @@ export class ViewManager {
     this._baseWindow?.close();
     this._baseWindow = null;
     this._mainView?.webContents.close();
-    this.tkLoginPageWindow.close();
+    this.tkPagesWindow.close();
   }
 }

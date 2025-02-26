@@ -1,3 +1,3 @@
 export enum Menu {
-  Crawler = 'Crawler',
+  Entry = 'Entry',
 }

@@ -1,7 +1,5 @@
-import { setConfig } from '@tk-crawler/core';
 import { MessageCenter } from '@tk-crawler/shared';
-import config from '../config';
-import { Crawler } from './crawler';
+import { MainPageManagement } from './crawler';
 import { Services } from './services';
 import { ViewManager } from './view';
 
@@ -11,7 +9,7 @@ export class GlobalManager {
 
   private _messageCenter: MessageCenter;
 
-  private _crawler: Crawler;
+  private _mainPageManagement: MainPageManagement;
 
   private _viewManager: ViewManager;
 
@@ -19,7 +17,7 @@ export class GlobalManager {
 
   private constructor() {
     this._messageCenter = new MessageCenter();
-    this._crawler = new Crawler({
+    this._mainPageManagement = new MainPageManagement({
       messageCenter: this._messageCenter,
     });
     this._viewManager = new ViewManager({
@@ -27,21 +25,18 @@ export class GlobalManager {
     });
     this._services = new Services({
       messageCenter: this._messageCenter,
-      crawler: this._crawler,
+      mainPageManagement: this._mainPageManagement,
       viewManager: this._viewManager,
     });
   }
 
   async start() {
-    setConfig({
-      ownServerUrl: config.ownServerUrl,
-    });
     this._services.init();
     await this._viewManager.createWindow();
   }
 
   destroy() {
-    this._crawler.clear();
+    this._mainPageManagement.clear();
     this._viewManager.destroy();
     this._services.destroy();
     this._messageCenter.clear();

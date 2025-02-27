@@ -1,22 +1,18 @@
 import type { BaseWindow } from 'electron';
 import path from 'node:path';
-import { clickElement, loadThirdPartyURL } from '@tk-crawler/electron-utils';
+import { loadThirdPartyURL } from '@tk-crawler/electron-utils';
 import { ipcMain, WebContentsView } from 'electron';
 import {
   TIKTOK_AUTO_FOLLOW_HELP_WIDTH,
   TIKTOK_AUTO_FOLLOW_PAGE_EVENTS,
   TIKTOK_AUTO_FOLLOW_PAGE_STATUS,
+  TIKTOK_AUTO_FOLLOW_RUNNING_STATUS,
+  TK_URL,
 } from '../../constants';
 import { RENDERER_DIST, VITE_DEV_SERVER_URL } from '../../env';
 import { logger } from '../../infra/logger';
 
-const TK_LOGIN_PAGE_URL = 'https://www.tiktok.com/login';
-
-export interface TKAutoFollowViewContext {}
-
 export class TKAutoFollowView {
-  private _context: TKAutoFollowViewContext;
-
   private _parentWindow: BaseWindow;
 
   private _tkPageView: WebContentsView | null = null;
@@ -26,16 +22,27 @@ export class TKAutoFollowView {
   private _status: TIKTOK_AUTO_FOLLOW_PAGE_STATUS =
     TIKTOK_AUTO_FOLLOW_PAGE_STATUS.stateless;
 
+  private _userIds: string[] = [];
+
+  private _currentUserIndex: number = 0;
+
+  private _runningStatus: TIKTOK_AUTO_FOLLOW_RUNNING_STATUS =
+    TIKTOK_AUTO_FOLLOW_RUNNING_STATUS.not_started;
+
   private _openTurnId: number = 0;
 
   private _removeResizeListener: (() => void) | null = null;
 
-  constructor(props: {
-    parentWindow: BaseWindow;
-    context: TKAutoFollowViewContext;
-  }) {
+  private _goBack: () => void;
+
+  constructor(props: { parentWindow: BaseWindow; goBack: () => void }) {
     this._parentWindow = props.parentWindow;
-    this._context = props.context;
+    this._goBack = props.goBack;
+  }
+
+  updateUserIds(userIds: string[]) {
+    this._userIds = userIds;
+    this._currentUserIndex = 0;
   }
 
   private _setStatus(status: TIKTOK_AUTO_FOLLOW_PAGE_STATUS) {
@@ -49,16 +56,20 @@ export class TKAutoFollowView {
     }
     const bounds = this._parentWindow.getBounds();
     if (this._status === TIKTOK_AUTO_FOLLOW_PAGE_STATUS.opened) {
+      const sidebarWidth = Math.min(
+        TIKTOK_AUTO_FOLLOW_HELP_WIDTH,
+        bounds.width,
+      );
       this._helpView?.setBounds({
         x: 0,
         y: 0,
-        width: TIKTOK_AUTO_FOLLOW_HELP_WIDTH,
+        width: sidebarWidth,
         height: bounds.height,
       });
       this._tkPageView?.setBounds({
-        x: TIKTOK_AUTO_FOLLOW_HELP_WIDTH,
+        x: sidebarWidth,
         y: 0,
-        width: bounds.width - TIKTOK_AUTO_FOLLOW_HELP_WIDTH,
+        width: bounds.width - sidebarWidth,
         height: bounds.height,
       });
     } else {
@@ -107,15 +118,7 @@ export class TKAutoFollowView {
     this._setStatus(TIKTOK_AUTO_FOLLOW_PAGE_STATUS.loading);
     try {
       // 加载目标网页
-      await this._loadThirdPartyURL(this._tkPageView, TK_LOGIN_PAGE_URL);
-
-      setTimeout(async () => {
-        const res = await clickElement(
-          this._tkPageView!,
-          'span[data-e2e="bottom-sign-up"]',
-        );
-        console.log('click element result:', res);
-      }, 1000);
+      await this._loadThirdPartyURL(this._tkPageView, TK_URL);
 
       if (currentOpenTurnId !== this._openTurnId) {
         // 已过时
@@ -186,6 +189,33 @@ export class TKAutoFollowView {
         await this._reopenTKPageView();
       },
     );
+    this._addEventHandler(
+      TIKTOK_AUTO_FOLLOW_PAGE_EVENTS.GET_RUNNING_STATUS,
+      () => {
+        return this._runningStatus;
+      },
+    );
+    this._addEventHandler(
+      TIKTOK_AUTO_FOLLOW_PAGE_EVENTS.START_AUTO_FOLLOW,
+      () => {
+        this._startAutoFollow();
+      },
+    );
+    this._addEventHandler(
+      TIKTOK_AUTO_FOLLOW_PAGE_EVENTS.PAUSE_AUTO_FOLLOW,
+      () => {
+        this._pauseAutoFollow();
+      },
+    );
+    this._addEventHandler(
+      TIKTOK_AUTO_FOLLOW_PAGE_EVENTS.CONTINUE_AUTO_FOLLOW,
+      () => {
+        this._continueAutoFollow();
+      },
+    );
+    this._addEventHandler(TIKTOK_AUTO_FOLLOW_PAGE_EVENTS.CLOSE_AND_BACK, () => {
+      this._stopAutoFollow();
+    });
   }
 
   private _removeEventHandlers() {
@@ -210,16 +240,68 @@ export class TKAutoFollowView {
     }
   }
 
+  private async _runAutoFollow() {
+    if (this._tkPageView && this._userIds[this._currentUserIndex]) {
+      const userId = this._userIds[this._currentUserIndex];
+      try {
+        await this._loadThirdPartyURL(this._tkPageView, `${TK_URL}/@${userId}`);
+      } catch (error) {
+        logger.error('Run auto follow error:', error);
+      } finally {
+        this._currentUserIndex++;
+      }
+    }
+  }
+
+  private async _startAutoFollow() {
+    this._runningStatus = TIKTOK_AUTO_FOLLOW_RUNNING_STATUS.running;
+    while (
+      this._currentUserIndex < this._userIds.length &&
+      this._runningStatus === TIKTOK_AUTO_FOLLOW_RUNNING_STATUS.running &&
+      this._tkPageView
+    ) {
+      await this._runAutoFollow();
+      await sleep(1000);
+    }
+    if (
+      this._userIds.length &&
+      this._currentUserIndex === this._userIds.length &&
+      this._runningStatus === TIKTOK_AUTO_FOLLOW_RUNNING_STATUS.running
+    ) {
+      this._runningStatus = TIKTOK_AUTO_FOLLOW_RUNNING_STATUS.completed;
+    }
+  }
+
+  private _pauseAutoFollow() {
+    this._runningStatus = TIKTOK_AUTO_FOLLOW_RUNNING_STATUS.paused;
+  }
+
+  private _continueAutoFollow() {
+    this._startAutoFollow();
+  }
+
+  private _stopAutoFollow() {
+    this.close();
+    this._goBack();
+  }
+
   close() {
     this._removeResizeListener?.();
     this._removeResizeListener = null;
     this._removeEventHandlers();
     this._closeTKPageView();
     this._closeHelpView();
+    this._userIds = [];
+    this._currentUserIndex = 0;
+    this._runningStatus = TIKTOK_AUTO_FOLLOW_RUNNING_STATUS.not_started;
     this._setStatus(TIKTOK_AUTO_FOLLOW_PAGE_STATUS.stateless);
   }
 
   destroy() {
     this.close();
   }
+}
+
+export async function sleep(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }

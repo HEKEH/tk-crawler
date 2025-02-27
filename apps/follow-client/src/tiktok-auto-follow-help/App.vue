@@ -10,10 +10,9 @@ import 'element-plus/dist/index.css';
 
 const status = ref(TIKTOK_AUTO_FOLLOW_PAGE_STATUS.stateless);
 async function updateStatus() {
-  const status = await window.ipcRenderer.invoke(
+  status.value = await window.ipcRenderer.invoke(
     TIKTOK_AUTO_FOLLOW_PAGE_EVENTS.GET_STATUS,
   );
-  status.value = status;
 }
 updateStatus();
 const intervalId = setInterval(updateStatus, 100);

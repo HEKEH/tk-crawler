@@ -26,9 +26,6 @@ export class ViewsManager implements TkLoginViewContext {
 
   private _onClose: () => void;
 
-  private _userIds: string[] = [];
-  private _executeIndex: number = 0;
-
   private get allViews() {
     return [this._mainView, this._tkLoginView, this._tkAutoFollowView];
   }
@@ -59,7 +56,9 @@ export class ViewsManager implements TkLoginViewContext {
     });
     this._tkAutoFollowView = new TKAutoFollowView({
       parentWindow: this._baseWindow,
-      context: this,
+      goBack: () => {
+        this._changeView(this._mainView!);
+      },
     });
     this._baseWindow.on('close', this._onClose);
   }
@@ -91,8 +90,7 @@ export class ViewsManager implements TkLoginViewContext {
   }
 
   async startAutoFollow(userIds: string[]) {
-    this._userIds = userIds;
-    this._executeIndex = 0;
+    this._tkAutoFollowView!.updateUserIds(userIds);
     await this._changeView(this._tkAutoFollowView!);
   }
 

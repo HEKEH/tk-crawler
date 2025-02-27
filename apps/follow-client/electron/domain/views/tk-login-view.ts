@@ -47,16 +47,17 @@ export class TKLoginView implements IView {
   private _onResize() {
     const bounds = this._parentWindow.getBounds();
     if (this._status === LOGIN_TIKTOK_STATUS.opened) {
+      const sidebarWidth = Math.min(LOGIN_HELP_WIDTH, bounds.width);
       this._helpView?.setBounds({
         x: 0,
         y: 0,
-        width: LOGIN_HELP_WIDTH,
+        width: sidebarWidth,
         height: bounds.height,
       });
       this._tkPageView?.setBounds({
-        x: LOGIN_HELP_WIDTH,
+        x: sidebarWidth,
         y: 0,
-        width: bounds.width - LOGIN_HELP_WIDTH,
+        width: bounds.width - sidebarWidth,
         height: bounds.height,
       });
     } else {

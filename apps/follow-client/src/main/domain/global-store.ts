@@ -2,7 +2,7 @@ import { MessageCenter, RequestErrorType } from '@tk-crawler/shared';
 import { CheckNetworkResultType } from '@tk-follow-client/shared';
 import { markRaw } from 'vue';
 import { CUSTOM_EVENTS } from '../constants';
-import { checkNetwork, startExecute } from '../services';
+import { checkNetwork, startAutoFollow } from '../services';
 import { Menu } from '../types';
 import { MessageQueue } from './message-queue';
 
@@ -91,8 +91,8 @@ export default class GlobalStore {
     this._isInitialized = true;
   }
 
-  async startExecute(userIds: string[]) {
-    await startExecute(userIds);
+  async startAutoFollow(userIds: string[]) {
+    await startAutoFollow(userIds);
   }
 
   async stop() {}

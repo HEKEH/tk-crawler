@@ -12,7 +12,7 @@ const MAX_INPUT_COUNT = 100;
 const globalStore = useGlobalStore();
 const content = ref('');
 
-async function handleSubmit() {
+async function nextStep() {
   let userIds = content.value
     .trim()
     .split('\n')
@@ -27,7 +27,7 @@ async function handleSubmit() {
     ElMessage.error('请输入至少一个用户ID');
     return;
   }
-  await globalStore.startExecute(userIds);
+  await globalStore.startAutoFollow(userIds);
 }
 const isSubmitting = ref(false);
 
@@ -59,7 +59,7 @@ abc_xyz`"
         type="primary"
         :loading="isSubmitting"
         :disabled="content.trim().length === 0"
-        @click="handleSubmit"
+        @click="nextStep"
       >
         下一步
       </ElButton>

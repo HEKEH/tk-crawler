@@ -54,7 +54,7 @@ export class Services {
 
   init() {
     this._addEventHandler(
-      CUSTOM_EVENTS.START_EXECUTE,
+      CUSTOM_EVENTS.START_AUTO_FOLLOW,
       (_, userIds: string[]) => {
         logger.info('[startExecute]', userIds);
         return this._viewManager.startExecute(userIds);

@@ -1,5 +1,6 @@
 import type { MessageCenter } from '@tk-crawler/shared';
 import type { Subscription } from 'rxjs';
+import type { TkLoginViewContext } from './tk-login-view';
 import type { TkPagesWindow } from './tk-pages-window';
 import type { IView } from './types';
 import path from 'node:path';
@@ -8,7 +9,7 @@ import { BaseWindow } from 'electron';
 import { MainView } from './main-view';
 import { TKLoginView } from './tk-login-view';
 
-export class ViewsManager {
+export class ViewsManager implements TkLoginViewContext {
   private _baseWindow: BaseWindow | null = null;
 
   private _currentView: IView | null = null;
@@ -44,14 +45,19 @@ export class ViewsManager {
     });
     this._tkLoginView = new TKLoginView({
       parentWindow: this._baseWindow,
+      context: this,
     });
     this._baseWindow.on('close', this._onClose);
   }
 
   async show() {
-    this._currentView = this._mainView;
-    await this._mainView?.show();
+    this._currentView = this._tkLoginView;
+    await this._currentView?.show();
     this._baseWindow?.show();
+  }
+
+  async onTikTokLoginConfirmed() {
+    await this._changeView(this._mainView!);
   }
 
   private _closeCurrentView() {

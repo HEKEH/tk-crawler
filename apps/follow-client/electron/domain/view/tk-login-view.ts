@@ -12,7 +12,13 @@ import { logger } from '../../infra/logger';
 
 const TK_LOGIN_PAGE_URL = 'https://www.tiktok.com/login';
 
+export interface TkLoginViewContext {
+  onTikTokLoginConfirmed: () => Promise<void>;
+}
+
 export class TKLoginView implements IView {
+  private _context: TkLoginViewContext;
+
   private _parentWindow: BaseWindow;
 
   private _tkPageView: WebContentsView | null = null;
@@ -25,8 +31,12 @@ export class TKLoginView implements IView {
 
   private _removeResizeListener: (() => void) | null = null;
 
-  constructor(props: { parentWindow: BaseWindow }) {
+  constructor(props: {
+    parentWindow: BaseWindow;
+    context: TkLoginViewContext;
+  }) {
     this._parentWindow = props.parentWindow;
+    this._context = props.context;
   }
 
   private _setLoginStatus(status: LOGIN_TIKTOK_STATUS) {
@@ -163,6 +173,12 @@ export class TKLoginView implements IView {
       LOGIN_TIKTOK_HELP_EVENTS.RETRY_OPEN_TIKTOK_LOGIN_PAGE,
       async () => {
         await this._reopenTKPageView();
+      },
+    );
+    this._addEventHandler(
+      LOGIN_TIKTOK_HELP_EVENTS.LOGIN_TIKTOK_CONFIRMED,
+      async () => {
+        await this._context.onTikTokLoginConfirmed();
       },
     );
   }

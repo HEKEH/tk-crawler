@@ -1,42 +1,27 @@
 <script setup lang="ts">
-import { ElButton, ElInput } from 'element-plus';
-import { ref } from 'vue';
+import { LOGIN_TIKTOK_HELP_EVENTS } from '@tk-follow-client/shared';
+import { ElButton } from 'element-plus';
 
 defineOptions({
   name: 'MainView',
 });
 
-const cookie = ref<string>('');
-
-function onLoginSuccess() {}
-
-function onSubmitCookie() {}
+async function nextStep() {
+  await window.ipcRenderer.invoke(
+    LOGIN_TIKTOK_HELP_EVENTS.LOGIN_TIKTOK_CONFIRMED,
+  );
+}
 </script>
 
 <template>
   <div class="main-view-container">
     <div class="block">
-      <div class="description">请在完成登录后点击下方按钮</div>
-      <ElButton type="primary" @click="onLoginSuccess">已登录成功</ElButton>
-    </div>
-    <div class="block">
       <div class="description">
-        若登录遇到问题，可以手动粘贴cookie后点击提交
+        <div>请查看右侧页面是否已登录您的TikTok账号:</div>
+        <div>• 如果已登录且账号信息正确，请直接点击下一步</div>
+        <div>• 如果尚未登录，请在登录成功后再点击下一步</div>
       </div>
-      <ElInput
-        v-model="cookie"
-        type="textarea"
-        placeholder="手动粘贴cookie"
-        :rows="20"
-        resize="none"
-      />
-      <ElButton
-        type="primary"
-        :disabled="!cookie.trim()"
-        @click="onSubmitCookie"
-      >
-        提交Cookie
-      </ElButton>
+      <ElButton type="primary" @click="nextStep">下一步</ElButton>
     </div>
   </div>
 </template>

@@ -3,6 +3,7 @@ import path from 'node:path';
 import { loadThirdPartyURL } from '@tk-crawler/electron-utils';
 import { ipcMain, WebContentsView } from 'electron';
 import {
+  AUTO_FOLLOWED_RESULT_TYPE,
   TIKTOK_AUTO_FOLLOW_HELP_WIDTH,
   TIKTOK_AUTO_FOLLOW_PAGE_EVENTS,
   TIKTOK_AUTO_FOLLOW_PAGE_STATUS,
@@ -245,6 +246,10 @@ export class TKAutoFollowView {
       const userId = this._userIds[this._currentUserIndex];
       try {
         await this._loadThirdPartyURL(this._tkPageView, `${TK_URL}/@${userId}`);
+        this._helpView?.webContents.send(
+          TIKTOK_AUTO_FOLLOW_PAGE_EVENTS.AUTO_FOLLOWED_RESULT,
+          { user_id: userId, type: AUTO_FOLLOWED_RESULT_TYPE.SUCCESS },
+        );
       } catch (error) {
         logger.error('Run auto follow error:', error);
       } finally {

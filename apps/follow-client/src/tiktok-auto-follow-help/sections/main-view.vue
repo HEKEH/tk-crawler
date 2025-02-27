@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import { MessageQueue } from '@tk-crawler/view-shared';
 import {
+  AUTO_FOLLOWED_RESULT_TYPE,
   TIKTOK_AUTO_FOLLOW_PAGE_EVENTS,
   TIKTOK_AUTO_FOLLOW_RUNNING_STATUS,
 } from '@tk-follow-client/shared';
-import { onBeforeUnmount, ref } from 'vue';
+import { markRaw, onBeforeUnmount, ref } from 'vue';
 import IsCompleted from './is-completed.vue';
 import IsPaused from './is-paused.vue';
 import IsRunning from './is-running.vue';
@@ -25,6 +27,56 @@ updateRunningStatus();
 const intervalId = setInterval(updateRunningStatus, 100);
 onBeforeUnmount(() => {
   clearInterval(intervalId);
+});
+
+const messageQueue = markRaw(
+  new MessageQueue({
+    messageOffset: 200,
+  }),
+);
+
+function onUserFollowResultMessage(
+  _: Electron.IpcRendererEvent,
+  data: { user_id: string; type: AUTO_FOLLOWED_RESULT_TYPE },
+) {
+  switch (data.type) {
+    case AUTO_FOLLOWED_RESULT_TYPE.SUCCESS:
+      messageQueue.showMessage({
+        message: `关注用户成功:\n${data.user_id}`,
+        type: 'success',
+      });
+      break;
+    case AUTO_FOLLOWED_RESULT_TYPE.FAIL:
+      messageQueue.showMessage({
+        message: `关注用户失败:\n${data.user_id}`,
+        type: 'error',
+      });
+      break;
+    case AUTO_FOLLOWED_RESULT_TYPE.NO_FOUND:
+      messageQueue.showMessage({
+        message: `用户不存在:\n${data.user_id}`,
+        type: 'warning',
+      });
+      break;
+    case AUTO_FOLLOWED_RESULT_TYPE.ALREADY_FOLLOWED:
+      messageQueue.showMessage({
+        message: `用户无需重复关注:\n${data.user_id}`,
+        type: 'info',
+      });
+      break;
+  }
+}
+
+window.ipcRenderer.on(
+  TIKTOK_AUTO_FOLLOW_PAGE_EVENTS.AUTO_FOLLOWED_RESULT,
+  onUserFollowResultMessage,
+);
+
+onBeforeUnmount(() => {
+  window.ipcRenderer.off(
+    TIKTOK_AUTO_FOLLOW_PAGE_EVENTS.AUTO_FOLLOWED_RESULT,
+    onUserFollowResultMessage,
+  );
 });
 </script>
 

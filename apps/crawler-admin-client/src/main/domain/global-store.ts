@@ -1,6 +1,7 @@
 import type { AnchorScrawledMessage } from '@tk-crawler/shared';
 import { IsCookieValidResultStatus } from '@tk-crawler-admin-client/shared';
 import { MessageCenter, RequestErrorType } from '@tk-crawler/shared';
+import { MessageQueue } from '@tk-crawler/view-shared';
 import { markRaw } from 'vue';
 import { CrawlerViewMessage, CUSTOM_EVENTS } from '../constants';
 import {
@@ -10,7 +11,6 @@ import {
   stopLiveAnchorCrawl,
 } from '../services';
 import { Menu } from '../types';
-import { MessageQueue } from './message-queue';
 
 export default class GlobalStore {
   private _currentMenu: Menu = Menu.Crawler;
@@ -22,7 +22,7 @@ export default class GlobalStore {
 
   private _isCrawling: boolean = false;
 
-  private _notificationQueue = markRaw(
+  private _messageQueue = markRaw(
     new MessageQueue({
       messageOffset: 200,
     }),
@@ -69,7 +69,7 @@ export default class GlobalStore {
     this._addEventListener(
       CUSTOM_EVENTS.ANCHOR_SCRAWLED,
       (_, data: AnchorScrawledMessage) => {
-        this._notificationQueue.showMessage({
+        this._messageQueue.showMessage({
           message: `抓取到主播${data.anchor.display_id}的信息`,
           type: 'success',
         });
@@ -88,7 +88,7 @@ export default class GlobalStore {
         } else {
           message = '请求失败，请检查网络是否有异常';
         }
-        this._notificationQueue.showMessage({
+        this._messageQueue.showMessage({
           message,
           type: 'error',
         });

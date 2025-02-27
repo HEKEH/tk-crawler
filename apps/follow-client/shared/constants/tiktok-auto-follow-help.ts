@@ -8,7 +8,17 @@ export const TIKTOK_AUTO_FOLLOW_PAGE_EVENTS = {
   PAUSE_AUTO_FOLLOW: 'auto-follow:pause-auto-follow',
   CLOSE_AND_BACK: 'auto-follow:stop-auto-follow',
   CONTINUE_AUTO_FOLLOW: 'auto-follow:continue-auto-follow',
+
+  // 后台返回关注结果到前台
+  AUTO_FOLLOWED_RESULT: 'auto-follow:auto-followed-result',
 };
+
+export enum AUTO_FOLLOWED_RESULT_TYPE {
+  SUCCESS = 'success',
+  FAIL = 'fail',
+  NO_FOUND = 'no_found',
+  ALREADY_FOLLOWED = 'already_followed',
+}
 
 export enum TIKTOK_AUTO_FOLLOW_PAGE_STATUS {
   stateless = 'stateless',

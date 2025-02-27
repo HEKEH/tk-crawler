@@ -1,10 +1,10 @@
 import { MessageCenter, RequestErrorType } from '@tk-crawler/shared';
+import { MessageQueue } from '@tk-crawler/view-shared';
 import { CheckNetworkResultType } from '@tk-follow-client/shared';
 import { markRaw } from 'vue';
 import { CUSTOM_EVENTS } from '../constants';
 import { checkNetwork, startAutoFollow } from '../services';
 import { Menu } from '../types';
-import { MessageQueue } from './message-queue';
 
 export default class GlobalStore {
   private _currentMenu: Menu = Menu.Entry;
@@ -14,7 +14,7 @@ export default class GlobalStore {
   private _networkStatus: CheckNetworkResultType =
     CheckNetworkResultType.SUCCESS;
 
-  private _notificationQueue = markRaw(
+  private _messageQueue = markRaw(
     new MessageQueue({
       messageOffset: 200,
     }),
@@ -60,7 +60,7 @@ export default class GlobalStore {
         } else {
           message = '请求失败，请检查网络是否有异常';
         }
-        this._notificationQueue.showMessage({
+        this._messageQueue.showMessage({
           message,
           type: 'error',
         });

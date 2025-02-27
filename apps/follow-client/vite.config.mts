@@ -23,6 +23,10 @@ export default defineConfig(({ mode }) => {
       __dirname,
       '../../packages/electron-utils/src',
     ),
+    '@tk-crawler/view-shared': resolve(
+      __dirname,
+      '../../packages/view-shared/src',
+    ),
   };
 
   const electronOptions: ElectronSimpleOptions = {

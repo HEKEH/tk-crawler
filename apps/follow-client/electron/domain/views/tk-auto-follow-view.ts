@@ -1,6 +1,6 @@
 import type { BaseWindow } from 'electron';
 import path from 'node:path';
-import { loadThirdPartyURL } from '@tk-crawler/electron-utils';
+import { clickElement, loadThirdPartyURL } from '@tk-crawler/electron-utils';
 import { ipcMain, WebContentsView } from 'electron';
 import {
   AUTO_FOLLOWED_RESULT_TYPE,
@@ -10,7 +10,7 @@ import {
   TIKTOK_AUTO_FOLLOW_RUNNING_STATUS,
   TK_URL,
 } from '../../constants';
-import { RENDERER_DIST, VITE_DEV_SERVER_URL } from '../../env';
+import { isDevelopment, RENDERER_DIST, VITE_DEV_SERVER_URL } from '../../env';
 import { logger } from '../../infra/logger';
 
 export class TKAutoFollowView {
@@ -118,6 +118,9 @@ export class TKAutoFollowView {
     this._tkPageView = new WebContentsView();
     this._setStatus(TIKTOK_AUTO_FOLLOW_PAGE_STATUS.loading);
     try {
+      this._tkPageView.webContents.setUserAgent(
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+      );
       // 加载目标网页
       await this._loadThirdPartyURL(this._tkPageView, TK_URL);
 
@@ -125,13 +128,13 @@ export class TKAutoFollowView {
         // 已过时
         return;
       }
-      // if (isDevelopment) {
-      //   if (this._tkPageView?.webContents) {
-      //     this._tkPageView.webContents.openDevTools({
-      //       mode: 'right',
-      //     });
-      //   }
-      // }
+      if (isDevelopment) {
+        if (this._tkPageView?.webContents) {
+          this._tkPageView.webContents.openDevTools({
+            mode: 'right',
+          });
+        }
+      }
       this._parentWindow.contentView.addChildView(this._tkPageView);
       this._setStatus(TIKTOK_AUTO_FOLLOW_PAGE_STATUS.opened);
     } catch (error) {
@@ -241,18 +244,43 @@ export class TKAutoFollowView {
     }
   }
 
+  private async _clickFollowButton() {
+    const clickResult = await clickElement(
+      this._tkPageView!,
+      'button[data-e2e="follow-button"]',
+    );
+    logger.info('[Click follow button]', clickResult);
+    return clickResult;
+  }
+
   private async _runAutoFollow() {
     if (this._tkPageView && this._userIds[this._currentUserIndex]) {
       const userId = this._userIds[this._currentUserIndex];
       try {
         await this._loadThirdPartyURL(this._tkPageView, `${TK_URL}/@${userId}`);
-        this._helpView?.webContents.send(
-          TIKTOK_AUTO_FOLLOW_PAGE_EVENTS.AUTO_FOLLOWED_RESULT,
-          { user_id: userId, type: AUTO_FOLLOWED_RESULT_TYPE.SUCCESS },
-        );
+        await sleep(1000);
+        if (this._runningStatus !== TIKTOK_AUTO_FOLLOW_RUNNING_STATUS.running) {
+          return;
+        }
+        const clickResult = await this._clickFollowButton();
+        if (clickResult.success) {
+          this._helpView?.webContents.send(
+            TIKTOK_AUTO_FOLLOW_PAGE_EVENTS.AUTO_FOLLOWED_RESULT,
+            { user_id: userId, type: AUTO_FOLLOWED_RESULT_TYPE.SUCCESS },
+          );
+        } else {
+          // this._helpView?.webContents.send(
+          //   TIKTOK_AUTO_FOLLOW_PAGE_EVENTS.AUTO_FOLLOWED_RESULT,
+          //   { user_id: userId, type: AUTO_FOLLOWED_RESULT_TYPE.FAIL },
+          // );
+        }
+        this._currentUserIndex++;
       } catch (error) {
         logger.error('Run auto follow error:', error);
-      } finally {
+        this._helpView?.webContents.send(
+          TIKTOK_AUTO_FOLLOW_PAGE_EVENTS.AUTO_FOLLOWED_RESULT,
+          { user_id: userId, type: AUTO_FOLLOWED_RESULT_TYPE.FAIL },
+        );
         this._currentUserIndex++;
       }
     }

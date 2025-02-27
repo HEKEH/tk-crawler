@@ -1,13 +1,9 @@
 import type { WebContentsView } from 'electron';
 
-export function loadThirdPartyURL(
+export function addCSPHandle(
   view: WebContentsView,
-  url: string,
   onError: (error: Error) => void,
 ) {
-  view.webContents.setUserAgent(
-    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
-  );
   view.webContents.session.webRequest.onHeadersReceived((details, callback) => {
     try {
       const {
@@ -36,6 +32,13 @@ export function loadThirdPartyURL(
       callback({ responseHeaders: details.responseHeaders });
     }
   });
+}
+export function loadThirdPartyURL(
+  view: WebContentsView,
+  url: string,
+  onError: (error: Error) => void,
+) {
+  addCSPHandle(view, onError);
   return view.webContents.loadURL(url);
 }
 
@@ -45,7 +48,6 @@ export async function clickElement(
 ): Promise<{ success: boolean; error?: string }> {
   const result = await view.webContents.executeJavaScript(`
       (function() {
-        console.log('click element', '${selector}');
         try {
           const element = document.querySelector('${selector}');
           if (element) {

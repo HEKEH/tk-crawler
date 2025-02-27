@@ -1,4 +1,4 @@
-import type { ViewsManager } from '../view';
+import type { ViewsManager } from '../views';
 import { checkNetwork, type MessageCenter } from '@tk-crawler/shared';
 import { CheckNetworkResultType, TK_URL } from '@tk-follow-client/shared';
 import { ipcMain } from 'electron';
@@ -57,7 +57,7 @@ export class Services {
       CUSTOM_EVENTS.START_AUTO_FOLLOW,
       (_, userIds: string[]) => {
         logger.info('[startExecute]', userIds);
-        return this._viewManager.startExecute(userIds);
+        return this._viewManager.startAutoFollow(userIds);
       },
     );
     this._addEventHandler(CUSTOM_EVENTS.CHECK_NETWORK, async () => {

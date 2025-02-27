@@ -10,6 +10,8 @@
       "@tk-crawler/shared": ["packages/shared/src/index.ts"],
       "@tk-crawler/biz-shared/*": ["packages/biz-shared/src/*"],
       "@tk-crawler/biz-shared": ["packages/biz-shared/src/index.ts"],
+      "@tk-crawler/electron-utils/*": ["packages/electron-utils/src/*"],
+      "@tk-crawler/electron-utils": ["packages/electron-utils/src/index.ts"],
       "@tk-crawler/database/*": ["packages/database/src/*"],
       "@tk-crawler/database": ["packages/database/src/index.ts"],
       "@tk-crawler-admin-client/shared/*": [

@@ -7,9 +7,7 @@ defineOptions({
 });
 
 async function nextStep() {
-  await window.ipcRenderer.invoke(
-    LOGIN_TIKTOK_HELP_EVENTS.LOGIN_TIKTOK_CONFIRMED,
-  );
+  await window.ipcRenderer.invoke(LOGIN_TIKTOK_HELP_EVENTS.LOGIN_CONFIRMED);
 }
 </script>
 

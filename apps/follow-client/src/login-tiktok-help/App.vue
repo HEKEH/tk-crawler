@@ -11,7 +11,7 @@ import 'element-plus/dist/index.css';
 const loginStatus = ref(LOGIN_TIKTOK_STATUS.stateless);
 async function updateLoginStatus() {
   const status = await window.ipcRenderer.invoke(
-    LOGIN_TIKTOK_HELP_EVENTS.GET_LOGIN_TIKTOK_STATUS,
+    LOGIN_TIKTOK_HELP_EVENTS.GET_STATUS,
   );
   loginStatus.value = status;
 }
@@ -21,9 +21,7 @@ onBeforeUnmount(() => {
   clearInterval(intervalId);
 });
 function onRetry() {
-  window.ipcRenderer.invoke(
-    LOGIN_TIKTOK_HELP_EVENTS.RETRY_OPEN_TIKTOK_LOGIN_PAGE,
-  );
+  window.ipcRenderer.invoke(LOGIN_TIKTOK_HELP_EVENTS.RETRY_OPEN_PAGE);
 }
 </script>
 

@@ -1,12 +1,12 @@
 import type { MessageCenter } from '@tk-crawler/shared';
 import type { Subscription } from 'rxjs';
 import type { TkLoginViewContext } from './tk-login-view';
-import type { TkPagesWindow } from './tk-pages-window';
 import type { IView } from './types';
 import path from 'node:path';
 import process from 'node:process';
 import { BaseWindow } from 'electron';
 import { MainView } from './main-view';
+import { TKAutoFollowView } from './tk-auto-follow-view';
 import { TKLoginView } from './tk-login-view';
 
 export class ViewsManager implements TkLoginViewContext {
@@ -18,7 +18,7 @@ export class ViewsManager implements TkLoginViewContext {
 
   private _tkLoginView: TKLoginView | null = null;
 
-  private _tkPagesWindow: TkPagesWindow | null = null;
+  private _tkAutoFollowView: TKAutoFollowView | null = null;
 
   private _messageCenter: MessageCenter;
 
@@ -28,6 +28,16 @@ export class ViewsManager implements TkLoginViewContext {
 
   private _userIds: string[] = [];
   private _executeIndex: number = 0;
+
+  private get allViews() {
+    return [this._mainView, this._tkLoginView, this._tkAutoFollowView];
+  }
+
+  private _clearAllViewVariables() {
+    this._mainView = null;
+    this._tkLoginView = null;
+    this._tkAutoFollowView = null;
+  }
 
   constructor(props: { messageCenter: MessageCenter; onClose: () => void }) {
     this._messageCenter = props.messageCenter;
@@ -44,6 +54,10 @@ export class ViewsManager implements TkLoginViewContext {
       messageCenter: this._messageCenter,
     });
     this._tkLoginView = new TKLoginView({
+      parentWindow: this._baseWindow,
+      context: this,
+    });
+    this._tkAutoFollowView = new TKAutoFollowView({
       parentWindow: this._baseWindow,
       context: this,
     });
@@ -76,10 +90,10 @@ export class ViewsManager implements TkLoginViewContext {
     await this._currentView.show();
   }
 
-  async startExecute(userIds: string[]) {
+  async startAutoFollow(userIds: string[]) {
     this._userIds = userIds;
     this._executeIndex = 0;
-    await this._changeView(this._tkLoginView!);
+    await this._changeView(this._tkAutoFollowView!);
   }
 
   private _clearSubscriptions() {
@@ -96,10 +110,6 @@ export class ViewsManager implements TkLoginViewContext {
     }
   }
 
-  private get allViews() {
-    return [this._mainView, this._tkLoginView];
-  }
-
   destroy() {
     this._clearSubscriptions();
     this.allViews.forEach(view => {
@@ -111,7 +121,6 @@ export class ViewsManager implements TkLoginViewContext {
     }
     this._currentView = null;
     this._baseWindow = null;
-    this._mainView = null;
-    this._tkLoginView = null;
+    this._clearAllViewVariables();
   }
 }

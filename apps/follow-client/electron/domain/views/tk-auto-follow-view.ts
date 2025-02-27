@@ -1,23 +1,21 @@
 import type { BaseWindow } from 'electron';
-import type { IView } from './types';
 import path from 'node:path';
-import {
-  LOGIN_HELP_WIDTH,
-  LOGIN_TIKTOK_HELP_EVENTS,
-  LOGIN_TIKTOK_STATUS,
-} from '@tk-follow-client/shared';
+import { clickElement, loadThirdPartyURL } from '@tk-crawler/electron-utils';
 import { ipcMain, WebContentsView } from 'electron';
-import { isDevelopment, RENDERER_DIST, VITE_DEV_SERVER_URL } from '../../env';
+import {
+  TIKTOK_AUTO_FOLLOW_HELP_WIDTH,
+  TIKTOK_AUTO_FOLLOW_PAGE_EVENTS,
+  TIKTOK_AUTO_FOLLOW_PAGE_STATUS,
+} from '../../constants';
+import { RENDERER_DIST, VITE_DEV_SERVER_URL } from '../../env';
 import { logger } from '../../infra/logger';
 
 const TK_LOGIN_PAGE_URL = 'https://www.tiktok.com/login';
 
-export interface TkLoginViewContext {
-  onTikTokLoginConfirmed: () => Promise<void>;
-}
+export interface TKAutoFollowViewContext {}
 
-export class TKLoginView implements IView {
-  private _context: TkLoginViewContext;
+export class TKAutoFollowView {
+  private _context: TKAutoFollowViewContext;
 
   private _parentWindow: BaseWindow;
 
@@ -25,7 +23,8 @@ export class TKLoginView implements IView {
 
   private _helpView: WebContentsView | null = null;
 
-  private _loginStatus: LOGIN_TIKTOK_STATUS = LOGIN_TIKTOK_STATUS.stateless;
+  private _status: TIKTOK_AUTO_FOLLOW_PAGE_STATUS =
+    TIKTOK_AUTO_FOLLOW_PAGE_STATUS.stateless;
 
   private _openTurnId: number = 0;
 
@@ -33,30 +32,33 @@ export class TKLoginView implements IView {
 
   constructor(props: {
     parentWindow: BaseWindow;
-    context: TkLoginViewContext;
+    context: TKAutoFollowViewContext;
   }) {
     this._parentWindow = props.parentWindow;
     this._context = props.context;
   }
 
-  private _setLoginStatus(status: LOGIN_TIKTOK_STATUS) {
-    this._loginStatus = status;
+  private _setStatus(status: TIKTOK_AUTO_FOLLOW_PAGE_STATUS) {
+    this._status = status;
     this._onResize();
   }
 
   private _onResize() {
+    if (!this._parentWindow) {
+      return;
+    }
     const bounds = this._parentWindow.getBounds();
-    if (this._loginStatus === LOGIN_TIKTOK_STATUS.opened) {
+    if (this._status === TIKTOK_AUTO_FOLLOW_PAGE_STATUS.opened) {
       this._helpView?.setBounds({
         x: 0,
         y: 0,
-        width: LOGIN_HELP_WIDTH,
+        width: TIKTOK_AUTO_FOLLOW_HELP_WIDTH,
         height: bounds.height,
       });
       this._tkPageView?.setBounds({
-        x: LOGIN_HELP_WIDTH,
+        x: TIKTOK_AUTO_FOLLOW_HELP_WIDTH,
         y: 0,
-        width: bounds.width - LOGIN_HELP_WIDTH,
+        width: bounds.width - TIKTOK_AUTO_FOLLOW_HELP_WIDTH,
         height: bounds.height,
       });
     } else {
@@ -80,49 +82,61 @@ export class TKLoginView implements IView {
       });
       if (VITE_DEV_SERVER_URL) {
         await this._helpView.webContents.loadURL(
-          `${VITE_DEV_SERVER_URL}login-tiktok-help.html`,
+          `${VITE_DEV_SERVER_URL}tiktok-auto-follow-help.html`,
         );
       } else {
         await this._helpView.webContents.loadFile(
-          path.join(RENDERER_DIST, 'login-tiktok-help.html'),
+          path.join(RENDERER_DIST, 'tiktok-auto-follow-help.html'),
         );
       }
-      this._parentWindow.contentView.addChildView(this._helpView);
+      this._parentWindow!.contentView.addChildView(this._helpView);
       this._onResize();
     }
+  }
+
+  private _loadThirdPartyURL(view: WebContentsView, url: string) {
+    return loadThirdPartyURL(view, url, error => {
+      logger.error('Load third party url error:', error);
+    });
   }
 
   private async _openTKPageView() {
     this._openTurnId++;
     const currentOpenTurnId = this._openTurnId;
     this._tkPageView = new WebContentsView();
-    this._setLoginStatus(LOGIN_TIKTOK_STATUS.loading);
+    this._setStatus(TIKTOK_AUTO_FOLLOW_PAGE_STATUS.loading);
     try {
-      this._tkPageView.webContents.setUserAgent(
-        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
-      );
       // 加载目标网页
-      await this._tkPageView.webContents.loadURL(TK_LOGIN_PAGE_URL);
+      await this._loadThirdPartyURL(this._tkPageView, TK_LOGIN_PAGE_URL);
+
+      setTimeout(async () => {
+        const res = await clickElement(
+          this._tkPageView!,
+          'span[data-e2e="bottom-sign-up"]',
+        );
+        console.log('click element result:', res);
+      }, 1000);
+
       if (currentOpenTurnId !== this._openTurnId) {
         // 已过时
         return;
       }
-      if (isDevelopment) {
-        if (this._tkPageView?.webContents) {
-          this._tkPageView.webContents.openDevTools({
-            mode: 'right',
-          });
-        }
-      }
+      // if (isDevelopment) {
+      //   if (this._tkPageView?.webContents) {
+      //     this._tkPageView.webContents.openDevTools({
+      //       mode: 'right',
+      //     });
+      //   }
+      // }
       this._parentWindow.contentView.addChildView(this._tkPageView);
-      this._setLoginStatus(LOGIN_TIKTOK_STATUS.opened);
+      this._setStatus(TIKTOK_AUTO_FOLLOW_PAGE_STATUS.opened);
     } catch (error) {
       if ((error as any)?.code === 'ERR_CONNECTION_TIMED_OUT') {
         logger.error('Open tiktok login page timeout:', error);
-        this._setLoginStatus(LOGIN_TIKTOK_STATUS.timeout);
+        this._setStatus(TIKTOK_AUTO_FOLLOW_PAGE_STATUS.timeout);
       } else {
         logger.error('Open tiktok login page error:', error);
-        this._setLoginStatus(LOGIN_TIKTOK_STATUS.fail);
+        this._setStatus(TIKTOK_AUTO_FOLLOW_PAGE_STATUS.fail);
       }
     }
   }
@@ -163,22 +177,13 @@ export class TKLoginView implements IView {
   }
 
   private _addEventHandlers() {
+    this._addEventHandler(TIKTOK_AUTO_FOLLOW_PAGE_EVENTS.GET_STATUS, () => {
+      return this._status;
+    });
     this._addEventHandler(
-      LOGIN_TIKTOK_HELP_EVENTS.GET_LOGIN_TIKTOK_STATUS,
-      () => {
-        return this._loginStatus;
-      },
-    );
-    this._addEventHandler(
-      LOGIN_TIKTOK_HELP_EVENTS.RETRY_OPEN_TIKTOK_LOGIN_PAGE,
+      TIKTOK_AUTO_FOLLOW_PAGE_EVENTS.RETRY_OPEN_PAGE,
       async () => {
         await this._reopenTKPageView();
-      },
-    );
-    this._addEventHandler(
-      LOGIN_TIKTOK_HELP_EVENTS.LOGIN_TIKTOK_CONFIRMED,
-      async () => {
-        await this._context.onTikTokLoginConfirmed();
       },
     );
   }
@@ -211,7 +216,7 @@ export class TKLoginView implements IView {
     this._removeEventHandlers();
     this._closeTKPageView();
     this._closeHelpView();
-    this._setLoginStatus(LOGIN_TIKTOK_STATUS.stateless);
+    this._setStatus(TIKTOK_AUTO_FOLLOW_PAGE_STATUS.stateless);
   }
 
   destroy() {

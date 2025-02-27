@@ -19,6 +19,10 @@ export default defineConfig(({ mode }) => {
   const alias: AliasOptions = {
     '@tk-follow-client/shared': resolve(__dirname, 'shared'),
     '@tk-crawler/shared': resolve(__dirname, '../../packages/shared/src'),
+    '@tk-crawler/electron-utils': resolve(
+      __dirname,
+      '../../packages/electron-utils/src',
+    ),
   };
 
   const electronOptions: ElectronSimpleOptions = {
@@ -77,8 +81,8 @@ export default defineConfig(({ mode }) => {
             },
           },
           {
-            filename: 'tiktok-pages-help.html',
-            template: 'tiktok-pages-help.html',
+            filename: 'tiktok-auto-follow-help.html',
+            template: 'tiktok-auto-follow-help.html',
           },
           {
             filename: 'login-tiktok-help.html',
@@ -94,9 +98,9 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         input: {
           main: path.resolve(__dirname, 'index.html'),
-          'tiktok-pages-help': path.resolve(
+          'tiktok-auto-follow-help': path.resolve(
             __dirname,
-            'tiktok-pages-help.html',
+            'tiktok-auto-follow-help.html',
           ),
         },
       },

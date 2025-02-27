@@ -1,0 +1,13 @@
+{
+  "name": "@tk-crawler/electron-utils",
+  "version": "0.0.0",
+  "private": true,
+  "files": [],
+  "scripts": {
+    "preinstall": "npx only-allow pnpm"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "electron": "^33.3.1"
+  }
+}

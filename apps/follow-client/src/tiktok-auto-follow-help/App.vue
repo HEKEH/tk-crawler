@@ -2,16 +2,16 @@
 import { ElButton } from 'element-plus';
 import { onBeforeUnmount, ref } from 'vue';
 import {
-  TIKTOK_PAGES_HELP_EVENTS,
-  TIKTOK_PAGES_STATUS,
+  TIKTOK_AUTO_FOLLOW_PAGE_EVENTS,
+  TIKTOK_AUTO_FOLLOW_PAGE_STATUS,
 } from '../main/constants';
 import MainView from './sections/main-view.vue';
 import 'element-plus/dist/index.css';
 
-const status = ref(TIKTOK_PAGES_STATUS.stateless);
+const status = ref(TIKTOK_AUTO_FOLLOW_PAGE_STATUS.stateless);
 async function updateStatus() {
   const status = await window.ipcRenderer.invoke(
-    TIKTOK_PAGES_HELP_EVENTS.GET_LOGIN_TIKTOK_STATUS,
+    TIKTOK_AUTO_FOLLOW_PAGE_EVENTS.GET_STATUS,
   );
   status.value = status;
 }
@@ -21,27 +21,27 @@ onBeforeUnmount(() => {
   clearInterval(intervalId);
 });
 function onRetry() {
-  window.ipcRenderer.invoke(TIKTOK_PAGES_HELP_EVENTS.RETRY_OPEN_TIKTOK_PAGE);
+  window.ipcRenderer.invoke(TIKTOK_AUTO_FOLLOW_PAGE_EVENTS.RETRY_OPEN_PAGE);
 }
 </script>
 
 <template>
   <div
-    v-loading="status === TIKTOK_PAGES_STATUS.loading"
+    v-loading="status === TIKTOK_AUTO_FOLLOW_PAGE_STATUS.loading"
     class="container"
     element-loading-text="加载中..."
   >
-    <template v-if="status === TIKTOK_PAGES_STATUS.timeout">
+    <template v-if="status === TIKTOK_AUTO_FOLLOW_PAGE_STATUS.timeout">
       <div class="tip-text">
         请求超时，请检查是否开启VPN，且VPN是否开启了全局代理
       </div>
       <ElButton type="primary" @click="onRetry">点击重试</ElButton>
     </template>
-    <template v-else-if="status === TIKTOK_PAGES_STATUS.fail">
+    <template v-else-if="status === TIKTOK_AUTO_FOLLOW_PAGE_STATUS.fail">
       <div class="tip-text">打开登录页失败，请检查网络</div>
       <ElButton type="primary" @click="onRetry">点击重试</ElButton>
     </template>
-    <MainView v-else-if="status === TIKTOK_PAGES_STATUS.opened" />
+    <MainView v-else-if="status === TIKTOK_AUTO_FOLLOW_PAGE_STATUS.opened" />
   </div>
 </template>
 

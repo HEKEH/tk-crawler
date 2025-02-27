@@ -1,6 +1,6 @@
 import { MessageCenter } from '@tk-crawler/shared';
 import { Services } from './services';
-import { ViewsManager } from './view';
+import { ViewsManager } from './views';
 
 /** 领域的总入口 */
 export class GlobalManager {

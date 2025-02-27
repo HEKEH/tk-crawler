@@ -94,6 +94,11 @@ export class ViewsManager implements TkLoginViewContext {
     await this._changeView(this._tkAutoFollowView!);
   }
 
+  /** 回到登录页 */
+  async openTKLoginPage() {
+    await this._changeView(this._tkLoginView!);
+  }
+
   private _clearSubscriptions() {
     this._subscriptions.forEach(subscription => {
       subscription.unsubscribe();

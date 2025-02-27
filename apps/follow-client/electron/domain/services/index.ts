@@ -60,6 +60,10 @@ export class Services {
         return this._viewManager.startAutoFollow(userIds);
       },
     );
+    this._addEventHandler(CUSTOM_EVENTS.SWITCH_TIKTOK_ACCOUNT, async () => {
+      logger.info('[Switch TikTok Account]');
+      return this._viewManager.openTKLoginPage();
+    });
     this._addEventHandler(CUSTOM_EVENTS.CHECK_NETWORK, async () => {
       const res = await checkNetwork(TK_URL);
       logger.info('[checkNetwork]', res);

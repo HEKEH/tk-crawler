@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import LeftMenus from './left-menus.vue';
+import RightPart from './right-part.vue';
 
 defineOptions({
   name: 'TopBar',
@@ -12,7 +13,9 @@ defineOptions({
       <img class="app-icon" src="/appicon.svg" alt="appicon" />
       <LeftMenus />
     </div>
-    <div class="top-bar-right"></div>
+    <div class="top-bar-right">
+      <RightPart />
+    </div>
   </div>
 </template>
 

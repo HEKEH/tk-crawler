@@ -16,10 +16,11 @@ async function nextStep() {
     <div class="block">
       <div class="description">
         <div>请查看右侧页面是否已登录您的TikTok账号:</div>
-        <div>• 如果已登录且账号信息正确，请直接点击下一步</div>
-        <div>• 如果尚未登录，请在登录成功后再点击下一步</div>
+        <div>• 如果已登录且账号信息正确，请直接点击下方按钮</div>
+        <div>• 如果尚未登录，请在登录成功后再点击下方按钮</div>
+        <div>• 如需切换账户，请在右侧注销后重新登录</div>
       </div>
-      <ElButton type="primary" @click="nextStep">下一步</ElButton>
+      <ElButton type="primary" @click="nextStep">进入主页</ElButton>
     </div>
   </div>
 </template>

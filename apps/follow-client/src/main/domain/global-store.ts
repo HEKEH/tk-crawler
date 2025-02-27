@@ -101,6 +101,10 @@ export default class GlobalStore {
     this._currentMenu = menu;
   }
 
+  async switchTikTokAccount() {
+    await window.ipcRenderer.invoke(CUSTOM_EVENTS.SWITCH_TIKTOK_ACCOUNT);
+  }
+
   clear() {
     this._removeEventListeners();
   }

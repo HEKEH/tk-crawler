@@ -16,13 +16,14 @@ async function onStop() {
 <template>
   <div class="block">
     <div class="description">自动关注任务已全部完成</div>
-    <ElButton @click="onStop">回到主页</ElButton>
+    <ElButton type="primary" @click="onStop">回到主页</ElButton>
   </div>
 </template>
 
 <style scoped>
 .description {
   font-size: 16px;
+  color: var(--el-color-primary);
 }
 .block {
   width: 100%;

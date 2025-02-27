@@ -13,6 +13,13 @@ import {
 import { isDevelopment, RENDERER_DIST, VITE_DEV_SERVER_URL } from '../../env';
 import { logger } from '../../infra/logger';
 
+enum FOLLOW_PAGE_STATUS {
+  NOT_FOLLOWED = 'not_followed',
+  ALREADY_FOLLOWED = 'already_followed',
+  NOT_FOUND = 'not_found',
+  ERROR = 'error',
+}
+
 export class TKAutoFollowView {
   private _parentWindow: BaseWindow;
 
@@ -244,6 +251,27 @@ export class TKAutoFollowView {
     }
   }
 
+  private async _checkFollowPage(): Promise<FOLLOW_PAGE_STATUS> {
+    const selector = 'button[data-e2e="follow-button"]';
+    const result = await this._tkPageView!.webContents.executeJavaScript(`
+      (function() {
+        try {
+          const element = document.querySelector('${selector}');
+          if (element) {
+            if (element.classList.contains('TUXButton--primary')) {
+              return '${FOLLOW_PAGE_STATUS.NOT_FOLLOWED}';
+            }
+            return '${FOLLOW_PAGE_STATUS.ALREADY_FOLLOWED}';
+          }
+          return '${FOLLOW_PAGE_STATUS.NOT_FOUND}';
+        } catch (error) {
+          return '${FOLLOW_PAGE_STATUS.ERROR}';
+        }
+      })()
+    `);
+    return result as FOLLOW_PAGE_STATUS;
+  }
+
   private async _clickFollowButton() {
     const clickResult = await clickElement(
       this._tkPageView!,
@@ -259,21 +287,41 @@ export class TKAutoFollowView {
       try {
         await this._loadThirdPartyURL(this._tkPageView, `${TK_URL}/@${userId}`);
         await sleep(1000);
-        if (this._runningStatus !== TIKTOK_AUTO_FOLLOW_RUNNING_STATUS.running) {
+        if (
+          this._runningStatus !== TIKTOK_AUTO_FOLLOW_RUNNING_STATUS.running ||
+          !this._tkPageView
+        ) {
           return;
         }
-        const clickResult = await this._clickFollowButton();
-        if (clickResult.success) {
-          this._helpView?.webContents.send(
-            TIKTOK_AUTO_FOLLOW_PAGE_EVENTS.AUTO_FOLLOWED_RESULT,
-            { user_id: userId, type: AUTO_FOLLOWED_RESULT_TYPE.SUCCESS },
-          );
-        } else {
-          // this._helpView?.webContents.send(
-          //   TIKTOK_AUTO_FOLLOW_PAGE_EVENTS.AUTO_FOLLOWED_RESULT,
-          //   { user_id: userId, type: AUTO_FOLLOWED_RESULT_TYPE.FAIL },
-          // );
+        const followPageStatus = await this._checkFollowPage();
+        let followResultType: AUTO_FOLLOWED_RESULT_TYPE;
+        switch (followPageStatus) {
+          case FOLLOW_PAGE_STATUS.NOT_FOLLOWED: {
+            const clickResult = await this._clickFollowButton();
+            if (clickResult.success) {
+              followResultType = AUTO_FOLLOWED_RESULT_TYPE.SUCCESS;
+            } else {
+              followResultType = AUTO_FOLLOWED_RESULT_TYPE.FAIL;
+            }
+            break;
+          }
+          case FOLLOW_PAGE_STATUS.ALREADY_FOLLOWED: {
+            followResultType = AUTO_FOLLOWED_RESULT_TYPE.ALREADY_FOLLOWED;
+            break;
+          }
+          case FOLLOW_PAGE_STATUS.NOT_FOUND: {
+            followResultType = AUTO_FOLLOWED_RESULT_TYPE.NOT_FOUND;
+            break;
+          }
+          case FOLLOW_PAGE_STATUS.ERROR: {
+            followResultType = AUTO_FOLLOWED_RESULT_TYPE.FAIL;
+            break;
+          }
         }
+        this._helpView?.webContents.send(
+          TIKTOK_AUTO_FOLLOW_PAGE_EVENTS.AUTO_FOLLOWED_RESULT,
+          { user_id: userId, type: followResultType },
+        );
         this._currentUserIndex++;
       } catch (error) {
         logger.error('Run auto follow error:', error);

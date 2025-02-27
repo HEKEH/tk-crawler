@@ -16,7 +16,7 @@ export const TIKTOK_AUTO_FOLLOW_PAGE_EVENTS = {
 export enum AUTO_FOLLOWED_RESULT_TYPE {
   SUCCESS = 'success',
   FAIL = 'fail',
-  NO_FOUND = 'no_found',
+  NOT_FOUND = 'not_found',
   ALREADY_FOLLOWED = 'already_followed',
 }
 

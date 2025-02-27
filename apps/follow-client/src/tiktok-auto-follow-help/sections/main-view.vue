@@ -52,7 +52,7 @@ function onUserFollowResultMessage(
         type: 'error',
       });
       break;
-    case AUTO_FOLLOWED_RESULT_TYPE.NO_FOUND:
+    case AUTO_FOLLOWED_RESULT_TYPE.NOT_FOUND:
       messageQueue.showMessage({
         message: `用户不存在:\n${data.user_id}`,
         type: 'warning',

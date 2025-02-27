@@ -42,6 +42,26 @@ export function loadThirdPartyURL(
   return view.webContents.loadURL(url);
 }
 
+export async function findElement(
+  view: WebContentsView,
+  selector: string,
+): Promise<{ success: boolean }> {
+  const result = await view.webContents.executeJavaScript(`
+      (function() {
+        try {
+          const element = document.querySelector('${selector}');
+          if (element) {
+            return { success: true };
+          }
+          return { success: false };
+        } catch (error) {
+          return { success: false };
+        }
+      })()
+    `);
+  return result;
+}
+
 export async function clickElement(
   view: WebContentsView,
   selector: string,

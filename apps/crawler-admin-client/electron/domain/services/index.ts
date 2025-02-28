@@ -1,6 +1,6 @@
 import type { CommonResult, MessageCenter } from '@tk-crawler/shared';
 import type { Crawler } from '../crawler';
-import type { ViewManager } from '../view';
+import type { ViewsManager } from '../views';
 import { IsCookieValidResultStatus } from '@tk-crawler-admin-client/shared';
 import { checkTiktokCookieValid, getMsTokenFromCookie } from '@tk-crawler/core';
 import { getVerifyFp } from '@tk-crawler/core/requests/utils/params';
@@ -11,7 +11,7 @@ import { syncTiktokCookie } from './cookie';
 
 export class Services {
   private _crawler: Crawler;
-  private _viewManager: ViewManager;
+  private _viewManager: ViewsManager;
 
   private _messageCenter: MessageCenter;
 
@@ -22,7 +22,7 @@ export class Services {
     messageCenter,
   }: {
     crawler: Crawler;
-    viewManager: ViewManager;
+    viewManager: ViewsManager;
     messageCenter: MessageCenter;
   }) {
     this._crawler = crawler;

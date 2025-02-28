@@ -3,7 +3,7 @@ import { MessageCenter } from '@tk-crawler/shared';
 import config from '../config';
 import { Crawler } from './crawler';
 import { Services } from './services';
-import { ViewManager } from './view';
+import { ViewsManager } from './views';
 
 /** 领域的总入口 */
 export class GlobalManager {
@@ -13,7 +13,7 @@ export class GlobalManager {
 
   private _crawler: Crawler;
 
-  private _viewManager: ViewManager;
+  private _viewsManager: ViewsManager;
 
   private _services: Services;
 
@@ -22,13 +22,16 @@ export class GlobalManager {
     this._crawler = new Crawler({
       messageCenter: this._messageCenter,
     });
-    this._viewManager = new ViewManager({
+    this._viewsManager = new ViewsManager({
       messageCenter: this._messageCenter,
+      onClose: () => {
+        this.destroy();
+      },
     });
     this._services = new Services({
       messageCenter: this._messageCenter,
       crawler: this._crawler,
-      viewManager: this._viewManager,
+      viewManager: this._viewsManager,
     });
   }
 
@@ -37,12 +40,13 @@ export class GlobalManager {
       ownServerUrl: config.ownServerUrl,
     });
     this._services.init();
-    await this._viewManager.createWindow();
+    this._viewsManager.init();
+    await this._viewsManager.show();
   }
 
   destroy() {
     this._crawler.clear();
-    this._viewManager.destroy();
+    this._viewsManager.destroy();
     this._services.destroy();
     this._messageCenter.clear();
   }

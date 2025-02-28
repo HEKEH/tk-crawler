@@ -1,4 +1,5 @@
-import { app, session, type WebContentsView } from 'electron';
+import type { BaseWindow, WebContentsView } from 'electron';
+import { app, session } from 'electron';
 
 export function addCSPHandle(
   view: WebContentsView,
@@ -105,4 +106,29 @@ export function setElectronLang(lang = 'en-US') {
       },
     );
   });
+}
+
+export function bindViewToWindowBounds(
+  view: WebContentsView,
+  window: BaseWindow,
+  getViewBounds: (
+    windowBounds: Electron.Rectangle,
+  ) => Electron.Rectangle = bounds => {
+    return {
+      x: 0,
+      y: 0,
+      width: bounds.width,
+      height: bounds.height,
+    };
+  },
+) {
+  const setBounds = () => {
+    const bounds = window.getBounds();
+    view.setBounds(getViewBounds(bounds));
+  };
+  setBounds();
+  window.on('resize', setBounds);
+  return () => {
+    window.removeListener('resize', setBounds);
+  };
 }

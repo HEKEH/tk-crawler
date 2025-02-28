@@ -1,4 +1,8 @@
-import type { MessageCenter, RequestErrorType } from '@tk-crawler/shared';
+import type {
+  AnchorScrawledMessage,
+  MessageCenter,
+  RequestErrorType,
+} from '@tk-crawler/shared';
 import type { BaseWindow } from 'electron';
 import type { Subscription } from 'rxjs';
 import type { IView } from './types';
@@ -30,14 +34,22 @@ export class MainView implements IView {
       this._messageCenter.addListener(
         CrawlerMessage.REQUEST_ERROR,
         (errorType: RequestErrorType) => {
-          this._onRequestError(errorType);
+          this._view?.webContents.send(CUSTOM_EVENTS.REQUEST_ERROR, errorType);
+        },
+      ),
+      this._messageCenter.addListener(
+        CrawlerMessage.TIKTOK_COOKIE_OUTDATED,
+        () => {
+          this._view?.webContents.send(CUSTOM_EVENTS.TIKTOK_COOKIE_OUTDATED);
+        },
+      ),
+      this._messageCenter.addListener(
+        CrawlerMessage.ANCHOR_SCRAWLED,
+        (data: AnchorScrawledMessage) => {
+          this._view?.webContents.send(CUSTOM_EVENTS.ANCHOR_SCRAWLED, data);
         },
       ),
     );
-  }
-
-  private _onRequestError(errorType: RequestErrorType) {
-    this._view?.webContents.send(CUSTOM_EVENTS.REQUEST_ERROR, errorType);
   }
 
   async show() {
@@ -81,6 +93,10 @@ export class MainView implements IView {
       subscription.unsubscribe();
     });
     this._subscriptions = [];
+  }
+
+  onCookiesUpdated() {
+    this._view?.webContents.send(CUSTOM_EVENTS.TIKTOK_COOKIE_UPDATED);
   }
 
   close() {

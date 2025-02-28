@@ -1,43 +1,49 @@
+import type { BaseWindow } from 'electron';
+import type { IView } from './types';
 import path from 'node:path';
-import { BaseWindow, ipcMain, WebContentsView } from 'electron';
 import {
   LOGIN_HELP_WIDTH,
   LOGIN_TIKTOK_HELP_EVENTS,
   LOGIN_TIKTOK_STATUS,
-} from '../../constants';
+} from '@tk-crawler-admin-client/shared';
+import { ipcMain, WebContentsView } from 'electron';
 import { isDevelopment, RENDERER_DIST, VITE_DEV_SERVER_URL } from '../../env';
 import { logger } from '../../infra/logger';
 
 const TK_LOGIN_PAGE_URL = 'https://www.tiktok.com/login';
 
-interface TkLoginPageWindowContext {
+export interface TkLoginViewContext {
   submitCookies: (cookies: [string, string][] | string) => Promise<void>;
 }
 
-export class TkLoginPageWindow {
-  private _context: TkLoginPageWindowContext;
+export class TKLoginView implements IView {
+  private _context: TkLoginViewContext;
 
-  private _tkLoginPageWindow: BaseWindow | null = null;
+  private _parentWindow: BaseWindow;
 
-  private _tkLoginPageView: WebContentsView | null = null;
+  private _tkPageView: WebContentsView | null = null;
 
-  // 登录状态view
-  private _loginHelpView: WebContentsView | null = null;
+  private _helpView: WebContentsView | null = null;
 
-  private _loginStatus: LOGIN_TIKTOK_STATUS = LOGIN_TIKTOK_STATUS.stateless;
+  private _status: LOGIN_TIKTOK_STATUS = LOGIN_TIKTOK_STATUS.stateless;
 
   private _openTurnId: number = 0;
 
-  constructor(props: { context: TkLoginPageWindowContext }) {
+  private _removeResizeListener: (() => void) | null = null;
+
+  constructor(props: {
+    parentWindow: BaseWindow;
+    context: TkLoginViewContext;
+  }) {
+    this._parentWindow = props.parentWindow;
     this._context = props.context;
   }
 
   private async _getCookies(): Promise<Electron.Cookie[]> {
-    if (!this._tkLoginPageView) {
+    if (!this._tkPageView) {
       return [];
     }
-
-    const session = this._tkLoginPageView.webContents.session;
+    const session = this._tkPageView.webContents.session;
     try {
       const cookies = await session.cookies.get({});
       return cookies;
@@ -52,30 +58,27 @@ export class TkLoginPageWindow {
     await this._context.submitCookies(
       cookies.map(cookie => [cookie.name, cookie.value]),
     );
-    this.close();
   }
 
-  private _setLoginStatus(status: LOGIN_TIKTOK_STATUS) {
-    this._loginStatus = status;
+  private _setStatus(status: LOGIN_TIKTOK_STATUS) {
+    this._status = status;
     this._onResize();
   }
 
   private _onResize() {
-    if (!this._tkLoginPageWindow) {
-      return;
-    }
-    const bounds = this._tkLoginPageWindow.getBounds();
-    if (this._loginStatus === LOGIN_TIKTOK_STATUS.opened) {
-      this._loginHelpView?.setBounds({
+    const bounds = this._parentWindow.getBounds();
+    if (this._status === LOGIN_TIKTOK_STATUS.opened) {
+      const sidebarWidth = Math.min(LOGIN_HELP_WIDTH, bounds.width);
+      this._helpView?.setBounds({
         x: 0,
         y: 0,
-        width: LOGIN_HELP_WIDTH,
+        width: sidebarWidth,
         height: bounds.height,
       });
-      this._tkLoginPageView?.setBounds({
-        x: LOGIN_HELP_WIDTH,
+      this._tkPageView?.setBounds({
+        x: sidebarWidth,
         y: 0,
-        width: bounds.width - LOGIN_HELP_WIDTH,
+        width: bounds.width - sidebarWidth,
         height: bounds.height,
       });
     } else {
@@ -85,8 +88,8 @@ export class TkLoginPageWindow {
         width: bounds.width,
         height: bounds.height,
       };
-      this._loginHelpView?.setBounds(viewBounds);
-      this._tkLoginPageView?.setBounds(viewBounds);
+      this._helpView?.setBounds(viewBounds);
+      this._tkPageView?.setBounds(viewBounds);
     }
   }
 
@@ -149,81 +152,85 @@ export class TkLoginPageWindow {
   //   }
   // }
 
-  private async _initLoginHelpView() {
-    if (!this._loginHelpView) {
-      this._loginHelpView = new WebContentsView({
+  private async _openHelpView() {
+    if (!this._helpView) {
+      this._helpView = new WebContentsView({
         webPreferences: {
           preload: path.join(__dirname, 'preload.js'),
         },
       });
       if (VITE_DEV_SERVER_URL) {
-        await this._loginHelpView.webContents.loadURL(
+        await this._helpView.webContents.loadURL(
           `${VITE_DEV_SERVER_URL}login-tiktok-help.html`,
         );
       } else {
-        await this._loginHelpView.webContents.loadFile(
+        await this._helpView.webContents.loadFile(
           path.join(RENDERER_DIST, 'login-tiktok-help.html'),
         );
       }
-      this._tkLoginPageWindow!.contentView.addChildView(this._loginHelpView);
+      this._parentWindow.contentView.addChildView(this._helpView);
       this._onResize();
     }
   }
 
-  private _closeLoginView() {
-    if (this._tkLoginPageView) {
-      const webContents = this._tkLoginPageView.webContents;
-      // webContents.debugger.detach();
-      webContents.close();
-      this._tkLoginPageWindow?.contentView.removeChildView(
-        this._tkLoginPageView,
-      );
-      this._tkLoginPageView = null;
-    }
-  }
-
-  private async _openLoginView() {
+  private async _openTKPageView() {
     this._openTurnId++;
     const currentOpenTurnId = this._openTurnId;
-    this._tkLoginPageView = new WebContentsView();
-    this._setLoginStatus(LOGIN_TIKTOK_STATUS.loading);
+    this._tkPageView = new WebContentsView();
+    this._setStatus(LOGIN_TIKTOK_STATUS.loading);
     try {
-      this._tkLoginPageView.webContents.setUserAgent(
+      this._tkPageView.webContents.setUserAgent(
         'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
       );
       // 加载目标网页
-      await this._tkLoginPageView.webContents.loadURL(TK_LOGIN_PAGE_URL);
+      await this._tkPageView.webContents.loadURL(TK_LOGIN_PAGE_URL);
       if (currentOpenTurnId !== this._openTurnId) {
         // 已过时
         return;
       }
-      if (!this._tkLoginPageWindow) {
-        return;
-      }
       if (isDevelopment) {
-        if (this._tkLoginPageView?.webContents) {
-          this._tkLoginPageView.webContents.openDevTools({
+        if (this._tkPageView?.webContents) {
+          this._tkPageView.webContents.openDevTools({
             mode: 'right',
           });
         }
       }
-      this._tkLoginPageWindow.contentView.addChildView(this._tkLoginPageView);
-      this._setLoginStatus(LOGIN_TIKTOK_STATUS.opened);
-      // this._watchLoginSuccess();
+      this._parentWindow.contentView.addChildView(this._tkPageView);
+      this._setStatus(LOGIN_TIKTOK_STATUS.opened);
     } catch (error) {
       if ((error as any)?.code === 'ERR_CONNECTION_TIMED_OUT') {
         logger.error('Open tiktok login page timeout:', error);
-        this._setLoginStatus(LOGIN_TIKTOK_STATUS.timeout);
+        this._setStatus(LOGIN_TIKTOK_STATUS.timeout);
       } else {
         logger.error('Open tiktok login page error:', error);
-        this._setLoginStatus(LOGIN_TIKTOK_STATUS.fail);
+        this._setStatus(LOGIN_TIKTOK_STATUS.fail);
       }
     }
   }
 
-  private async _reopenLoginView() {
-    this._closeLoginView();
-    await this._openLoginView();
+  private _closeView(view: WebContentsView) {
+    const webContents = view.webContents;
+    webContents.close();
+    this._parentWindow.contentView.removeChildView(view);
+  }
+
+  private _closeTKPageView() {
+    if (this._tkPageView) {
+      this._closeView(this._tkPageView);
+      this._tkPageView = null;
+    }
+  }
+
+  private _closeHelpView() {
+    if (this._helpView) {
+      this._closeView(this._helpView);
+      this._helpView = null;
+    }
+  }
+
+  private async _reopenTKPageView() {
+    this._closeTKPageView();
+    await this._openTKPageView();
   }
 
   private _eventNames: Array<string> = [];
@@ -240,13 +247,13 @@ export class TkLoginPageWindow {
     this._addEventHandler(
       LOGIN_TIKTOK_HELP_EVENTS.GET_LOGIN_TIKTOK_STATUS,
       () => {
-        return this._loginStatus;
+        return this._status;
       },
     );
     this._addEventHandler(
       LOGIN_TIKTOK_HELP_EVENTS.RETRY_OPEN_TIKTOK_LOGIN_PAGE,
       async () => {
-        await this._reopenLoginView();
+        await this._reopenTKPageView();
       },
     );
     this._addEventHandler(LOGIN_TIKTOK_HELP_EVENTS.LOGIN_SUCCESS, () => {
@@ -256,7 +263,6 @@ export class TkLoginPageWindow {
       LOGIN_TIKTOK_HELP_EVENTS.SUBMIT_COOKIES,
       async (_, cookies: string) => {
         await this._context.submitCookies(cookies);
-        this.close();
       },
     );
   }
@@ -268,43 +274,31 @@ export class TkLoginPageWindow {
     this._eventNames = [];
   }
 
-  async open() {
-    if (this._tkLoginPageWindow && !this._tkLoginPageWindow.isDestroyed()) {
-      this.close();
-    }
+  async show() {
     try {
       this._addEventHandlers();
-      this._tkLoginPageWindow = new BaseWindow({
-        fullscreen: true,
-      });
-      this._tkLoginPageWindow.on('resize', () => {
+      const onResize = () => {
         this._onResize();
-      });
-      this._tkLoginPageWindow.on('close', () => {
-        this.close();
-      });
-      await this._initLoginHelpView();
-      await this._openLoginView();
+      };
+      this._parentWindow.on('resize', onResize);
+      this._removeResizeListener = onResize;
+      await this._openHelpView();
+      await this._openTKPageView();
     } catch (error) {
       console.error('Error loading URL:', error);
     }
   }
 
   close() {
+    this._removeResizeListener?.();
+    this._removeResizeListener = null;
     this._removeEventHandlers();
-    this._closeLoginView();
-    if (this._loginHelpView) {
-      const webContents = this._loginHelpView.webContents;
-      webContents.close();
-      this._tkLoginPageWindow?.contentView.removeChildView(this._loginHelpView);
-      this._loginHelpView = null;
-    }
-    if (this._tkLoginPageWindow) {
-      this._tkLoginPageWindow.removeAllListeners('resize');
-      this._tkLoginPageWindow.removeAllListeners('close');
-      this._tkLoginPageWindow.close();
-      this._tkLoginPageWindow = null;
-    }
-    this._setLoginStatus(LOGIN_TIKTOK_STATUS.stateless);
+    this._closeTKPageView();
+    this._closeHelpView();
+    this._setStatus(LOGIN_TIKTOK_STATUS.stateless);
+  }
+
+  destroy() {
+    this.close();
   }
 }

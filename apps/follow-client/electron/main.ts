@@ -5,6 +5,7 @@ import { initProxy, RENDERER_DIST, VITE_DEV_SERVER_URL } from './env';
 import path from 'node:path';
 import process from 'node:process';
 // import { createRequire } from 'node:module'
+import { setElectronLang } from '@tk-crawler/electron-utils';
 import { app, BaseWindow } from 'electron';
 import { GlobalManager } from './domain';
 
@@ -16,6 +17,8 @@ process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL
   : RENDERER_DIST;
 
 async function main() {
+  setElectronLang('en-US');
+
   await app.whenReady();
   await initProxy();
   const globalManager = GlobalManager.getInstance();

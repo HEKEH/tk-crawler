@@ -9,6 +9,7 @@ import { setLogger } from '@tk-crawler/core';
 import { app, BaseWindow } from 'electron';
 import { logger } from './infra/logger';
 import { GlobalManager } from './domain';
+import { setElectronLang } from '@tk-crawler/electron-utils';
 
 // const require = createRequire(import.meta.url)
 // const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -19,6 +20,7 @@ process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL
 
 async function main() {
   setLogger(logger);
+  setElectronLang('en-US');
   await app.whenReady();
   await initProxy();
   const globalManager = GlobalManager.getInstance();

@@ -1,4 +1,4 @@
-import type { WebContentsView } from 'electron';
+import { app, session, type WebContentsView } from 'electron';
 
 export function addCSPHandle(
   view: WebContentsView,
@@ -81,4 +81,28 @@ export async function clickElement(
       })()
     `);
   return result;
+}
+
+export function setElectronLang(lang = 'en-US') {
+  // 设置命令行参数
+  app.commandLine.appendSwitch('lang', lang);
+  app.commandLine.appendSwitch('accept-language', lang);
+
+  // 配置session
+  app.whenReady().then(() => {
+    // 设置拼写检查语言
+    session.defaultSession.setSpellCheckerLanguages([lang]);
+
+    // 修改请求头
+    session.defaultSession.webRequest.onBeforeSendHeaders(
+      (details, callback) => {
+        const headers = {
+          ...details.requestHeaders,
+          'Accept-Language': `${lang},en;q=0.9`,
+          'Content-Language': lang,
+        };
+        callback({ requestHeaders: headers });
+      },
+    );
+  });
 }

@@ -46,7 +46,7 @@ export default class AnchorPool {
   private _anchorId2TimestampMap: Map<string, number> = new Map();
 
   private _taskQueue: FrequencyLimitTaskQueue = new FrequencyLimitTaskQueue({
-    frequencyLimit: 99,
+    frequencyLimit: 300,
     onlyOneTask: false,
     // taskInterval: 1000,
   });

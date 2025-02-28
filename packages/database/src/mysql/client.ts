@@ -33,7 +33,7 @@ export class MysqlClient {
       follower_count,
       audience_count,
       level,
-      current_diamond,
+      current_diamonds,
       rank_league,
       has_commerce_goods,
       tag,
@@ -47,11 +47,11 @@ export class MysqlClient {
         follower_count,
         audience_count,
         level,
-        current_diamond,
+        current_diamonds,
         rank_league,
         has_commerce_goods,
         tag,
-        highest_diamond,
+        highest_diamonds,
         updated_at
       )
       VALUES (
@@ -62,11 +62,11 @@ export class MysqlClient {
         ${follower_count},
         ${audience_count},
         ${level},
-        ${current_diamond},
+        ${current_diamonds},
         ${rank_league},
         ${has_commerce_goods},
         ${tag},
-        ${current_diamond},
+        ${current_diamonds},
         CURRENT_TIMESTAMP(3)
       )
       ON DUPLICATE KEY UPDATE
@@ -76,11 +76,11 @@ export class MysqlClient {
         follower_count = ${follower_count},
         audience_count = ${audience_count},
         level = ${level},
-        -- 因为current_diamond的计算方式是有问题的，总是会小于或等于真实的钻石数，所以如果之前的current_diamond较大，则不更新
-        current_diamond = IF(room_id != ${room_id}, ${current_diamond}, GREATEST(${current_diamond}, current_diamond)),
-        -- 如果房间id发生变化，则更新last_diamond
-        last_diamond = IF(room_id != ${room_id}, current_diamond, last_diamond),
-        highest_diamond = GREATEST(${current_diamond}, highest_diamond),
+        -- 因为current_diamonds的计算方式是有问题的，总是会小于或等于真实的钻石数，所以如果之前的current_diamonds较大，则不更新
+        current_diamonds = IF(room_id != ${room_id}, ${current_diamonds}, GREATEST(${current_diamonds}, current_diamonds)),
+        -- 如果房间id发生变化，则更新last_diamonds
+        last_diamonds = IF(room_id != ${room_id}, current_diamonds, last_diamonds),
+        highest_diamonds = GREATEST(${current_diamonds}, highest_diamonds),
         rank_league = ${rank_league},
         has_commerce_goods = ${has_commerce_goods},
         tag = ${tag},

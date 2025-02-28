@@ -14,9 +14,9 @@ tiktok爬虫爬取的基础信息
 | region             | CHAR(2)          | 是   | 地区代码         |
 | follower_count     | INT UNSIGNED     | 是   | 粉丝数           |
 | audience_count     | INT UNSIGNED     | 否   | 当前观众数       |
-| current_diamond    | INT UNSIGNED     | 是   | 当前钻石数       |
-| last_diamond       | INT UNSIGNED     | 否   | 上次钻石数       |
-| highest_diamond    | INT UNSIGNED     | 是   | 历史最高钻石数   |
+| current_diamonds   | INT UNSIGNED     | 是   | 当前钻石数       |
+| last_diamonds      | INT UNSIGNED     | 否   | 上次钻石数       |
+| highest_diamonds   | INT UNSIGNED     | 是   | 历史最高钻石数   |
 | rank_league        | CHAR(2)          | 否   | 段位等级         |
 | level              | TINYINT UNSIGNED | 否   | 等级             |
 | has_commerce_goods | BOOLEAN          | 否   | 是否有商品       |
@@ -30,7 +30,7 @@ tiktok爬虫爬取的基础信息
 - UNIQUE KEY (display_id)
 - INDEX (region)
 - INDEX (follower_count)
-- INDEX (highest_diamond)
+- INDEX (highest_diamonds)
 - INDEX (rank_league)
 
 ## 2-主播验证相关
@@ -80,7 +80,7 @@ tiktok爬虫爬取的基础信息
 | -------------- | ---------------- | ---- | -------------------------------------------------------------- |
 | id             | BIGINT UNSIGNED  | 是   | 主键                                                           |
 | org_id         | BIGINT UNSIGNED  | 是   | 机构ID, 关联organization表的id                                 |
-| anchor_id      | BIGINT UNSIGNED  | 是   | 主播ID, 唯一，关联anchor表的user_id                            |
+| anchor_id      | BIGINT UNSIGNED  | 是   | 主播ID, 关联anchor表的user_id                                  |
 | checked_at     | DATETIME         | 是   | 验证时间                                                       |
 | checked_by     | BIGINT UNSIGNED  | 是   | 验证人ID, 关联live_admin_user表的id                            |
 | checked_result | TINYINT UNSIGNED | 是   | 验证结果：1-可邀约，0-不可邀约                                 |
@@ -96,7 +96,6 @@ tiktok爬虫爬取的基础信息
 索引:
 
 - INDEX (org_id)
-- INDEX (checked_by)
 - INDEX (checked_result)
 - INDEX (region)
 
@@ -120,14 +119,13 @@ tiktok爬虫爬取的基础信息
 | ------------ | ---------------- | ---- | ---------------------------- |
 | id           | BIGINT UNSIGNED  | 是   | 主键                         |
 | org_id       | BIGINT UNSIGNED  | 是   | 关联机构ID                   |
-| username     | VARCHAR(50)      | 是   | 登录名称，唯一               |
-| display_name | VARCHAR(50)      | 是   | 显示名称                     |
+| username     | VARCHAR(24)      | 是   | 登录名称，唯一               |
+| display_name | VARCHAR(24)      | 是   | 显示名称                     |
 | password     | VARCHAR(128)     | 是   | 密码（加密后的）             |
 | email        | VARCHAR(50)      | 否   | 邮箱，唯一                   |
 | mobile       | VARCHAR(20)      | 否   | 手机号码，唯一               |
 | role_id      | INT UNSIGNED     | 是   | 角色ID: 1-管理员，2-普通用户 |
 | status       | TINYINT UNSIGNED | 是   | 状态：1-正常，0-禁用         |
-| remark       | VARCHAR(200)     | 否   | 备注                         |
 | created_at   | DATETIME         | 是   | 创建时间                     |
 | updated_at   | DATETIME         | 是   | 更新时间                     |
 

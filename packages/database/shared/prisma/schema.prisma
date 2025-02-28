@@ -10,24 +10,156 @@ generator client {
 }
 
 model Anchor {
-  user_id            BigInt   @id @db.UnsignedBigInt
-  display_id         String   @unique @db.VarChar(24)
-  room_id            BigInt   @db.UnsignedBigInt
-  region             String   @db.Char(2) // 限制为2个字符
-  follower_count     Int      @db.UnsignedInt
-  audience_count     Int?     @db.UnsignedInt
-  current_diamond    Int      @db.UnsignedInt
-  last_diamond       Int?     @db.UnsignedInt
-  highest_diamond    Int      @db.UnsignedInt
-  rank_league        String?  @db.Char(2) // 限制为2个字符
-  level              Int?     @db.UnsignedTinyInt
+  user_id            BigInt              @id @db.UnsignedBigInt
+  display_id         String              @unique @db.VarChar(24)
+  room_id            BigInt              @db.UnsignedBigInt
+  region             String              @db.Char(2)
+  follower_count     Int                 @db.UnsignedInt
+  audience_count     Int?                @db.UnsignedInt
+  current_diamonds   Int                 @db.UnsignedInt
+  last_diamonds      Int?                @db.UnsignedInt
+  highest_diamonds   Int                 @db.UnsignedInt
+  rank_league        String?             @db.Char(2)
+  level              Int?                @db.UnsignedTinyInt
   has_commerce_goods Boolean?
-  tag                String?  @db.VarChar(20)
-  created_at         DateTime @default(now()) @db.DateTime(3)
-  updated_at         DateTime @updatedAt @db.DateTime(3)
+  tag                String?             @db.VarChar(20)
+  created_at         DateTime            @default(now()) @db.DateTime(3)
+  updated_at         DateTime            @updatedAt @db.DateTime(3)
+  inviteChecks       AnchorInviteCheck[]
+  taskAssigns        TaskAssign[]
+  anchorConnects     AnchorConnect[]
 
   @@index([region])
   @@index([follower_count])
-  @@index([highest_diamond])
+  @@index([highest_diamonds])
   @@index([rank_league])
+}
+
+model LiveAdminUser {
+  id                 BigInt                        @id @default(autoincrement()) @db.UnsignedBigInt
+  username           String                        @unique @db.VarChar(24)
+  password           String                        @db.VarChar(128)
+  org_id             BigInt                        @db.UnsignedBigInt
+  status             Int                           @db.UnsignedTinyInt
+  max_query_per_hour Int?                          @default(50) @db.UnsignedInt
+  max_query_per_day  Int?                          @default(280) @db.UnsignedInt
+  cookie             String?                       @db.Text
+  is_cookie_valid    Boolean?
+  created_at         DateTime                      @default(now()) @db.DateTime(3)
+  updated_at         DateTime                      @updatedAt @db.DateTime(3)
+  organization       Organization                  @relation(fields: [org_id], references: [id])
+  regions            LiveAdminUserRegionRelation[]
+  inviteChecks       AnchorInviteCheck[]
+
+  @@index([org_id])
+}
+
+model LiveAdminUserRegionRelation {
+  id      BigInt        @id @default(autoincrement()) @db.UnsignedBigInt
+  user_id BigInt        @db.UnsignedBigInt
+  region  String        @db.VarChar(2)
+  user    LiveAdminUser @relation(fields: [user_id], references: [id])
+
+  @@unique([user_id, region])
+  @@index([user_id])
+  @@index([region])
+}
+
+// 主播邀约验证数据表
+model AnchorInviteCheck {
+  id             BigInt        @id @default(autoincrement()) @db.UnsignedBigInt
+  org_id         BigInt        @db.UnsignedBigInt
+  anchor_id      BigInt        @db.UnsignedBigInt
+  checked_at     DateTime      @db.DateTime(3)
+  checked_by     BigInt        @db.UnsignedBigInt
+  checked_result Int           @db.UnsignedTinyInt
+  invite_type    Int
+  created_at     DateTime      @default(now()) @db.DateTime(3)
+  updated_at     DateTime      @updatedAt @db.DateTime(3)
+  region         String        @db.VarChar(2)
+  organization   Organization  @relation(fields: [org_id], references: [id])
+  anchor         Anchor        @relation(fields: [anchor_id], references: [user_id])
+  checkedByUser  LiveAdminUser @relation(fields: [checked_by], references: [id])
+
+  @@index([org_id])
+  @@index([checked_result])
+  @@index([region])
+}
+
+// 机构表
+model Organization {
+  id                   BigInt              @id @default(autoincrement()) @db.UnsignedBigInt
+  name                 String              @unique @db.VarChar(100)
+  membership_expire_at DateTime?           @db.DateTime(3)
+  status               Int                 @db.UnsignedTinyInt
+  remark               String?             @db.VarChar(200)
+  created_at           DateTime            @default(now()) @db.DateTime(3)
+  updated_at           DateTime            @updatedAt @db.DateTime(3)
+  adminUsers           LiveAdminUser[]
+  orgUsers             OrgUser[]
+  regions              OrgRegionRelation[]
+  inviteChecks         AnchorInviteCheck[]
+  taskAssigns          TaskAssign[]
+  anchorConnects       AnchorConnect[]
+}
+
+// 机构用户表
+model OrgUser {
+  id           BigInt       @id @default(autoincrement()) @db.UnsignedBigInt
+  org_id       BigInt       @db.UnsignedBigInt
+  username     String       @unique @db.VarChar(24)
+  display_name String       @db.VarChar(24)
+  password     String       @db.VarChar(128)
+  email        String?      @unique @db.VarChar(50)
+  mobile       String?      @unique @db.VarChar(20)
+  role_id      Int          @db.UnsignedInt
+  status       Int          @db.UnsignedTinyInt
+  created_at   DateTime     @default(now()) @db.DateTime(3)
+  updated_at   DateTime     @updatedAt @db.DateTime(3)
+  organization Organization @relation(fields: [org_id], references: [id])
+  taskAssigns  TaskAssign[]
+
+  @@index([org_id])
+}
+
+model OrgRegionRelation {
+  id     BigInt       @id @default(autoincrement()) @db.UnsignedBigInt
+  org_id BigInt       @db.UnsignedBigInt
+  region String       @db.VarChar(2)
+  org    Organization @relation(fields: [org_id], references: [id])
+
+  @@unique([org_id, region])
+  @@index([org_id])
+  @@index([region])
+}
+
+// 任务分配表
+model TaskAssign {
+  id           BigInt       @id @default(autoincrement()) @db.UnsignedBigInt
+  org_id       BigInt       @db.UnsignedBigInt
+  anchor_id    BigInt       @db.UnsignedBigInt
+  org_user_id  BigInt       @db.UnsignedBigInt
+  created_at   DateTime     @default(now()) @db.DateTime(3)
+  updated_at   DateTime     @updatedAt @db.DateTime(3)
+  organization Organization @relation(fields: [org_id], references: [id])
+  anchor       Anchor       @relation(fields: [anchor_id], references: [user_id])
+  orgUser      OrgUser      @relation(fields: [org_user_id], references: [id])
+
+  @@unique([org_id, anchor_id])
+  @@index([org_id])
+  @@index([org_user_id])
+}
+
+// 已建联状态表
+model AnchorConnect {
+  id           BigInt       @id @default(autoincrement()) @db.UnsignedBigInt
+  org_id       BigInt       @db.UnsignedBigInt
+  anchor_id    BigInt       @db.UnsignedBigInt
+  created_at   DateTime     @default(now()) @db.DateTime(3)
+  updated_at   DateTime     @updatedAt @db.DateTime(3)
+  organization Organization @relation(fields: [org_id], references: [id])
+  anchor       Anchor       @relation(fields: [anchor_id], references: [user_id])
+
+  @@index([org_id])
+  @@index([anchor_id])
 }

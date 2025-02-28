@@ -22,11 +22,11 @@ export interface CollectedAnchorInfo {
   // /** 直播间点赞数 */
   // like_count: number;
   /** 当前钻石 */
-  current_diamond: number;
+  current_diamonds: number;
   // /** 上次钻石 */
-  // last_diamond?: number;
+  // last_diamonds?: number;
   // /** 历史最高钻石 */
-  // highest_diamond?: number;
+  // highest_diamonds?: number;
   /** 主播等级 */
   level: number | null;
   /** 主播直播段位 */

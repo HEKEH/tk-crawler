@@ -20,6 +20,8 @@ export class MainView implements IView {
 
   private _removeResizeListener: (() => void) | null = null;
 
+  private _isVisible = true;
+
   constructor(props: {
     parentWindow: BaseWindow;
     messageCenter: MessageCenter;
@@ -41,6 +43,12 @@ export class MainView implements IView {
   }
 
   async show() {
+    if (this._view && !this._isVisible) {
+      this._view.setVisible(true);
+      this._isVisible = true;
+      this._bindResizeListener();
+      return;
+    }
     this._view = new WebContentsView({
       webPreferences: {
         preload: path.join(__dirname, 'preload.js'),
@@ -70,10 +78,20 @@ export class MainView implements IView {
       );
     }
     this._parentWindow.contentView.addChildView(this._view);
-    this._removeResizeListener = bindViewToWindowBounds(
-      this._view,
-      this._parentWindow,
-    );
+    this._bindResizeListener();
+  }
+
+  private _bindResizeListener() {
+    if (this._view) {
+      const removeResizeListener = bindViewToWindowBounds(
+        this._view,
+        this._parentWindow,
+      );
+      this._removeResizeListener = () => {
+        removeResizeListener();
+        this._removeResizeListener = null;
+      };
+    }
   }
 
   private _clearSubscriptions() {
@@ -83,18 +101,22 @@ export class MainView implements IView {
     this._subscriptions = [];
   }
 
+  /** 只是隐藏视图，不销毁 */
   close() {
-    this._removeResizeListener?.();
-    this._removeResizeListener = null;
     if (this._view) {
-      this._view.webContents.close();
-      this._parentWindow.contentView.removeChildView(this._view);
-      this._view = null;
+      this._view.setVisible(false);
+      this._isVisible = false;
+      this._removeResizeListener?.();
     }
   }
 
   destroy() {
     this._clearSubscriptions();
-    this.close();
+    this._removeResizeListener?.();
+    if (this._view) {
+      this._view.webContents.close();
+      this._parentWindow.contentView.removeChildView(this._view);
+      this._view = null;
+    }
   }
 }

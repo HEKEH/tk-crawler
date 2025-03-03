@@ -20,7 +20,6 @@
     "packages/play/**",
     "packages/script-tools/**",
     "packages/database/**",
-    "packages/electron-utils/**",
     "**/node_modules/**",
     "**/dist/**",
     "**/vite.config.*"

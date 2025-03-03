@@ -12,6 +12,10 @@ const Menus = [
     key: Menu.Crawler,
     name: '爬虫后台',
   },
+  {
+    key: Menu.UserAdmin,
+    name: '用户管理',
+  },
 ];
 
 const globalStore = useGlobalStore();

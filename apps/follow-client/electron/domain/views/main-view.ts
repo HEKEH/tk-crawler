@@ -3,7 +3,7 @@ import type { BaseWindow } from 'electron';
 import type { Subscription } from 'rxjs';
 import type { IView } from './types';
 import path from 'node:path';
-import { bindViewToWindowBounds } from '@tk-crawler/electron-utils';
+import { bindViewToWindowBounds } from '@tk-crawler/electron-utils/main';
 import { CrawlerMessage } from '@tk-crawler/shared';
 import { WebContentsView } from 'electron';
 import { CUSTOM_EVENTS } from '../../constants';

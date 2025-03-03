@@ -9,5 +9,5 @@ export const CUSTOM_EVENTS = {
   TIKTOK_COOKIE_OUTDATED: 'tiktok-cookie-outdated',
   ANCHOR_SCRAWLED: 'anchor-scrawled',
   // 请求错误，一般是vpn问题
-  REQUEST_ERROR: 'request-error',
+  CRAWL_REQUEST_ERROR: 'crawl-request-error',
 };

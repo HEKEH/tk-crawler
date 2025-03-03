@@ -5,7 +5,7 @@ import { initProxy, RENDERER_DIST, VITE_DEV_SERVER_URL } from './env';
 import path from 'node:path';
 import process from 'node:process';
 // import { createRequire } from 'node:module'
-import { setElectronLang } from '@tk-crawler/electron-utils';
+import { setElectronLang } from '@tk-crawler/electron-utils/main';
 import { app, BaseWindow } from 'electron';
 import { GlobalManager } from './domain';
 

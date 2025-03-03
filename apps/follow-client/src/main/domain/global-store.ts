@@ -1,3 +1,4 @@
+import { ElectronRenderListeners } from '@tk-crawler/electron-utils/render';
 import { MessageCenter, RequestErrorType } from '@tk-crawler/shared';
 import { MessageQueue } from '@tk-crawler/view-shared';
 import { CheckNetworkResultType } from '@tk-follow-client/shared';
@@ -43,7 +44,7 @@ export default class GlobalStore {
     listener: (event: Electron.IpcRendererEvent, ...args: any[]) => void,
   ) {
     this._eventListeners.push([event, listener]);
-    window.ipcRenderer.on(event, listener);
+    ElectronRenderListeners.getInstance().on(event, listener);
   }
 
   private _addEventListeners() {
@@ -70,7 +71,7 @@ export default class GlobalStore {
 
   private _removeEventListeners() {
     this._eventListeners.forEach(([event, listener]) => {
-      window.ipcRenderer.off(event, listener);
+      ElectronRenderListeners.getInstance().off(event, listener);
     });
     this._eventListeners = [];
   }

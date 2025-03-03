@@ -1,6 +1,9 @@
 import type { BaseWindow } from 'electron';
 import path from 'node:path';
-import { clickElement, loadThirdPartyURL } from '@tk-crawler/electron-utils';
+import {
+  clickElement,
+  loadThirdPartyURL,
+} from '@tk-crawler/electron-utils/main';
 import { ipcMain, WebContentsView } from 'electron';
 import {
   AUTO_FOLLOWED_RESULT_TYPE,

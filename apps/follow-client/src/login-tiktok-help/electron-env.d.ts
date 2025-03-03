@@ -1,4 +1,5 @@
 // Used in Renderer process, expose in `preload.ts`
 interface Window {
-  ipcRenderer: import('electron').IpcRenderer;
+  /** on 和 off 请使用 ElectronRenderListeners 中的 on 和 off 来替代 */
+  ipcRenderer: Omit<import('electron').IpcRenderer, 'on' | 'off'>;
 }

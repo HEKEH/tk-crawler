@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ElectronRenderListeners } from '@tk-crawler/electron-utils/render';
 import { MessageQueue } from '@tk-crawler/view-shared';
 import {
   AUTO_FOLLOWED_RESULT_TYPE,
@@ -67,13 +68,13 @@ function onUserFollowResultMessage(
   }
 }
 
-window.ipcRenderer.on(
+ElectronRenderListeners.getInstance().on(
   TIKTOK_AUTO_FOLLOW_PAGE_EVENTS.AUTO_FOLLOWED_RESULT,
   onUserFollowResultMessage,
 );
 
 onBeforeUnmount(() => {
-  window.ipcRenderer.off(
+  ElectronRenderListeners.getInstance().off(
     TIKTOK_AUTO_FOLLOW_PAGE_EVENTS.AUTO_FOLLOWED_RESULT,
     onUserFollowResultMessage,
   );

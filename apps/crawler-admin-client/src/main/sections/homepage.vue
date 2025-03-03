@@ -2,7 +2,7 @@
 import { computed } from 'vue';
 import { Menu } from '../types';
 import { useGlobalStore } from '../utils/vue';
-import ScrawlerManage from './scrawler-manage/index.vue';
+import CrawlerManage from './crawler-manage/index.vue';
 import TopBar from './top-bar/index.vue';
 
 defineOptions({
@@ -18,7 +18,7 @@ const currentMenu = computed(() => {
   <div class="homepage">
     <TopBar />
     <div class="body">
-      <ScrawlerManage v-show="currentMenu === Menu.Crawler" />
+      <CrawlerManage v-if="currentMenu === Menu.Crawler" />
     </div>
   </div>
 </template>

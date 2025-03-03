@@ -9,7 +9,7 @@ import { setLogger } from '@tk-crawler/core';
 import { app, BaseWindow } from 'electron';
 import { logger } from './infra/logger';
 import { GlobalManager } from './domain';
-import { setElectronLang } from '@tk-crawler/electron-utils';
+import { setElectronLang } from '@tk-crawler/electron-utils/main';
 
 // const require = createRequire(import.meta.url)
 // const __dirname = path.dirname(fileURLToPath(import.meta.url));

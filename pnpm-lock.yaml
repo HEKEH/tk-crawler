@@ -100,8 +100,8 @@ importers:
         specifier: ^4.1.1
         version: 4.1.1(vite@5.4.11)(vue@3.5.13)
       electron:
-        specifier: ^33.3.1
-        version: 33.3.1
+        specifier: ^34.3.0
+        version: 34.3.0
       electron-builder:
         specifier: ^25.1.8
         version: 25.1.8(electron-builder-squirrel-windows@25.1.8)
@@ -154,8 +154,8 @@ importers:
         specifier: ^4.1.1
         version: 4.1.1(vite@5.4.11)(vue@3.5.13)
       electron:
-        specifier: ^33.3.1
-        version: 33.3.1
+        specifier: ^34.3.0
+        version: 34.3.0
       electron-builder:
         specifier: ^25.1.8
         version: 25.1.8(electron-builder-squirrel-windows@25.1.8)
@@ -218,8 +218,8 @@ importers:
         specifier: ^4.1.1
         version: 4.1.1(vite@5.4.11)(vue@3.5.13)
       electron:
-        specifier: ^33.3.1
-        version: 33.3.1
+        specifier: ^34.3.0
+        version: 34.3.0
       electron-builder:
         specifier: ^25.1.8
         version: 25.1.8(electron-builder-squirrel-windows@25.1.8)
@@ -393,8 +393,8 @@ importers:
   packages/electron-utils:
     devDependencies:
       electron:
-        specifier: ^33.3.1
-        version: 33.3.1
+        specifier: ^34.3.0
+        version: 34.3.0
 
   packages/play:
     dependencies:
@@ -5465,8 +5465,8 @@ packages:
     resolution: {integrity: sha512-CjVQyG7n7Sr+eBXE86HIulnL5N8xZY1sgmOPGuq/F0Rr0FJq63lg0kEtOIDfZBk44FnDLf6FUJ+dsJcuiUDdDQ==}
     dev: true
 
-  /electron@33.3.1:
-    resolution: {integrity: sha512-Z7l2bVgpdKxHQMI4i0CirBX2n+iCYKOx5mbzNM3BpOyFELwlobEXKmzCmEnwP+3EcNeIhUQyIEBFQxN06QgdIw==}
+  /electron@34.3.0:
+    resolution: {integrity: sha512-I238qRnYTAsuwJ/rS7HGaFNY4NNKAcjX8nlj7mnNmj1TK3z4HvNoD1r7Zud81DYDFx8AITuLd76EPrEnnfF9Bg==}
     engines: {node: '>= 12.20.55'}
     hasBin: true
     requiresBuild: true

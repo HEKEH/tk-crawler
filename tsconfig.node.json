@@ -19,7 +19,7 @@
     "apps/follow-client/shared/**/*",
     "packages/core/**/*",
     "packages/shared/**/*",
-    "packages/electron-utils/**/*",
+    "packages/electron-utils/src/main/**/*",
     "packages/biz-shared/**/*",
     "packages/play/**/*",
     "packages/script-tools/**/*",

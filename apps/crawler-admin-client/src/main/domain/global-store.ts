@@ -1,7 +1,6 @@
-import type { AnchorScrawledMessage } from '@tk-crawler/shared';
 import { IsCookieValidResultStatus } from '@tk-crawler-admin-client/shared';
-import { MessageCenter, RequestErrorType } from '@tk-crawler/shared';
-import { MessageQueue } from '@tk-crawler/view-shared';
+import { ElectronRenderListeners } from '@tk-crawler/electron-utils/render';
+import { MessageCenter } from '@tk-crawler/shared';
 import { markRaw } from 'vue';
 import { CrawlerViewMessage, CUSTOM_EVENTS } from '../constants';
 import {
@@ -21,12 +20,6 @@ export default class GlobalStore {
     IsCookieValidResultStatus.FAILED;
 
   private _isCrawling: boolean = false;
-
-  private _messageQueue = markRaw(
-    new MessageQueue({
-      messageOffset: 200,
-    }),
-  );
 
   readonly messageCenter = markRaw(new MessageCenter());
 
@@ -55,7 +48,7 @@ export default class GlobalStore {
     listener: (event: Electron.IpcRendererEvent, ...args: any[]) => void,
   ) {
     this._eventListeners.push([event, listener]);
-    window.ipcRenderer.on(event, listener);
+    ElectronRenderListeners.getInstance().on(event, listener);
   }
 
   private _addEventListeners() {
@@ -66,39 +59,11 @@ export default class GlobalStore {
       this.messageCenter.emit(CrawlerViewMessage.TIKTOK_COOKIE_OUTDATED);
       this._tiktokCookieValidStatus = IsCookieValidResultStatus.FAILED;
     });
-    this._addEventListener(
-      CUSTOM_EVENTS.ANCHOR_SCRAWLED,
-      (_, data: AnchorScrawledMessage) => {
-        this._messageQueue.showMessage({
-          message: `抓取到主播${data.anchor.display_id}的信息`,
-          type: 'success',
-        });
-      },
-    );
-    this._addEventListener(
-      CUSTOM_EVENTS.REQUEST_ERROR,
-      (_, errorType: RequestErrorType) => {
-        let message: string;
-        if (errorType === RequestErrorType.TIKTOK_REQUEST_ECONNRESET) {
-          message =
-            '连接失败，请检查网络是否有异常，例如是否开启了VPN，且VPN是否开启了全局代理';
-        } else if (errorType === RequestErrorType.TIKTOK_REQUEST_TIMEOUT) {
-          message =
-            '请求超时，请检查网络是否有异常，例如是否开启了VPN，且VPN是否开启了全局代理';
-        } else {
-          message = '请求失败，请检查网络是否有异常';
-        }
-        this._messageQueue.showMessage({
-          message,
-          type: 'error',
-        });
-      },
-    );
   }
 
   private _removeEventListeners() {
     this._eventListeners.forEach(([event, listener]) => {
-      window.ipcRenderer.off(event, listener);
+      ElectronRenderListeners.getInstance().off(event, listener);
     });
     this._eventListeners = [];
   }

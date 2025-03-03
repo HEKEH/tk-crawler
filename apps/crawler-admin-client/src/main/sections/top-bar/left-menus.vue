@@ -13,7 +13,7 @@ const Menus = [
     name: '爬虫管理',
   },
   {
-    key: Menu.OrgAndUserAdmin,
+    key: Menu.OrgAndUser,
     name: '机构与用户管理',
   },
 ];

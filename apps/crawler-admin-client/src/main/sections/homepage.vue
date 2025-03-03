@@ -3,6 +3,7 @@ import { computed } from 'vue';
 import { Menu } from '../types';
 import { useGlobalStore } from '../utils/vue';
 import CrawlerManage from './crawler-manage/index.vue';
+import OrgAndUserManage from './org-and-user-manage/index.vue';
 import TopBar from './top-bar/index.vue';
 
 defineOptions({
@@ -19,6 +20,7 @@ const currentMenu = computed(() => {
     <TopBar />
     <div class="body">
       <CrawlerManage v-if="currentMenu === Menu.Crawler" />
+      <OrgAndUserManage v-if="currentMenu === Menu.OrgAndUser" />
     </div>
   </div>
 </template>

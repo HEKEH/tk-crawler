@@ -10,11 +10,11 @@ defineOptions({
 const Menus = [
   {
     key: Menu.Crawler,
-    name: '爬虫后台',
+    name: '爬虫管理',
   },
   {
-    key: Menu.UserAdmin,
-    name: '用户管理',
+    key: Menu.OrgAndUserAdmin,
+    name: '机构与用户管理',
   },
 ];
 

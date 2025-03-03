@@ -20,19 +20,21 @@ defineOptions({
 
 const globalStore = useGlobalStore();
 
+const crawlerManage = globalStore.crawlerManage;
+
 async function loginTiktok() {
-  await globalStore.loginTiktok();
+  await crawlerManage.loginTiktok();
 }
 
 async function retryCheckCookieValid() {
-  await globalStore.checkTiktokCookieValid();
+  await crawlerManage.checkTiktokCookieValid();
 }
 
 async function start() {
-  await globalStore.start();
+  await crawlerManage.start();
 }
 async function stop() {
-  await globalStore.stop();
+  await crawlerManage.stop();
 }
 
 const messageQueue = new MessageQueue({
@@ -100,24 +102,31 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="crawler-manage">
+  <div
+    v-if="!crawlerManage.isInitialized"
+    v-loading="!crawlerManage.isInitialized"
+    :style="{ width: '100%', height: '100%', overflow: 'hidden' }"
+    element-loading-text="加载中..."
+  />
+  <div v-else class="crawler-manage">
     <CookieNotValidView
       v-if="
-        globalStore.tiktokCookieValidStatus === IsCookieValidResultStatus.FAILED
+        crawlerManage.tiktokCookieValidStatus ===
+        IsCookieValidResultStatus.FAILED
       "
       @login-tiktok="loginTiktok"
     />
     <CookieCheckErrorView
       v-else-if="
-        globalStore.tiktokCookieValidStatus !==
+        crawlerManage.tiktokCookieValidStatus !==
         IsCookieValidResultStatus.SUCCESS
       "
-      :cookie-valid-status="globalStore.tiktokCookieValidStatus"
+      :cookie-valid-status="crawlerManage.tiktokCookieValidStatus"
       @retry="retryCheckCookieValid"
     />
     <ControlButtons
       v-else
-      :is-scrawling="globalStore.isCrawling"
+      :is-scrawling="crawlerManage.isCrawling"
       @start="start"
       @stop="stop"
     />

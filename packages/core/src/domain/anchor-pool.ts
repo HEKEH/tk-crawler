@@ -1,5 +1,5 @@
 import type {
-  AnchorScrawledMessage,
+  AnchorCrawledMessage,
   CollectedAnchorInfo,
   MessageCenter,
   Region,
@@ -34,16 +34,15 @@ export type RawAnchorParam = Pick<
   room_id: string;
 };
 
-class StopScrawlError extends Error {
+class StopCrawlError extends Error {
   constructor() {
-    super('Stop scrawl');
+    super('Stop crawl');
   }
 }
 
 /** 当前主播的集合 */
 export default class AnchorPool {
   private _region: Region[] | 'all' = 'all';
-  private _anchorId2TimestampMap: Map<string, number> = new Map();
 
   private _taskQueue: FrequencyLimitTaskQueue = new FrequencyLimitTaskQueue({
     frequencyLimit: 300,
@@ -91,7 +90,7 @@ export default class AnchorPool {
   /** 保存到数据库 */
   private async _saveAnchor(anchor: CollectedAnchorInfo) {
     if (this._stopped) {
-      throw new StopScrawlError();
+      throw new StopCrawlError();
     }
     getLogger().info('[SaveAnchor] To save anchor info:', { anchor });
     const response = await updateAnchor(anchor);
@@ -103,8 +102,8 @@ export default class AnchorPool {
     getLogger().info(
       `[SaveAnchor] Anchor info save success: ${anchor.display_id}`,
     );
-    const data: AnchorScrawledMessage = { anchor };
-    this._messageCenter.emit(CrawlerMessage.ANCHOR_SCRAWLED, data);
+    const data: AnchorCrawledMessage = { anchor };
+    this._messageCenter.emit(CrawlerMessage.ANCHOR_CRAWLED, data);
   }
 
   async addAnchors(anchors: RawAnchorParam[]) {
@@ -165,7 +164,7 @@ export default class AnchorPool {
       }),
     ]);
     if (this._stopped) {
-      throw new StopScrawlError();
+      throw new StopCrawlError();
     }
     this._checkStatusCode(giftListInfo.status_code);
     this._checkStatusCode(liveDiamondsInfo.status_code);
@@ -191,12 +190,12 @@ export default class AnchorPool {
   private async _addAnchor(anchor: RawAnchorParam) {
     try {
       if (this._stopped) {
-        throw new StopScrawlError();
+        throw new StopCrawlError();
       }
       const anchorInfo = await this._completeAnchorInfo(anchor);
       await this._saveAnchor(anchorInfo);
     } catch (error) {
-      if (!(error instanceof StopScrawlError)) {
+      if (!(error instanceof StopCrawlError)) {
         getLogger().error('[addAnchor] Add anchor info failed', {
           anchor,
           error,

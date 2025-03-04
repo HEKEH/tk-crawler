@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { AnchorScrawledMessage } from '@tk-crawler/shared';
+import type { AnchorCrawledMessage } from '@tk-crawler/shared';
 import type { IpcRendererEvent } from 'electron';
 import {
   CUSTOM_EVENTS,
@@ -41,10 +41,7 @@ const messageQueue = new MessageQueue({
   messageOffset: 200,
 });
 
-function handleAnchorScrawled(
-  _: IpcRendererEvent,
-  data: AnchorScrawledMessage,
-) {
+function handleAnchorCrawled(_: IpcRendererEvent, data: AnchorCrawledMessage) {
   messageQueue.showMessage({
     message: `抓取到主播${data.anchor.display_id}的信息`,
     type: 'success',
@@ -54,17 +51,14 @@ function handleAnchorScrawled(
 const electronRenderListeners = ElectronRenderListeners.getInstance();
 
 onMounted(() => {
-  electronRenderListeners.on(
-    CUSTOM_EVENTS.ANCHOR_SCRAWLED,
-    handleAnchorScrawled,
-  );
+  electronRenderListeners.on(CUSTOM_EVENTS.ANCHOR_CRAWLED, handleAnchorCrawled);
 });
 
 onBeforeUnmount(() => {
   messageQueue.clearMessages();
   electronRenderListeners.off(
-    CUSTOM_EVENTS.ANCHOR_SCRAWLED,
-    handleAnchorScrawled,
+    CUSTOM_EVENTS.ANCHOR_CRAWLED,
+    handleAnchorCrawled,
   );
 });
 
@@ -126,7 +120,7 @@ onBeforeUnmount(() => {
     />
     <ControlButtons
       v-else
-      :is-scrawling="crawlerManage.isCrawling"
+      :is-crawling="crawlerManage.isCrawling"
       @start="start"
       @stop="stop"
     />

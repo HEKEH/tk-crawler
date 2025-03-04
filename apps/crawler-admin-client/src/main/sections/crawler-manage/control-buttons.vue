@@ -6,7 +6,7 @@ defineOptions({
 });
 
 const props = defineProps({
-  isScrawling: Boolean,
+  isCrawling: Boolean,
 });
 
 const emit = defineEmits<{
@@ -26,14 +26,14 @@ async function stop() {
 <template>
   <div class="controller-button-container">
     <ElButton
-      :disabled="props.isScrawling"
+      :disabled="props.isCrawling"
       type="primary"
-      :loading="props.isScrawling"
+      :loading="props.isCrawling"
       @click.prevent="start"
     >
-      {{ props.isScrawling ? '正在爬取数据' : '开始爬取数据' }}
+      {{ props.isCrawling ? '正在爬取数据' : '开始爬取数据' }}
     </ElButton>
-    <ElButton :disabled="!props.isScrawling" @click.prevent="stop">
+    <ElButton :disabled="!props.isCrawling" @click.prevent="stop">
       停止爬取数据
     </ElButton>
   </div>

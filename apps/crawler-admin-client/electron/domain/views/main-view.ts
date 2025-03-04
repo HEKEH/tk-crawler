@@ -1,5 +1,5 @@
 import type {
-  AnchorScrawledMessage,
+  AnchorCrawledMessage,
   MessageCenter,
   RequestErrorType,
 } from '@tk-crawler/shared';
@@ -49,9 +49,9 @@ export class MainView implements IView {
         },
       ),
       this._messageCenter.addListener(
-        CrawlerMessage.ANCHOR_SCRAWLED,
-        (data: AnchorScrawledMessage) => {
-          this._view?.webContents.send(CUSTOM_EVENTS.ANCHOR_SCRAWLED, data);
+        CrawlerMessage.ANCHOR_CRAWLED,
+        (data: AnchorCrawledMessage) => {
+          this._view?.webContents.send(CUSTOM_EVENTS.ANCHOR_CRAWLED, data);
         },
       ),
     );

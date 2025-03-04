@@ -7,7 +7,7 @@ export const CUSTOM_EVENTS = {
   START_LIVE_ANCHOR_CRAWL: 'start-live-anchor-crawl',
   STOP_LIVE_ANCHOR_CRAWL: 'stop-live-anchor-crawl',
   TIKTOK_COOKIE_OUTDATED: 'tiktok-cookie-outdated',
-  ANCHOR_SCRAWLED: 'anchor-scrawled',
+  ANCHOR_CRAWLED: 'anchor-crawled',
   // 请求错误，一般是vpn问题
   CRAWL_REQUEST_ERROR: 'crawl-request-error',
 };

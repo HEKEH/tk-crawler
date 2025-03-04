@@ -64,7 +64,8 @@ export class ViewsManager implements TkLoginViewContext {
   }
 
   async show() {
-    this._currentView = this._tkLoginView;
+    // 初试视图
+    this._currentView = this._mainView;
     await this._currentView?.show();
     this._baseWindow?.show();
   }

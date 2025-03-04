@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type GlobalStore from './domain/global-store';
-import { CheckNetworkResultType } from '@tk-ios-follow-client/shared';
+import { CheckNetworkResultType } from '@tk-mobile-follow-client/shared';
 import { ElNotification } from 'element-plus';
 import { computed, onBeforeUnmount, onErrorCaptured } from 'vue';
 

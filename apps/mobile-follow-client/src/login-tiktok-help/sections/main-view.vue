@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { LOGIN_TIKTOK_HELP_EVENTS } from '@tk-ios-follow-client/shared';
+import { LOGIN_TIKTOK_HELP_EVENTS } from '@tk-mobile-follow-client/shared';
 import { ElButton } from 'element-plus';
 
 defineOptions({

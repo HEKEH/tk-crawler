@@ -5,7 +5,7 @@ import {
   AUTO_FOLLOWED_RESULT_TYPE,
   TIKTOK_AUTO_FOLLOW_PAGE_EVENTS,
   TIKTOK_AUTO_FOLLOW_RUNNING_STATUS,
-} from '@tk-ios-follow-client/shared';
+} from '@tk-mobile-follow-client/shared';
 import { markRaw, onBeforeUnmount, ref } from 'vue';
 import IsCompleted from './is-completed.vue';
 import IsPaused from './is-paused.vue';

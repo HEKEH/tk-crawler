@@ -1,5 +1,5 @@
 {
-  "name": "tk-ios-follow-client",
+  "name": "tk-mobile-follow-client",
   "version": "0.0.1",
   "description": "TK Follow Client",
   "main": "dist-electron/main.js",

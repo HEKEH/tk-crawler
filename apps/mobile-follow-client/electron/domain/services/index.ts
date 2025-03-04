@@ -1,6 +1,9 @@
 import type { ViewsManager } from '../views';
 import { checkNetwork, type MessageCenter } from '@tk-crawler/shared';
-import { CheckNetworkResultType, TK_URL } from '@tk-ios-follow-client/shared';
+import {
+  CheckNetworkResultType,
+  TK_URL,
+} from '@tk-mobile-follow-client/shared';
 import { ipcMain } from 'electron';
 import { CUSTOM_EVENTS } from '../../constants';
 import { logger } from '../../infra/logger';

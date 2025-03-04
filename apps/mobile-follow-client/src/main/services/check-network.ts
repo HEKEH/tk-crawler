@@ -1,4 +1,4 @@
-import type { CheckNetworkResultType } from '@tk-ios-follow-client/shared';
+import type { CheckNetworkResultType } from '@tk-mobile-follow-client/shared';
 import { CUSTOM_EVENTS } from '../constants';
 
 export function checkNetwork(): Promise<CheckNetworkResultType> {

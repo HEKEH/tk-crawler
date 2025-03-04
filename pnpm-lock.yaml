@@ -196,7 +196,7 @@ importers:
         specifier: ^2.0.26
         version: 2.2.0(typescript@5.5.4)
 
-  apps/ios-follow-client:
+  apps/mobile-follow-client:
     devDependencies:
       '@types/global-agent':
         specifier: ^2.1.3

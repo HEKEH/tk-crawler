@@ -1,7 +1,7 @@
 import { ElectronRenderListeners } from '@tk-crawler/electron-utils/render';
 import { MessageCenter, RequestErrorType } from '@tk-crawler/shared';
 import { MessageQueue } from '@tk-crawler/view-shared';
-import { CheckNetworkResultType } from '@tk-ios-follow-client/shared';
+import { CheckNetworkResultType } from '@tk-mobile-follow-client/shared';
 import { markRaw } from 'vue';
 import { CUSTOM_EVENTS } from '../constants';
 import { checkNetwork, startAutoFollow } from '../services';

@@ -17,7 +17,7 @@ export default defineConfig(({ mode }) => {
     readFileSync(new URL('./package.json', import.meta.url), 'utf8'),
   );
   const alias: AliasOptions = {
-    '@tk-ios-follow-client/shared': resolve(__dirname, 'shared'),
+    '@tk-mobile-follow-client/shared': resolve(__dirname, 'shared'),
     '@tk-crawler/shared': resolve(__dirname, '../../packages/shared/src'),
     '@tk-crawler/electron-utils': resolve(
       __dirname,
@@ -70,7 +70,7 @@ export default defineConfig(({ mode }) => {
       vue(),
       vueJsx() as PluginOption,
       cssInjectedByJsPlugin({
-        styleId: 'ios-follow-client-style',
+        styleId: 'mobile-follow-client-style',
         relativeCSSInjection: true, // for multiple format
       }),
       createHtmlPlugin({

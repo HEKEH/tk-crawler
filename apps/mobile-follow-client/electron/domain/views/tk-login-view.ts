@@ -5,7 +5,7 @@ import {
   LOGIN_HELP_WIDTH,
   LOGIN_TIKTOK_HELP_EVENTS,
   LOGIN_TIKTOK_STATUS,
-} from '@tk-ios-follow-client/shared';
+} from '@tk-mobile-follow-client/shared';
 import { ipcMain, WebContentsView } from 'electron';
 import { isDevelopment, RENDERER_DIST, VITE_DEV_SERVER_URL } from '../../env';
 import { logger } from '../../infra/logger';

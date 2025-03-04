@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { TIKTOK_AUTO_FOLLOW_PAGE_EVENTS } from '@tk-ios-follow-client/shared';
+import { TIKTOK_AUTO_FOLLOW_PAGE_EVENTS } from '@tk-mobile-follow-client/shared';
 import { ElButton } from 'element-plus';
 
 defineOptions({

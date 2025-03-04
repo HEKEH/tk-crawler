@@ -1,9 +1,6 @@
+import type { MessageCenter } from '@tk-crawler/shared';
 import type { ViewsManager } from '../views';
-import { checkNetwork, type MessageCenter } from '@tk-crawler/shared';
-import {
-  CheckNetworkResultType,
-  TK_URL,
-} from '@tk-mobile-follow-client/shared';
+import { CheckNetworkResultType } from '@tk-mobile-follow-client/shared';
 import { ipcMain } from 'electron';
 import { CUSTOM_EVENTS } from '../../constants';
 import { logger } from '../../infra/logger';
@@ -68,12 +65,14 @@ export class Services {
       return this._viewManager.openTKLoginPage();
     });
     this._addEventHandler(CUSTOM_EVENTS.CHECK_NETWORK, async () => {
-      const res = await checkNetwork(TK_URL);
-      logger.info('[checkNetwork]', res);
-      // 如果有必要可以再细分
-      return res
-        ? CheckNetworkResultType.SUCCESS
-        : CheckNetworkResultType.ERROR;
+      // 当前场景不需要检查tiktok网络
+      return CheckNetworkResultType.SUCCESS;
+      // const res = await checkNetwork(TK_URL);
+      // logger.info('[checkNetwork]', res);
+      // // 如果有必要可以再细分
+      // return res
+      //   ? CheckNetworkResultType.SUCCESS
+      //   : CheckNetworkResultType.ERROR;
     });
   }
 

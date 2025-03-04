@@ -1,20 +1,44 @@
 <script setup lang="ts">
 import { ElMenu, ElMenuItem } from 'element-plus';
-import { useGlobalStore } from '../../utils/vue';
+import { OrgAndUserMenu } from '../../types';
 
 defineOptions({
   name: 'OrgAndUserManageSideMenus',
 });
+
+const props = defineProps<{
+  currentMenu: OrgAndUserMenu;
+}>();
+
+const emit = defineEmits<{
+  (e: 'update:currentMenu', value: OrgAndUserMenu): void;
+}>();
+
+function handleSelect(menu: string) {
+  emit('update:currentMenu', menu as OrgAndUserMenu);
+}
+
+const menus = [
+  {
+    label: '机构管理',
+    index: OrgAndUserMenu.Org,
+  },
+  {
+    label: '用户管理',
+    index: OrgAndUserMenu.User,
+  },
+];
 </script>
 
 <template>
   <div class="side-menus-container">
-    <ElMenu class="side-menus">
-      <ElMenuItem index="org">
-        <span>机构管理</span>
-      </ElMenuItem>
-      <ElMenuItem index="user">
-        <span>用户管理</span>
+    <ElMenu
+      :default-active="props.currentMenu"
+      class="side-menus"
+      @select="handleSelect"
+    >
+      <ElMenuItem v-for="menu in menus" :key="menu.index" :index="menu.index">
+        <span>{{ menu.label }}</span>
       </ElMenuItem>
     </ElMenu>
   </div>
@@ -23,11 +47,10 @@ defineOptions({
 <style scoped>
 .side-menus-container {
   position: relative;
-  width: 200px;
+  width: fit-content;
   height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  padding: 1rem;
+  border-right: 1px solid var(--el-border-color);
 }
 .side-menus {
   width: 100%;

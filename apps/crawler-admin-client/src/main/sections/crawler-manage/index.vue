@@ -135,6 +135,7 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .crawler-manage {
+  padding: 2rem;
   position: relative;
   width: 100%;
   height: 100%;

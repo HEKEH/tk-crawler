@@ -23,6 +23,10 @@
       ],
       "@tk-follow-client/shared/*": ["apps/follow-client/shared/*"],
       "@tk-follow-client/shared": ["apps/follow-client/shared/index.ts"],
+      "@tk-ios-follow-client/shared/*": ["apps/ios-follow-client/shared/*"],
+      "@tk-ios-follow-client/shared": [
+        "apps/ios-follow-client/shared/index.ts"
+      ],
       "@tk-crawler/script-tools/*": ["packages/script-tools/src/*"],
       "@tk-crawler/script-tools": ["packages/script-tools/src/index.ts"]
     },

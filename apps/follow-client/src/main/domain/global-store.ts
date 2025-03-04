@@ -1,5 +1,6 @@
+import { RequestErrorType } from '@tk-crawler/biz-shared';
 import { ElectronRenderListeners } from '@tk-crawler/electron-utils/render';
-import { MessageCenter, RequestErrorType } from '@tk-crawler/shared';
+import { MessageCenter } from '@tk-crawler/shared';
 import { MessageQueue } from '@tk-crawler/view-shared';
 import { CheckNetworkResultType } from '@tk-follow-client/shared';
 import { markRaw } from 'vue';

@@ -1,7 +1,7 @@
 import type {
   UpdateAnchorRequest,
   UpdateAnchorResponse,
-} from '@tk-crawler/shared';
+} from '@tk-crawler/biz-shared';
 import { getConfig } from '../../config';
 import { commonPostRequest } from '../utils/common-request';
 import { getUrl } from '../utils/get-url';

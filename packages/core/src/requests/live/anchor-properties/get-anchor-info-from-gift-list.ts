@@ -1,4 +1,4 @@
-import type { Region } from '@tk-crawler/shared';
+import type { Region } from '@tk-crawler/biz-shared';
 import type { WithRegion } from '../../../types';
 import type { TikTokQueryTokens } from '../types';
 import { commonGetRequest } from '../../utils/common-request';

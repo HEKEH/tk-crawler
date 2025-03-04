@@ -1,4 +1,4 @@
-import type { RecordAnchorCrawlRequest } from '@tk-crawler/shared';
+import type { RecordAnchorCrawlRequest } from '@tk-crawler/biz-shared';
 import { ANCHOR_CRAWL_OUTDATE_TIME } from './constants';
 import { anchorCrawlRecordRedisNamespace } from './redis-namespaces';
 

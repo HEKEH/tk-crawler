@@ -1,10 +1,11 @@
-import type { MessageCenter, RequestErrorType } from '@tk-crawler/shared';
+import type { RequestErrorType } from '@tk-crawler/biz-shared';
+import type { MessageCenter } from '@tk-crawler/shared';
 import type { BaseWindow } from 'electron';
 import type { Subscription } from 'rxjs';
 import type { IView } from './types';
 import path from 'node:path';
+import { CrawlerMessage } from '@tk-crawler/biz-shared';
 import { bindViewToWindowBounds } from '@tk-crawler/electron-utils/main';
-import { CrawlerMessage } from '@tk-crawler/shared';
 import { WebContentsView } from 'electron';
 import { CUSTOM_EVENTS } from '../../constants';
 import { isDevelopment, RENDERER_DIST, VITE_DEV_SERVER_URL } from '../../env';

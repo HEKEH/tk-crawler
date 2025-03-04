@@ -1,4 +1,4 @@
-import { DefaultRegion, Region } from '@tk-crawler/shared';
+import { DefaultRegion, Region } from '@tk-crawler/biz-shared';
 import { getRandomArrayElement } from '../../utils';
 import { BROWSER_NAME, BROWSER_VERSION, USER_AGENT } from '../constants';
 

@@ -1,4 +1,4 @@
-import type { MessageCenter } from './message-center';
+import type { MessageCenter } from '@tk-crawler/shared';
 import { CrawlerMessage, RequestErrorType } from '../types';
 
 export function isTiktokRequestEconnreset(error: any) {

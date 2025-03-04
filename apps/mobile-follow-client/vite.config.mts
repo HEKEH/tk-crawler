@@ -19,6 +19,10 @@ export default defineConfig(({ mode }) => {
   const alias: AliasOptions = {
     '@tk-mobile-follow-client/shared': resolve(__dirname, 'shared'),
     '@tk-crawler/shared': resolve(__dirname, '../../packages/shared/src'),
+    '@tk-crawler/biz-shared': resolve(
+      __dirname,
+      '../../packages/biz-shared/src',
+    ),
     '@tk-crawler/electron-utils': resolve(
       __dirname,
       '../../packages/electron-utils/src',

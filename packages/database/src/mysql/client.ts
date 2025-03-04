@@ -1,4 +1,4 @@
-import type { UpdateAnchorRequest } from '@tk-crawler/shared';
+import type { UpdateAnchorRequest } from '@tk-crawler/biz-shared';
 import process from 'node:process';
 import { Prisma, PrismaClient } from '@prisma/client';
 import { getLogger } from '../infra';

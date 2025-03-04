@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Region } from '@tk-crawler/shared';
+import type { Region } from '@tk-crawler/biz-shared';
 import { ElOption, ElSelect } from 'element-plus';
 import { computed, ref } from 'vue';
 import { REGION_OPTIONS } from '../constants';

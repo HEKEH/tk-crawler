@@ -1,8 +1,11 @@
+import type { MessageCenter } from '@tk-crawler/shared';
 import type { Subscription } from 'rxjs';
 import type { DrawerSubTab, TikTokQueryTokens } from '../requests/live';
 import type { RawAnchorParam } from './anchor-pool';
-import { CrawlerMessage, type MessageCenter } from '@tk-crawler/shared';
-import { tiktokRequestErrorHandler } from '@tk-crawler/shared';
+import {
+  CrawlerMessage,
+  tiktokRequestErrorHandler,
+} from '@tk-crawler/biz-shared';
 import { IntervalRunner } from '../infra/interval-runner';
 import { getLogger } from '../infra/logger';
 import { DRAWER_TABS_SCENE, getDrawerTabs, getFeed } from '../requests/live';

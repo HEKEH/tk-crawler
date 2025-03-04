@@ -26,6 +26,7 @@
     "preinstall": "npx only-allow pnpm"
   },
   "dependencies": {
+    "@tk-crawler/biz-shared": "workspace:*",
     "@tk-crawler/database": "workspace:*",
     "@tk-crawler/shared": "workspace:*",
     "assert": "^2.1.0",

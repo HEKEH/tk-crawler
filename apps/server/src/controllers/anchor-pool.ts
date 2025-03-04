@@ -3,7 +3,7 @@ import type {
   RecordAnchorCrawlRequest,
   ShouldUpdateAnchorRequest,
   UpdateAnchorRequest,
-} from '@tk-crawler/shared';
+} from '@tk-crawler/biz-shared';
 import type { Context, Next } from 'koa';
 import {
   deleteAnchorCrawlRecord,

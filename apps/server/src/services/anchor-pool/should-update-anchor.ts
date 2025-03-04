@@ -2,7 +2,7 @@ import {
   type ShouldUpdateAnchorRequest,
   type ShouldUpdateAnchorResponseData,
   ShouldUpdateAnchorResult,
-} from '@tk-crawler/shared';
+} from '@tk-crawler/biz-shared';
 import { ANCHOR_CRAWL_OUTDATE_TIME } from './constants';
 import { anchorCrawlRecordRedisNamespace } from './redis-namespaces';
 

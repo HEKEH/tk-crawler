@@ -1,16 +1,16 @@
 import type {
   AnchorCrawledMessage,
   CollectedAnchorInfo,
-  MessageCenter,
   Region,
-} from '@tk-crawler/shared';
+} from '@tk-crawler/biz-shared';
+import type { MessageCenter } from '@tk-crawler/shared';
 import type { TikTokQueryTokens } from '../requests/live';
 import {
   CrawlerMessage,
-  FrequencyLimitTaskQueue,
   getRequestErrorType,
   ShouldUpdateAnchorResult,
-} from '@tk-crawler/shared';
+} from '@tk-crawler/biz-shared';
+import { FrequencyLimitTaskQueue } from '@tk-crawler/shared';
 import { getLogger } from '../infra/logger';
 import { getAnchorInfoFromGiftList, getLiveDiamonds } from '../requests/live';
 import {

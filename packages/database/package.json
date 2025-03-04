@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@prisma/client": "^6.4.1",
+    "@tk-crawler/biz-shared": "workspace:*",
     "@tk-crawler/shared": "workspace:*",
     "prisma": "^6.4.1"
   }

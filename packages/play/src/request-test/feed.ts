@@ -1,9 +1,9 @@
+import { Region } from '@tk-crawler/biz-shared';
 import { ChannelId, getFeed } from '@tk-crawler/core/requests/live';
 import {
   type ChannelSubTagMap,
   getChannelParamsByChannelId,
 } from '@tk-crawler/core/requests/utils/params';
-import { Region } from '@tk-crawler/shared/types';
 import { getTokens } from '../mock/tokens';
 
 export default async function getFeedTest() {

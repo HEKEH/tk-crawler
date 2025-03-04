@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { AnchorCrawledMessage } from '@tk-crawler/shared';
+import type { AnchorCrawledMessage } from '@tk-crawler/biz-shared';
 import type { IpcRendererEvent } from 'electron';
 import {
   CUSTOM_EVENTS,
   IsCookieValidResultStatus,
 } from '@tk-crawler-admin-client/shared';
+import { RequestErrorType } from '@tk-crawler/biz-shared';
 import { ElectronRenderListeners } from '@tk-crawler/electron-utils/render';
-import { RequestErrorType } from '@tk-crawler/shared';
 import { MessageQueue } from '@tk-crawler/view-shared';
 import { onBeforeUnmount, onMounted } from 'vue';
 import { useGlobalStore } from '../../utils/vue';

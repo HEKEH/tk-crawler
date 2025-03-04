@@ -1,4 +1,4 @@
-import type { UpdateAnchorRequest } from '@tk-crawler/shared';
+import type { UpdateAnchorRequest } from '@tk-crawler/biz-shared';
 import { mysqlClient } from '@tk-crawler/database/mysql';
 import { logger } from '../../infra/logger';
 

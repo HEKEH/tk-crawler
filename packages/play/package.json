@@ -8,6 +8,7 @@
     "dev": "cross-env NODE_ENV=development dotenv -e ../../.env.development nodemon"
   },
   "dependencies": {
+    "@tk-crawler/biz-shared": "workspace:*",
     "@tk-crawler/core": "workspace:*",
     "@tk-crawler/shared": "workspace:*",
     "log4js": "^6.9.1"

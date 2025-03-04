@@ -11,8 +11,6 @@
   "include": [
     "scripts/**/*",
     "apps/server/**/*",
-    "apps/pc-client/electron/**/*",
-    "apps/pc-client/shared/**/*",
     "apps/crawler-admin-client/electron/**/*",
     "apps/crawler-admin-client/shared/**/*",
     "apps/follow-client/electron/**/*",

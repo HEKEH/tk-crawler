@@ -252,6 +252,9 @@ importers:
 
   apps/server:
     dependencies:
+      '@tk-crawler/biz-shared':
+        specifier: workspace:*
+        version: link:../../packages/biz-shared
       '@tk-crawler/database':
         specifier: workspace:*
         version: link:../../packages/database
@@ -344,7 +347,11 @@ importers:
         specifier: ^3.1.9
         version: 3.1.9
 
-  packages/biz-shared: {}
+  packages/biz-shared:
+    devDependencies:
+      '@tk-crawler/shared':
+        specifier: workspace:*
+        version: link:../shared
 
   packages/core:
     dependencies:
@@ -394,6 +401,9 @@ importers:
 
   packages/play:
     dependencies:
+      '@tk-crawler/biz-shared':
+        specifier: workspace:*
+        version: link:../biz-shared
       '@tk-crawler/core':
         specifier: workspace:*
         version: link:../core

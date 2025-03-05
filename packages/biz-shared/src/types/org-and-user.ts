@@ -10,6 +10,8 @@ export interface OrganizationItem {
   id: string;
   /** 机构名称 */
   name: string;
+  /** 会员开始时间 */
+  membership_start_at: Date | null;
   /** 会员到期时间 */
   membership_expire_at: Date | null;
   /** 状态 */

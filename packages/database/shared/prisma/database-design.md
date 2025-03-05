@@ -107,6 +107,7 @@ tiktok爬虫爬取的基础信息
 | -------------------- | ---------------- | ---- | -------------------- |
 | id                   | BIGINT UNSIGNED  | 是   | 主键，机构id         |
 | name                 | VARCHAR(100)     | 是   | 机构名称，唯一       |
+| membership_start_at  | DATETIME         | 否   | 会员开始时间         |
 | membership_expire_at | DATETIME         | 否   | 会员到期时间         |
 | status               | TINYINT UNSIGNED | 是   | 状态：1-正常，0-禁用 |
 | remark               | VARCHAR(200)     | 否   | 备注                 |

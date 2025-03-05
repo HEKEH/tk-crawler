@@ -9,6 +9,12 @@ generator client {
   output   = "../../node_modules/.prisma/client"
 }
 
+generator client2 {
+  provider = "prisma-client-js"
+  output   = "../../../biz-shared/node_modules/.prisma/client"
+}
+
+/// @TypeMapping: BigInt => String
 model Anchor {
   user_id            BigInt              @id @db.UnsignedBigInt
   display_id         String              @unique @db.VarChar(24)
@@ -67,7 +73,7 @@ model LiveAdminUserRegionRelation {
 
 // 主播邀约验证数据表
 model AnchorInviteCheck {
-  id             BigInt        @id @default(autoincrement()) @db.UnsignedBigInt
+  id             BigInt        @id @default(dbgenerated("(uuid_short())")) @db.UnsignedBigInt
   org_id         BigInt        @db.UnsignedBigInt
   anchor_id      BigInt        @db.UnsignedBigInt
   checked_at     DateTime      @db.DateTime(3)
@@ -88,8 +94,9 @@ model AnchorInviteCheck {
 
 // 机构表
 model Organization {
-  id                   BigInt              @id @default(autoincrement()) @db.UnsignedBigInt
+  id                   BigInt              @id @default(dbgenerated("(uuid_short())")) @db.UnsignedBigInt
   name                 String              @unique @db.VarChar(100)
+  membership_start_at  DateTime?           @db.DateTime(3)
   membership_expire_at DateTime?           @db.DateTime(3)
   status               Int                 @db.UnsignedTinyInt
   remark               String?             @db.VarChar(200)
@@ -105,7 +112,7 @@ model Organization {
 
 // 机构用户表
 model OrgUser {
-  id           BigInt       @id @default(autoincrement()) @db.UnsignedBigInt
+  id           BigInt       @id @default(dbgenerated("(uuid_short())")) @db.UnsignedBigInt
   org_id       BigInt       @db.UnsignedBigInt
   username     String       @unique @db.VarChar(24)
   display_name String       @db.VarChar(24)

@@ -7,7 +7,7 @@ import {
   openTiktokLoginPage,
   startLiveAnchorCrawl,
   stopLiveAnchorCrawl,
-} from '../services';
+} from '../requests';
 
 export default class CrawlerManage {
   private _isInitialized: boolean = false;

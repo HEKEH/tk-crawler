@@ -10,15 +10,22 @@ import { OrganizationStatus } from '@tk-crawler/biz-shared';
 import { formatDateTime } from '@tk-crawler/shared';
 import {
   ElButton,
+  ElMessage,
   ElMessageBox,
   ElPagination,
   ElTable,
   ElTableColumn,
   ElTag,
 } from 'element-plus';
-import { ref } from 'vue';
-import { createOrg, getOrgList, updateOrg } from '../../../requests';
+import { onActivated, ref } from 'vue';
+import {
+  createOrg,
+  getOrgList,
+  updateOrg,
+  updateOrgMembership,
+} from '../../../requests';
 import OrgDialog from './org-dialog.vue';
+import OrgMembershipDialog from './org-membership-dialog.vue';
 
 defineOptions({
   name: 'OrgManage',
@@ -39,6 +46,10 @@ const { data, isLoading, isError, error, refetch } = useQuery<
     });
     return response.data;
   },
+});
+
+onActivated(() => {
+  refetch();
 });
 
 const orgDialogVisible = ref(false);
@@ -69,45 +80,67 @@ async function toggleDisableItem(row: OrganizationItem) {
   refetch();
 }
 
-function onAddItem() {
+function onAddOrgItem() {
   orgDialogInitialData.value = undefined;
   orgDialogMode.value = 'create';
   orgDialogVisible.value = true;
 }
-function onEditItem(item: OrganizationItem) {
+function onEditOrgItem(item: OrganizationItem) {
   orgDialogInitialData.value = item;
   orgDialogMode.value = 'edit';
   orgDialogVisible.value = true;
 }
-function onCloseDialog() {
+function onCloseOrgDialog() {
   orgDialogVisible.value = false;
   orgDialogInitialData.value = undefined;
   orgDialogMode.value = 'create';
 }
-async function handleSubmit(data: Partial<OrganizationItem>) {
+async function handleSubmitOrgData(data: Partial<OrganizationItem>) {
   if (orgDialogMode.value === 'create') {
     await createOrg(data as CreateOrgRequest);
   } else {
     await updateOrg(data as UpdateOrgRequest);
   }
   refetch();
-  onCloseDialog();
+  onCloseOrgDialog();
+  ElMessage.success('保存成功');
+}
+
+const orgMembershipDialogVisible = ref(false);
+const orgMembershipEditId = ref<string>();
+
+function openUpdateOrgMembershipDialog(item: OrganizationItem) {
+  orgMembershipEditId.value = item.id;
+  orgMembershipDialogVisible.value = true;
+}
+async function handleUpdateOrgMembership(data: { membership_days: number }) {
+  await updateOrgMembership({
+    id: orgMembershipEditId.value!,
+    membership_days: data.membership_days,
+  });
+  refetch();
+  onCloseOrgMembershipDialog();
+  ElMessage.success('保存成功');
+}
+function onCloseOrgMembershipDialog() {
+  orgMembershipDialogVisible.value = false;
+  orgMembershipEditId.value = undefined;
 }
 </script>
 
 <template>
-  <div v-loading="isLoading" class="org-manage">
+  <div class="org-manage">
     <template v-if="!isLoading">
       <div v-if="isError" class="org-manage-error">
         {{ error?.message }}
       </div>
       <template v-if="!isError">
         <div class="header-row">
-          <ElButton type="primary" @click="onAddItem"> 添加组织 </ElButton>
+          <ElButton type="primary" @click="onAddOrgItem"> 添加组织 </ElButton>
         </div>
         <ElTable :data="data?.list" style="width: 100%">
           <ElTableColumn fixed prop="id" label="组织ID" min-width="100" />
-          <ElTableColumn prop="name" label="组织名称" min-width="100" />
+          <ElTableColumn fixed prop="name" label="组织名称" min-width="100" />
           <ElTableColumn prop="status" label="状态" min-width="100">
             <template #default="scope">
               <ElTag
@@ -143,6 +176,20 @@ async function handleSubmit(data: Partial<OrganizationItem>) {
               {{ formatDateTime(scope.row.membership_expire_at) }}
             </template>
           </ElTableColumn>
+          <ElTableColumn
+            prop="if_membership_valid"
+            label="会员是否有效"
+            min-width="120"
+          >
+            <template #default="scope">
+              <ElTag
+                :type="scope.row.if_membership_valid ? 'success' : 'danger'"
+              >
+                {{ scope.row.if_membership_valid ? '是' : '否' }}
+              </ElTag>
+            </template>
+          </ElTableColumn>
+          <ElTableColumn prop="user_count" label="用户数量" min-width="100" />
           <ElTableColumn prop="created_at" label="创建时间" min-width="180">
             <template #default="scope">
               {{ formatDateTime(scope.row.created_at) }}
@@ -154,13 +201,13 @@ async function handleSubmit(data: Partial<OrganizationItem>) {
             </template>
           </ElTableColumn>
           <ElTableColumn prop="remark" label="备注" min-width="100" />
-          <ElTableColumn fixed="right" label="操作" min-width="160">
+          <ElTableColumn fixed="right" label="操作" min-width="220">
             <template #default="scope">
               <ElButton
                 link
                 type="primary"
                 size="small"
-                @click.prevent="onEditItem(scope.row)"
+                @click.prevent="onEditOrgItem(scope.row)"
               >
                 编辑
               </ElButton>
@@ -179,6 +226,14 @@ async function handleSubmit(data: Partial<OrganizationItem>) {
                     ? '禁用'
                     : '启用'
                 }}
+              </ElButton>
+              <ElButton
+                link
+                type="primary"
+                size="small"
+                @click.prevent="openUpdateOrgMembershipDialog(scope.row)"
+              >
+                添加会员天数
               </ElButton>
             </template>
           </ElTableColumn>
@@ -203,20 +258,25 @@ async function handleSubmit(data: Partial<OrganizationItem>) {
     :visible="orgDialogVisible"
     :mode="orgDialogMode"
     :initial-data="orgDialogInitialData"
-    :submit="handleSubmit"
-    @close="onCloseDialog"
+    :submit="handleSubmitOrgData"
+    @close="onCloseOrgDialog"
+  />
+  <OrgMembershipDialog
+    :visible="orgMembershipDialogVisible"
+    :submit="handleUpdateOrgMembership"
+    @close="onCloseOrgMembershipDialog"
   />
 </template>
 
 <style scoped>
 .org-manage {
-  padding: 1rem;
+  padding: 2rem 1rem;
   position: relative;
   flex: 1;
   height: 100%;
   overflow: hidden;
   .header-row {
-    margin-bottom: 0.5rem;
+    margin-bottom: 1rem;
   }
   .org-manage-error {
     display: flex;

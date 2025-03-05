@@ -2,10 +2,17 @@ import type {
   CreateOrgRequest,
   DeleteOrgRequest,
   GetOrgListRequest,
+  UpdateOrgMembershipRequest,
   UpdateOrgRequest,
 } from '@tk-crawler/biz-shared';
 import type { Context, Next } from 'koa';
-import { createOrg, deleteOrg, getOrgList, updateOrg } from '../services';
+import {
+  createOrg,
+  deleteOrg,
+  getOrgList,
+  updateOrg,
+  updateOrgMembership,
+} from '../services';
 
 export default class OrgAndUserController {
   static async getOrgList(ctx: Context, next: Next) {
@@ -31,6 +38,13 @@ export default class OrgAndUserController {
   static async updateOrg(ctx: Context, next: Next) {
     const data = ctx.getRequestData<UpdateOrgRequest>();
     await updateOrg(data);
+    ctx.body = ctx.t('Success');
+    await next();
+  }
+
+  static async updateOrgMembership(ctx: Context, next: Next) {
+    const data = ctx.getRequestData<UpdateOrgMembershipRequest>();
+    await updateOrgMembership(data);
     ctx.body = ctx.t('Success');
     await next();
   }

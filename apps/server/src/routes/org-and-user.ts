@@ -11,4 +11,8 @@ orgAndUserRouter.post('/create-org', OrgAndUserController.createOrg);
 
 orgAndUserRouter.post('/update-org', OrgAndUserController.updateOrg);
 
+orgAndUserRouter.post(
+  '/update-org-membership',
+  OrgAndUserController.updateOrgMembership,
+);
 export default orgAndUserRouter;

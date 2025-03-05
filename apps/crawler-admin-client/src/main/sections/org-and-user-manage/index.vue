@@ -22,7 +22,9 @@ function setCurrentMenu(menu: OrgAndUserMenu) {
       :current-menu="orgAndUserManage.currentMenu"
       @update:current-menu="setCurrentMenu"
     />
-    <OrgManage v-if="orgAndUserManage.currentMenu === OrgAndUserMenu.Org" />
+    <KeepAlive>
+      <OrgManage v-if="orgAndUserManage.currentMenu === OrgAndUserMenu.Org" />
+    </KeepAlive>
   </div>
 </template>
 

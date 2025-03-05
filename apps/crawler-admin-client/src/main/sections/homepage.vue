@@ -20,7 +20,9 @@ const currentMenu = computed(() => {
     <TopBar />
     <div class="body">
       <CrawlerManage v-if="currentMenu === Menu.Crawler" />
-      <OrgAndUserManage v-if="currentMenu === Menu.OrgAndUser" />
+      <KeepAlive>
+        <OrgAndUserManage v-if="currentMenu === Menu.OrgAndUser" />
+      </KeepAlive>
     </div>
   </div>
 </template>

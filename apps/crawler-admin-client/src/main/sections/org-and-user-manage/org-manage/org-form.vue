@@ -3,6 +3,7 @@ import {
   type OrganizationItem,
   OrganizationStatus,
 } from '@tk-crawler/biz-shared';
+import { CommonDatePickerShortcuts } from '@tk-crawler/shared';
 import dayjs from 'dayjs';
 import {
   ElButton,
@@ -43,10 +44,10 @@ const statusOptions = [
 
 const rules: FormRules = {
   name: [
-    { required: true, message: '请输入机构名称', trigger: 'blur' },
-    { min: 2, max: 30, message: '长度在 2 到 30 个字符', trigger: 'blur' },
+    { required: true, message: '请输入机构名称' },
+    { min: 2, max: 30, message: '长度在 2 到 30 个字符' },
   ],
-  status: [{ required: true, message: '请选择状态', trigger: 'change' }],
+  status: [{ required: true, message: '请选择状态' }],
   membershipDates: [
     {
       validator: (rule, value, callback) => {
@@ -56,10 +57,13 @@ const rules: FormRules = {
           ) {
             callback(new Error('到期时间不能早于开始时间'));
           }
+        } else if (form.membership_expire_at && !form.membership_start_at) {
+          callback(new Error('已选择到期时间，开始时间不能为空'));
+        } else if (!form.membership_expire_at && form.membership_start_at) {
+          callback(new Error('已选择开始时间，到期时间不能为空'));
         }
         callback();
       },
-      trigger: 'change',
     },
   ],
 };
@@ -97,7 +101,11 @@ async function handleSubmit() {
           }
         }
         await props.submit({
-          ...form,
+          name: form.name,
+          status: form.status,
+          membership_start_at: form.membership_start_at ?? null,
+          membership_expire_at: form.membership_expire_at ?? null,
+          remark: form.remark,
           id: props.initialData?.id,
         });
       } finally {
@@ -132,7 +140,6 @@ function handleCancel() {
         type="datetime"
         placeholder="开始时间"
         format="YYYY-MM-DD HH:mm:ss"
-        value-format="YYYY-MM-DD HH:mm:ss"
         :disabled-date="disablePastDates"
         style="margin-right: 10px"
       />
@@ -141,10 +148,10 @@ function handleCancel() {
         type="datetime"
         placeholder="到期时间"
         format="YYYY-MM-DD HH:mm:ss"
-        value-format="YYYY-MM-DD HH:mm:ss"
         :disabled-date="
           (time: Date) => disablePastDates(time, form.membership_start_at)
         "
+        :shortcuts="CommonDatePickerShortcuts"
       />
     </ElFormItem>
 

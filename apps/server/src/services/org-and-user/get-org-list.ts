@@ -3,6 +3,7 @@ import type {
   GetOrgListResponseData,
 } from '@tk-crawler/biz-shared';
 import { mysqlClient } from '@tk-crawler/database';
+import dayjs from 'dayjs';
 import { logger } from '../../infra/logger';
 
 export async function getOrgList(
@@ -15,6 +16,13 @@ export async function getOrgList(
       skip: (data.page_num - 1) * data.page_size,
       take: data.page_size,
       orderBy: data.order_by,
+      include: {
+        _count: {
+          select: {
+            orgUsers: true,
+          },
+        },
+      },
     }),
     mysqlClient.prismaClient.organization.count({
       where: data.filter,
@@ -24,6 +32,10 @@ export async function getOrgList(
     list: orgs.map(org => ({
       ...org,
       id: org.id.toString(),
+      if_membership_valid:
+        Boolean(org.membership_expire_at) &&
+        dayjs(org.membership_expire_at).isAfter(new Date()),
+      user_count: org._count.orgUsers,
     })),
     total,
   };

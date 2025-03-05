@@ -102,6 +102,9 @@ importers:
       '@vitejs/plugin-vue-jsx':
         specifier: ^4.1.1
         version: 4.1.1(vite@5.4.11)(vue@3.5.13)
+      dayjs:
+        specifier: ^1.11.13
+        version: 1.11.13
       electron:
         specifier: ^34.3.0
         version: 34.3.0
@@ -337,6 +340,9 @@ importers:
       '@types/uuid':
         specifier: ^10.0.0
         version: 10.0.0
+      dayjs:
+        specifier: ^1.11.13
+        version: 1.11.13
       ioredis:
         specifier: ^5.5.0
         version: 5.5.0

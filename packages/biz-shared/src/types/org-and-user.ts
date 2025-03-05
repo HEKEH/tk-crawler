@@ -14,6 +14,8 @@ export interface OrganizationItem {
   membership_start_at: Date | null;
   /** 会员到期时间 */
   membership_expire_at: Date | null;
+  /** 会员是否有效 */
+  if_membership_valid: boolean;
   /** 状态 */
   status: OrganizationStatus;
   /** 备注 */
@@ -22,6 +24,6 @@ export interface OrganizationItem {
   created_at: Date;
   /** 更新时间 */
   updated_at: Date;
-  // /** 用户数量 */
-  // user_count: number;
+  /** 用户数量 */
+  user_count: number;
 }

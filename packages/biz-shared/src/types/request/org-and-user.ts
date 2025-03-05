@@ -4,7 +4,7 @@ import type { OrganizationItem } from '../org-and-user';
 
 export type CreateOrgRequest = Omit<
   OrganizationItem,
-  'id' | 'membership_start_at' | 'membership_expire_at'
+  'id' | 'membership_start_at' | 'membership_expire_at' | 'if_membership_valid'
 >;
 
 export interface CreateOrgResponse {
@@ -13,7 +13,13 @@ export interface CreateOrgResponse {
 }
 
 export type UpdateOrgRequest = Partial<
-  Omit<OrganizationItem, 'id' | 'membership_start_at' | 'membership_expire_at'>
+  Omit<
+    OrganizationItem,
+    | 'id'
+    | 'membership_start_at'
+    | 'membership_expire_at'
+    | 'if_membership_valid'
+  >
 > &
   Pick<OrganizationItem, 'id'>;
 
@@ -46,5 +52,15 @@ export interface GetOrgListResponseData {
 export interface GetOrgListResponse {
   status_code: RESPONSE_CODE;
   data?: GetOrgListResponseData;
+  message?: string;
+}
+
+export interface UpdateOrgMembershipRequest {
+  id: string;
+  membership_days: number;
+}
+
+export interface UpdateOrgMembershipResponse {
+  status_code: RESPONSE_CODE;
   message?: string;
 }

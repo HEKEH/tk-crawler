@@ -11,6 +11,7 @@ import { formatDateTime } from '@tk-crawler/shared';
 import {
   ElButton,
   ElMessageBox,
+  ElPagination,
   ElTable,
   ElTableColumn,
   ElTag,
@@ -23,15 +24,18 @@ defineOptions({
   name: 'OrgManage',
 });
 
+const pageNum = ref(1);
+const pageSize = ref(10);
+
 const { data, isLoading, isError, error, refetch } = useQuery<
   GetOrgListResponseData | undefined
 >({
-  queryKey: ['orgs'],
+  queryKey: ['orgs', pageNum, pageSize],
   retry: false,
   queryFn: async () => {
     const response = await getOrgList({
-      page_num: 1,
-      page_size: 10,
+      page_num: pageNum.value,
+      page_size: pageSize.value,
     });
     return response.data;
   },
@@ -98,7 +102,7 @@ async function handleSubmit(data: Partial<OrganizationItem>) {
         {{ error?.message }}
       </div>
       <template v-if="!isError">
-        <div class="button-row">
+        <div class="header-row">
           <ElButton type="primary" @click="onAddItem"> 添加组织 </ElButton>
         </div>
         <ElTable :data="data?.list" style="width: 100%">
@@ -179,6 +183,19 @@ async function handleSubmit(data: Partial<OrganizationItem>) {
             </template>
           </ElTableColumn>
         </ElTable>
+        <div class="pagination-row">
+          <ElPagination
+            size="small"
+            background
+            :page-size="pageSize"
+            :current-page="pageNum"
+            layout="total, sizes, prev, pager, next"
+            :total="data?.total"
+            class="mt-4"
+            @size-change="pageSize = $event"
+            @current-change="pageNum = $event"
+          />
+        </div>
       </template>
     </template>
   </div>
@@ -198,7 +215,7 @@ async function handleSubmit(data: Partial<OrganizationItem>) {
   flex: 1;
   height: 100%;
   overflow: hidden;
-  .button-row {
+  .header-row {
     margin-bottom: 0.5rem;
   }
   .org-manage-error {
@@ -206,6 +223,13 @@ async function handleSubmit(data: Partial<OrganizationItem>) {
     align-items: center;
     justify-content: center;
     color: var(--el-color-danger);
+  }
+  .pagination-row {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1rem;
+    padding-right: 1rem;
   }
 }
 </style>

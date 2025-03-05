@@ -11,8 +11,8 @@ services:
       TK_CRAWLER_DATABASE: ${MYSQL_DATABASE}
       TK_CRAWLER_DATABASE_SHADOW: ${MYSQL_DATABASE_SHADOW}
 
-      # 时区
-      TZ: Asia/Shanghai
+      # # 时区
+      # TZ: Asia/Shanghai
 
       # 一些基本系统变量
       MYSQL_MAX_CONNECTIONS: 1000

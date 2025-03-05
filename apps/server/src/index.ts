@@ -18,7 +18,7 @@ logger.info('[port]', config.port);
     setDatabaseLogger(logger);
     await Promise.all([redisClient.connect(config), mysqlClient.connect()]);
   } catch (error) {
-    logger.error('Redis Client Error:', error);
+    logger.error('Start Databases Error:', error);
     process.exit(1);
   }
 

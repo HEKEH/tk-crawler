@@ -1,50 +1,30 @@
 <script setup lang="ts">
+import type { GetOrgListResponseData } from '@tk-crawler/biz-shared';
 import { useQuery } from '@tanstack/vue-query';
+import { formatDateTime } from '@tk-crawler/shared';
 import { ElButton, ElTable, ElTableColumn } from 'element-plus';
+import { getOrgList } from '../../requests';
 
 defineOptions({
   name: 'OrgManage',
 });
 
-const { data, isLoading, isError, error } = useQuery<any>({
+const { data, isLoading, isError, error } = useQuery<
+  GetOrgListResponseData | undefined
+>({
   queryKey: ['orgs'],
   retry: false,
-  queryFn: () => {
-    return new Promise(resolve => {
-      setTimeout(() => {
-        resolve([
-          {
-            date: '2016-05-01',
-            name: 'Tom',
-            state: 'California',
-            city: 'Los Angeles',
-            address: 'No. 189, Grove St, Los Angeles',
-            zip: 'CA 90036',
-          },
-          {
-            date: '2016-05-02',
-            name: 'Tom',
-            state: 'California',
-            city: 'Los Angeles',
-            address: 'No. 189, Grove St, Los Angeles',
-            zip: 'CA 90036',
-          },
-          {
-            date: '2016-05-03',
-            name: 'Tom',
-            state: 'California',
-            city: 'Los Angeles',
-            address: 'No. 189, Grove St, Los Angeles',
-            zip: 'CA 90036',
-          },
-        ]);
-      }, 1000);
+  queryFn: async () => {
+    const response = await getOrgList({
+      page_num: 1,
+      page_size: 10,
     });
+    return response.data;
   },
 });
 
-function deleteRow(index: number) {
-  console.log('deleteRow', index);
+function deleteRow(id: string) {
+  console.log('deleteRow', id);
 }
 
 function onAddItem() {}
@@ -57,28 +37,54 @@ function onAddItem() {}
         {{ error?.message }}
       </div>
       <template v-if="!isError">
-        <ElTable :data="data" style="width: 100%" max-height="250">
-          <ElTableColumn fixed prop="date" label="Date" width="150" />
-          <ElTableColumn prop="name" label="Name" width="120" />
-          <ElTableColumn prop="state" label="State" width="120" />
-          <ElTableColumn prop="city" label="City" width="120" />
-          <ElTableColumn prop="address" label="Address" width="600" />
-          <ElTableColumn prop="zip" label="Zip" width="120" />
+        <ElTable :data="data?.list" style="width: 100%">
+          <ElTableColumn fixed prop="id" label="组织ID" min-width="200" />
+          <ElTableColumn prop="name" label="组织名称" min-width="100" />
+          <ElTableColumn prop="status" label="状态" min-width="100" />
+          <ElTableColumn
+            prop="membership_start_at"
+            label="会员开始时间"
+            min-width="120"
+          >
+            <template #default="scope">
+              {{ formatDateTime(scope.row.membership_start_at) }}
+            </template>
+          </ElTableColumn>
+          <ElTableColumn
+            prop="membership_expire_at"
+            label="会员到期时间"
+            min-width="120"
+          >
+            <template #default="scope">
+              {{ formatDateTime(scope.row.membership_expire_at) }}
+            </template>
+          </ElTableColumn>
+          <ElTableColumn prop="created_at" label="创建时间" min-width="120">
+            <template #default="scope">
+              {{ formatDateTime(scope.row.created_at) }}
+            </template>
+          </ElTableColumn>
+          <ElTableColumn prop="updated_at" label="更新时间" min-width="120">
+            <template #default="scope">
+              {{ formatDateTime(scope.row.updated_at) }}
+            </template>
+          </ElTableColumn>
+          <ElTableColumn prop="remark" label="备注" min-width="100" />
           <ElTableColumn fixed="right" label="Operations" min-width="120">
             <template #default="scope">
               <ElButton
                 link
                 type="primary"
                 size="small"
-                @click.prevent="deleteRow(scope.$index)"
+                @click.prevent="deleteRow(scope.row.id)"
               >
-                Remove
+                删除
               </ElButton>
             </template>
           </ElTableColumn>
         </ElTable>
         <ElButton class="mt-4" style="width: 100%" @click="onAddItem">
-          Add Item
+          添加组织
         </ElButton>
       </template>
     </template>
@@ -91,6 +97,7 @@ function onAddItem() {}
   position: relative;
   flex: 1;
   height: 100%;
+  overflow: hidden;
   .org-manage-error {
     display: flex;
     align-items: center;

@@ -34,6 +34,14 @@ export default defineConfig(({ mode }) => {
     ),
   };
 
+  const envConfig = {
+    envDir: path.resolve(__dirname, '../..'), // 环境文件目录
+    envPrefix: ['CLIENT_'], // 环境变量前缀
+    env: {
+      envFile: `.env.${mode}`, // 指定环境文件名
+    },
+  };
+
   const electronOptions: ElectronSimpleOptions = {
     main: {
       // Shortcut of `build.lib.entry`.
@@ -49,11 +57,7 @@ export default defineConfig(({ mode }) => {
             // external: ['@tk-crawler/core'],
           },
         },
-        envDir: path.resolve(__dirname, '../..'), // 环境文件目录
-        envPrefix: ['CLIENT_'], // 环境变量前缀
-        env: {
-          envFile: `.env.${mode}`, // 指定环境文件名
-        },
+        ...envConfig,
       } as InlineConfig,
     },
     preload: {
@@ -113,5 +117,6 @@ export default defineConfig(({ mode }) => {
     resolve: {
       alias,
     },
+    ...envConfig,
   };
 });

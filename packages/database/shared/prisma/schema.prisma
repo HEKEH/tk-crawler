@@ -6,10 +6,14 @@ datasource db {
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../../node_modules/.prisma/client"
 }
 
 generator client2 {
+  provider = "prisma-client-js"
+  output   = "../../node_modules/.prisma/client"
+}
+
+generator client3 {
   provider = "prisma-client-js"
   output   = "../../../biz-shared/node_modules/.prisma/client"
 }

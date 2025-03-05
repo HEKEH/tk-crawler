@@ -57,7 +57,7 @@ CREATE TABLE `LiveAdminUserRegionRelation` (
 
 -- CreateTable
 CREATE TABLE `AnchorInviteCheck` (
-    `id` BIGINT UNSIGNED NOT NULL DEFAULT (uuid_short()),
+    `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     `org_id` BIGINT UNSIGNED NOT NULL,
     `anchor_id` BIGINT UNSIGNED NOT NULL,
     `checked_at` DATETIME(3) NOT NULL,
@@ -76,7 +76,7 @@ CREATE TABLE `AnchorInviteCheck` (
 
 -- CreateTable
 CREATE TABLE `Organization` (
-    `id` BIGINT UNSIGNED NOT NULL DEFAULT (uuid_short()),
+    `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(100) NOT NULL,
     `membership_start_at` DATETIME(3) NULL,
     `membership_expire_at` DATETIME(3) NULL,
@@ -91,7 +91,7 @@ CREATE TABLE `Organization` (
 
 -- CreateTable
 CREATE TABLE `OrgUser` (
-    `id` BIGINT UNSIGNED NOT NULL DEFAULT (uuid_short()),
+    `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     `org_id` BIGINT UNSIGNED NOT NULL,
     `username` VARCHAR(24) NOT NULL,
     `display_name` VARCHAR(24) NOT NULL,

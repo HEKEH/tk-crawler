@@ -12,10 +12,10 @@ export interface CreateOrgResponse {
   message?: string;
 }
 
-export type UpdateOrgRequest = Omit<
-  OrganizationItem,
-  'membership_start_at' | 'membership_expire_at'
->;
+export type UpdateOrgRequest = Partial<
+  Omit<OrganizationItem, 'id' | 'membership_start_at' | 'membership_expire_at'>
+> &
+  Pick<OrganizationItem, 'id'>;
 
 export interface UpdateOrgResponse {
   status_code: RESPONSE_CODE;

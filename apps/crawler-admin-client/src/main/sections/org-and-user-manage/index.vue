@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { OrgAndUserMenu } from '../../types';
 import { useGlobalStore } from '../../utils/vue';
-import OrgManage from './org-manage.vue';
+import OrgManage from './org-manage/index.vue';
 import OrgAndUserManageSideMenus from './side-menus.vue';
 
 defineOptions({

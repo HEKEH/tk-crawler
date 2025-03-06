@@ -41,7 +41,9 @@ export interface GetOrgListRequest {
   page_num: number;
   page_size: number;
   filter?: Prisma.OrganizationWhereInput;
-  order_by?: Prisma.OrganizationOrderByWithRelationInput;
+  order_by?: Prisma.OrganizationOrderByWithRelationInput & {
+    user_count?: Prisma.SortOrder;
+  };
 }
 
 export interface GetOrgListResponseData {

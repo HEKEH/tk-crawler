@@ -33,18 +33,26 @@ defineOptions({
   name: 'OrgManage',
 });
 
+const tableRef = ref<InstanceType<typeof ElTable>>();
 const pageNum = ref(1);
 const pageSize = ref(10);
+const sortField = ref<keyof OrganizationItem>();
+const sortOrder = ref<'ascending' | 'descending'>();
+
 const { data, isLoading, isError, error, refetch } = useQuery<
   GetOrgListResponseData | undefined
 >({
-  queryKey: ['orgs', pageNum, pageSize],
+  queryKey: ['orgs', pageNum, pageSize, sortField, sortOrder],
   retry: false,
   queryFn: async () => {
     await new Promise(resolve => setTimeout(resolve, 1000));
+    const orderBy = sortField.value
+      ? { [sortField.value]: sortOrder.value === 'ascending' ? 'asc' : 'desc' }
+      : undefined;
     const response = await getOrgList({
       page_num: pageNum.value,
       page_size: pageSize.value,
+      order_by: orderBy,
     });
     return response.data;
   },
@@ -54,10 +62,28 @@ onActivated(() => {
   refetch();
 });
 
+// 处理排序变化
+function handleSortChange({
+  prop,
+  order,
+}: {
+  prop: keyof OrganizationItem;
+  order: 'ascending' | 'descending' | null;
+}) {
+  sortField.value = order ? prop : undefined;
+  sortOrder.value = order || undefined;
+}
+
 // 为了手动refreshing的时候看得出效果
 const isRefreshing = ref(false);
+function resetSort() {
+  tableRef.value?.clearSort();
+  sortField.value = undefined;
+  sortOrder.value = undefined;
+}
 function refresh() {
   isRefreshing.value = true;
+  resetSort();
   refetch().finally(() => {
     isRefreshing.value = false;
   });
@@ -155,7 +181,17 @@ function onCloseOrgMembershipDialog() {
           </ElIcon>
         </div>
       </div>
-      <ElTable :data="data?.list" style="width: 100%">
+      <ElTable
+        ref="tableRef"
+        :data="data?.list"
+        style="width: 100%"
+        :default-sort="
+          sortField && sortOrder
+            ? { prop: sortField, order: sortOrder }
+            : undefined
+        "
+        @sort-change="handleSortChange"
+      >
         <ElTableColumn fixed prop="id" label="组织ID" min-width="100" />
         <ElTableColumn fixed prop="name" label="组织名称" min-width="100" />
         <ElTableColumn prop="status" label="状态" min-width="100">
@@ -177,6 +213,7 @@ function onCloseOrgMembershipDialog() {
           prop="membership_start_at"
           label="会员开始时间"
           min-width="180"
+          sortable="custom"
         >
           <template #default="scope">
             {{ formatDateTime(scope.row.membership_start_at) }}
@@ -186,6 +223,7 @@ function onCloseOrgMembershipDialog() {
           prop="membership_expire_at"
           label="会员到期时间"
           min-width="180"
+          sortable="custom"
         >
           <template #default="scope">
             {{ formatDateTime(scope.row.membership_expire_at) }}
@@ -202,13 +240,28 @@ function onCloseOrgMembershipDialog() {
             </ElTag>
           </template>
         </ElTableColumn>
-        <ElTableColumn prop="user_count" label="用户数量" min-width="100" />
-        <ElTableColumn prop="created_at" label="创建时间" min-width="180">
+        <ElTableColumn
+          sortable="custom"
+          prop="user_count"
+          label="用户数量"
+          min-width="120"
+        />
+        <ElTableColumn
+          prop="created_at"
+          label="创建时间"
+          min-width="180"
+          sortable="custom"
+        >
           <template #default="scope">
             {{ formatDateTime(scope.row.created_at) }}
           </template>
         </ElTableColumn>
-        <ElTableColumn prop="updated_at" label="更新时间" min-width="180">
+        <ElTableColumn
+          prop="updated_at"
+          label="更新时间"
+          min-width="180"
+          sortable="custom"
+        >
           <template #default="scope">
             {{ formatDateTime(scope.row.updated_at) }}
           </template>

@@ -10,12 +10,18 @@ export async function getOrgList(
   data: GetOrgListRequest,
 ): Promise<GetOrgListResponseData> {
   logger.info('[Get Org List]', { data });
+  const { user_count, ...orderBy } = data.order_by ?? {};
+  if (user_count) {
+    orderBy.orgUsers = {
+      _count: user_count,
+    };
+  }
   const [orgs, total] = await Promise.all([
     mysqlClient.prismaClient.organization.findMany({
       where: data.filter,
       skip: (data.page_num - 1) * data.page_size,
       take: data.page_size,
-      orderBy: data.order_by,
+      orderBy,
       include: {
         _count: {
           select: {

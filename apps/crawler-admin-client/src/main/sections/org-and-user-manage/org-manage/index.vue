@@ -19,7 +19,7 @@ import {
   ElTableColumn,
   ElTag,
 } from 'element-plus';
-import { onActivated, ref } from 'vue';
+import { markRaw, onActivated, onBeforeUnmount, ref } from 'vue';
 import {
   createOrg,
   getOrgList,
@@ -32,6 +32,13 @@ import OrgMembershipDialog from './org-membership-dialog.vue';
 defineOptions({
   name: 'OrgManage',
 });
+
+const props = defineProps<{
+  model: {
+    refresh?: () => void;
+    onOrgMembersManage: (org: OrganizationItem) => void;
+  };
+}>();
 
 const tableRef = ref<InstanceType<typeof ElTable>>();
 const pageNum = ref(1);
@@ -56,6 +63,13 @@ const { data, isLoading, isError, error, refetch } = useQuery<
     });
     return response.data;
   },
+});
+
+// eslint-disable-next-line vue/no-mutating-props
+props.model.refresh = markRaw(refetch);
+onBeforeUnmount(() => {
+  // eslint-disable-next-line vue/no-mutating-props
+  props.model.refresh = undefined;
 });
 
 onActivated(() => {
@@ -163,6 +177,10 @@ function onCloseOrgMembershipDialog() {
   orgMembershipDialogVisible.value = false;
   orgMembershipEditId.value = undefined;
 }
+
+function onManageOrgMembers(org: OrganizationItem) {
+  props.model.onOrgMembersManage(org);
+}
 </script>
 
 <template>
@@ -173,7 +191,7 @@ function onCloseOrgMembershipDialog() {
     <template v-if="!isError">
       <div class="header-row">
         <div class="left-part">
-          <ElButton type="primary" @click="onAddOrgItem"> 添加组织 </ElButton>
+          <ElButton type="primary" @click="onAddOrgItem"> 添加机构 </ElButton>
         </div>
         <div class="right-part">
           <ElIcon class="org-icon" @click="refresh">
@@ -192,8 +210,8 @@ function onCloseOrgMembershipDialog() {
         "
         @sort-change="handleSortChange"
       >
-        <ElTableColumn fixed prop="id" label="组织ID" min-width="100" />
-        <ElTableColumn fixed prop="name" label="组织名称" min-width="100" />
+        <ElTableColumn fixed prop="id" label="机构ID" min-width="100" />
+        <ElTableColumn fixed prop="name" label="机构名称" min-width="100" />
         <ElTableColumn prop="status" label="状态" min-width="100">
           <template #default="scope">
             <ElTag
@@ -269,36 +287,50 @@ function onCloseOrgMembershipDialog() {
         <ElTableColumn prop="remark" label="备注" min-width="100" />
         <ElTableColumn fixed="right" label="操作" min-width="220">
           <template #default="scope">
-            <ElButton
-              link
-              type="primary"
-              size="small"
-              @click.prevent="onEditOrgItem(scope.row)"
-            >
-              编辑
-            </ElButton>
-            <ElButton
-              link
-              :type="
-                scope.row.status === OrganizationStatus.normal
-                  ? 'danger'
-                  : 'primary'
-              "
-              size="small"
-              @click.prevent="toggleDisableItem(scope.row)"
-            >
-              {{
-                scope.row.status === OrganizationStatus.normal ? '禁用' : '启用'
-              }}
-            </ElButton>
-            <ElButton
-              link
-              type="primary"
-              size="small"
-              @click.prevent="openUpdateOrgMembershipDialog(scope.row)"
-            >
-              添加会员天数
-            </ElButton>
+            <div class="action-row">
+              <ElButton
+                link
+                type="primary"
+                size="small"
+                @click.prevent="onEditOrgItem(scope.row)"
+              >
+                编辑
+              </ElButton>
+              <ElButton
+                link
+                :type="
+                  scope.row.status === OrganizationStatus.normal
+                    ? 'danger'
+                    : 'primary'
+                "
+                size="small"
+                @click.prevent="toggleDisableItem(scope.row)"
+              >
+                {{
+                  scope.row.status === OrganizationStatus.normal
+                    ? '禁用'
+                    : '启用'
+                }}
+              </ElButton>
+              <ElButton
+                link
+                type="primary"
+                size="small"
+                @click.prevent="openUpdateOrgMembershipDialog(scope.row)"
+              >
+                添加会员天数
+              </ElButton>
+            </div>
+            <div class="action-row">
+              <ElButton
+                link
+                type="primary"
+                size="small"
+                @click.prevent="onManageOrgMembers(scope.row)"
+              >
+                管理成员
+              </ElButton>
+            </div>
           </template>
         </ElTableColumn>
       </ElTable>

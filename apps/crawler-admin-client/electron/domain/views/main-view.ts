@@ -9,7 +9,7 @@ import type { IView } from './types';
 import path from 'node:path';
 import { CrawlerMessage } from '@tk-crawler/biz-shared';
 import { bindViewToWindowBounds } from '@tk-crawler/electron-utils/main';
-import { WebContentsView } from 'electron';
+import { globalShortcut, WebContentsView } from 'electron';
 import { CUSTOM_EVENTS } from '../../constants';
 import { isDevelopment, RENDERER_DIST, VITE_DEV_SERVER_URL } from '../../env';
 
@@ -79,11 +79,11 @@ export class MainView implements IView {
           });
         }
       }
-      // globalShortcut.register('F12', () => {
-      //   if (this._view?.webContents) {
-      //     this._view.webContents.toggleDevTools();
-      //   }
-      // });
+      globalShortcut.register('F12', () => {
+        if (this._view?.webContents) {
+          this._view.webContents.toggleDevTools();
+        }
+      });
     });
     if (VITE_DEV_SERVER_URL) {
       await this._view.webContents.loadURL(`${VITE_DEV_SERVER_URL}index.html`);

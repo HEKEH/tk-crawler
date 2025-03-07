@@ -110,7 +110,7 @@ const orgDialogMode = ref<'create' | 'edit'>('create');
 async function toggleDisableItem(row: OrganizationItem) {
   if (row.status === OrganizationStatus.normal) {
     try {
-      await ElMessageBox.confirm('确定要禁用该组织吗？', {
+      await ElMessageBox.confirm('确定要禁用该机构吗？', {
         type: 'warning',
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -298,6 +298,14 @@ function onManageOrgMembers(org: OrganizationItem) {
               </ElButton>
               <ElButton
                 link
+                type="primary"
+                size="small"
+                @click.prevent="onManageOrgMembers(scope.row)"
+              >
+                管理成员
+              </ElButton>
+              <ElButton
+                link
                 :type="
                   scope.row.status === OrganizationStatus.normal
                     ? 'danger'
@@ -312,23 +320,15 @@ function onManageOrgMembers(org: OrganizationItem) {
                     : '启用'
                 }}
               </ElButton>
-              <ElButton
-                link
-                type="primary"
-                size="small"
-                @click.prevent="openUpdateOrgMembershipDialog(scope.row)"
-              >
-                添加会员天数
-              </ElButton>
             </div>
             <div class="action-row">
               <ElButton
                 link
                 type="primary"
                 size="small"
-                @click.prevent="onManageOrgMembers(scope.row)"
+                @click.prevent="openUpdateOrgMembershipDialog(scope.row)"
               >
-                管理成员
+                新增或延长会员
               </ElButton>
             </div>
           </template>

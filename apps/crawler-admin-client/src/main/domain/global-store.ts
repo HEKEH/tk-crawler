@@ -1,13 +1,13 @@
 import { MessageCenter } from '@tk-crawler/shared';
 import { markRaw } from 'vue';
 import { Menu } from '../types';
+import ClientManage from './client-manage';
 import CrawlerManage from './crawler-manage';
-import OrgAndUserManage from './org-and-user-manage';
 
 export default class GlobalStore {
   private _crawlerManage: CrawlerManage;
 
-  private _orgAndUserManage: OrgAndUserManage;
+  private _clientManage: ClientManage;
   private _currentMenu: Menu = Menu.Crawler;
 
   readonly messageCenter = markRaw(new MessageCenter());
@@ -16,8 +16,8 @@ export default class GlobalStore {
     return this._crawlerManage;
   }
 
-  get orgAndUserManage() {
-    return this._orgAndUserManage;
+  get clientManage() {
+    return this._clientManage;
   }
 
   get currentMenu() {
@@ -26,7 +26,7 @@ export default class GlobalStore {
 
   constructor() {
     this._crawlerManage = new CrawlerManage();
-    this._orgAndUserManage = new OrgAndUserManage();
+    this._clientManage = new ClientManage();
   }
 
   async init() {

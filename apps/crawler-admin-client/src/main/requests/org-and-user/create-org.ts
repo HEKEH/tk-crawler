@@ -11,7 +11,7 @@ export function createOrg(
   return commonRequest<CreateOrgResponse>({
     baseURL: config.ownServerUrl,
     method: 'post',
-    path: '/org-and-user/create-org',
+    path: '/admin/org-and-user/create-org',
     params,
   });
 }

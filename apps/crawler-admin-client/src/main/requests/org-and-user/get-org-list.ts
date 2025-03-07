@@ -11,7 +11,7 @@ export function getOrgList(
   return commonRequest<GetOrgListResponse>({
     baseURL: config.ownServerUrl,
     method: 'post',
-    path: '/org-and-user/get-org-list',
+    path: '/admin/org-and-user/get-org-list',
     params,
   });
 }

@@ -1,14 +1,14 @@
 import type { OrganizationItem } from '@tk-crawler/biz-shared';
-import type { OrgAndUserTabModel } from './types';
-import { OrgAndUserTabType } from './types';
+import type { ClientTabModel } from './types';
+import { ClientTabType } from './types';
 
 interface OrgManageTabModelContext {
   onOrgMembersManage: (org: OrganizationItem) => void;
 }
 
-export default class OrgManageTabModel implements OrgAndUserTabModel {
+export default class OrgManageTabModel implements ClientTabModel {
   private _context: OrgManageTabModelContext;
-  readonly type = OrgAndUserTabType.OrgManage;
+  readonly type = ClientTabType.OrgManage;
   readonly closable = false;
 
   refresh?: () => void;

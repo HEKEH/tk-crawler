@@ -15,7 +15,7 @@ export async function updateOrgMembership(
     },
   });
   if (!org) {
-    throw new BusinessError('未找到该组织');
+    throw new BusinessError('未找到该机构');
   }
   const membershipExpireAt = org.membership_expire_at;
   if (!membershipExpireAt) {

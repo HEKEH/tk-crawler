@@ -2,8 +2,8 @@
 import { computed } from 'vue';
 import { Menu } from '../types';
 import { useGlobalStore } from '../utils/vue';
+import ClientManage from './client-manage/index.vue';
 import CrawlerManage from './crawler-manage/index.vue';
-import OrgAndUserManage from './org-and-user-manage/index.vue';
 import TopBar from './top-bar/index.vue';
 
 defineOptions({
@@ -21,7 +21,7 @@ const currentMenu = computed(() => {
     <div class="body">
       <CrawlerManage v-if="currentMenu === Menu.Crawler" />
       <KeepAlive>
-        <OrgAndUserManage v-if="currentMenu === Menu.OrgAndUser" />
+        <ClientManage v-if="currentMenu === Menu.Client" />
       </KeepAlive>
     </div>
   </div>

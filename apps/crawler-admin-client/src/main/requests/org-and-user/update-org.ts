@@ -11,7 +11,7 @@ export function updateOrg(
   return commonRequest<UpdateOrgResponse>({
     baseURL: config.ownServerUrl,
     method: 'post',
-    path: '/org-and-user/update-org',
+    path: '/admin/org-and-user/update-org',
     params,
   });
 }

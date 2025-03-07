@@ -12,7 +12,7 @@
 //   return commonRequest<DeleteOrgResponse>({
 //     baseURL: config.ownServerUrl,
 //     method: 'post',
-//     path: '/org-and-user/delete-org',
+//     path: '/admin/org-and-user/delete-org',
 //     params,
 //   });
 // }

@@ -1,12 +1,12 @@
 import type { OrganizationItem } from '@tk-crawler/biz-shared';
-import type { OrgAndUserTabModel } from './types';
+import type { ClientTabModel } from './types';
 import OrgMembersManageTabModel, {
   generateOrgMembersManageTabId,
 } from './members-manage-tab-model';
 import OrgManageTabModel from './org-manage-tab-model';
 
-export default class OrgAndUserManage {
-  private _tabs: OrgAndUserTabModel[];
+export default class ClientManage {
+  private _tabs: ClientTabModel[];
 
   private _activeTabId: string;
 

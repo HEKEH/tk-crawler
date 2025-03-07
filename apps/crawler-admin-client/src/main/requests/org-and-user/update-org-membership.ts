@@ -11,7 +11,7 @@ export function updateOrgMembership(
   return commonRequest<UpdateOrgMembershipResponse>({
     baseURL: config.ownServerUrl,
     method: 'post',
-    path: '/org-and-user/update-org-membership',
+    path: '/admin/org-and-user/update-org-membership',
     params,
   });
 }

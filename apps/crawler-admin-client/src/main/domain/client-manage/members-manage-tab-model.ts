@@ -1,13 +1,13 @@
 import type { OrganizationItem } from '@tk-crawler/biz-shared/index';
-import type { OrgAndUserTabModel } from './types';
-import { OrgAndUserTabType } from './types';
+import type { ClientTabModel } from './types';
+import { ClientTabType } from './types';
 
 export function generateOrgMembersManageTabId(orgId: string) {
   return `org-members-manage-${orgId}`;
 }
 
-export default class OrgMembersManageTabModel implements OrgAndUserTabModel {
-  readonly type = OrgAndUserTabType.OrgMembersManage;
+export default class OrgMembersManageTabModel implements ClientTabModel {
+  readonly type = ClientTabType.OrgMembersManage;
   readonly closable = true;
   private _org: OrganizationItem;
 

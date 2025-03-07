@@ -91,7 +91,7 @@ async function handleSubmit() {
           form.status === OrganizationStatus.disabled;
         if (toDisable) {
           try {
-            await ElMessageBox.confirm('确定要禁用该组织吗？', {
+            await ElMessageBox.confirm('确定要禁用该机构吗？', {
               type: 'warning',
               confirmButtonText: '确定',
               cancelButtonText: '取消',

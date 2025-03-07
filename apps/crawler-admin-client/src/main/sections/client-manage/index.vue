@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import type OrgMembersManageTabModel from '../../domain/client-manage/members-manage-tab-model';
 import type OrgManageTabModel from '../../domain/client-manage/org-manage-tab-model';
 import { ElTabPane, ElTabs } from 'element-plus';
 import { ClientTabType } from '../../domain/client-manage/types';
 import { useGlobalStore } from '../../utils/vue';
 import OrgManage from './org-manage/index.vue';
+import OrgMembersManage from './org-members-manage/index.vue';
 
 defineOptions({
   name: 'ClientManage',
@@ -33,6 +35,7 @@ function onCloseTab(tabId: string | number) {
         v-for="tab in clientManage.tabs"
         :key="tab.id"
         :label="tab.label"
+        z
         :name="tab.id"
         :closable="tab.closable"
       >
@@ -40,9 +43,10 @@ function onCloseTab(tabId: string | number) {
           v-if="tab.type === ClientTabType.OrgManage"
           :model="tab as OrgManageTabModel"
         />
-        <template v-else>
-          {{ tab.label }}
-        </template>
+        <OrgMembersManage
+          v-else-if="tab.type === ClientTabType.OrgMembersManage"
+          :model="tab as OrgMembersManageTabModel"
+        />
       </ElTabPane>
     </ElTabs>
   </div>

@@ -15,4 +15,24 @@ adminOrgAndUserRouter.post(
   '/update-org-membership',
   OrgAndUserController.updateOrgMembership,
 );
+
+adminOrgAndUserRouter.post(
+  '/get-org-member-list',
+  OrgAndUserController.getOrgMemberList,
+);
+adminOrgAndUserRouter.post(
+  '/create-org-member',
+  OrgAndUserController.createOrgMember,
+);
+
+adminOrgAndUserRouter.post(
+  '/update-org-member',
+  OrgAndUserController.updateOrgMember,
+);
+
+adminOrgAndUserRouter.post(
+  '/delete-org-member',
+  OrgAndUserController.deleteOrgMember,
+);
+
 export default adminOrgAndUserRouter;

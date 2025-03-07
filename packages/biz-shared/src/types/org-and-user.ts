@@ -27,3 +27,41 @@ export interface OrganizationItem {
   /** 用户数量 */
   user_count: number;
 }
+
+export enum OrgMemberStatus {
+  /** 正常 */
+  normal = 1,
+  /** 禁用 */
+  disabled = 0,
+}
+
+export enum OrgMemberRole {
+  /** 管理员 */
+  admin = 1,
+  /** 成员 */
+  member = 2,
+}
+
+export interface OrgMemberItem {
+  id: string;
+  /** 所属机构id */
+  org_id: string;
+  /** 登录名，唯一 */
+  username: string;
+  /** 显示名 */
+  display_name: string;
+  /** 密码 */
+  password: string;
+  /** 邮箱 */
+  email?: string | null;
+  /** 手机号 */
+  mobile?: string | null;
+  /** 角色id */
+  role_id: OrgMemberRole;
+  /** 状态 */
+  status: OrgMemberStatus;
+  /** 创建时间 */
+  created_at?: Date | string;
+  /** 更新时间 */
+  updated_at?: Date | string;
+}

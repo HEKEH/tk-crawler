@@ -2,8 +2,8 @@ import type {
   CreateOrgRequest,
   CreateOrgResponse,
 } from '@tk-crawler/biz-shared';
-import { commonRequest } from '../../../shared';
-import config from '../../config';
+import { commonRequest } from '../../../../shared';
+import config from '../../../config';
 
 export function createOrg(
   params: CreateOrgRequest,

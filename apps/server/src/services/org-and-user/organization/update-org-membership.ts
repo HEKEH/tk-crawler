@@ -1,8 +1,8 @@
 import type { UpdateOrgMembershipRequest } from '@tk-crawler/biz-shared';
 import { mysqlClient } from '@tk-crawler/database';
 import dayjs from 'dayjs';
-import { logger } from '../../infra/logger';
-import { BusinessError } from '../../utils';
+import { logger } from '../../../infra/logger';
+import { BusinessError } from '../../../utils';
 
 export async function updateOrgMembership(
   data: UpdateOrgMembershipRequest,

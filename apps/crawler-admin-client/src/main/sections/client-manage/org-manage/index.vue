@@ -22,6 +22,7 @@ import {
 import { markRaw, onActivated, onBeforeUnmount, ref } from 'vue';
 import {
   createOrg,
+  deleteOrg,
   getOrgList,
   updateOrg,
   updateOrgMembership,
@@ -98,7 +99,7 @@ function resetSort() {
 function refresh() {
   isRefreshing.value = true;
   resetSort();
-  refetch().finally(() => {
+  return refetch().finally(() => {
     isRefreshing.value = false;
   });
 }
@@ -128,7 +129,22 @@ async function toggleDisableItem(row: OrganizationItem) {
       status: OrganizationStatus.normal,
     });
   }
-  refetch();
+  await refetch();
+}
+
+async function deleteOrganization(id: string) {
+  try {
+    await ElMessageBox.confirm('确定要删除该机构吗？', {
+      type: 'warning',
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+    });
+  } catch {
+    return;
+  }
+  await deleteOrg({ id });
+  await refetch();
+  ElMessage.success('删除成功');
 }
 
 function onAddOrgItem() {
@@ -152,7 +168,7 @@ async function handleSubmitOrgData(data: Partial<OrganizationItem>) {
   } else {
     await updateOrg(data as UpdateOrgRequest);
   }
-  refetch();
+  await refetch();
   onCloseOrgDialog();
   ElMessage.success('保存成功');
 }
@@ -169,7 +185,7 @@ async function handleUpdateOrgMembership(data: { membership_days: number }) {
     id: orgMembershipEditId.value!,
     membership_days: data.membership_days,
   });
-  refetch();
+  await refetch();
   onCloseOrgMembershipDialog();
   ElMessage.success('保存成功');
 }
@@ -298,14 +314,6 @@ function onManageOrgMembers(org: OrganizationItem) {
               </ElButton>
               <ElButton
                 link
-                type="primary"
-                size="small"
-                @click.prevent="onManageOrgMembers(scope.row)"
-              >
-                管理成员
-              </ElButton>
-              <ElButton
-                link
                 :type="
                   scope.row.status === OrganizationStatus.normal
                     ? 'danger'
@@ -320,8 +328,24 @@ function onManageOrgMembers(org: OrganizationItem) {
                     : '启用'
                 }}
               </ElButton>
+              <ElButton
+                link
+                type="danger"
+                size="small"
+                @click.prevent="deleteOrganization(scope.row.id)"
+              >
+                删除机构
+              </ElButton>
             </div>
             <div class="action-row">
+              <ElButton
+                link
+                type="primary"
+                size="small"
+                @click.prevent="onManageOrgMembers(scope.row)"
+              >
+                管理成员
+              </ElButton>
               <ElButton
                 link
                 type="primary"

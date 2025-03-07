@@ -1,6 +1,6 @@
 import type { Prisma } from '.prisma/client';
 import type { RESPONSE_CODE } from '@tk-crawler/shared';
-import type { OrganizationItem } from '../org-and-user';
+import type { OrganizationItem } from '../../org-and-user';
 
 export type CreateOrgRequest = Omit<
   OrganizationItem,
@@ -12,15 +12,7 @@ export interface CreateOrgResponse {
   message?: string;
 }
 
-export type UpdateOrgRequest = Partial<
-  Omit<
-    OrganizationItem,
-    | 'id'
-    | 'membership_start_at'
-    | 'membership_expire_at'
-    | 'if_membership_valid'
-  >
-> &
+export type UpdateOrgRequest = Partial<CreateOrgRequest> &
   Pick<OrganizationItem, 'id'>;
 
 export interface UpdateOrgResponse {

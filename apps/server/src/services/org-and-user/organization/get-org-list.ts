@@ -4,7 +4,7 @@ import type {
 } from '@tk-crawler/biz-shared';
 import { mysqlClient } from '@tk-crawler/database';
 import dayjs from 'dayjs';
-import { logger } from '../../infra/logger';
+import { logger } from '../../../infra/logger';
 
 export async function getOrgList(
   data: GetOrgListRequest,

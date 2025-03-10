@@ -1,12 +1,18 @@
 import type { UpdateOrgMemberRequest } from '@tk-crawler/biz-shared';
 import { mysqlClient } from '@tk-crawler/database';
 import { logger } from '../../../infra/logger';
-import { hashPassword } from '../../../utils';
+import { BusinessError, hashPassword } from '../../../utils';
 
 export async function updateOrgMember(
   data: UpdateOrgMemberRequest,
 ): Promise<void> {
   const { password, id, ...rest } = data;
+  const usernameFind = await mysqlClient.prismaClient.orgUser.findFirst({
+    where: { username: rest.username, id: { not: BigInt(id) } },
+  });
+  if (usernameFind) {
+    throw new BusinessError('登录名已存在');
+  }
   let updateData;
   if (password) {
     const hashedPassword = await hashPassword(password);

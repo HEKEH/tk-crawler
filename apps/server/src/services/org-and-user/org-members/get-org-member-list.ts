@@ -17,7 +17,7 @@ export async function getOrgMemberList(
       take: data.page_size,
       orderBy,
       omit: {
-        password: false,
+        password: true,
       },
     }),
     mysqlClient.prismaClient.orgUser.count({

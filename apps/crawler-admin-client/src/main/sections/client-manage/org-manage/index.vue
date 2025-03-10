@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import type {
   CreateOrgRequest,
+  CreateOrgResponse,
   GetOrgListResponseData,
   OrganizationItem,
   UpdateOrgRequest,
+  UpdateOrgResponse,
 } from '@tk-crawler/biz-shared';
 import { RefreshRight } from '@element-plus/icons-vue';
 import { useQuery } from '@tanstack/vue-query';
 import { OrganizationStatus } from '@tk-crawler/biz-shared';
-import { formatDateTime } from '@tk-crawler/shared';
+import { formatDateTime, RESPONSE_CODE } from '@tk-crawler/shared';
 import {
   ElButton,
   ElIcon,
@@ -158,10 +160,14 @@ function onCloseFormDialog() {
   formMode.value = 'create';
 }
 async function handleCreateOrEdit(data: Partial<OrganizationItem>) {
+  let result: CreateOrgResponse | UpdateOrgResponse;
   if (formMode.value === 'create') {
-    await createOrg(data as CreateOrgRequest);
+    result = await createOrg(data as CreateOrgRequest);
   } else {
-    await updateOrg(data as UpdateOrgRequest);
+    result = await updateOrg(data as UpdateOrgRequest);
+  }
+  if (result.status_code !== RESPONSE_CODE.SUCCESS) {
+    return;
   }
   await refetch();
   onCloseFormDialog();

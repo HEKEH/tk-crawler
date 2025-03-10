@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import type { OrganizationItem } from '@tk-crawler/biz-shared';
+import type { OrgMemberItem } from '@tk-crawler/biz-shared';
 import { ElDialog, ElScrollbar } from 'element-plus';
-import OrgForm from './member-form.vue';
+import MemberForm from './member-form.vue';
 
 const props = defineProps<{
   mode: 'create' | 'edit';
   visible: boolean;
-  submit: (data: Partial<OrganizationItem>) => Promise<void>;
-  initialData?: Partial<OrganizationItem>;
+  submit: (data: Partial<OrgMemberItem>) => Promise<void>;
+  initialData?: Partial<OrgMemberItem>;
 }>();
 
 const emit = defineEmits<{
@@ -22,13 +22,14 @@ function handleClose() {
 <template>
   <ElDialog
     :model-value="visible"
-    :title="mode === 'create' ? '新增机构' : '编辑机构'"
+    :title="mode === 'create' ? '新增成员' : '编辑成员信息'"
     width="650px"
     destroy-on-close
     @close="handleClose"
   >
     <ElScrollbar>
-      <OrgForm
+      <MemberForm
+        :mode="mode"
         :initial-data="initialData"
         :submit="props.submit"
         @cancel="handleClose"

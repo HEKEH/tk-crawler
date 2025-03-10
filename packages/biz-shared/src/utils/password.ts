@@ -19,7 +19,7 @@ export function validatePassword(password: string): PasswordValidationResult {
   if (!PASSWORD_PATTERN.test(password)) {
     return {
       isValid: false,
-      error: '密码必须包含大小写字母、数字和特殊字符',
+      error: '密码必须包含大小写字母、数字',
     };
   }
 

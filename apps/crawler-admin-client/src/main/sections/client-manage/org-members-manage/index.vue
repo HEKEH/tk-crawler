@@ -1,15 +1,17 @@
 <script setup lang="ts">
 import type {
   CreateOrgMemberRequest,
+  CreateOrgMemberResponse,
   GetOrgMemberListResponseData,
   OrganizationItem,
   OrgMemberItem,
   UpdateOrgMemberRequest,
+  UpdateOrgMemberResponse,
 } from '@tk-crawler/biz-shared';
 import { RefreshRight } from '@element-plus/icons-vue';
 import { useQuery } from '@tanstack/vue-query';
 import { OrgMemberRole, OrgMemberStatus } from '@tk-crawler/biz-shared';
-import { formatDateTime } from '@tk-crawler/shared';
+import { formatDateTime, RESPONSE_CODE } from '@tk-crawler/shared';
 import {
   ElButton,
   ElIcon,
@@ -27,7 +29,7 @@ import {
   getOrgMemberList,
   updateOrgMember,
 } from '../../../requests';
-import OrgFormDialog from './member-form-dialog.vue';
+import FormDialog from './member-form-dialog.vue';
 
 defineOptions({
   name: 'OrgMembersManage',
@@ -41,7 +43,7 @@ const props = defineProps<{
 
 const OrgMemberRoleMap = {
   [OrgMemberRole.admin]: '管理员',
-  [OrgMemberRole.member]: '成员',
+  [OrgMemberRole.member]: '普通成员',
 };
 
 const tableRef = ref<InstanceType<typeof ElTable>>();
@@ -53,7 +55,14 @@ const sortOrder = ref<'ascending' | 'descending'>();
 const { data, isLoading, isError, error, refetch } = useQuery<
   GetOrgMemberListResponseData | undefined
 >({
-  queryKey: ['orgs', pageNum, pageSize, sortField, sortOrder],
+  queryKey: [
+    'org-members',
+    props.model.org.id,
+    pageNum,
+    pageSize,
+    sortField,
+    sortOrder,
+  ],
   retry: false,
   queryFn: async () => {
     const orderBy = sortField.value
@@ -157,10 +166,21 @@ function onCloseFormDialog() {
   formMode.value = 'create';
 }
 async function handleSubmitCreateOrEdit(data: Partial<OrgMemberItem>) {
+  const orgId = props.model.org.id;
+  let result: CreateOrgMemberResponse | UpdateOrgMemberResponse;
   if (formMode.value === 'create') {
-    await createOrgMember(data as CreateOrgMemberRequest);
+    result = await createOrgMember({
+      ...data,
+      org_id: orgId,
+    } as CreateOrgMemberRequest);
   } else {
-    await updateOrgMember(data as UpdateOrgMemberRequest);
+    result = await updateOrgMember({
+      ...data,
+      org_id: orgId,
+    } as UpdateOrgMemberRequest);
+  }
+  if (result.status_code !== RESPONSE_CODE.SUCCESS) {
+    return;
   }
   await refetch();
   onCloseFormDialog();
@@ -196,8 +216,8 @@ async function handleSubmitCreateOrEdit(data: Partial<OrgMemberItem>) {
         @sort-change="handleSortChange"
       >
         <ElTableColumn fixed prop="id" label="ID" min-width="100" />
-        <ElTableColumn prop="username" label="登录名" min-width="100" />
-        <ElTableColumn prop="display_name" label="显示名" min-width="100" />
+        <ElTableColumn prop="username" label="登录名" min-width="120" />
+        <ElTableColumn prop="display_name" label="显示名" min-width="120" />
         <ElTableColumn prop="email" label="邮箱" min-width="120">
           <template #default="scope">
             {{ scope.row.email || '-' }}
@@ -300,13 +320,13 @@ async function handleSubmitCreateOrEdit(data: Partial<OrgMemberItem>) {
       </div>
     </template>
   </div>
-  <!-- <OrgFormDialog
+  <FormDialog
     :visible="formDialogVisible"
     :mode="formMode"
     :initial-data="formData"
-    :submit="handleSubmitOrgData"
-    @close="onCloseOrgDialog"
-  /> -->
+    :submit="handleSubmitCreateOrEdit"
+    @close="onCloseFormDialog"
+  />
 </template>
 
 <style scoped>

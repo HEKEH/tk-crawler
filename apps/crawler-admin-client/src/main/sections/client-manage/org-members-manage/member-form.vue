@@ -1,27 +1,26 @@
 <script setup lang="ts">
 import {
-  type OrganizationItem,
-  OrganizationStatus,
+  type OrgMemberItem,
+  OrgMemberRole,
+  OrgMemberStatus,
+  validatePassword,
 } from '@tk-crawler/biz-shared';
-import { CommonDatePickerShortcuts } from '@tk-crawler/shared';
-import dayjs from 'dayjs';
 import {
   ElButton,
-  ElDatePicker,
   ElForm,
   ElFormItem,
   ElInput,
-  ElMessageBox,
   ElOption,
   ElSelect,
   type FormInstance,
   type FormRules,
 } from 'element-plus';
-import { reactive, ref } from 'vue';
+import { computed, reactive, ref } from 'vue';
 
 const props = defineProps<{
-  initialData?: Partial<OrganizationItem>;
-  submit: (data: Partial<OrganizationItem>) => void;
+  mode: 'create' | 'edit';
+  initialData?: Partial<OrgMemberItem>;
+  submit: (data: Partial<OrgMemberItem>) => void;
 }>();
 
 const emit = defineEmits<{
@@ -32,48 +31,56 @@ const formRef = ref<FormInstance>();
 
 const form = reactive({
   ...props.initialData,
-  membership_start_at: props.initialData?.membership_start_at ?? undefined,
-  membership_expire_at: props.initialData?.membership_expire_at ?? undefined,
-  status: props.initialData?.status ?? OrganizationStatus.normal,
+  status: props.initialData?.status ?? OrgMemberStatus.normal,
+  role_id: props.initialData?.role_id ?? OrgMemberRole.member,
 });
 
 const statusOptions = [
-  { label: '正常', value: OrganizationStatus.normal },
-  { label: '禁用', value: OrganizationStatus.disabled },
+  { label: '正常', value: OrgMemberStatus.normal },
+  { label: '禁用', value: OrgMemberStatus.disabled },
 ];
 
-const rules: FormRules = {
-  name: [
-    { required: true, message: '请输入机构名称' },
-    { min: 2, max: 30, message: '长度在 2 到 30 个字符' },
-  ],
-  status: [{ required: true, message: '请选择状态' }],
-  membershipDates: [
-    {
-      validator: (rule, value, callback) => {
-        if (form.membership_expire_at && form.membership_start_at) {
-          if (
-            dayjs(form.membership_expire_at).isBefore(form.membership_start_at)
-          ) {
-            callback(new Error('到期时间不能早于开始时间'));
-          }
-        } else if (form.membership_expire_at && !form.membership_start_at) {
-          callback(new Error('已选择到期时间，开始时间不能为空'));
-        } else if (!form.membership_expire_at && form.membership_start_at) {
-          callback(new Error('已选择开始时间，到期时间不能为空'));
-        }
-        callback();
-      },
-    },
-  ],
-};
+const roleOptions = [
+  { label: '管理员', value: OrgMemberRole.admin },
+  { label: '普通成员', value: OrgMemberRole.member },
+];
 
-function disablePastDates(time: Date, startDate?: Date | null) {
-  if (startDate && time) {
-    return dayjs(time).isBefore(startDate);
-  }
-  return dayjs(time).isBefore(dayjs(), 'day');
-}
+const rules = computed<FormRules>(() => {
+  return {
+    username: [
+      { required: true, message: '请输入登录名' },
+      { min: 2, max: 24, message: '长度在 2 到 24 个字符' },
+    ],
+    display_name: [
+      { required: true, message: '请输入显示名' },
+      { min: 2, max: 24, message: '长度在 2 到 24 个字符' },
+    ],
+    password: [
+      {
+        required: props.mode === 'create',
+        message: '请输入密码',
+      },
+      {
+        validator: (rule, value, callback) => {
+          if (!value) {
+            callback();
+            return;
+          }
+          const result = validatePassword(value);
+          if (!result.isValid) {
+            callback(new Error(result.error));
+          } else {
+            callback();
+          }
+        },
+      },
+    ],
+    email: [{ type: 'email', message: '请输入正确的邮箱地址' }],
+    mobile: [{ pattern: /^[1-9]\d{5,14}$/, message: '请输入正确的手机号' }],
+    role_id: [{ required: true, message: '请选择角色' }],
+    status: [{ required: true, message: '请选择状态' }],
+  };
+});
 
 const isLoading = ref(false);
 
@@ -86,26 +93,14 @@ async function handleSubmit() {
     if (valid) {
       isLoading.value = true;
       try {
-        const toDisable =
-          props.initialData?.status === OrganizationStatus.normal &&
-          form.status === OrganizationStatus.disabled;
-        if (toDisable) {
-          try {
-            await ElMessageBox.confirm('确定要禁用该机构吗？', {
-              type: 'warning',
-              confirmButtonText: '确定',
-              cancelButtonText: '取消',
-            });
-          } catch {
-            return;
-          }
-        }
         await props.submit({
-          name: form.name,
+          username: form.username,
+          display_name: form.display_name,
+          password: form.password,
+          email: form.email || null,
+          mobile: form.mobile || null,
+          role_id: form.role_id,
           status: form.status,
-          membership_start_at: form.membership_start_at ?? null,
-          membership_expire_at: form.membership_expire_at ?? null,
-          remark: form.remark,
           id: props.initialData?.id,
         });
       } finally {
@@ -130,29 +125,48 @@ function handleCancel() {
     label-width="120px"
     label-position="right"
   >
-    <ElFormItem label="机构名称" prop="name">
-      <ElInput v-model="form.name" placeholder="请输入机构名称" />
+    <ElFormItem label="登录名" prop="username">
+      <ElInput
+        v-model="form.username"
+        placeholder="请输入登录名"
+        :disabled="!!props.initialData?.id"
+      />
     </ElFormItem>
 
-    <ElFormItem label="会员时间" prop="membershipDates">
-      <ElDatePicker
-        v-model="form.membership_start_at"
-        type="datetime"
-        placeholder="开始时间"
-        format="YYYY-MM-DD HH:mm:ss"
-        :disabled-date="disablePastDates"
-        style="margin-right: 10px"
+    <ElFormItem label="显示名" prop="display_name">
+      <ElInput v-model="form.display_name" placeholder="请输入显示名" />
+    </ElFormItem>
+
+    <ElFormItem
+      label="密码"
+      prop="password"
+      :required="props.mode === 'create'"
+    >
+      <ElInput
+        v-model="form.password"
+        type="password"
+        :placeholder="props.mode === 'create' ? '请输入密码' : '留空则不修改'"
+        show-password
       />
-      <ElDatePicker
-        v-model="form.membership_expire_at"
-        type="datetime"
-        placeholder="到期时间"
-        format="YYYY-MM-DD HH:mm:ss"
-        :disabled-date="
-          (time: Date) => disablePastDates(time, form.membership_start_at)
-        "
-        :shortcuts="CommonDatePickerShortcuts"
-      />
+    </ElFormItem>
+
+    <ElFormItem label="邮箱" prop="email">
+      <ElInput v-model="form.email" placeholder="请输入邮箱" />
+    </ElFormItem>
+
+    <ElFormItem label="手机号" prop="mobile">
+      <ElInput v-model="form.mobile" placeholder="请输入手机号" />
+    </ElFormItem>
+
+    <ElFormItem label="角色" prop="role_id">
+      <ElSelect v-model="form.role_id" placeholder="请选择角色">
+        <ElOption
+          v-for="item in roleOptions"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+        />
+      </ElSelect>
     </ElFormItem>
 
     <ElFormItem label="状态" prop="status">
@@ -164,16 +178,6 @@ function handleCancel() {
           :value="item.value"
         />
       </ElSelect>
-    </ElFormItem>
-
-    <ElFormItem label="备注" prop="remark">
-      <ElInput
-        v-model="form.remark"
-        type="textarea"
-        :rows="3"
-        resize="none"
-        placeholder="请输入备注"
-      />
     </ElFormItem>
 
     <ElFormItem>

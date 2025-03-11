@@ -31,6 +31,12 @@ if (
 
 const defaultLanguage = env.DEFAULT_LANGUAGE;
 
+const jwtSecret = env.JWT_SECRET;
+if (!jwtSecret) {
+  logger.error('JWT_SECRET is required');
+  process.exit(1);
+}
+
 const config = {
   /** service port */
   port: Number.parseInt(port, 10),
@@ -42,7 +48,7 @@ const config = {
   redisUsername,
 
   /** jwt salt */
-  jwtSecret: env.JWT_SECRET || 'yx-tkc-jwt-0',
+  jwtSecret,
   jwtAlgorithm: (env.JWT_ALGORITHM || 'HS256') as TAlgorithm,
   // token expires time, ms
   jwtTokenExpiresTime: env.JWT_TOKEN_EXPIRES_TIME

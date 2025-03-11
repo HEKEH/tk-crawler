@@ -106,6 +106,10 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         input: {
           main: path.resolve(__dirname, 'index.html'),
+          'login-tiktok-help': path.resolve(
+            __dirname,
+            'login-tiktok-help.html',
+          ),
           'tiktok-auto-follow-help': path.resolve(
             __dirname,
             'tiktok-auto-follow-help.html',

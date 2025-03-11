@@ -2,7 +2,7 @@ import type {
   UpdateOrgRequest,
   UpdateOrgResponse,
 } from '@tk-crawler/biz-shared';
-import { commonRequest } from '../../../../shared';
+import { commonRequest } from '@tk-crawler/view-shared';
 import config from '../../../config';
 
 export function updateOrg(

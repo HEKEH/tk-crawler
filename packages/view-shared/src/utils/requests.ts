@@ -10,6 +10,7 @@ interface CommonRequestParams<RequestParams> {
   params?: RequestParams;
   headers?: Record<string, string | undefined>;
   data?: FormData;
+  onTokenInvalid?: () => void;
 }
 
 export async function commonRequest<
@@ -21,6 +22,7 @@ export async function commonRequest<
   path,
   params,
   headers,
+  onTokenInvalid,
 }: CommonRequestParams<RequestParams>): Promise<ResponseData> {
   const config: AxiosRequestConfig = {
     method,
@@ -40,6 +42,9 @@ export async function commonRequest<
     ElNotification.error({
       message: data.message,
     });
+    if (data.status_code === RESPONSE_CODE.TOKEN_INVALID) {
+      onTokenInvalid?.();
+    }
   }
   return data;
 }

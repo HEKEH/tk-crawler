@@ -61,4 +61,8 @@ const router = createRouter({
   routes,
 });
 
+export function redirectToLogin() {
+  router.push('/login');
+}
+
 export default router;

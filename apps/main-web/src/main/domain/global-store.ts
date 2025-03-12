@@ -11,7 +11,7 @@ import {
 import { MessageQueue } from '@tk-crawler/view-shared';
 import { markRaw } from 'vue';
 import { login, loginByToken } from '../requests';
-import { localStorageStore } from '../utils';
+import { getToken, removeToken, setToken } from '../utils';
 import { UserProfile } from './user-profile';
 
 export default class GlobalStore {
@@ -82,7 +82,7 @@ export default class GlobalStore {
   }
 
   private async _loginByToken() {
-    const token = localStorageStore.getItem('token');
+    const token = await getToken();
     if (token) {
       const resp = await loginByToken({
         token,
@@ -97,14 +97,14 @@ export default class GlobalStore {
     const resp = await login(params);
     if (resp.status_code === RESPONSE_CODE.SUCCESS) {
       const data = resp.data!;
-      localStorageStore.setItem('token', data.token);
+      await setToken(data.token);
       this._handleLoginSuccess(data);
     }
     return resp;
   }
 
-  logout() {
-    localStorageStore.removeItem('token');
+  async logout() {
+    await removeToken();
     this.clear();
   }
 

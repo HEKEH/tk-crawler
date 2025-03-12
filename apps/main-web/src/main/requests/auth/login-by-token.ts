@@ -5,6 +5,7 @@ import type {
 
 import { commonRequest } from '@tk-crawler/view-shared';
 import config from '../../config';
+import { redirectToLogin } from '../../router';
 
 export function loginByToken(
   params: OrgMemberLoginByTokenRequest,
@@ -14,5 +15,6 @@ export function loginByToken(
     method: 'post',
     path: '/auth/org-member-login-by-token',
     params,
+    onTokenInvalid: redirectToLogin,
   });
 }

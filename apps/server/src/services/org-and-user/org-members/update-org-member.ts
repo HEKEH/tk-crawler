@@ -7,11 +7,14 @@ export async function updateOrgMember(
   data: UpdateOrgMemberRequest,
 ): Promise<void> {
   const { password, id, ...rest } = data;
-  const usernameFind = await mysqlClient.prismaClient.orgUser.findFirst({
-    where: { username: rest.username, id: { not: BigInt(id) } },
-  });
-  if (usernameFind) {
-    throw new BusinessError('登录名已存在');
+  if (rest.username) {
+    const usernameFind = await mysqlClient.prismaClient.orgUser.findFirst({
+      select: { id: true },
+      where: { username: rest.username, id: { not: BigInt(id) } },
+    });
+    if (usernameFind) {
+      throw new BusinessError('登录名已存在');
+    }
   }
   let updateData;
   if (password) {

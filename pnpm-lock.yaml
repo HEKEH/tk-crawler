@@ -228,6 +228,9 @@ importers:
       vue:
         specifier: ^3.5.12
         version: 3.5.13(typescript@5.5.4)
+      vue-router:
+        specifier: ^4.5.0
+        version: 4.5.0(vue@3.5.13)
       vue-tsc:
         specifier: ^2.0.26
         version: 2.2.0(typescript@5.5.4)
@@ -11079,6 +11082,15 @@ packages:
       semver: 7.6.3
     transitivePeerDependencies:
       - supports-color
+    dev: true
+
+  /vue-router@4.5.0(vue@3.5.13):
+    resolution: {integrity: sha512-HDuk+PuH5monfNuY+ct49mNmkCRK4xJAV9Ts4z9UFc4rzdDnxQLyCMGGc8pKhZhHTVzfanpNwB/lwqevcBwI4w==}
+    peerDependencies:
+      vue: ^3.2.0
+    dependencies:
+      '@vue/devtools-api': 6.6.4
+      vue: 3.5.13(typescript@5.5.4)
     dev: true
 
   /vue-tsc@2.2.0(typescript@5.5.4):

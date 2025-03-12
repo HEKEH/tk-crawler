@@ -112,6 +112,7 @@ const formData = ref<Partial<OrgMemberItem>>();
 const formMode = ref<'create' | 'edit'>('create');
 
 async function toggleDisableItem(row: OrgMemberItem) {
+  let updateResp: UpdateOrgMemberResponse;
   if (row.status === OrgMemberStatus.normal) {
     try {
       await ElMessageBox.confirm('确定要禁用该用户吗？', {
@@ -122,17 +123,19 @@ async function toggleDisableItem(row: OrgMemberItem) {
     } catch {
       return;
     }
-    await updateOrgMember({
+    updateResp = await updateOrgMember({
       id: row.id,
       status: OrgMemberStatus.disabled,
     });
   } else {
-    await updateOrgMember({
+    updateResp = await updateOrgMember({
       id: row.id,
       status: OrgMemberStatus.normal,
     });
   }
-  await refetch();
+  if (updateResp.status_code === RESPONSE_CODE.SUCCESS) {
+    await refetch();
+  }
 }
 
 async function deleteItem(id: string) {
@@ -145,9 +148,11 @@ async function deleteItem(id: string) {
   } catch {
     return;
   }
-  await deleteOrgMember({ id });
-  await refetch();
-  ElMessage.success('删除成功');
+  const resp = await deleteOrgMember({ id });
+  if (resp.status_code === RESPONSE_CODE.SUCCESS) {
+    await refetch();
+    ElMessage.success('删除成功');
+  }
 }
 
 function onAddItem() {

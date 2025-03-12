@@ -1,12 +1,20 @@
-import { MessageCenter } from '@tk-crawler/shared';
+import type {
+  OrgMemberLoginRequest,
+  OrgMemberLoginSuccessData,
+} from '@tk-crawler/biz-shared';
+import type { Menu } from '../types';
+import { MessageCenter, RESPONSE_CODE } from '@tk-crawler/shared';
 import { MessageQueue } from '@tk-crawler/view-shared';
 import { markRaw } from 'vue';
-import { Menu } from '../types';
+import { login, loginByToken } from '../requests';
+import { localStorageStore } from '../utils';
+import { UserProfile } from './user-profile';
 
 export default class GlobalStore {
-  private _currentMenu: Menu = Menu.Entry;
-
+  currentMenu: Menu | null = null;
   private _isInitialized: boolean = false;
+
+  private _userProfile = new UserProfile();
 
   private _messageQueue = markRaw(
     new MessageQueue({
@@ -16,8 +24,8 @@ export default class GlobalStore {
 
   readonly messageCenter = markRaw(new MessageCenter());
 
-  get currentMenu() {
-    return this._currentMenu;
+  get userProfile() {
+    return this._userProfile;
   }
 
   get isInitialized() {
@@ -65,18 +73,53 @@ export default class GlobalStore {
   //   this._eventListeners = [];
   // }
 
+  private _handleLoginSuccess(data: OrgMemberLoginSuccessData) {
+    this._userProfile.initAfterLoginSuccess(data);
+  }
+
+  private async _loginByToken() {
+    const token = localStorageStore.getItem('token');
+    if (token) {
+      const resp = await loginByToken({
+        token,
+      });
+      console.log(resp, 'resp');
+      if (resp.status_code === RESPONSE_CODE.SUCCESS) {
+        this._handleLoginSuccess(resp.data!);
+        // return;
+      }
+    }
+    // router.push('/login');
+  }
+
+  async login(params: OrgMemberLoginRequest) {
+    const resp = await login(params);
+    if (resp.status_code === RESPONSE_CODE.SUCCESS) {
+      const data = resp.data!;
+      localStorageStore.setItem('token', data.token);
+      this._handleLoginSuccess(data);
+    }
+    return resp;
+  }
+
+  logout() {
+    localStorageStore.removeItem('token');
+    this.clear();
+  }
+
   async init() {
+    if (this._isInitialized) {
+      return;
+    }
     this._addEventListeners();
+    await this._loginByToken();
     this._isInitialized = true;
   }
 
   async stop() {}
 
-  setCurrentMenu(menu: Menu) {
-    this._currentMenu = menu;
-  }
-
   clear() {
+    this._userProfile.clear();
     // this._removeEventListeners();
   }
 }

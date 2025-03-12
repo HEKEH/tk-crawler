@@ -6,11 +6,14 @@ import { BusinessError } from '../../../utils';
 
 export async function updateOrg(data: UpdateOrgRequest): Promise<void> {
   logger.info('[Update Org]', { data });
-  const orgNameFind = await mysqlClient.prismaClient.organization.findFirst({
-    where: { name: data.name, id: { not: BigInt(data.id) } },
-  });
-  if (orgNameFind) {
-    throw new BusinessError('组织名称已存在');
+  if (data.name) {
+    const orgNameFind = await mysqlClient.prismaClient.organization.findFirst({
+      select: { id: true },
+      where: { name: data.name, id: { not: BigInt(data.id) } },
+    });
+    if (orgNameFind) {
+      throw new BusinessError('组织名称已存在');
+    }
   }
   await mysqlClient.prismaClient.organization.update({
     where: {

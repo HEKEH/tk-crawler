@@ -1,20 +1,31 @@
 <script setup lang="ts">
 import { ElLink } from 'element-plus';
+import { computed } from 'vue';
 import { Menu } from '../../types';
-import { useGlobalStore } from '../../utils/vue';
+import { useGlobalStore } from '../../utils';
 
 defineOptions({
   name: 'LeftMenus',
 });
-
-const Menus = [
-  {
-    key: Menu.Entry,
-    name: '主页',
-  },
-];
-
 const globalStore = useGlobalStore();
+
+const Menus = computed(() =>
+  globalStore.userProfile.hasLoggedIn
+    ? [
+        {
+          key: Menu.Entry,
+          name: '主页',
+          path: '/entry',
+        },
+      ]
+    : [
+        {
+          key: Menu.Login,
+          name: '登录',
+          path: '/login',
+        },
+      ],
+);
 </script>
 
 <template>
@@ -24,7 +35,7 @@ const globalStore = useGlobalStore();
         class="left-menu-item"
         :class="{ active: globalStore.currentMenu === menu.key }"
         :underline="false"
-        @click="globalStore.setCurrentMenu(menu.key)"
+        @click="$router.push(menu.path)"
       >
         {{ menu.name }}
       </ElLink>

@@ -4,7 +4,7 @@ import { ElNotification } from 'element-plus';
 import { computed, onBeforeUnmount, onErrorCaptured } from 'vue';
 
 import Homepage from './sections/homepage.vue';
-import { provideGlobalStore } from './utils/vue';
+import { provideGlobalStore } from './utils';
 // import { CrawlerViewMessage } from './constants';
 import 'element-plus/dist/index.css';
 
@@ -34,7 +34,7 @@ onErrorCaptured(e => {
     :style="{ width: '100%', height: '100%', overflow: 'hidden' }"
     element-loading-text="加载中..."
   />
-  <Homepage />
+  <Homepage v-else />
 </template>
 
 <style scoped></style>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ElLink } from 'element-plus';
-import { useGlobalStore } from '../../utils/vue';
+import { useGlobalStore } from '../../utils';
 
 defineOptions({
   name: 'RightPart',
@@ -11,13 +11,13 @@ const globalStore = useGlobalStore();
 
 <template>
   <div class="right-part">
-    <ElLink
+    <!-- <ElLink
       class="right-part-item"
       :underline="false"
       @click="globalStore.switchTikTokAccount()"
     >
       切换TikTok账号
-    </ElLink>
+    </ElLink> -->
   </div>
 </template>
 

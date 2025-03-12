@@ -106,6 +106,7 @@ const formData = ref<Partial<OrganizationItem>>();
 const formMode = ref<'create' | 'edit'>('create');
 
 async function toggleDisableItem(row: OrganizationItem) {
+  let updateResp: UpdateOrgResponse;
   if (row.status === OrganizationStatus.normal) {
     try {
       await ElMessageBox.confirm('确定要禁用该机构吗？', {
@@ -116,17 +117,20 @@ async function toggleDisableItem(row: OrganizationItem) {
     } catch {
       return;
     }
-    await updateOrg({
+    updateResp = await updateOrg({
       id: row.id,
       status: OrganizationStatus.disabled,
     });
   } else {
-    await updateOrg({
+    updateResp = await updateOrg({
       id: row.id,
       status: OrganizationStatus.normal,
     });
   }
-  await refetch();
+  if (updateResp.status_code === RESPONSE_CODE.SUCCESS) {
+    await refetch();
+    ElMessage.success('操作成功');
+  }
 }
 
 async function deleteOrganization(id: string) {
@@ -139,9 +143,11 @@ async function deleteOrganization(id: string) {
   } catch {
     return;
   }
-  await deleteOrg({ id });
-  await refetch();
-  ElMessage.success('删除成功');
+  const resp = await deleteOrg({ id });
+  if (resp.status_code === RESPONSE_CODE.SUCCESS) {
+    await refetch();
+    ElMessage.success('删除成功');
+  }
 }
 
 function onAddItem() {
@@ -182,13 +188,15 @@ function openUpdateOrgMembershipDialog(item: OrganizationItem) {
   orgMembershipDialogVisible.value = true;
 }
 async function handleUpdateOrgMembership(data: { membership_days: number }) {
-  await updateOrgMembership({
+  const resp = await updateOrgMembership({
     id: orgMembershipEditId.value!,
     membership_days: data.membership_days,
   });
-  await refetch();
-  onCloseOrgMembershipDialog();
-  ElMessage.success('保存成功');
+  if (resp.status_code === RESPONSE_CODE.SUCCESS) {
+    await refetch();
+    onCloseOrgMembershipDialog();
+    ElMessage.success('保存成功');
+  }
 }
 function onCloseOrgMembershipDialog() {
   orgMembershipDialogVisible.value = false;

@@ -1,16 +1,10 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { Menu } from '../types';
-import { useGlobalStore } from '../utils/vue';
+import { useGlobalStore } from '../utils';
 import Entry from './entry/index.vue';
 import TopBar from './top-bar/index.vue';
 
 defineOptions({
   name: 'Homepage',
-});
-const globalStore = useGlobalStore();
-const currentMenu = computed(() => {
-  return globalStore.currentMenu;
 });
 </script>
 
@@ -18,7 +12,7 @@ const currentMenu = computed(() => {
   <div class="homepage">
     <TopBar />
     <div class="body">
-      <Entry v-show="currentMenu === Menu.Entry" />
+      <router-view></router-view>
     </div>
   </div>
 </template>

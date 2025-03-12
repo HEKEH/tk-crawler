@@ -28,7 +28,7 @@ export async function orgMemberLogin(
     throw new BusinessError('用户已禁用');
   }
   const { password, ...rest } = user;
-  if (await verifyPassword(data.password, password)) {
+  if (!(await verifyPassword(data.password, password))) {
     throw new BusinessError('密码错误');
   }
   const org = await mysqlClient.prismaClient.organization.findUnique({

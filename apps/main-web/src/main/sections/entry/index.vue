@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ElButton, ElInput, ElMessage } from 'element-plus';
 import { ref } from 'vue';
-import { useGlobalStore } from '../../utils/vue';
+import { useGlobalStore } from '../../utils';
 
 defineOptions({
   name: 'Entry',

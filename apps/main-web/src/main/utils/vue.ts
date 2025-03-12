@@ -4,9 +4,20 @@ import GlobalStore from '../domain/global-store';
 
 const GlobalStoreKey: InjectionKey<GlobalStore> = Symbol('GlobalStore');
 
+let globalStore: GlobalStore;
+
+export function getGlobalStore() {
+  if (!globalStore) {
+    globalStore = reactive(new GlobalStore()) as GlobalStore;
+  }
+  return globalStore;
+}
+
 /** register global store when init */
 export function provideGlobalStore() {
-  const globalStore: GlobalStore = reactive(new GlobalStore()) as GlobalStore;
+  if (!globalStore) {
+    globalStore = reactive(new GlobalStore()) as GlobalStore;
+  }
   provide(GlobalStoreKey, globalStore);
   return globalStore;
 }

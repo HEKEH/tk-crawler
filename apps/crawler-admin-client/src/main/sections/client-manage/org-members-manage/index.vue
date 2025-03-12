@@ -142,7 +142,7 @@ async function toggleDisableItem(row: OrgMemberItem) {
 async function deleteItem(item: OrgMemberItem) {
   try {
     await confirmAfterSeconds(
-      `确定要删除成员 ${item.username} 吗？删除后将无法恢复。一般情况下，更推荐禁用功能`,
+      `确定要删除成员 ${item.username} 吗？删除后将无法恢复。一般情况下，更推荐使用禁用`,
       3,
     );
   } catch {

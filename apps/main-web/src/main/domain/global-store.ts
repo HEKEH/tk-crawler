@@ -3,7 +3,11 @@ import type {
   OrgMemberLoginSuccessData,
 } from '@tk-crawler/biz-shared';
 import type { Menu } from '../types';
-import { MessageCenter, RESPONSE_CODE } from '@tk-crawler/shared';
+import {
+  InitializationState,
+  MessageCenter,
+  RESPONSE_CODE,
+} from '@tk-crawler/shared';
 import { MessageQueue } from '@tk-crawler/view-shared';
 import { markRaw } from 'vue';
 import { login, loginByToken } from '../requests';
@@ -12,7 +16,7 @@ import { UserProfile } from './user-profile';
 
 export default class GlobalStore {
   currentMenu: Menu | null = null;
-  private _isInitialized: boolean = false;
+  private _initializationState = new InitializationState();
 
   private _userProfile = new UserProfile();
 
@@ -29,7 +33,7 @@ export default class GlobalStore {
   }
 
   get isInitialized() {
-    return this._isInitialized;
+    return this._initializationState.isInitialized;
   }
 
   // private _eventListeners: Array<
@@ -83,13 +87,10 @@ export default class GlobalStore {
       const resp = await loginByToken({
         token,
       });
-      console.log(resp, 'resp');
       if (resp.status_code === RESPONSE_CODE.SUCCESS) {
         this._handleLoginSuccess(resp.data!);
-        // return;
       }
     }
-    // router.push('/login');
   }
 
   async login(params: OrgMemberLoginRequest) {
@@ -108,12 +109,22 @@ export default class GlobalStore {
   }
 
   async init() {
-    if (this._isInitialized) {
+    if (this._initializationState.isInitialized) {
       return;
     }
-    this._addEventListeners();
-    await this._loginByToken();
-    this._isInitialized = true;
+    if (this._initializationState.isPending) {
+      await this._initializationState.onInitialized();
+      return;
+    }
+    try {
+      this._initializationState.initializeBegin();
+      this._addEventListeners();
+      await this._loginByToken();
+      this._initializationState.initializeComplete();
+    } catch (error) {
+      this._initializationState.reset();
+      throw error;
+    }
   }
 
   async stop() {}

@@ -138,7 +138,7 @@ async function toggleDisableItem(row: OrganizationItem) {
 async function deleteOrganization(item: OrganizationItem) {
   try {
     const second = 3;
-    const message = `确定要删除机构 ${item.name} 吗？删除后将无法恢复。一般情况下，更推荐禁用功能`;
+    const message = `确定要删除机构 ${item.name} 吗？删除后将无法恢复。一般情况下，更推荐使用禁用`;
     await confirmAfterSeconds(message, second);
     props.model.onOrgDelete(item);
   } catch {

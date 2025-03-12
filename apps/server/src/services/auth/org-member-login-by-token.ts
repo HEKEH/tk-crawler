@@ -14,11 +14,11 @@ export async function orgMemberLoginByToken(
   data: OrgMemberLoginByTokenRequest,
 ): Promise<OrgMemberLoginByTokenResponseData> {
   logger.info('[Org Member Login By Token]', data);
-  assert(data?.token, 'token不能为空');
+  assert(data?.token, 'Token不能为空');
   const { userId, expires } = parseToken(data.token);
-  assert(userId && expires, 'token无效');
+  assert(userId && expires, 'Token无效，请重新登录');
   if (expires < Date.now()) {
-    throw new BusinessError('token已过期');
+    throw new BusinessError('Token已过期，请重新登录');
   }
   const user = await mysqlClient.prismaClient.orgUser.findFirst({
     where: {
@@ -29,10 +29,10 @@ export async function orgMemberLoginByToken(
     },
   });
   if (!user) {
-    throw new BusinessError('用户不存在');
+    throw new BusinessError('用户不存在, 请重新登录');
   }
   if (user.status !== OrgMemberStatus.normal) {
-    throw new BusinessError('用户已禁用');
+    throw new BusinessError('用户已禁用, 请重新登录');
   }
   const org = await mysqlClient.prismaClient.organization.findUnique({
     where: {
@@ -40,11 +40,11 @@ export async function orgMemberLoginByToken(
     },
   });
   if (!org) {
-    throw new BusinessError('所属组织不存在，可能已被删除');
+    throw new BusinessError('所属组织不存在，可能已被删除，请重新登录');
   }
 
   if (org.status !== OrganizationStatus.normal) {
-    throw new BusinessError('所属组织已禁用');
+    throw new BusinessError('所属组织已禁用, 请重新登录');
   }
 
   return {

@@ -22,14 +22,14 @@ export async function orgMemberLogin(
     },
   });
   if (!user) {
-    throw new BusinessError('用户不存在');
+    throw new BusinessError('用户不存在, 请重新登录');
   }
   if (user.status !== OrgMemberStatus.normal) {
-    throw new BusinessError('用户已禁用');
+    throw new BusinessError('用户已禁用, 请重新登录');
   }
   const { password, ...rest } = user;
   if (!(await verifyPassword(data.password, password))) {
-    throw new BusinessError('密码错误');
+    throw new BusinessError('密码错误, 请重新登录');
   }
   const org = await mysqlClient.prismaClient.organization.findUnique({
     where: {
@@ -37,11 +37,11 @@ export async function orgMemberLogin(
     },
   });
   if (!org) {
-    throw new BusinessError('所属组织不存在，可能已被删除');
+    throw new BusinessError('所属组织不存在, 可能已被删除，请重新登录');
   }
 
   if (org.status !== OrganizationStatus.normal) {
-    throw new BusinessError('所属组织已禁用');
+    throw new BusinessError('所属组织已禁用, 请重新登录');
   }
 
   const token = await generateToken(user.id.toString());

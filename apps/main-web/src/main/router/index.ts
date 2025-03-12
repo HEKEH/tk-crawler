@@ -42,16 +42,6 @@ const routes: RouteRecordRaw[] = [
           next();
         },
       },
-      // {
-      //   path: '/abc',
-      //   name: 'Abc',
-      //   component: () => import('../sections/entry/index.vue'),
-      //   beforeEnter: async (to, from, next) => {
-      //     const globalStore = getGlobalStore();
-      //     globalStore.currentMenu = 'ABC' as any;
-      //     next();
-      //   },
-      // },
     ],
   },
 ];

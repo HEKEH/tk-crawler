@@ -38,6 +38,7 @@ export default defineConfig(({ mode }) => {
   };
 
   return {
+    publicDir: 'public',
     plugins: [
       vue(),
       vueJsx() as PluginOption,

@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { useGlobalStore } from '../utils';
-import Entry from './entry/index.vue';
 import TopBar from './top-bar/index.vue';
 
 defineOptions({

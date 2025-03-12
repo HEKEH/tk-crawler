@@ -1,16 +1,21 @@
 <script setup lang="ts">
-import { ElLink } from 'element-plus';
+import { computed } from 'vue';
 import { useGlobalStore } from '../../utils';
+import AvatarDropdown from './avatar-dropdown/index.vue';
 
 defineOptions({
   name: 'RightPart',
 });
 
 const globalStore = useGlobalStore();
+const hasLoggedIn = computed(() => globalStore.userProfile.hasLoggedIn);
 </script>
 
 <template>
   <div class="right-part">
+    <template v-if="hasLoggedIn">
+      <AvatarDropdown />
+    </template>
     <!-- <ElLink
       class="right-part-item"
       :underline="false"

@@ -12,6 +12,7 @@ import { RefreshRight } from '@element-plus/icons-vue';
 import { useQuery } from '@tanstack/vue-query';
 import { OrgMemberRole, OrgMemberStatus } from '@tk-crawler/biz-shared';
 import { formatDateTime, RESPONSE_CODE } from '@tk-crawler/shared';
+import { confirmAfterSeconds } from '@tk-crawler/view-shared';
 import {
   ElButton,
   ElIcon,
@@ -138,17 +139,16 @@ async function toggleDisableItem(row: OrgMemberItem) {
   }
 }
 
-async function deleteItem(id: string) {
+async function deleteItem(item: OrgMemberItem) {
   try {
-    await ElMessageBox.confirm('确定要删除该机构成员吗？', {
-      type: 'warning',
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-    });
+    await confirmAfterSeconds(
+      `确定要删除成员 ${item.username} 吗？删除后将无法恢复。一般情况下，更推荐禁用功能`,
+      3,
+    );
   } catch {
     return;
   }
-  const resp = await deleteOrgMember({ id });
+  const resp = await deleteOrgMember({ id: item.id });
   if (resp.status_code === RESPONSE_CODE.SUCCESS) {
     await refetch();
     ElMessage.success('删除成功');
@@ -302,7 +302,7 @@ async function handleSubmitCreateOrEdit(data: Partial<OrgMemberItem>) {
                 link
                 type="danger"
                 size="small"
-                @click.prevent="deleteItem(scope.row.id)"
+                @click.prevent="deleteItem(scope.row)"
               >
                 删除
               </ElButton>

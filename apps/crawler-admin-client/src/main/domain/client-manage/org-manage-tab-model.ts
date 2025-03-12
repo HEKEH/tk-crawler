@@ -1,9 +1,11 @@
 import type { OrganizationItem } from '@tk-crawler/biz-shared';
 import type { ClientTabModel } from './types';
+import { generateOrgMembersManageTabId } from './members-manage-tab-model';
 import { ClientTabType } from './types';
 
 interface OrgManageTabModelContext {
   onOrgMembersManage: (org: OrganizationItem) => void;
+  closeTab: (tabId: string) => void;
 }
 
 export default class OrgManageTabModel implements ClientTabModel {
@@ -15,6 +17,10 @@ export default class OrgManageTabModel implements ClientTabModel {
 
   onOrgMembersManage(org: OrganizationItem) {
     this._context.onOrgMembersManage(org);
+  }
+
+  onOrgDelete(org: OrganizationItem) {
+    this._context.closeTab(generateOrgMembersManageTabId(org.id));
   }
 
   get id() {

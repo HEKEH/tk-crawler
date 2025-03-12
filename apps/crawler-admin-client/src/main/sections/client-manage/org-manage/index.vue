@@ -11,6 +11,7 @@ import { RefreshRight } from '@element-plus/icons-vue';
 import { useQuery } from '@tanstack/vue-query';
 import { OrganizationStatus } from '@tk-crawler/biz-shared';
 import { formatDateTime, RESPONSE_CODE } from '@tk-crawler/shared';
+import { confirmAfterSeconds } from '@tk-crawler/view-shared';
 import {
   ElButton,
   ElIcon,
@@ -40,6 +41,7 @@ const props = defineProps<{
   model: {
     refresh?: () => void;
     onOrgMembersManage: (org: OrganizationItem) => void;
+    onOrgDelete: (org: OrganizationItem) => void;
   };
 }>();
 
@@ -133,17 +135,16 @@ async function toggleDisableItem(row: OrganizationItem) {
   }
 }
 
-async function deleteOrganization(id: string) {
+async function deleteOrganization(item: OrganizationItem) {
   try {
-    await ElMessageBox.confirm('确定要删除该机构吗？', {
-      type: 'warning',
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-    });
+    const second = 3;
+    const message = `确定要删除机构 ${item.name} 吗？删除后将无法恢复。一般情况下，更推荐禁用功能`;
+    await confirmAfterSeconds(message, second);
+    props.model.onOrgDelete(item);
   } catch {
     return;
   }
-  const resp = await deleteOrg({ id });
+  const resp = await deleteOrg({ id: item.id });
   if (resp.status_code === RESPONSE_CODE.SUCCESS) {
     await refetch();
     ElMessage.success('删除成功');
@@ -341,7 +342,7 @@ function onManageOrgMembers(org: OrganizationItem) {
                 link
                 type="danger"
                 size="small"
-                @click.prevent="deleteOrganization(scope.row.id)"
+                @click.prevent="deleteOrganization(scope.row)"
               >
                 删除机构
               </ElButton>

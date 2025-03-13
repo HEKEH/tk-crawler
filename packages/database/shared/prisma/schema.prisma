@@ -174,3 +174,61 @@ model AnchorConnect {
   @@index([org_id])
   @@index([anchor_id])
 }
+
+// 下面是临时表
+
+model AnchorFrom87 {
+  id         BigInt @id @default(autoincrement())
+  account_id BigInt @unique @db.UnsignedBigInt
+  account    String @unique @db.VarChar(30)
+
+  // 钻石相关
+  day_diamond_val      Int @default(0)
+  last_day_diamond_val Int @default(0)
+  his_max_diamond_val  Int @default(0)
+
+  // 状态相关
+  available        Int     @db.UnsignedTinyInt
+  available_reason String?
+  status           Int     @db.UnsignedTinyInt
+
+  // 地区相关
+  country      String? @db.VarChar(10)
+  country_code String? @db.VarChar(2)
+
+  // 其他信息
+  follower_count         Int     @default(0)
+  tag_title              String? @db.VarChar(10)
+  canuse_invitation_type Int     @db.UnsignedTinyInt // 3普通邀约，4金票邀约
+  pieces                 String? @db.VarChar(3)
+
+  created_at                DateTime                    @default(now())
+  updated_at                DateTime                    @updatedAt
+  AnchorFollowGroupRelation AnchorFollowGroupRelation[]
+
+  @@index([account])
+  @@index([account_id])
+  @@index([country_code])
+}
+
+model AnchorFollowGroup {
+  id                        BigInt                      @id @default(autoincrement()) @db.UnsignedBigInt
+  name                      String                      @db.VarChar(30)
+  created_at                DateTime                    @default(now())
+  updated_at                DateTime                    @updatedAt
+  AnchorFollowGroupRelation AnchorFollowGroupRelation[]
+}
+
+model AnchorFollowGroupRelation {
+  id           BigInt            @id @default(autoincrement())
+  anchor_id    BigInt            @db.UnsignedBigInt
+  group_id     BigInt            @db.UnsignedBigInt
+  created_at   DateTime          @default(now())
+  updated_at   DateTime          @updatedAt
+  group        AnchorFollowGroup @relation(fields: [group_id], references: [id], onDelete: Cascade)
+  AnchorFrom87 AnchorFrom87      @relation(fields: [anchor_id], references: [account_id], onDelete: Cascade)
+
+  @@unique([group_id, anchor_id])
+  @@index([anchor_id])
+  @@index([group_id])
+}

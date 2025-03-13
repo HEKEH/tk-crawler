@@ -93,8 +93,8 @@ export default defineConfig(({ mode }) => {
             template: 'tiktok-auto-follow-help.html',
           },
           {
-            filename: 'login-tiktok-help.html',
-            template: 'login-tiktok-help.html',
+            filename: 'collect-page-help.html',
+            template: 'collect-page-help.html',
           },
         ],
       }),

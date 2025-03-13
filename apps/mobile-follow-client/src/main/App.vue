@@ -7,7 +7,6 @@ import { computed, onBeforeUnmount, onErrorCaptured } from 'vue';
 import Homepage from './sections/homepage.vue';
 import NetworkErrorView from './sections/network-error-view/index.vue';
 import { provideGlobalStore } from './utils/vue';
-// import { CrawlerViewMessage } from './constants';
 import 'element-plus/dist/index.css';
 
 const globalStore: GlobalStore = provideGlobalStore();
@@ -21,17 +20,7 @@ async function retryCheckNetwork() {
   await globalStore.retryCheckNetwork();
 }
 
-// const cookieOutdatedSubscription = globalStore.messageCenter.addListener(
-//   CrawlerViewMessage.TIKTOK_COOKIE_OUTDATED,
-//   () => {
-//     ElNotification.error({
-//       message: 'Tiktok cookie已过期，请重新登录',
-//     });
-//   },
-// );
-
 onBeforeUnmount(() => {
-  // cookieOutdatedSubscription.unsubscribe();
   globalStore.clear();
 });
 onErrorCaptured(e => {

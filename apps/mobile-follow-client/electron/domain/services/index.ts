@@ -53,16 +53,9 @@ export class Services {
   }
 
   init() {
-    this._addEventHandler(
-      CUSTOM_EVENTS.START_AUTO_FOLLOW,
-      (_, userIds: string[]) => {
-        logger.info('[Start Auto Follow]', userIds);
-        return this._viewManager.startAutoFollow(userIds);
-      },
-    );
-    this._addEventHandler(CUSTOM_EVENTS.SWITCH_TIKTOK_ACCOUNT, async () => {
+    this._addEventHandler(CUSTOM_EVENTS.GO_TO_COLLECT_PAGE, async () => {
       logger.info('[Switch TikTok Account]');
-      return this._viewManager.openTKLoginPage();
+      return this._viewManager.openCollectPage();
     });
     this._addEventHandler(CUSTOM_EVENTS.CHECK_NETWORK, async () => {
       // 当前场景不需要检查tiktok网络

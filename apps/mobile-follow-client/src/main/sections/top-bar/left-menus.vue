@@ -29,6 +29,15 @@ const globalStore = useGlobalStore();
         {{ menu.name }}
       </ElLink>
     </div>
+    <div class="left-menu">
+      <ElLink
+        class="left-menu-item"
+        :underline="false"
+        @click="globalStore.goToCollectPage()"
+      >
+        主播采集页
+      </ElLink>
+    </div>
   </div>
 </template>
 

@@ -1,24 +1,20 @@
 import type { MessageCenter } from '@tk-crawler/shared';
 import type { Subscription } from 'rxjs';
-import type { TkLoginViewContext } from './tk-login-view';
 import type { IView } from './types';
 import path from 'node:path';
 import process from 'node:process';
 import { BaseWindow } from 'electron';
+import { CollectPageView } from './collect-page-view';
 import { MainView } from './main-view';
-import { TKAutoFollowView } from './tk-auto-follow-view';
-import { TKLoginView } from './tk-login-view';
 
-export class ViewsManager implements TkLoginViewContext {
+export class ViewsManager {
   private _baseWindow: BaseWindow | null = null;
 
   private _currentView: IView | null = null;
 
   private _mainView: MainView | null = null;
 
-  private _tkLoginView: TKLoginView | null = null;
-
-  private _tkAutoFollowView: TKAutoFollowView | null = null;
+  private _collectPageView: CollectPageView | null = null;
 
   private _messageCenter: MessageCenter;
 
@@ -27,13 +23,12 @@ export class ViewsManager implements TkLoginViewContext {
   private _onClose: () => void;
 
   private get allViews() {
-    return [this._mainView, this._tkLoginView, this._tkAutoFollowView];
+    return [this._mainView, this._collectPageView];
   }
 
   private _clearAllViewVariables() {
     this._mainView = null;
-    this._tkLoginView = null;
-    this._tkAutoFollowView = null;
+    this._collectPageView = null;
   }
 
   constructor(props: { messageCenter: MessageCenter; onClose: () => void }) {
@@ -50,14 +45,10 @@ export class ViewsManager implements TkLoginViewContext {
       parentWindow: this._baseWindow,
       messageCenter: this._messageCenter,
     });
-    this._tkLoginView = new TKLoginView({
+    this._collectPageView = new CollectPageView({
       parentWindow: this._baseWindow,
-      context: this,
-    });
-    this._tkAutoFollowView = new TKAutoFollowView({
-      parentWindow: this._baseWindow,
-      goBack: () => {
-        this._changeView(this._mainView!);
+      backToMainView: () => {
+        this._toMainView();
       },
     });
     this._baseWindow.on('close', this._onClose);
@@ -70,7 +61,7 @@ export class ViewsManager implements TkLoginViewContext {
     this._baseWindow?.show();
   }
 
-  async onTikTokLoginConfirmed() {
+  private async _toMainView() {
     await this._changeView(this._mainView!);
   }
 
@@ -90,14 +81,9 @@ export class ViewsManager implements TkLoginViewContext {
     await this._currentView.show();
   }
 
-  async startAutoFollow(userIds: string[]) {
-    this._tkAutoFollowView!.updateUserIds(userIds);
-    await this._changeView(this._tkAutoFollowView!);
-  }
-
   /** 回到登录页 */
-  async openTKLoginPage() {
-    await this._changeView(this._tkLoginView!);
+  async openCollectPage() {
+    await this._changeView(this._collectPageView!);
   }
 
   private _clearSubscriptions() {

@@ -7,3 +7,4 @@ export * from './frequency-limit-task-queue';
 export * from './initialization-state';
 export * from './limited-promise-all';
 export * from './message-center';
+export * from './object';

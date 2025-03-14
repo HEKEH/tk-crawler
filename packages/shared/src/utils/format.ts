@@ -1,29 +1,25 @@
-export function transObjectIdToString<T extends object, K extends keyof T>(
+export function transObjectValuesToString<T extends object, K extends keyof T>(
   obj: T,
-  idKey: K,
+  keys: K[],
 ): Omit<T, K> & {
   [P in K]: undefined extends T[P] ? string | undefined : string;
 } {
-  if (obj[idKey] === null || obj[idKey] === undefined) {
-    return obj as any;
+  const newObj = { ...obj } as any;
+  for (const key of keys) {
+    newObj[key] = newObj[key] ? newObj[key].toString() : undefined;
   }
-  return {
-    ...obj,
-    [idKey]: obj[idKey].toString(),
-  };
+  return newObj;
 }
 
-export function transObjectIdToBigInt<T extends object, K extends keyof T>(
+export function transObjectValuesToBigInt<T extends object, K extends keyof T>(
   obj: T,
-  idKey: K,
+  keys: K[],
 ): Omit<T, K> & {
   [P in K]: undefined extends T[P] ? bigint | undefined : bigint;
 } {
-  if (!obj[idKey]) {
-    return obj as any;
+  const newObj = { ...obj } as any;
+  for (const key of keys) {
+    newObj[key] = newObj[key] ? BigInt(newObj[key] as string) : undefined;
   }
-  return {
-    ...obj,
-    [idKey]: BigInt(obj[idKey] as string),
-  };
+  return newObj;
 }

@@ -1,5 +1,6 @@
 export * from './anchor';
 export * from './error';
+export * from './follow-help';
 export * from './messages';
 export * from './org-and-user';
 export * from './region';

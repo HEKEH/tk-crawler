@@ -3,13 +3,18 @@ import type {
   GetOrgMemberListResponseData,
 } from '@tk-crawler/biz-shared';
 import { mysqlClient } from '@tk-crawler/database';
+import { isEmpty } from '@tk-crawler/shared';
 import { logger } from '../../../infra/logger';
 
 export async function getOrgMemberList(
   data: GetOrgMemberListRequest,
 ): Promise<GetOrgMemberListResponseData> {
   logger.info('[Get Org Member List]', { data });
-  const orderBy = data.order_by ?? {};
+  const orderBy = isEmpty(data.order_by)
+    ? {
+        updated_at: 'desc' as const, // 默认按更新时间倒序排序
+      }
+    : data.order_by!;
   const [orgMembers, total] = await Promise.all([
     mysqlClient.prismaClient.orgUser.findMany({
       where: data.filter,

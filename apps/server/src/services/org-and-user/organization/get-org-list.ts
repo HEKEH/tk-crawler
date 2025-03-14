@@ -3,6 +3,7 @@ import type {
   GetOrgListResponseData,
 } from '@tk-crawler/biz-shared';
 import { mysqlClient } from '@tk-crawler/database';
+import { isEmpty } from '@tk-crawler/shared';
 import dayjs from 'dayjs';
 import { logger } from '../../../infra/logger';
 
@@ -10,7 +11,12 @@ export async function getOrgList(
   data: GetOrgListRequest,
 ): Promise<GetOrgListResponseData> {
   logger.info('[Get Org List]', { data });
-  const { user_count, ...orderBy } = data.order_by ?? {};
+  const _orderBy = isEmpty(data.order_by)
+    ? {
+        updated_at: 'desc' as const, // 默认按更新时间倒序排序
+      }
+    : data.order_by!;
+  const { user_count, ...orderBy } = _orderBy;
   if (user_count) {
     orderBy.orgUsers = {
       _count: user_count,

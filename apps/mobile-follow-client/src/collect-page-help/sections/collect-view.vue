@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { AnchorFrom87RawData } from '@tk-crawler/biz-shared';
 import type { IpcRendererEvent } from 'electron';
 import { ElectronRenderListeners } from '@tk-crawler/electron-utils/render';
 import { MessageQueue } from '@tk-crawler/view-shared';
@@ -15,9 +16,12 @@ const messageQueue = markRaw(
   }),
 );
 
-function onAnchorListFetched(_: IpcRendererEvent, anchorList: any[]) {
+function onAnchorListFetched(
+  _: IpcRendererEvent,
+  data: { anchorList: AnchorFrom87RawData[]; createCount: number },
+) {
   messageQueue.showMessage({
-    message: `采集到 ${anchorList[0]?.account} 等 ${anchorList?.length} 条数据`,
+    message: `采集到 ${data.anchorList[0]?.account} 等 ${data.anchorList?.length} 条数据，其中 ${data.createCount} 条为新数据`,
     type: 'success',
   });
 }
@@ -39,12 +43,14 @@ onBeforeUnmount(() => {
 <template>
   <div class="block">
     <div class="description">
-      请在右侧页面中搜索主播，表格中的主播信息会被自动采集
+      右侧页面表格中的主播信息会被自动采集。
+      <br />
+      为了加快采集速度，建议每页条数改为200。
     </div>
     <div
       v-loading="true"
       class="loading"
-      element-loading-text="采集中..."
+      element-loading-text="自动采集中，请在右侧页面进行操作"
     ></div>
   </div>
 </template>

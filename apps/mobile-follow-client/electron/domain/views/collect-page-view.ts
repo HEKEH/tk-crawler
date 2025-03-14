@@ -1,7 +1,9 @@
+import type { AnchorFrom87RawData } from '@tk-crawler/biz-shared';
 import type { BaseWindow } from 'electron';
 import type { IView } from './types';
 import path from 'node:path';
 import { findElement } from '@tk-crawler/electron-utils/main';
+import { RESPONSE_CODE } from '@tk-crawler/shared';
 import {
   COLLECT_PAGE_HELP_EVENTS,
   COLLECT_PAGE_HELP_RUNNING_STATUS,
@@ -11,6 +13,7 @@ import {
 import { ipcMain, WebContentsView } from 'electron';
 import { isDevelopment, RENDERER_DIST, VITE_DEV_SERVER_URL } from '../../env';
 import { logger } from '../../infra/logger';
+import { createOrUpdateAnchorFrom87 } from '../../requests';
 
 const TK_87_URL = 'http://tk.87cloud.cn/';
 
@@ -264,11 +267,16 @@ export class CollectPageView implements IView {
                 if (typeof body === 'string' && body.startsWith('{')) {
                   const json = JSON.parse(body);
                   if (json.code === 0) {
-                    const anchorList = json.rows;
-                    this._helpView?.webContents.send(
-                      COLLECT_PAGE_HELP_EVENTS.ANCHOR_LIST_FETCHED,
-                      anchorList,
-                    );
+                    const anchorList = json.rows as AnchorFrom87RawData[];
+                    const resp = await createOrUpdateAnchorFrom87({
+                      list: anchorList,
+                    });
+                    if (resp.status_code === RESPONSE_CODE.SUCCESS) {
+                      this._helpView?.webContents.send(
+                        COLLECT_PAGE_HELP_EVENTS.ANCHOR_LIST_FETCHED,
+                        { anchorList, createCount: resp.data!.created_count },
+                      );
+                    }
                   }
                 }
               } catch (err) {

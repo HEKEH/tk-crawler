@@ -9,9 +9,9 @@ export interface AnchorFrom87 {
   his_max_diamond_val: number;
 
   // 状态相关
-  available: number;
+  available: number | null;
   available_reason: string | null;
-  status: number;
+  status: number | null;
 
   // 地区相关
   country: string | null;
@@ -20,7 +20,7 @@ export interface AnchorFrom87 {
   // 其他信息
   follower_count: number;
   tag_title: string | null;
-  canuse_invitation_type: number; // 3普通邀约，4金票邀约
+  canuse_invitation_type: number | null; // 3普通邀约，4金票邀约
   pieces: string | null;
 
   // 时间戳
@@ -30,3 +30,8 @@ export interface AnchorFrom87 {
   // 是否已分组
   has_grouped: boolean;
 }
+
+export type AnchorFrom87RawData = Omit<
+  AnchorFrom87,
+  'created_at' | 'updated_at' | 'has_grouped' | 'id'
+>;

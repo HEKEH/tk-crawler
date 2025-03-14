@@ -188,9 +188,9 @@ model AnchorFrom87 {
   his_max_diamond_val  Int @default(0)
 
   // 状态相关
-  available        Int     @db.UnsignedTinyInt
+  available        Int?    @db.UnsignedTinyInt
   available_reason String?
-  status           Int     @db.UnsignedTinyInt
+  status           Int?    @db.UnsignedTinyInt
 
   // 地区相关
   country      String? @db.VarChar(10)
@@ -199,7 +199,7 @@ model AnchorFrom87 {
   // 其他信息
   follower_count         Int     @default(0)
   tag_title              String? @db.VarChar(10)
-  canuse_invitation_type Int     @db.UnsignedTinyInt // 3普通邀约，4金票邀约
+  canuse_invitation_type Int?    @db.UnsignedTinyInt // 3普通邀约，4金票邀约
   pieces                 String? @db.VarChar(3)
 
   created_at                DateTime                    @default(now())

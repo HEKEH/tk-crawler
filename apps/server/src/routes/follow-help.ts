@@ -54,4 +54,4 @@ followHelpRouter.post(
   FollowHelpController.clearAnchorFollowGroup,
 );
 
-export { followHelpRouter };
+export default followHelpRouter;

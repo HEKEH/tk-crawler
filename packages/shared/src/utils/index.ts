@@ -8,3 +8,4 @@ export * from './initialization-state';
 export * from './limited-promise-all';
 export * from './message-center';
 export * from './object';
+export * from './request';

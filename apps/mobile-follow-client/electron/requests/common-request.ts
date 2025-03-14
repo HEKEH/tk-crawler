@@ -3,7 +3,7 @@ import {
   RESPONSE_CODE,
   commonRequest as sharedCommonRequest,
 } from '@tk-crawler/shared';
-import { ElNotification } from 'element-plus';
+import { logger } from '../infra/logger';
 
 interface CommonRequestParams<RequestParams>
   extends Omit<SharedCommonRequestParams<RequestParams>, 'onBusinessError'> {
@@ -19,7 +19,7 @@ export async function commonRequest<
 }: CommonRequestParams<RequestParams>): Promise<ResponseData> {
   const data = await sharedCommonRequest<ResponseData>(requestParams);
   if (data.status_code !== RESPONSE_CODE.SUCCESS) {
-    ElNotification.error({
+    logger.error({
       message: data.message,
     });
     if (data.status_code === RESPONSE_CODE.TOKEN_INVALID) {

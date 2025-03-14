@@ -33,6 +33,14 @@ export default defineConfig(({ mode }) => {
     ),
   };
 
+  const envConfig = {
+    envDir: path.resolve(__dirname, '../..'), // 环境文件目录
+    envPrefix: ['CLIENT_'], // 环境变量前缀
+    env: {
+      envFile: `.env.${mode}`, // 指定环境文件名
+    },
+  };
+
   const electronOptions: ElectronSimpleOptions = {
     main: {
       // Shortcut of `build.lib.entry`.
@@ -48,11 +56,7 @@ export default defineConfig(({ mode }) => {
             // external: ['@tk-crawler/core'],
           },
         },
-        envDir: path.resolve(__dirname, '../..'), // 环境文件目录
-        envPrefix: ['CLIENT_'], // 环境变量前缀
-        env: {
-          envFile: `.env.${mode}`, // 指定环境文件名
-        },
+        ...envConfig,
       } as InlineConfig,
     },
     preload: {
@@ -89,10 +93,6 @@ export default defineConfig(({ mode }) => {
             },
           },
           {
-            filename: 'tiktok-auto-follow-help.html',
-            template: 'tiktok-auto-follow-help.html',
-          },
-          {
             filename: 'collect-page-help.html',
             template: 'collect-page-help.html',
           },
@@ -106,9 +106,9 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         input: {
           main: path.resolve(__dirname, 'index.html'),
-          'tiktok-auto-follow-help': path.resolve(
+          'collect-page-help': path.resolve(
             __dirname,
-            'tiktok-auto-follow-help.html',
+            'collect-page-help.html',
           ),
         },
       },
@@ -116,5 +116,6 @@ export default defineConfig(({ mode }) => {
     resolve: {
       alias,
     },
+    ...envConfig,
   };
 });

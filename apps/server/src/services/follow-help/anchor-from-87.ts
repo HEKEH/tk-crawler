@@ -52,13 +52,14 @@ export async function getAnchorFrom87List(
 
 // 创建或更新
 export async function createOrUpdateAnchorFrom87(
-  _data: CreateOrUpdateAnchorFrom87Request,
+  request: CreateOrUpdateAnchorFrom87Request,
 ): Promise<{ created_count: number; updated_count: number }> {
+  const _data = request.list;
   logger.info('[Create Or Update Anchor From 87]', {
     dataLength: _data.length,
   });
 
-  return await mysqlClient.prismaClient.$transaction(async tx => {
+  const res = await mysqlClient.prismaClient.$transaction(async tx => {
     const data = _data.map(anchor => ({
       account_id: BigInt(anchor.account_id),
       account: anchor.account,
@@ -69,9 +70,13 @@ export async function createOrUpdateAnchorFrom87(
       his_max_diamond_val: anchor.his_max_diamond_val,
 
       // 状态相关
-      available: anchor.available,
+      available: Number.isNaN(Number(anchor.available))
+        ? null // 默认可用
+        : Number(anchor.available),
       available_reason: anchor.available_reason,
-      status: anchor.status,
+      status: Number.isNaN(Number(anchor.status))
+        ? null
+        : Number(anchor.status),
 
       // 地区相关
       country: anchor.country,
@@ -80,7 +85,11 @@ export async function createOrUpdateAnchorFrom87(
       // 其他信息
       follower_count: anchor.follower_count,
       tag_title: anchor.tag_title,
-      canuse_invitation_type: anchor.canuse_invitation_type,
+      canuse_invitation_type: Number.isNaN(
+        Number(anchor.canuse_invitation_type),
+      )
+        ? null
+        : Number(anchor.canuse_invitation_type),
       pieces: anchor.pieces,
     }));
     // 批量查询现有记录
@@ -134,6 +143,8 @@ export async function createOrUpdateAnchorFrom87(
       updated_count: toUpdate.length,
     };
   });
+  console.log('res', res);
+  return res;
 }
 
 // 删除指定记录

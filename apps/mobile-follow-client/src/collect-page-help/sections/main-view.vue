@@ -54,7 +54,7 @@ async function backToMainView() {
   padding: 20px 20px;
   width: 100%;
   height: 100%;
-  margin-right: 10px;
+  margin-right: 2px;
   overflow: hidden;
   display: flex;
   flex-direction: column;

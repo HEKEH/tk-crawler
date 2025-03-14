@@ -9,7 +9,7 @@ defineOptions({
 
 const MAX_INPUT_COUNT = 100;
 
-const globalStore = useGlobalStore();
+// const globalStore = useGlobalStore();
 const content = ref('');
 
 async function nextStep() {
@@ -25,9 +25,7 @@ async function nextStep() {
   }
   if (userIds.length === 0) {
     ElMessage.error('请输入至少一个用户ID');
-    return;
   }
-  await globalStore.startAutoFollow(userIds);
 }
 const isSubmitting = ref(false);
 

@@ -1,12 +1,11 @@
 import type { Prisma } from '.prisma/client';
 import type { RESPONSE_CODE } from '@tk-crawler/shared';
 
-import type { AnchorFrom87 } from '../../follow-help';
+import type { AnchorFrom87, AnchorFrom87RawData } from '../../follow-help';
 
-export type CreateOrUpdateAnchorFrom87Request = Omit<
-  AnchorFrom87,
-  'has_grouped' | 'id' | 'created_at' | 'updated_at'
->[];
+export interface CreateOrUpdateAnchorFrom87Request {
+  list: AnchorFrom87RawData[];
+}
 
 export interface CreateOrUpdateAnchorFrom87Response {
   status_code: RESPONSE_CODE;

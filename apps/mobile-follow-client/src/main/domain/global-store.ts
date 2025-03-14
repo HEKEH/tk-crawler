@@ -5,7 +5,7 @@ import { MessageQueue } from '@tk-crawler/view-shared';
 import { CheckNetworkResultType } from '@tk-mobile-follow-client/shared';
 import { markRaw } from 'vue';
 import { CUSTOM_EVENTS } from '../constants';
-import { checkNetwork, startAutoFollow } from '../services';
+import { checkNetwork } from '../requests';
 import { Menu } from '../types';
 
 export default class GlobalStore {
@@ -93,9 +93,9 @@ export default class GlobalStore {
     this._isInitialized = true;
   }
 
-  async startAutoFollow(userIds: string[]) {
-    await startAutoFollow(userIds);
-  }
+  // async startAutoFollow(userIds: string[]) {
+  //   await startAutoFollow(userIds);
+  // }
 
   async stop() {}
 

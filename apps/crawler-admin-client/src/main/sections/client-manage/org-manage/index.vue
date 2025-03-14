@@ -67,6 +67,7 @@ const { data, isLoading, isError, error, refetch } = useQuery<
     });
     return response.data;
   },
+  placeholderData: previousData => previousData,
 });
 
 // eslint-disable-next-line vue/no-mutating-props
@@ -234,6 +235,7 @@ function onManageOrgMembers(org: OrganizationItem) {
             ? { prop: sortField, order: sortOrder }
             : undefined
         "
+        row-key="id"
         @sort-change="handleSortChange"
       >
         <ElTableColumn fixed prop="id" label="机构ID" min-width="100" />

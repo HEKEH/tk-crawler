@@ -35,6 +35,6 @@ const currentMenu = computed(() => {
   height: calc(100% - var(--top-bar-height));
   width: 100%;
   overflow: hidden;
-  padding: 2rem;
+  padding: 1rem;
 }
 </style>

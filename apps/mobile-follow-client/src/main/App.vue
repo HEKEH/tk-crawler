@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import type GlobalStore from './domain/global-store';
 import { CheckNetworkResultType } from '@tk-mobile-follow-client/shared';
-import { ElNotification } from 'element-plus';
-import { computed, onBeforeUnmount, onErrorCaptured } from 'vue';
+import { ElConfigProvider, ElNotification } from 'element-plus';
+import zhCn from 'element-plus/es/locale/lang/zh-cn';
 
+import { computed, onBeforeUnmount, onErrorCaptured } from 'vue';
 import Homepage from './sections/homepage.vue';
 import NetworkErrorView from './sections/network-error-view/index.vue';
 import { provideGlobalStore } from './utils/vue';
@@ -33,17 +34,19 @@ onErrorCaptured(e => {
 </script>
 
 <template>
-  <div
-    v-if="isLoading"
-    v-loading="isLoading"
-    :style="{ width: '100%', height: '100%', overflow: 'hidden' }"
-    element-loading-text="加载中..."
-  />
-  <NetworkErrorView
-    v-else-if="globalStore.networkStatus === CheckNetworkResultType.ERROR"
-    @retry="retryCheckNetwork"
-  />
-  <Homepage v-else />
+  <ElConfigProvider :locale="zhCn">
+    <div
+      v-if="isLoading"
+      v-loading="isLoading"
+      :style="{ width: '100%', height: '100%', overflow: 'hidden' }"
+      element-loading-text="加载中..."
+    />
+    <NetworkErrorView
+      v-else-if="globalStore.networkStatus === CheckNetworkResultType.ERROR"
+      @retry="retryCheckNetwork"
+    />
+    <Homepage v-else />
+  </ElConfigProvider>
 </template>
 
 <style scoped></style>

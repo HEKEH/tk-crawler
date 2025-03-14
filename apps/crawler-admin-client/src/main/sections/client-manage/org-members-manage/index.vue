@@ -79,6 +79,7 @@ const { data, isLoading, isError, error, refetch } = useQuery<
     });
     return response.data;
   },
+  placeholderData: previousData => previousData,
 });
 
 // 处理排序变化
@@ -218,6 +219,7 @@ async function handleSubmitCreateOrEdit(data: Partial<OrgMemberItem>) {
             ? { prop: sortField, order: sortOrder }
             : undefined
         "
+        row-key="id"
         @sort-change="handleSortChange"
       >
         <ElTableColumn fixed prop="id" label="ID" min-width="100" />

@@ -1,67 +1,27 @@
 <script setup lang="ts">
-import { ElButton, ElInput, ElMessage } from 'element-plus';
-import { ref } from 'vue';
+import { ElAlert, ElLink } from 'element-plus';
 import { useGlobalStore } from '../../utils/vue';
+import AnchorTable from './anchor-table.vue';
 
 defineOptions({
   name: 'Entry',
 });
-
-const MAX_INPUT_COUNT = 100;
-
-// const globalStore = useGlobalStore();
-const content = ref('');
-
-async function nextStep() {
-  let userIds = content.value
-    .trim()
-    .split('\n')
-    .map(id => id.trim())
-    .filter(id => id);
-  userIds = [...new Set(userIds)];
-  if (userIds.length > MAX_INPUT_COUNT) {
-    ElMessage.error(`最多支持${MAX_INPUT_COUNT}个用户ID`);
-    return;
-  }
-  if (userIds.length === 0) {
-    ElMessage.error('请输入至少一个用户ID');
-  }
-}
-const isSubmitting = ref(false);
-
-function clearContent() {
-  content.value = '';
+const globalStore = useGlobalStore();
+function goToCollectPage() {
+  globalStore.goToCollectPage();
 }
 </script>
 
 <template>
   <div class="entry">
-    <ElInput
-      v-model="content"
-      class="anchors-input"
-      type="textarea"
-      :rows="30"
-      resize="none"
-      :placeholder="`请批量输入TikTok用户ID：
-• 每行输入一个ID
-• 最多支持${MAX_INPUT_COUNT}个ID
-
-示例：
-foo
-bar
-abc_xyz`"
-    />
-    <div class="button-group">
-      <ElButton @click="clearContent">清空</ElButton>
-      <ElButton
-        type="primary"
-        :loading="isSubmitting"
-        :disabled="content.trim().length === 0"
-        @click="nextStep"
-      >
-        下一步
-      </ElButton>
-    </div>
+    <ElAlert class="tip" type="success" :closable="false">
+      <template #default>
+        如果页面数据不够，请先到
+        <ElLink type="warning" @click="goToCollectPage"> 主播采集页 </ElLink>
+        采集数据
+      </template>
+    </ElAlert>
+    <AnchorTable class="anchor-table" />
   </div>
 </template>
 
@@ -73,13 +33,24 @@ abc_xyz`"
   display: flex;
   flex-direction: column;
   align-items: center;
-  row-gap: 20px;
-}
-.anchors-input {
-  max-width: 400px;
-}
-.button-group {
-  display: flex;
-  gap: 12px;
+  overflow: hidden;
+  row-gap: 0.5rem;
+  .tip {
+    width: 100%;
+    color: var(--el-text-color-secondary);
+    text-align: center;
+    :global(.el-alert__description) {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    :global(.el-link) {
+      font-weight: bold;
+    }
+  }
+  .anchor-table {
+    flex: 1;
+  }
 }
 </style>

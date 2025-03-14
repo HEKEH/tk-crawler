@@ -29,7 +29,7 @@ const globalStore = useGlobalStore();
         {{ menu.name }}
       </ElLink>
     </div>
-    <div class="left-menu">
+    <!-- <div class="left-menu">
       <ElLink
         class="left-menu-item"
         :underline="false"
@@ -37,7 +37,7 @@ const globalStore = useGlobalStore();
       >
         主播采集页
       </ElLink>
-    </div>
+    </div> -->
   </div>
 </template>
 

@@ -50,7 +50,7 @@ onBeforeUnmount(() => {
     <div
       v-loading="true"
       class="loading"
-      element-loading-text="自动采集中，请在右侧页面进行操作"
+      element-loading-text="自动采集中，请在右侧页面进行数据搜索"
     ></div>
   </div>
 </template>

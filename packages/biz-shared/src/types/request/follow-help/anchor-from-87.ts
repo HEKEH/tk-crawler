@@ -16,11 +16,17 @@ export interface CreateOrUpdateAnchorFrom87Response {
   message?: string;
 }
 
+export type GetAnchorFrom87ListFilter = Prisma.AnchorFrom87WhereInput & {
+  has_grouped?: boolean;
+  search?: string;
+};
+
 export interface GetAnchorFrom87ListRequest {
   page_num: number;
   page_size: number;
-  filter?: Prisma.AnchorFrom87WhereInput;
+  filter?: GetAnchorFrom87ListFilter;
   order_by?: Prisma.AnchorFrom87OrderByWithRelationInput;
+  search?: string;
 }
 
 export interface GetAnchorFrom87ListResponseData {

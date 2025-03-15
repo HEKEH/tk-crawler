@@ -1,27 +1,57 @@
 <script setup lang="ts">
-import { ElAlert, ElLink } from 'element-plus';
-import { useGlobalStore } from '../../utils/vue';
-import AnchorTable from './anchor-table.vue';
+import { ElMenu, ElMenuItem } from 'element-plus';
+import { ref } from 'vue';
+import AnchorSection from './anchor-section/index.vue';
 
 defineOptions({
   name: 'Entry',
 });
-const globalStore = useGlobalStore();
-function goToCollectPage() {
-  globalStore.goToCollectPage();
+
+enum MenuType {
+  ANCHOR = 'anchor',
+  GROUP = 'group',
 }
+
+const currentMenu = ref<MenuType>(MenuType.ANCHOR);
+
+function handleSelectMenu(key: string) {
+  currentMenu.value = key as MenuType;
+}
+
+const MenuList = [
+  {
+    type: MenuType.ANCHOR,
+    label: '主播列表',
+  },
+  {
+    type: MenuType.GROUP,
+    label: '分组管理',
+  },
+];
 </script>
 
 <template>
   <div class="entry">
-    <ElAlert class="tip" type="success" :closable="false">
-      <template #default>
-        如果页面数据不够，请先到
-        <ElLink type="warning" @click="goToCollectPage"> 主播采集页 </ElLink>
-        采集数据
-      </template>
-    </ElAlert>
-    <AnchorTable class="anchor-table" />
+    <div class="left-part">
+      <ElMenu
+        :default-active="currentMenu"
+        class="side-menus"
+        @select="handleSelectMenu"
+      >
+        <ElMenuItem
+          v-for="menu in MenuList"
+          :key="menu.type"
+          :index="menu.type"
+        >
+          <span>{{ menu.label }}</span>
+        </ElMenuItem>
+      </ElMenu>
+    </div>
+    <div class="right-part">
+      <KeepAlive>
+        <AnchorSection v-if="currentMenu === MenuType.ANCHOR" />
+      </KeepAlive>
+    </div>
   </div>
 </template>
 
@@ -30,27 +60,23 @@ function goToCollectPage() {
   position: relative;
   width: 100%;
   height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   overflow: hidden;
-  row-gap: 0.5rem;
-  .tip {
-    width: 100%;
-    color: var(--el-text-color-secondary);
-    text-align: center;
-    :global(.el-alert__description) {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    :global(.el-link) {
-      font-weight: bold;
-    }
+  display: flex;
+  .left-part {
+    width: 140px;
+    height: 100%;
+    overflow: hidden;
+    border-right: 1px solid var(--el-border-color);
   }
-  .anchor-table {
+  .right-part {
     flex: 1;
+    height: 100%;
+    overflow: hidden;
+    padding: 1rem 0.5rem 0.5rem 1rem;
+  }
+  .side-menus {
+    width: 100%;
+    border-right: unset;
   }
 }
 </style>

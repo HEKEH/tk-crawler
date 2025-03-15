@@ -17,8 +17,18 @@ import {
   ElTableColumn,
   ElTag,
 } from 'element-plus';
-import { ref } from 'vue';
-import { deleteAnchorFrom87, getAnchorFrom87List } from '../../requests';
+import { computed, onActivated, ref } from 'vue';
+import {
+  clearAnchorFrom87,
+  deleteAnchorFrom87,
+  getAnchorFrom87List,
+} from '../../../requests';
+import AnchorFilter from './anchor-filter.vue';
+import {
+  DefaultFilterViewValues,
+  type FilterViewValues,
+  transformFilterViewValuesToFilterValues,
+} from './filter';
 
 defineOptions({
   name: 'AnchorTable',
@@ -30,10 +40,24 @@ const pageSize = ref(1000);
 const sortField = ref<keyof AnchorFrom87>();
 const sortOrder = ref<'ascending' | 'descending'>();
 
+// 过滤条件
+const filters = ref<FilterViewValues>(DefaultFilterViewValues);
+
+// 处理过滤器变化
+function handleFilterChange(_filters: FilterViewValues) {
+  filters.value = _filters;
+  pageNum.value = 1; // 重置页码
+}
+
+function handleFilterReset() {
+  filters.value = DefaultFilterViewValues;
+  pageNum.value = 1; // 重置页码
+}
+
 const { data, isLoading, isError, error, refetch } = useQuery<
   GetAnchorFrom87ListResponseData | undefined
 >({
-  queryKey: ['anchors', pageNum, pageSize, sortField, sortOrder],
+  queryKey: ['anchors', pageNum, pageSize, sortField, sortOrder, filters],
   retry: false,
   queryFn: async () => {
     const orderBy = sortField.value
@@ -43,6 +67,7 @@ const { data, isLoading, isError, error, refetch } = useQuery<
       page_num: pageNum.value,
       page_size: pageSize.value,
       order_by: orderBy,
+      filter: transformFilterViewValuesToFilterValues(filters.value),
     });
     return response.data;
   },
@@ -99,6 +124,61 @@ function handlePageNumChange(_pageNum: number) {
 function handlePageSizeChange(_pageSize: number) {
   pageSize.value = _pageSize;
 }
+
+const selectedRows = ref<AnchorFrom87[]>([]);
+
+// 处理选择变化
+function handleSelectionChange(rows: AnchorFrom87[]) {
+  selectedRows.value = rows;
+}
+const hasSelectedRows = computed(() => selectedRows.value.length > 0);
+
+function handleBatchAddToGroup() {
+  console.log('handleBatchAddToGroup', selectedRows.value);
+}
+
+async function handleBatchDelete() {
+  try {
+    await ElMessageBox.confirm(
+      `确定要删除 ${selectedRows.value.length} 个主播吗？`,
+      {
+        type: 'warning',
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+      },
+    );
+  } catch {
+    return;
+  }
+  await deleteAnchorFrom87({ id: selectedRows.value.map(item => item.id) });
+  ElMessage.success({
+    message: '批量删除成功',
+    type: 'success',
+    duration: 2000,
+  });
+  await refetch();
+}
+
+async function handleClearData() {
+  try {
+    await ElMessageBox.confirm(`确定要清空主播数据吗？`, {
+      type: 'warning',
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+    });
+  } catch {
+    return;
+  }
+  await clearAnchorFrom87({});
+  ElMessage.success({
+    message: '清空成功',
+    type: 'success',
+    duration: 2000,
+  });
+  await refetch();
+}
+
+onActivated(refetch);
 </script>
 
 <template>
@@ -107,11 +187,36 @@ function handlePageSizeChange(_pageSize: number) {
       {{ error?.message }}
     </div>
     <template v-if="!isError">
+      <div class="filter-row">
+        <AnchorFilter
+          :model-value="filters"
+          @change="handleFilterChange"
+          @reset="handleFilterReset"
+        />
+      </div>
       <div class="header-row">
         <div class="left-part">
-          <!-- <ElButton type="primary"> 添加主播 </ElButton> -->
+          <ElButton
+            :disabled="!hasSelectedRows"
+            type="primary"
+            size="small"
+            @click="handleBatchAddToGroup"
+          >
+            批量加入分组
+          </ElButton>
         </div>
         <div class="right-part">
+          <ElButton
+            :disabled="!hasSelectedRows"
+            type="danger"
+            size="small"
+            @click="handleBatchDelete"
+          >
+            批量删除
+          </ElButton>
+          <ElButton type="danger" size="small" @click="handleClearData">
+            清空数据
+          </ElButton>
           <ElIcon class="header-row-icon" @click="refresh">
             <RefreshRight />
           </ElIcon>
@@ -121,20 +226,21 @@ function handlePageSizeChange(_pageSize: number) {
         ref="tableRef"
         :data="data?.list"
         style="width: 100%"
-        height="calc(100% - 100px)"
+        height="calc(100% - 130px)"
         :default-sort="
           sortField && sortOrder
             ? { prop: sortField, order: sortOrder }
             : undefined
         "
         row-key="id"
-        empty-text="暂无数据，请先到主播采集页采集数据"
         @sort-change="handleSortChange"
+        @selection-change="handleSelectionChange"
       >
+        <ElTableColumn type="selection" width="55" />
         <ElTableColumn prop="account_id" label="账号ID" min-width="180" />
         <ElTableColumn prop="account" label="账号" min-width="140" />
 
-        <ElTableColumn prop="has_grouped" label="是否分组" min-width="100">
+        <ElTableColumn prop="has_grouped" label="是否已分组" min-width="100">
           <template #default="scope">
             <ElTag :type="scope.row.has_grouped ? 'success' : 'info'">
               {{ scope.row.has_grouped ? '已分组' : '未分组' }}
@@ -151,7 +257,7 @@ function handlePageSizeChange(_pageSize: number) {
             <ElTag v-if="scope.row.canuse_invitation_type === 3" type="info">
               常规邀约
             </ElTag>
-            <ElTag v-if="scope.row.canuse_invitation_type === 4" type="success">
+            <ElTag v-if="scope.row.canuse_invitation_type === 4" type="warning">
               金票邀约
             </ElTag>
           </template>
@@ -171,8 +277,8 @@ function handlePageSizeChange(_pageSize: number) {
         />
         <ElTableColumn
           prop="his_max_diamond_val"
-          label="历史最高"
-          min-width="120"
+          label="历史最高钻石"
+          min-width="140"
           sortable="custom"
         />
         <ElTableColumn
@@ -182,12 +288,12 @@ function handlePageSizeChange(_pageSize: number) {
           sortable="custom"
         />
 
-        <ElTableColumn prop="country" label="地区名称" min-width="100">
+        <ElTableColumn prop="country" label="地区名称" min-width="80">
           <template #default="scope">
             {{ scope.row.country || '-' }}
           </template>
         </ElTableColumn>
-        <ElTableColumn prop="country" label="地区编码" min-width="100">
+        <ElTableColumn prop="country" label="地区编码" min-width="80">
           <template #default="scope">
             {{ scope.row.country_code || '-' }}
           </template>
@@ -272,6 +378,12 @@ function handlePageSizeChange(_pageSize: number) {
   overflow: hidden;
 }
 
+.filter-row {
+  width: 100%;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
 .header-row {
   margin-bottom: 1rem;
   display: flex;
@@ -281,17 +393,19 @@ function handlePageSizeChange(_pageSize: number) {
 .left-part {
   display: flex;
   align-items: center;
+  padding-left: 0.5rem;
 }
 
 .right-part {
   display: flex;
   align-items: center;
+  padding-right: 0.5rem;
 }
 
 .header-row-icon {
   cursor: pointer;
   font-size: 18px;
-  margin-right: 0.5rem;
+  margin-left: 0.5rem;
 }
 
 .header-row-icon:hover {

@@ -1,3 +1,4 @@
+import type { Prisma } from '@prisma/client';
 import type {
   ClearAnchorFrom87Request,
   CreateOrUpdateAnchorFrom87Request,
@@ -8,7 +9,6 @@ import type {
 import { mysqlClient } from '@tk-crawler/database/mysql';
 import { isEmpty, transObjectValuesToString } from '@tk-crawler/shared';
 import { logger } from '../../infra/logger';
-
 // 获取列表
 export async function getAnchorFrom87List(
   data: GetAnchorFrom87ListRequest,
@@ -19,31 +19,49 @@ export async function getAnchorFrom87List(
         updated_at: 'desc' as const, // 默认按更新时间倒序排序
       }
     : data.order_by!;
+  const { has_grouped, search, ...filterRest } = data.filter ?? {};
+  const filter: Prisma.AnchorFrom87WhereInput = filterRest;
+  if (has_grouped !== undefined) {
+    filter.AnchorFollowGroupRelation = has_grouped
+      ? {
+          some: {}, // 存在任何关联记录
+        }
+      : {
+          none: {}, // 不存在任何关联记录
+        };
+  }
+
+  if (search) {
+    filter.account = {
+      contains: search,
+    };
+  }
 
   const [anchors, total] = await Promise.all([
     mysqlClient.prismaClient.anchorFrom87.findMany({
-      where: data.filter,
+      where: filter,
       skip: (data.page_num - 1) * data.page_size,
       take: data.page_size,
       orderBy,
       include: {
-        _count: {
+        AnchorFollowGroupRelation: {
           select: {
-            AnchorFollowGroupRelation: true,
+            id: true,
           },
+          take: 1, // 只需要查询一条记录
         },
       },
     }),
     mysqlClient.prismaClient.anchorFrom87.count({
-      where: data.filter,
+      where: filter,
     }),
   ]);
 
   return {
-    list: anchors.map(({ _count, ...anchor }) => {
+    list: anchors.map(({ AnchorFollowGroupRelation, ...anchor }) => {
       const res = transObjectValuesToString(anchor, ['account_id', 'id']);
       return Object.assign(res, {
-        has_grouped: _count.AnchorFollowGroupRelation > 0,
+        has_grouped: AnchorFollowGroupRelation.length > 0,
       });
     }),
     total,
@@ -166,7 +184,11 @@ export async function deleteAnchorFrom87(
 export async function clearAnchorFrom87(
   data: ClearAnchorFrom87Request,
 ): Promise<void> {
-  logger.info('[Clear Anchor From 87]', { filter: data.filter });
+  logger.info('[Clear Anchor From 87]', data);
+  if (isEmpty(data.filter)) {
+    await mysqlClient.prismaClient.$executeRaw`DELETE FROM AnchorFrom87`;
+    return;
+  }
 
   await mysqlClient.prismaClient.anchorFrom87.deleteMany({
     where: data.filter,

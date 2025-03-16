@@ -4,6 +4,7 @@ import { ref } from 'vue';
 
 interface Props {
   value: 'all' | 'filtered';
+  filteredRowsTotal: number;
 }
 
 const props = defineProps<Props>();
@@ -28,9 +29,9 @@ function handleUpdate(val: 'all' | 'filtered') {
       class="radio-group"
       @update:model-value="handleUpdate as any"
     >
-      <ElRadio value="all" class="radio-item"> 清空全部数据 </ElRadio>
+      <ElRadio value="all" class="radio-item"> 清空所有数据 </ElRadio>
       <ElRadio value="filtered" class="radio-item">
-        清空当前筛选条件下的数据
+        {{ `清空筛选结果（共 ${filteredRowsTotal} 条记录）` }}
       </ElRadio>
     </ElRadioGroup>
 
@@ -55,6 +56,8 @@ function handleUpdate(val: 'all' | 'filtered') {
   display: flex;
   gap: 12px;
   margin: 16px 0;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .radio-item {

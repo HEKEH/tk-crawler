@@ -31,6 +31,7 @@ import {
   ref,
   shallowRef,
 } from 'vue';
+import ClearMessage from '../../../components/clear-message.vue';
 import {
   clearAnchorFrom87,
   createAnchorFollowGroup,
@@ -38,7 +39,6 @@ import {
   getAnchorFrom87List,
 } from '../../../requests';
 import AnchorFilter from './anchor-filter.vue';
-import ClearMessage from './clear-message.vue';
 import CreateGroupDialog from './create-group-dialog.vue';
 import {
   DefaultFilterViewValues,
@@ -233,6 +233,7 @@ async function handleClearData() {
       title: '清空数据',
       message: h(ClearMessage, {
         value: state.clearType,
+        filteredRowsTotal: data.value?.total || 0,
         onUpdate: val => {
           state.clearType = val as 'all' | 'filtered';
         },
@@ -243,18 +244,18 @@ async function handleClearData() {
       customClass: 'custom-clear-message-box',
     });
 
-    const { data, status_code } = await clearAnchorFrom87({
+    const resp = await clearAnchorFrom87({
       filter:
         state.clearType === 'all'
           ? undefined
           : transformFilterViewValuesToFilterValues(filters.value),
     });
-    if (status_code !== RESPONSE_CODE.SUCCESS) {
+    if (resp.status_code !== RESPONSE_CODE.SUCCESS) {
       return;
     }
 
     ElMessage.success({
-      message: `共清空 ${data.deleted_count} 个主播`,
+      message: `共清空 ${resp.data?.deleted_count} 个主播`,
       type: 'success',
       duration: 2000,
     });

@@ -16,12 +16,12 @@ import {
   ElTableColumn,
 } from 'element-plus';
 import { computed, h, onActivated, reactive, ref } from 'vue';
+import ClearMessage from '../../../components/clear-message.vue';
 import {
   clearAnchorFollowGroup,
   deleteAnchorFollowGroup,
   getAnchorFollowGroupList,
 } from '../../../requests';
-import ClearMessage from './clear-message.vue';
 import {
   DefaultFilterViewValues,
   type FilterViewValues,
@@ -177,6 +177,7 @@ async function handleClearData() {
       title: '清空数据',
       message: h(ClearMessage, {
         value: state.clearType,
+        filteredRowsTotal: data.value?.total || 0,
         onUpdate: val => {
           state.clearType = val as 'all' | 'filtered';
         },
@@ -187,19 +188,19 @@ async function handleClearData() {
       customClass: 'custom-clear-message-box',
     });
 
-    const { data, status_code } = await clearAnchorFollowGroup({
+    const resp = await clearAnchorFollowGroup({
       filter:
         state.clearType === 'all'
           ? undefined
           : transformFilterViewValuesToFilterValues(filters.value),
     });
 
-    if (status_code !== RESPONSE_CODE.SUCCESS) {
+    if (resp.status_code !== RESPONSE_CODE.SUCCESS) {
       return;
     }
 
     ElMessage.success({
-      message: `共清空 ${data!.deleted_count} 个分组`,
+      message: `共清空 ${resp.data!.deleted_count} 个分组`,
       type: 'success',
       duration: 2000,
     });

@@ -28,8 +28,10 @@ function handleUpdate(val: 'all' | 'filtered') {
       class="radio-group"
       @update:model-value="handleUpdate as any"
     >
-      <ElRadio label="all" class="radio-item"> 清空全部数据 </ElRadio>
-      <ElRadio label="filtered" class="radio-item"> 清空筛选数据 </ElRadio>
+      <ElRadio value="all" class="radio-item"> 清空全部数据 </ElRadio>
+      <ElRadio value="filtered" class="radio-item">
+        清空当前筛选条件下的数据
+      </ElRadio>
     </ElRadioGroup>
 
     <p class="warning-text">

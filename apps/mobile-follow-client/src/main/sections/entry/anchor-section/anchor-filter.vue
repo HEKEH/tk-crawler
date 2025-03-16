@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { FilterViewValues } from './filter';
 import { Search } from '@element-plus/icons-vue';
-import { ElButton, ElInput, ElOption, ElSelect } from 'element-plus';
+import { ElButton, ElIcon, ElInput, ElOption, ElSelect } from 'element-plus';
 import { debounce } from 'lodash';
 import { ref, watch } from 'vue';
 
@@ -79,7 +79,7 @@ const debounceSearchChange = debounce(handleSearchChange, 500);
 
     <div class="buttons">
       <ElButton text type="primary" size="small" @click="resetFilters">
-        过滤重置
+        筛选重置
       </ElButton>
     </div>
   </div>

@@ -285,6 +285,12 @@ onActivated(refetch);
         </ElTableColumn>
 
         <ElTableColumn
+          prop="pieces"
+          label="主播段位"
+          min-width="120"
+          sortable="custom"
+        />
+        <ElTableColumn
           prop="day_diamond_val"
           label="日钻石"
           min-width="100"

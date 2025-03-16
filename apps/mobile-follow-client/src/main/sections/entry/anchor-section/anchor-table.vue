@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import type {
   AnchorFrom87,
+  CreateAnchorFollowGroupRequest,
   GetAnchorFrom87ListResponseData,
 } from '@tk-crawler/biz-shared';
 import { RefreshRight } from '@element-plus/icons-vue';
 import { useQuery } from '@tanstack/vue-query';
-import { formatDateTime } from '@tk-crawler/shared';
+import { formatDateTime, RESPONSE_CODE } from '@tk-crawler/shared';
 // import { confirmAfterSeconds } from '@tk-crawler/view-shared';
 import {
   ElButton,
@@ -20,11 +21,13 @@ import {
 import { computed, h, onActivated, reactive, ref } from 'vue';
 import {
   clearAnchorFrom87,
+  createAnchorFollowGroup,
   deleteAnchorFrom87,
   getAnchorFrom87List,
 } from '../../../requests';
 import AnchorFilter from './anchor-filter.vue';
 import ClearMessage from './clear-message.vue';
+import CreateGroupDialog from './create-group-dialog.vue';
 import {
   DefaultFilterViewValues,
   type FilterViewValues,
@@ -87,16 +90,16 @@ function handleSortChange({
   sortOrder.value = order || undefined;
 }
 
-// 刷新功能
-const isRefreshing = ref(false);
 function resetSort() {
   tableRef.value?.clearSort();
   sortField.value = undefined;
   sortOrder.value = undefined;
 }
+
+// 刷新功能
+const isRefreshing = ref(false);
 async function refresh() {
   isRefreshing.value = true;
-  resetSort();
   return refetch().finally(() => {
     isRefreshing.value = false;
   });
@@ -134,8 +137,28 @@ function handleSelectionChange(rows: AnchorFrom87[]) {
 }
 const hasSelectedRows = computed(() => selectedRows.value.length > 0);
 
-function handleBatchAddToGroup() {
-  console.log('handleBatchAddToGroup', selectedRows.value);
+const createGroupDialogVisible = ref(false);
+function openCreateGroupDialog() {
+  createGroupDialogVisible.value = true;
+}
+function closeCreateGroupDialog() {
+  createGroupDialogVisible.value = false;
+}
+async function handleGroupCreateSubmit(data: CreateAnchorFollowGroupRequest) {
+  const res = await createAnchorFollowGroup({
+    name: data.name,
+    anchor_ids: data.anchor_ids,
+  });
+  if (res.status_code !== RESPONSE_CODE.SUCCESS) {
+    return;
+  }
+  ElMessage.success({
+    message: '新增分组成功',
+    type: 'success',
+    duration: 2000,
+  });
+  closeCreateGroupDialog();
+  await refetch();
 }
 
 async function handleBatchDelete() {
@@ -221,7 +244,7 @@ onActivated(refetch);
             :disabled="!hasSelectedRows"
             type="primary"
             size="small"
-            @click="handleBatchAddToGroup"
+            @click="openCreateGroupDialog"
           >
             批量加入分组
           </ElButton>
@@ -237,6 +260,9 @@ onActivated(refetch);
           </ElButton>
           <ElButton type="danger" size="small" @click="handleClearData">
             清空数据
+          </ElButton>
+          <ElButton type="default" size="small" @click="resetSort">
+            重置排序
           </ElButton>
           <ElIcon class="header-row-icon" @click="refresh">
             <RefreshRight />
@@ -392,6 +418,12 @@ onActivated(refetch);
           @current-change="handlePageNumChange"
         />
       </div>
+      <CreateGroupDialog
+        :visible="createGroupDialogVisible"
+        :anchors="selectedRows"
+        :submit="handleGroupCreateSubmit"
+        @close="closeCreateGroupDialog"
+      />
     </template>
   </div>
 </template>

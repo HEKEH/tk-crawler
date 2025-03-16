@@ -213,7 +213,7 @@ model AnchorFrom87 {
 
 model AnchorFollowGroup {
   id                        BigInt                      @id @default(autoincrement()) @db.UnsignedBigInt
-  name                      String                      @db.VarChar(30)
+  name                      String                      @unique @db.VarChar(30)
   created_at                DateTime                    @default(now())
   updated_at                DateTime                    @updatedAt
   AnchorFollowGroupRelation AnchorFollowGroupRelation[]

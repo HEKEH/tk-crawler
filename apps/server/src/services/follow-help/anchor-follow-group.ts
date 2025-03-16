@@ -114,6 +114,13 @@ export async function createAnchorFollowGroup(
   const { anchor_ids, ...groupData } = data;
 
   return await mysqlClient.prismaClient.$transaction(async tx => {
+    const { name } = groupData;
+    const existGroup = await tx.anchorFollowGroup.findFirst({
+      where: { name },
+      select: { id: true },
+    });
+    assert(!existGroup, '分组名称已存在');
+
     // 创建分组
     const group = await tx.anchorFollowGroup.create({
       data: groupData,
@@ -143,6 +150,12 @@ export async function updateAnchorFollowGroup(
   const { id, added_anchor_ids, removed_anchor_ids, ...updateData } = data;
 
   await mysqlClient.prismaClient.$transaction(async tx => {
+    const { name } = updateData;
+    const existGroup = await tx.anchorFollowGroup.findFirst({
+      where: { name, id: { not: BigInt(id) } },
+      select: { id: true },
+    });
+    assert(!existGroup, '分组名称已存在');
     // 更新分组信息
     await tx.anchorFollowGroup.update({
       where: { id: BigInt(id) },

@@ -2,6 +2,7 @@
 import { ElMenu, ElMenuItem } from 'element-plus';
 import { ref } from 'vue';
 import AnchorSection from './anchor-section/index.vue';
+import GroupSection from './group-section/index.vue';
 
 defineOptions({
   name: 'Entry',
@@ -51,6 +52,9 @@ const MenuList = [
       <KeepAlive>
         <AnchorSection v-if="currentMenu === MenuType.ANCHOR" />
       </KeepAlive>
+      <Suspense v-if="currentMenu === MenuType.GROUP">
+        <GroupSection />
+      </Suspense>
     </div>
   </div>
 </template>

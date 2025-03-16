@@ -16,15 +16,27 @@ export interface CreateAnchorFollowGroupResponse {
   message?: string;
 }
 
+export type AnchorFollowGroupWhereInput = Prisma.AnchorFollowGroupWhereInput;
+
+export type AnchorFollowGroupListFilter = AnchorFollowGroupWhereInput & {
+  search?: string;
+};
+
 export interface GetAnchorFollowGroupListRequest {
   page_num: number;
   page_size: number;
-  filter?: Prisma.AnchorFollowGroupWhereInput;
-  order_by?: Prisma.AnchorFollowGroupOrderByWithRelationInput;
+  filter?: AnchorFollowGroupListFilter;
+  order_by?: Prisma.AnchorFollowGroupOrderByWithRelationInput & {
+    anchors_count?: 'asc' | 'desc';
+  };
 }
 
+export type AnchorFollowGroupItem = Omit<AnchorFollowGroup, 'anchors'> & {
+  anchors_count: number;
+};
+
 export interface GetAnchorFollowGroupListResponseData {
-  list: Omit<AnchorFollowGroup, 'anchors'>[];
+  list: AnchorFollowGroupItem[];
   total: number;
 }
 
@@ -60,6 +72,9 @@ export interface DeleteAnchorFollowGroupRequest {
 
 export interface DeleteAnchorFollowGroupResponse {
   status_code: RESPONSE_CODE;
+  data?: {
+    deleted_count: number;
+  };
   message?: string;
 }
 
@@ -81,5 +96,8 @@ export interface ClearAnchorFollowGroupRequest {
 
 export interface ClearAnchorFollowGroupResponse {
   status_code: RESPONSE_CODE;
+  data?: {
+    deleted_count: number;
+  };
   message?: string;
 }

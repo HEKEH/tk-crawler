@@ -41,13 +41,13 @@ export async function getOrgList(
     }),
   ]);
   return {
-    list: orgs.map(org => ({
+    list: orgs.map(({ _count, ...org }) => ({
       ...org,
       id: org.id.toString(),
       if_membership_valid:
         Boolean(org.membership_expire_at) &&
         dayjs(org.membership_expire_at).isAfter(new Date()),
-      user_count: org._count.orgUsers,
+      user_count: _count.orgUsers,
     })),
     total,
   };

@@ -1,9 +1,11 @@
 import type {
+  AnchorFollowGroupListFilter,
+  AnchorFollowGroupWhereInput,
   AnchorFrom87ListFilter,
   AnchorFrom87WhereInput,
 } from '@tk-crawler/biz-shared';
 
-export function transformFilterValuesToFilterValues(
+export function transformAnchorFilterValuesToFilterValues(
   filterValues?: AnchorFrom87ListFilter,
 ): AnchorFrom87WhereInput {
   const { has_grouped, search, ...filterRest } = filterValues ?? {};
@@ -20,6 +22,20 @@ export function transformFilterValuesToFilterValues(
 
   if (search) {
     filter.account = {
+      contains: search,
+    };
+  }
+  return filter;
+}
+
+export function transformGroupFilterValuesToFilterValues(
+  filterValues?: AnchorFollowGroupListFilter,
+): AnchorFollowGroupWhereInput {
+  const { search, ...filterRest } = filterValues ?? {};
+  const filter: AnchorFollowGroupWhereInput = filterRest;
+
+  if (search) {
+    filter.name = {
       contains: search,
     };
   }

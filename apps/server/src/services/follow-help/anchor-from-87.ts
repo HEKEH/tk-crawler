@@ -10,7 +10,7 @@ import type {
 import { mysqlClient } from '@tk-crawler/database/mysql';
 import { isEmpty, transObjectValuesToString } from '@tk-crawler/shared';
 import { logger } from '../../infra/logger';
-import { transformFilterValuesToFilterValues } from './filter';
+import { transformAnchorFilterValuesToFilterValues } from './filter';
 // 获取列表
 export async function getAnchorFrom87List(
   data: GetAnchorFrom87ListRequest,
@@ -22,7 +22,7 @@ export async function getAnchorFrom87List(
       }
     : data.order_by!;
 
-  const filter = transformFilterValuesToFilterValues(data.filter);
+  const filter = transformAnchorFilterValuesToFilterValues(data.filter);
   const [anchors, total] = await Promise.all([
     mysqlClient.prismaClient.anchorFrom87.findMany({
       where: filter,
@@ -187,7 +187,7 @@ export async function clearAnchorFrom87(
   } else {
     // 使用 Prisma deleteMany
     const result = await mysqlClient.prismaClient.anchorFrom87.deleteMany({
-      where: transformFilterValuesToFilterValues(data.filter),
+      where: transformAnchorFilterValuesToFilterValues(data.filter),
     });
 
     deletedCount = result.count;

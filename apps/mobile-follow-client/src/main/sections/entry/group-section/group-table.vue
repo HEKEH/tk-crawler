@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import type {
-  AnchorFrom87,
-  CreateAnchorFollowGroupRequest,
-  GetAnchorFrom87ListResponseData,
+  AnchorFollowGroupItem,
+  GetAnchorFollowGroupListResponseData,
 } from '@tk-crawler/biz-shared';
 import { RefreshRight } from '@element-plus/icons-vue';
 import { useQuery } from '@tanstack/vue-query';
 import { formatDateTime, RESPONSE_CODE } from '@tk-crawler/shared';
-// import { confirmAfterSeconds } from '@tk-crawler/view-shared';
 import {
   ElButton,
   ElIcon,
@@ -16,32 +14,29 @@ import {
   ElPagination,
   ElTable,
   ElTableColumn,
-  ElTag,
 } from 'element-plus';
 import { computed, h, onActivated, reactive, ref } from 'vue';
 import {
-  clearAnchorFrom87,
-  createAnchorFollowGroup,
-  deleteAnchorFrom87,
-  getAnchorFrom87List,
+  clearAnchorFollowGroup,
+  deleteAnchorFollowGroup,
+  getAnchorFollowGroupList,
 } from '../../../requests';
-import AnchorFilter from './anchor-filter.vue';
 import ClearMessage from './clear-message.vue';
-import CreateGroupDialog from './create-group-dialog.vue';
 import {
   DefaultFilterViewValues,
   type FilterViewValues,
   transformFilterViewValuesToFilterValues,
 } from './filter';
+import GroupFilter from './group-filter.vue';
 
 defineOptions({
-  name: 'AnchorTable',
+  name: 'GroupTable',
 });
 
 const tableRef = ref<InstanceType<typeof ElTable>>();
 const pageNum = ref(1);
-const pageSize = ref(1000);
-const sortField = ref<keyof AnchorFrom87>();
+const pageSize = ref(20);
+const sortField = ref<keyof AnchorFollowGroupItem>();
 const sortOrder = ref<'ascending' | 'descending'>();
 
 // 过滤条件
@@ -59,10 +54,10 @@ function handleFilterReset() {
 }
 
 const { data, isLoading, isError, error, refetch } = useQuery<
-  GetAnchorFrom87ListResponseData | undefined
+  GetAnchorFollowGroupListResponseData | undefined
 >({
   queryKey: [
-    'anchors-from-87',
+    'anchor-follow-groups',
     pageNum,
     pageSize,
     sortField,
@@ -74,7 +69,7 @@ const { data, isLoading, isError, error, refetch } = useQuery<
     const orderBy = sortField.value
       ? { [sortField.value]: sortOrder.value === 'ascending' ? 'asc' : 'desc' }
       : undefined;
-    const response = await getAnchorFrom87List({
+    const response = await getAnchorFollowGroupList({
       page_num: pageNum.value,
       page_size: pageSize.value,
       order_by: orderBy,
@@ -90,7 +85,7 @@ function handleSortChange({
   prop,
   order,
 }: {
-  prop: keyof AnchorFrom87;
+  prop: keyof AnchorFollowGroupItem;
   order: 'ascending' | 'descending' | null;
 }) {
   sortField.value = order ? prop : undefined;
@@ -112,10 +107,10 @@ async function refresh() {
   });
 }
 
-// 删除主播
-async function deleteItem(item: AnchorFrom87) {
+// 删除分组
+async function deleteItem(item: AnchorFollowGroupItem) {
   try {
-    await ElMessageBox.confirm(`确定要删除主播 ${item.account} 吗？`, {
+    await ElMessageBox.confirm(`确定要删除分组 ${item.name} 吗？`, {
       type: 'warning',
       confirmButtonText: '确定',
       cancelButtonText: '取消',
@@ -123,7 +118,7 @@ async function deleteItem(item: AnchorFrom87) {
   } catch {
     return;
   }
-  await deleteAnchorFrom87({ id: [item.id] });
+  await deleteAnchorFollowGroup({ id: [item.id] });
   ElMessage.success({ message: '删除成功', type: 'success', duration: 2000 });
   await refetch();
 }
@@ -136,42 +131,18 @@ function handlePageSizeChange(_pageSize: number) {
   pageSize.value = _pageSize;
 }
 
-const selectedRows = ref<AnchorFrom87[]>([]);
+const selectedRows = ref<AnchorFollowGroupItem[]>([]);
 
 // 处理选择变化
-function handleSelectionChange(rows: AnchorFrom87[]) {
+function handleSelectionChange(rows: AnchorFollowGroupItem[]) {
   selectedRows.value = rows;
 }
 const hasSelectedRows = computed(() => selectedRows.value.length > 0);
 
-const createGroupDialogVisible = ref(false);
-function openCreateGroupDialog() {
-  createGroupDialogVisible.value = true;
-}
-function closeCreateGroupDialog() {
-  createGroupDialogVisible.value = false;
-}
-async function handleGroupCreateSubmit(data: CreateAnchorFollowGroupRequest) {
-  const res = await createAnchorFollowGroup({
-    name: data.name,
-    anchor_ids: data.anchor_ids,
-  });
-  if (res.status_code !== RESPONSE_CODE.SUCCESS) {
-    return;
-  }
-  ElMessage.success({
-    message: '新增分组成功',
-    type: 'success',
-    duration: 2000,
-  });
-  closeCreateGroupDialog();
-  await refetch();
-}
-
 async function handleBatchDelete() {
   try {
     await ElMessageBox.confirm(
-      `确定要删除 ${selectedRows.value.length} 个主播吗？`,
+      `确定要删除 ${selectedRows.value.length} 个分组吗？`,
       {
         type: 'warning',
         confirmButtonText: '确定',
@@ -181,14 +152,15 @@ async function handleBatchDelete() {
   } catch {
     return;
   }
-  const { data, status_code } = await deleteAnchorFrom87({
+  const { data, status_code } = await deleteAnchorFollowGroup({
     id: selectedRows.value.map(item => item.id),
   });
   if (status_code !== RESPONSE_CODE.SUCCESS) {
     return;
   }
+
   ElMessage.success({
-    message: `共删除 ${data?.deleted_count} 个主播`,
+    message: `共删除 ${data!.deleted_count} 个分组`,
     type: 'success',
     duration: 2000,
   });
@@ -215,18 +187,19 @@ async function handleClearData() {
       customClass: 'custom-clear-message-box',
     });
 
-    const { data, status_code } = await clearAnchorFrom87({
+    const { data, status_code } = await clearAnchorFollowGroup({
       filter:
         state.clearType === 'all'
           ? undefined
           : transformFilterViewValuesToFilterValues(filters.value),
     });
+
     if (status_code !== RESPONSE_CODE.SUCCESS) {
       return;
     }
 
     ElMessage.success({
-      message: `共清空 ${data.deleted_count} 个主播`,
+      message: `共清空 ${data!.deleted_count} 个分组`,
       type: 'success',
       duration: 2000,
     });
@@ -239,29 +212,20 @@ onActivated(refetch);
 </script>
 
 <template>
-  <div v-loading="isLoading || isRefreshing" class="anchor-table">
-    <div v-if="isError" class="anchor-table-error">
+  <div v-loading="isLoading || isRefreshing" class="group-table">
+    <div v-if="isError" class="group-table-error">
       {{ error?.message }}
     </div>
     <template v-if="!isError">
       <div class="filter-row">
-        <AnchorFilter
+        <GroupFilter
           :model-value="filters"
           @change="handleFilterChange"
           @reset="handleFilterReset"
         />
       </div>
       <div class="header-row">
-        <div class="left-part">
-          <ElButton
-            :disabled="!hasSelectedRows"
-            type="primary"
-            size="small"
-            @click="openCreateGroupDialog"
-          >
-            批量加入分组
-          </ElButton>
-        </div>
+        <div class="left-part"></div>
         <div class="right-part">
           <ElButton
             :disabled="!hasSelectedRows"
@@ -297,82 +261,16 @@ onActivated(refetch);
         @selection-change="handleSelectionChange"
       >
         <ElTableColumn type="selection" width="55" />
-        <ElTableColumn prop="account_id" label="账号ID" min-width="180" />
-        <ElTableColumn prop="account" label="账号" min-width="140" />
-
-        <ElTableColumn prop="has_grouped" label="是否已分组" min-width="100">
-          <template #default="scope">
-            <ElTag :type="scope.row.has_grouped ? 'success' : 'info'">
-              {{ scope.row.has_grouped ? '已分组' : '未分组' }}
-            </ElTag>
-          </template>
-        </ElTableColumn>
-
+        <ElTableColumn prop="id" label="分组ID" min-width="120" />
+        <ElTableColumn prop="name" label="分组名称" min-width="140" />
         <ElTableColumn
-          prop="canuse_invitation_type"
-          label="邀约类型"
-          min-width="120"
-        >
-          <template #default="scope">
-            <ElTag v-if="scope.row.canuse_invitation_type === 3" type="info">
-              常规邀约
-            </ElTag>
-            <ElTag v-if="scope.row.canuse_invitation_type === 4" type="warning">
-              金票邀约
-            </ElTag>
-          </template>
-        </ElTableColumn>
-
-        <ElTableColumn
-          prop="pieces"
-          label="主播段位"
-          min-width="120"
-          sortable="custom"
-        />
-        <ElTableColumn
-          prop="day_diamond_val"
-          label="日钻石"
-          min-width="100"
-          sortable="custom"
-        />
-        <ElTableColumn
-          prop="last_day_diamond_val"
-          label="上次钻石"
-          min-width="120"
-          sortable="custom"
-        />
-        <ElTableColumn
-          prop="his_max_diamond_val"
-          label="历史最高钻石"
+          prop="anchors_count"
+          label="主播账号数量"
           min-width="140"
           sortable="custom"
         />
+
         <ElTableColumn
-          prop="follower_count"
-          label="粉丝数"
-          min-width="100"
-          sortable="custom"
-        />
-
-        <ElTableColumn prop="country" label="地区名称" min-width="80">
-          <template #default="scope">
-            {{ scope.row.country || '-' }}
-          </template>
-        </ElTableColumn>
-        <ElTableColumn prop="country" label="地区编码" min-width="80">
-          <template #default="scope">
-            {{ scope.row.country_code || '-' }}
-          </template>
-        </ElTableColumn>
-        <ElTableColumn prop="available" label="可用状态" min-width="100">
-          <template #default="scope">
-            <ElTag :type="scope.row.available === 0 ? 'success' : 'danger'">
-              {{ scope.row.available === 0 ? '可用' : '不可用' }}
-            </ElTag>
-          </template>
-        </ElTableColumn>
-
-        <!-- <ElTableColumn
           prop="created_at"
           label="创建时间"
           min-width="180"
@@ -381,11 +279,11 @@ onActivated(refetch);
           <template #default="scope">
             {{ formatDateTime(scope.row.created_at) }}
           </template>
-        </ElTableColumn> -->
+        </ElTableColumn>
 
         <ElTableColumn
           prop="updated_at"
-          label="采集时间"
+          label="更新时间"
           min-width="180"
           sortable="custom"
         >
@@ -397,14 +295,6 @@ onActivated(refetch);
         <ElTableColumn fixed="right" label="操作" min-width="120">
           <template #default="scope">
             <div>
-              <!-- <ElButton
-                link
-                type="primary"
-                size="small"
-                :disabled="scope.row.has_grouped"
-              >
-                加入分组
-              </ElButton> -->
               <ElButton
                 link
                 type="danger"
@@ -424,25 +314,18 @@ onActivated(refetch);
           size="small"
           background
           layout="total, sizes, prev, pager, next"
-          :page-sizes="[100, 200, 500, 1000]"
           :total="data?.total || 0"
           class="mt-4"
           @size-change="handlePageSizeChange"
           @current-change="handlePageNumChange"
         />
       </div>
-      <CreateGroupDialog
-        :visible="createGroupDialogVisible"
-        :anchors="selectedRows"
-        :submit="handleGroupCreateSubmit"
-        @close="closeCreateGroupDialog"
-      />
     </template>
   </div>
 </template>
 
 <style scoped>
-.anchor-table {
+.group-table {
   position: relative;
   flex: 1;
   height: 100%;
@@ -484,7 +367,7 @@ onActivated(refetch);
   color: var(--el-color-primary);
 }
 
-.anchor-table-error {
+.group-table-error {
   display: flex;
   align-items: center;
   justify-content: center;

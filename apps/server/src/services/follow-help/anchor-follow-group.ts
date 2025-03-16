@@ -1,7 +1,9 @@
 import type {
   ClearAnchorFollowGroupRequest,
+  ClearAnchorFollowGroupResponse,
   CreateAnchorFollowGroupRequest,
   DeleteAnchorFollowGroupRequest,
+  DeleteAnchorFollowGroupResponse,
   GetAnchorFollowGroupListRequest,
   GetAnchorFollowGroupListResponseData,
   GetAnchorFollowGroupRequest,
@@ -14,32 +16,51 @@ import assert from 'node:assert';
 import { mysqlClient } from '@tk-crawler/database/mysql';
 import { isEmpty, transObjectValuesToString } from '@tk-crawler/shared';
 import { logger } from '../../infra/logger';
+import { transformGroupFilterValuesToFilterValues } from './filter';
 
 // 获取列表
 export async function getAnchorFollowGroupList(
   data: GetAnchorFollowGroupListRequest,
 ): Promise<GetAnchorFollowGroupListResponseData> {
   logger.info('[Get Anchor Follow Group List]', { data });
-  const orderBy = isEmpty(data.order_by)
+  const _orderBy = isEmpty(data.order_by)
     ? {
         updated_at: 'desc' as const, // 默认按更新时间倒序排序
       }
     : data.order_by!;
 
+  const { anchors_count, ...orderBy } = _orderBy;
+  if (anchors_count) {
+    orderBy.AnchorFollowGroupRelation = {
+      _count: anchors_count,
+    };
+  }
+  const filter = transformGroupFilterValuesToFilterValues(data.filter);
   const [groups, total] = await Promise.all([
     mysqlClient.prismaClient.anchorFollowGroup.findMany({
-      where: data.filter,
+      where: filter,
       skip: (data.page_num - 1) * data.page_size,
       take: data.page_size,
       orderBy,
+      include: {
+        _count: {
+          select: {
+            AnchorFollowGroupRelation: true,
+          },
+        },
+      },
     }),
     mysqlClient.prismaClient.anchorFollowGroup.count({
-      where: data.filter,
+      where: filter,
     }),
   ]);
 
   return {
-    list: groups.map(group => transObjectValuesToString(group, ['id'])),
+    list: groups.map(({ _count, ...group }) => ({
+      ...group,
+      id: group.id.toString(),
+      anchors_count: _count.AnchorFollowGroupRelation,
+    })),
     total,
   };
 }
@@ -189,25 +210,45 @@ export async function updateAnchorFollowGroup(
 // 删除分组
 export async function deleteAnchorFollowGroup(
   data: DeleteAnchorFollowGroupRequest,
-): Promise<void> {
+): Promise<DeleteAnchorFollowGroupResponse['data']> {
   logger.info('[Delete Anchor Follow Group]', { data });
 
-  await mysqlClient.prismaClient.anchorFollowGroup.deleteMany({
+  const res = await mysqlClient.prismaClient.anchorFollowGroup.deleteMany({
     where: {
       id: {
         in: data.id.map(BigInt),
       },
     },
   });
+
+  return { deleted_count: res.count };
 }
 
 // 清空分组
 export async function clearAnchorFollowGroup(
   data: ClearAnchorFollowGroupRequest,
-): Promise<void> {
+): Promise<ClearAnchorFollowGroupResponse['data']> {
   logger.info('[Clear Anchor Follow Group]', { data });
 
-  await mysqlClient.prismaClient.anchorFollowGroup.deleteMany({
-    where: data.filter,
-  });
+  let deletedCount = 0;
+
+  if (isEmpty(data.filter)) {
+    deletedCount = await mysqlClient.prismaClient.anchorFollowGroup.count();
+
+    // 执行删除
+    await mysqlClient.prismaClient.$executeRaw`DELETE FROM AnchorFollowGroup`;
+  } else {
+    // 使用 Prisma deleteMany
+    const result = await mysqlClient.prismaClient.anchorFollowGroup.deleteMany({
+      where: transformGroupFilterValuesToFilterValues(data.filter),
+    });
+
+    deletedCount = result.count;
+  }
+
+  logger.info('[Clear Anchor Follow Group Result]', { deletedCount });
+
+  return {
+    deleted_count: deletedCount,
+  };
 }

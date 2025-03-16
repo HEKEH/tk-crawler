@@ -86,15 +86,13 @@ export default class FollowHelpController {
 
   static async deleteAnchorFollowGroup(ctx: Context, next: Next) {
     const data = ctx.getRequestData<DeleteAnchorFollowGroupRequest>();
-    await deleteAnchorFollowGroup(data);
-    ctx.body = ctx.t('Success');
+    ctx.body = await deleteAnchorFollowGroup(data);
     await next();
   }
 
   static async clearAnchorFollowGroup(ctx: Context, next: Next) {
     const data = ctx.getRequestData<ClearAnchorFollowGroupRequest>();
-    await clearAnchorFollowGroup(data);
-    ctx.body = ctx.t('Success');
+    ctx.body = await clearAnchorFollowGroup(data);
     await next();
   }
 }

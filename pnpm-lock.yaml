@@ -112,8 +112,8 @@ importers:
         specifier: ^25.1.8
         version: 25.1.8(electron-builder-squirrel-windows@25.1.8)
       element-plus:
-        specifier: ^2.9.3
-        version: 2.9.3(vue@3.5.13)
+        specifier: ^2.9.6
+        version: 2.9.6(vue@3.5.13)
       get-system-proxy:
         specifier: ^1.0.0
         version: 1.0.0
@@ -166,8 +166,8 @@ importers:
         specifier: ^25.1.8
         version: 25.1.8(electron-builder-squirrel-windows@25.1.8)
       element-plus:
-        specifier: ^2.9.3
-        version: 2.9.3(vue@3.5.13)
+        specifier: ^2.9.6
+        version: 2.9.6(vue@3.5.13)
       get-system-proxy:
         specifier: ^1.0.0
         version: 1.0.0
@@ -201,6 +201,9 @@ importers:
 
   apps/main-web:
     devDependencies:
+      '@tanstack/vue-query':
+        specifier: ^5.66.11
+        version: 5.66.11(vue@3.5.13)
       '@types/lodash':
         specifier: ^4.17.13
         version: 4.17.13
@@ -211,8 +214,8 @@ importers:
         specifier: ^4.1.1
         version: 4.1.1(vite@5.4.11)(vue@3.5.13)
       element-plus:
-        specifier: ^2.9.3
-        version: 2.9.3(vue@3.5.13)
+        specifier: ^2.9.6
+        version: 2.9.6(vue@3.5.13)
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
@@ -237,6 +240,9 @@ importers:
 
   apps/mobile-follow-client:
     devDependencies:
+      '@tanstack/vue-query':
+        specifier: ^5.66.11
+        version: 5.66.11(vue@3.5.13)
       '@types/global-agent':
         specifier: ^2.1.3
         version: 2.1.3
@@ -256,8 +262,8 @@ importers:
         specifier: ^25.1.8
         version: 25.1.8(electron-builder-squirrel-windows@25.1.8)
       element-plus:
-        specifier: ^2.9.3
-        version: 2.9.3(vue@3.5.13)
+        specifier: ^2.9.6
+        version: 2.9.6(vue@3.5.13)
       get-system-proxy:
         specifier: ^1.0.0
         version: 1.0.0
@@ -486,8 +492,8 @@ importers:
   packages/view-shared:
     dependencies:
       element-plus:
-        specifier: ^2.9.3
-        version: 2.9.3(vue@3.5.13)
+        specifier: ^2.9.6
+        version: 2.9.6(vue@3.5.13)
       vue:
         specifier: ^3.5.12
         version: 3.5.13(typescript@5.5.4)
@@ -5560,8 +5566,8 @@ packages:
       - supports-color
     dev: true
 
-  /element-plus@2.9.3(vue@3.5.13):
-    resolution: {integrity: sha512-6tSLp5XytDS4TMZ0P3aGZnr7MXTagfNycepNfIDitd9IgwM9y01+Ssu6mglNi8RiXYhek6LBWNOd/cvpIO12+w==}
+  /element-plus@2.9.6(vue@3.5.13):
+    resolution: {integrity: sha512-D9zU28Ce0s/9O/Vp3ewemikxzFVA6gdZyMwmWijHijo+t5/9H3sHRTIm1WlfeNpFW2Yq0y8nHXD0fU5YxU6qlQ==}
     peerDependencies:
       vue: ^3.2.0
     dependencies:

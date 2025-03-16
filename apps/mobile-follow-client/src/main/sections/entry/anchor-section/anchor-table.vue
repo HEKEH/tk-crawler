@@ -1,24 +1,36 @@
-<script setup lang="ts">
+<script setup lang="tsx">
 import type {
   AnchorFrom87,
   CreateAnchorFollowGroupRequest,
   GetAnchorFrom87ListResponseData,
 } from '@tk-crawler/biz-shared';
+import type { Column, SortBy } from 'element-plus';
+// import { confirmAfterSeconds } from '@tk-crawler/view-shared';
 import { RefreshRight } from '@element-plus/icons-vue';
 import { useQuery } from '@tanstack/vue-query';
 import { formatDateTime, RESPONSE_CODE } from '@tk-crawler/shared';
-// import { confirmAfterSeconds } from '@tk-crawler/view-shared';
+import { useTableMultiSelect } from '@tk-crawler/view-shared';
 import {
   ElButton,
+  ElCheckbox,
   ElIcon,
   ElMessage,
   ElMessageBox,
   ElPagination,
-  ElTable,
-  ElTableColumn,
+  ElTableV2,
   ElTag,
+  TableV2SortOrder,
 } from 'element-plus';
-import { computed, h, onActivated, reactive, ref } from 'vue';
+import {
+  computed,
+  h,
+  onActivated,
+  onBeforeUnmount,
+  onMounted,
+  reactive,
+  ref,
+  shallowRef,
+} from 'vue';
 import {
   clearAnchorFrom87,
   createAnchorFollowGroup,
@@ -38,11 +50,16 @@ defineOptions({
   name: 'AnchorTable',
 });
 
-const tableRef = ref<InstanceType<typeof ElTable>>();
+const tableRef = shallowRef<InstanceType<typeof ElTableV2>>();
 const pageNum = ref(1);
 const pageSize = ref(1000);
-const sortField = ref<keyof AnchorFrom87>();
-const sortOrder = ref<'ascending' | 'descending'>();
+const sortState = ref<
+  | {
+      key: string;
+      order: TableV2SortOrder;
+    }
+  | undefined
+>();
 
 // 过滤条件
 const filters = ref<FilterViewValues>(DefaultFilterViewValues);
@@ -61,19 +78,13 @@ function handleFilterReset() {
 const { data, isLoading, isError, error, refetch } = useQuery<
   GetAnchorFrom87ListResponseData | undefined
 >({
-  queryKey: [
-    'anchors-from-87',
-    pageNum,
-    pageSize,
-    sortField,
-    sortOrder,
-    filters,
-  ],
+  queryKey: ['anchors-from-87', pageNum, pageSize, sortState, filters],
   retry: false,
   queryFn: async () => {
-    const orderBy = sortField.value
-      ? { [sortField.value]: sortOrder.value === 'ascending' ? 'asc' : 'desc' }
-      : undefined;
+    const orderBy =
+      sortState.value?.key && sortState.value.order
+        ? { [sortState.value.key]: sortState.value.order! }
+        : undefined;
     const response = await getAnchorFrom87List({
       page_num: pageNum.value,
       page_size: pageSize.value,
@@ -85,22 +96,37 @@ const { data, isLoading, isError, error, refetch } = useQuery<
   placeholderData: previousData => previousData,
 });
 
-// 处理排序变化
-function handleSortChange({
-  prop,
-  order,
-}: {
-  prop: keyof AnchorFrom87;
-  order: 'ascending' | 'descending' | null;
-}) {
-  sortField.value = order ? prop : undefined;
-  sortOrder.value = order || undefined;
+const anchorList = computed(() => data.value?.list || []);
+
+const {
+  selectedRows,
+  isAllRowSelected,
+  isPartialSelected,
+  onToggleRowSelect,
+  onToggleAllRowSelect,
+  isRowSelected,
+} = useTableMultiSelect(anchorList, {
+  rowKey: 'id',
+});
+
+// TODO element-plus 排序有bug，自定义排序顺序
+function handleSortChange(sort: SortBy) {
+  if (sort.key !== sortState.value?.key) {
+    sortState.value = {
+      key: sort.key as string,
+      order: TableV2SortOrder.ASC,
+    };
+  } else {
+    if (sortState.value?.order === TableV2SortOrder.ASC) {
+      sortState.value.order = TableV2SortOrder.DESC;
+    } else if (sortState.value?.order === TableV2SortOrder.DESC) {
+      sortState.value = undefined;
+    }
+  }
 }
 
 function resetSort() {
-  tableRef.value?.clearSort();
-  sortField.value = undefined;
-  sortOrder.value = undefined;
+  sortState.value = undefined;
 }
 
 // 刷新功能
@@ -124,7 +150,11 @@ async function deleteItem(item: AnchorFrom87) {
     return;
   }
   await deleteAnchorFrom87({ id: [item.id] });
-  ElMessage.success({ message: '删除成功', type: 'success', duration: 2000 });
+  ElMessage.success({
+    message: `删除主播 ${item.account} 成功`,
+    type: 'success',
+    duration: 2000,
+  });
   await refetch();
 }
 
@@ -135,8 +165,6 @@ function handlePageNumChange(_pageNum: number) {
 function handlePageSizeChange(_pageSize: number) {
   pageSize.value = _pageSize;
 }
-
-const selectedRows = ref<AnchorFrom87[]>([]);
 
 // 处理选择变化
 function handleSelectionChange(rows: AnchorFrom87[]) {
@@ -236,14 +264,207 @@ async function handleClearData() {
 }
 
 onActivated(refetch);
+
+const containerWidth = ref(800);
+const containerHeight = ref(600);
+const tableContainer = ref<HTMLElement>();
+
+function updateSize() {
+  if (tableContainer.value) {
+    containerWidth.value = tableContainer.value.offsetWidth;
+    containerHeight.value = Math.max(tableContainer.value.offsetHeight, 100);
+  }
+}
+let resizeObserver: ResizeObserver | null = null;
+onMounted(() => {
+  if (tableContainer.value) {
+    resizeObserver = new ResizeObserver(updateSize);
+    resizeObserver.observe(tableContainer.value);
+  }
+  updateSize();
+});
+
+onBeforeUnmount(() => {
+  if (!resizeObserver) {
+    return;
+  }
+  if (tableContainer.value) {
+    resizeObserver.unobserve(tableContainer.value);
+  }
+  resizeObserver.disconnect();
+  resizeObserver = null;
+});
+
+const columns = computed<Column<AnchorFrom87>[]>(() => [
+  {
+    key: 'selection',
+    width: 55,
+    cellRenderer: ({ rowData }) => {
+      const onChange = () => onToggleRowSelect(rowData);
+      return (
+        <ElCheckbox modelValue={isRowSelected(rowData)} onChange={onChange} />
+      );
+    },
+
+    headerCellRenderer: () => {
+      const allSelected = isAllRowSelected.value;
+      return (
+        <ElCheckbox
+          modelValue={allSelected}
+          indeterminate={isPartialSelected.value}
+          onChange={onToggleAllRowSelect}
+        />
+      );
+    },
+  },
+  {
+    key: 'account_id',
+    dataKey: 'account_id',
+    title: '账号ID',
+    width: 180,
+  },
+  {
+    key: 'account',
+    dataKey: 'account',
+    title: '账号',
+    width: 140,
+  },
+  {
+    key: 'has_grouped',
+    dataKey: 'has_grouped',
+    title: '是否已分组',
+    width: 100,
+    cellRenderer: ({ rowData }) =>
+      h(
+        ElTag,
+        {
+          type: rowData.has_grouped ? 'success' : 'info',
+        },
+        () => (rowData.has_grouped ? '已分组' : '未分组'),
+      ),
+  },
+  {
+    key: 'updated_at',
+    dataKey: 'updated_at',
+    title: '采集时间',
+    width: 180,
+    sortable: true,
+    cellRenderer: ({ rowData }) =>
+      h(
+        'span',
+        null,
+        (rowData?.updated_at && formatDateTime(rowData.updated_at)) || '-',
+      ),
+  },
+  {
+    key: 'canuse_invitation_type',
+    dataKey: 'canuse_invitation_type',
+    title: '邀约类型',
+    width: 120,
+    cellRenderer: ({ rowData }) => {
+      if (rowData.canuse_invitation_type === 3) {
+        return h(ElTag, { type: 'info' }, () => '常规邀约');
+      }
+      if (rowData.canuse_invitation_type === 4) {
+        return h(ElTag, { type: 'warning' }, () => '金票邀约');
+      }
+      return h('span');
+    },
+  },
+  {
+    key: 'pieces',
+    dataKey: 'pieces',
+    title: '主播段位',
+    width: 120,
+    sortable: true,
+  },
+  {
+    key: 'day_diamond_val',
+    dataKey: 'day_diamond_val',
+    title: '日钻石',
+    width: 100,
+    sortable: true,
+  },
+  {
+    key: 'last_day_diamond_val',
+    dataKey: 'last_day_diamond_val',
+    title: '上次钻石',
+    width: 120,
+    sortable: true,
+  },
+  {
+    key: 'his_max_diamond_val',
+    dataKey: 'his_max_diamond_val',
+    title: '历史最高钻石',
+    width: 140,
+    sortable: true,
+  },
+  {
+    key: 'follower_count',
+    dataKey: 'follower_count',
+    title: '粉丝数',
+    width: 100,
+    sortable: true,
+  },
+  {
+    key: 'country',
+    dataKey: 'country',
+    title: '地区名称',
+    width: 80,
+    cellRenderer: ({ rowData }) => h('span', null, rowData.country || '-'),
+  },
+  {
+    key: 'country_code',
+    dataKey: 'country_code',
+    title: '地区编码',
+    width: 80,
+    cellRenderer: ({ rowData }) => h('span', null, rowData.country_code || '-'),
+  },
+  {
+    key: 'available',
+    dataKey: 'available',
+    title: '可用状态',
+    width: 100,
+    cellRenderer: ({ rowData }) =>
+      h(
+        ElTag,
+        {
+          type: rowData.available === 0 ? 'success' : 'danger',
+        },
+        () => (rowData.available === 0 ? '可用' : '不可用'),
+      ),
+  },
+  {
+    key: 'operations',
+    title: '操作',
+    width: 120,
+    fixed: 'right' as any,
+    cellRenderer: ({ rowData }) =>
+      h('div', [
+        h(
+          ElButton,
+          {
+            link: true,
+            type: 'danger',
+            size: 'small',
+            onClick: (e: Event) => {
+              e.preventDefault();
+              deleteItem(rowData);
+            },
+          },
+          () => '删除',
+        ),
+      ]),
+  },
+]);
 </script>
 
 <template>
-  <div v-loading="isLoading || isRefreshing" class="anchor-table">
+  <div v-loading="isLoading || isRefreshing" class="outer-container">
     <div v-if="isError" class="anchor-table-error">
-      {{ error?.message }}
+      {{ error?.message || '加载失败' }}
     </div>
-    <template v-if="!isError">
+    <div v-show="!isError" class="anchor-table-main">
       <div class="filter-row">
         <AnchorFilter
           :model-value="filters"
@@ -282,141 +503,22 @@ onActivated(refetch);
           </ElIcon>
         </div>
       </div>
-      <ElTable
-        ref="tableRef"
-        :data="data?.list"
-        style="width: 100%"
-        height="calc(100% - 130px)"
-        :default-sort="
-          sortField && sortOrder
-            ? { prop: sortField, order: sortOrder }
-            : undefined
-        "
-        row-key="id"
-        @sort-change="handleSortChange"
-        @selection-change="handleSelectionChange"
-      >
-        <ElTableColumn type="selection" width="55" />
-        <ElTableColumn prop="account_id" label="账号ID" min-width="180" />
-        <ElTableColumn prop="account" label="账号" min-width="140" />
-
-        <ElTableColumn prop="has_grouped" label="是否已分组" min-width="100">
-          <template #default="scope">
-            <ElTag :type="scope.row.has_grouped ? 'success' : 'info'">
-              {{ scope.row.has_grouped ? '已分组' : '未分组' }}
-            </ElTag>
-          </template>
-        </ElTableColumn>
-
-        <ElTableColumn
-          prop="canuse_invitation_type"
-          label="邀约类型"
-          min-width="120"
-        >
-          <template #default="scope">
-            <ElTag v-if="scope.row.canuse_invitation_type === 3" type="info">
-              常规邀约
-            </ElTag>
-            <ElTag v-if="scope.row.canuse_invitation_type === 4" type="warning">
-              金票邀约
-            </ElTag>
-          </template>
-        </ElTableColumn>
-
-        <ElTableColumn
-          prop="pieces"
-          label="主播段位"
-          min-width="120"
-          sortable="custom"
+      <div ref="tableContainer" class="table-container">
+        <ElTableV2
+          ref="tableRef"
+          :cache="10"
+          :data="anchorList"
+          :width="containerWidth"
+          :height="containerHeight"
+          :columns="columns"
+          :fixed="true"
+          :row-height="43"
+          row-key="id"
+          :sort-by="sortState"
+          @column-sort="handleSortChange"
+          @selection-change="handleSelectionChange"
         />
-        <ElTableColumn
-          prop="day_diamond_val"
-          label="日钻石"
-          min-width="100"
-          sortable="custom"
-        />
-        <ElTableColumn
-          prop="last_day_diamond_val"
-          label="上次钻石"
-          min-width="120"
-          sortable="custom"
-        />
-        <ElTableColumn
-          prop="his_max_diamond_val"
-          label="历史最高钻石"
-          min-width="140"
-          sortable="custom"
-        />
-        <ElTableColumn
-          prop="follower_count"
-          label="粉丝数"
-          min-width="100"
-          sortable="custom"
-        />
-
-        <ElTableColumn prop="country" label="地区名称" min-width="80">
-          <template #default="scope">
-            {{ scope.row.country || '-' }}
-          </template>
-        </ElTableColumn>
-        <ElTableColumn prop="country" label="地区编码" min-width="80">
-          <template #default="scope">
-            {{ scope.row.country_code || '-' }}
-          </template>
-        </ElTableColumn>
-        <ElTableColumn prop="available" label="可用状态" min-width="100">
-          <template #default="scope">
-            <ElTag :type="scope.row.available === 0 ? 'success' : 'danger'">
-              {{ scope.row.available === 0 ? '可用' : '不可用' }}
-            </ElTag>
-          </template>
-        </ElTableColumn>
-
-        <!-- <ElTableColumn
-          prop="created_at"
-          label="创建时间"
-          min-width="180"
-          sortable="custom"
-        >
-          <template #default="scope">
-            {{ formatDateTime(scope.row.created_at) }}
-          </template>
-        </ElTableColumn> -->
-
-        <ElTableColumn
-          prop="updated_at"
-          label="采集时间"
-          min-width="180"
-          sortable="custom"
-        >
-          <template #default="scope">
-            {{ formatDateTime(scope.row.updated_at) }}
-          </template>
-        </ElTableColumn>
-
-        <ElTableColumn fixed="right" label="操作" min-width="120">
-          <template #default="scope">
-            <div>
-              <!-- <ElButton
-                link
-                type="primary"
-                size="small"
-                :disabled="scope.row.has_grouped"
-              >
-                加入分组
-              </ElButton> -->
-              <ElButton
-                link
-                type="danger"
-                size="small"
-                @click.prevent="deleteItem(scope.row)"
-              >
-                删除
-              </ElButton>
-            </div>
-          </template>
-        </ElTableColumn>
-      </ElTable>
+      </div>
       <div class="pagination-row">
         <ElPagination
           v-model:current-page="pageNum"
@@ -437,17 +539,29 @@ onActivated(refetch);
         :submit="handleGroupCreateSubmit"
         @close="closeCreateGroupDialog"
       />
-    </template>
+    </div>
   </div>
 </template>
 
 <style scoped>
-.anchor-table {
+.outer-container {
   position: relative;
-  flex: 1;
-  height: 100%;
   width: 100%;
   overflow: hidden;
+  flex: 1;
+}
+
+.anchor-table-main {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+
+.table-container {
+  flex: 1;
+  width: 100%;
+  min-height: 0; /* 重要：防止flex子元素溢出 */
 }
 
 .filter-row {

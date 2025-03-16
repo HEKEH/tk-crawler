@@ -42,15 +42,13 @@ export default class FollowHelpController {
 
   static async deleteAnchorFrom87(ctx: Context, next: Next) {
     const data = ctx.getRequestData<DeleteAnchorFrom87Request>();
-    await deleteAnchorFrom87(data);
-    ctx.body = ctx.t('Success');
+    ctx.body = await deleteAnchorFrom87(data);
     await next();
   }
 
   static async clearAnchorFrom87(ctx: Context, next: Next) {
     const data = ctx.getRequestData<ClearAnchorFrom87Request>();
-    await clearAnchorFrom87(data);
-    ctx.body = ctx.t('Success');
+    ctx.body = await clearAnchorFrom87(data);
     await next();
   }
 

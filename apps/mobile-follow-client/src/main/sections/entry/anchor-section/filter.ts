@@ -1,4 +1,4 @@
-import type { GetAnchorFrom87ListFilter } from '@tk-crawler/biz-shared';
+import type { AnchorFrom87ListFilter } from '@tk-crawler/biz-shared';
 
 export interface FilterViewValues {
   has_grouped: boolean | 'all';
@@ -7,7 +7,7 @@ export interface FilterViewValues {
 
 export function transformFilterViewValuesToFilterValues(
   filterViewValues: FilterViewValues,
-): GetAnchorFrom87ListFilter {
+): AnchorFrom87ListFilter {
   return {
     has_grouped:
       filterViewValues.has_grouped === 'all'

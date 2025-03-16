@@ -1,14 +1,16 @@
-import type { Prisma } from '@prisma/client';
 import type {
   ClearAnchorFrom87Request,
+  ClearAnchorFrom87Response,
   CreateOrUpdateAnchorFrom87Request,
   DeleteAnchorFrom87Request,
+  DeleteAnchorFrom87Response,
   GetAnchorFrom87ListRequest,
   GetAnchorFrom87ListResponseData,
 } from '@tk-crawler/biz-shared';
 import { mysqlClient } from '@tk-crawler/database/mysql';
 import { isEmpty, transObjectValuesToString } from '@tk-crawler/shared';
 import { logger } from '../../infra/logger';
+import { transformFilterValuesToFilterValues } from './filter';
 // 获取列表
 export async function getAnchorFrom87List(
   data: GetAnchorFrom87ListRequest,
@@ -19,24 +21,8 @@ export async function getAnchorFrom87List(
         updated_at: 'desc' as const, // 默认按更新时间倒序排序
       }
     : data.order_by!;
-  const { has_grouped, search, ...filterRest } = data.filter ?? {};
-  const filter: Prisma.AnchorFrom87WhereInput = filterRest;
-  if (has_grouped !== undefined) {
-    filter.AnchorFollowGroupRelation = has_grouped
-      ? {
-          some: {}, // 存在任何关联记录
-        }
-      : {
-          none: {}, // 不存在任何关联记录
-        };
-  }
 
-  if (search) {
-    filter.account = {
-      contains: search,
-    };
-  }
-
+  const filter = transformFilterValuesToFilterValues(data.filter);
   const [anchors, total] = await Promise.all([
     mysqlClient.prismaClient.anchorFrom87.findMany({
       where: filter,
@@ -161,36 +147,55 @@ export async function createOrUpdateAnchorFrom87(
       updated_count: toUpdate.length,
     };
   });
-  console.log('res', res);
   return res;
 }
 
 // 删除指定记录
 export async function deleteAnchorFrom87(
   data: DeleteAnchorFrom87Request,
-): Promise<void> {
+): Promise<DeleteAnchorFrom87Response['data']> {
   logger.info('[Delete Anchor From 87]', { idCount: data.id.length });
 
-  await mysqlClient.prismaClient.anchorFrom87.deleteMany({
+  const result = await mysqlClient.prismaClient.anchorFrom87.deleteMany({
     where: {
       id: {
         in: data.id.map(BigInt),
       },
     },
   });
+
+  logger.info('[Delete Anchor From 87 Result]', { deletedCount: result.count });
+
+  return {
+    deleted_count: result.count,
+  };
 }
 
 // 清空记录
 export async function clearAnchorFrom87(
   data: ClearAnchorFrom87Request,
-): Promise<void> {
+): Promise<ClearAnchorFrom87Response['data']> {
   logger.info('[Clear Anchor From 87]', data);
+
+  let deletedCount = 0;
+
   if (isEmpty(data.filter)) {
+    deletedCount = await mysqlClient.prismaClient.anchorFrom87.count();
+
+    // 执行删除
     await mysqlClient.prismaClient.$executeRaw`DELETE FROM AnchorFrom87`;
-    return;
+  } else {
+    // 使用 Prisma deleteMany
+    const result = await mysqlClient.prismaClient.anchorFrom87.deleteMany({
+      where: transformFilterValuesToFilterValues(data.filter),
+    });
+
+    deletedCount = result.count;
   }
 
-  await mysqlClient.prismaClient.anchorFrom87.deleteMany({
-    where: data.filter,
-  });
+  logger.info('[Clear Anchor From 87 Result]', { deletedCount });
+
+  return {
+    deleted_count: deletedCount,
+  };
 }

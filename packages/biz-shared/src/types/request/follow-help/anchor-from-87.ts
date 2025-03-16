@@ -16,7 +16,9 @@ export interface CreateOrUpdateAnchorFrom87Response {
   message?: string;
 }
 
-export type GetAnchorFrom87ListFilter = Prisma.AnchorFrom87WhereInput & {
+export type AnchorFrom87WhereInput = Prisma.AnchorFrom87WhereInput;
+
+export type AnchorFrom87ListFilter = AnchorFrom87WhereInput & {
   has_grouped?: boolean;
   search?: string;
 };
@@ -24,7 +26,7 @@ export type GetAnchorFrom87ListFilter = Prisma.AnchorFrom87WhereInput & {
 export interface GetAnchorFrom87ListRequest {
   page_num: number;
   page_size: number;
-  filter?: GetAnchorFrom87ListFilter;
+  filter?: AnchorFrom87ListFilter;
   order_by?: Prisma.AnchorFrom87OrderByWithRelationInput;
   search?: string;
 }
@@ -46,14 +48,20 @@ export interface DeleteAnchorFrom87Request {
 
 export interface DeleteAnchorFrom87Response {
   status_code: RESPONSE_CODE;
+  data: {
+    deleted_count: number;
+  };
   message?: string;
 }
 
 export interface ClearAnchorFrom87Request {
-  filter?: Prisma.AnchorFrom87WhereInput;
+  filter?: AnchorFrom87ListFilter;
 }
 
 export interface ClearAnchorFrom87Response {
   status_code: RESPONSE_CODE;
+  data: {
+    deleted_count: number;
+  };
   message?: string;
 }

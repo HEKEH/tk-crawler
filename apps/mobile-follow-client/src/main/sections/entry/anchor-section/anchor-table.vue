@@ -17,13 +17,14 @@ import {
   ElTableColumn,
   ElTag,
 } from 'element-plus';
-import { computed, onActivated, ref } from 'vue';
+import { computed, h, onActivated, reactive, ref } from 'vue';
 import {
   clearAnchorFrom87,
   deleteAnchorFrom87,
   getAnchorFrom87List,
 } from '../../../requests';
 import AnchorFilter from './anchor-filter.vue';
+import ClearMessage from './clear-message.vue';
 import {
   DefaultFilterViewValues,
   type FilterViewValues,
@@ -150,9 +151,11 @@ async function handleBatchDelete() {
   } catch {
     return;
   }
-  await deleteAnchorFrom87({ id: selectedRows.value.map(item => item.id) });
+  const { data } = await deleteAnchorFrom87({
+    id: selectedRows.value.map(item => item.id),
+  });
   ElMessage.success({
-    message: '批量删除成功',
+    message: `共删除 ${data?.deleted_count} 个主播`,
     type: 'success',
     duration: 2000,
   });
@@ -160,22 +163,40 @@ async function handleBatchDelete() {
 }
 
 async function handleClearData() {
+  const state = reactive({
+    clearType: 'all' as 'all' | 'filtered',
+  });
+
   try {
-    await ElMessageBox.confirm(`确定要清空主播数据吗？`, {
-      type: 'warning',
+    await ElMessageBox({
+      title: '清空数据',
+      message: h(ClearMessage, {
+        value: state.clearType,
+        onUpdate: val => {
+          state.clearType = val as 'all' | 'filtered';
+        },
+      }),
+      showCancelButton: true,
       confirmButtonText: '确定',
       cancelButtonText: '取消',
+      customClass: 'custom-clear-message-box',
     });
-  } catch {
-    return;
-  }
-  await clearAnchorFrom87({});
-  ElMessage.success({
-    message: '清空成功',
-    type: 'success',
-    duration: 2000,
-  });
-  await refetch();
+
+    const { data } = await clearAnchorFrom87({
+      filter:
+        state.clearType === 'all'
+          ? undefined
+          : transformFilterViewValuesToFilterValues(filters.value),
+    });
+
+    ElMessage.success({
+      message: `共清空 ${data.deleted_count} 个主播`,
+      type: 'success',
+      duration: 2000,
+    });
+
+    await refetch();
+  } catch {}
 }
 
 onActivated(refetch);
@@ -359,7 +380,7 @@ onActivated(refetch);
           background
           layout="total, sizes, prev, pager, next"
           :page-sizes="[100, 200, 500, 1000]"
-          :total="data?.total"
+          :total="data?.total || 0"
           class="mt-4"
           @size-change="handlePageSizeChange"
           @current-change="handlePageNumChange"
@@ -425,5 +446,18 @@ onActivated(refetch);
   justify-content: flex-end;
   margin-top: 1rem;
   padding-right: 1rem;
+}
+
+.custom-clear-message-box {
+  :global(.el-radio) {
+    display: block;
+    margin-left: 0;
+    margin-bottom: 8px;
+    height: 32px;
+    line-height: 32px;
+  }
+  :global(.el-message-box__message) {
+    padding-top: 8px;
+  }
 }
 </style>

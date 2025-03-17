@@ -12,7 +12,6 @@
     target: ['dmg'],
     icon: 'build/icons/icon.icns',
     artifactName: '${productName}-Mac-${version}-Installer.${ext}',
-    displayName: 'TK直播爬虫管理端',
   },
   win: {
     target: [
@@ -29,7 +28,6 @@
     perMachine: false,
     allowToChangeInstallationDirectory: true,
     deleteAppDataOnUninstall: false,
-    displayName: 'TK直播爬虫管理端',
   },
   linux: {
     target: ['AppImage'],

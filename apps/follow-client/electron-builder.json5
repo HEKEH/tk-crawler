@@ -12,7 +12,6 @@
     target: ['dmg'],
     icon: 'build/icons/icon.icns',
     artifactName: '${productName}-Mac-${version}-Installer.${ext}',
-    displayName: 'TK自动关注助手',
   },
   win: {
     target: [
@@ -29,7 +28,6 @@
     perMachine: false,
     allowToChangeInstallationDirectory: true,
     deleteAppDataOnUninstall: false,
-    displayName: 'TK自动关注助手',
   },
   linux: {
     target: ['AppImage'],

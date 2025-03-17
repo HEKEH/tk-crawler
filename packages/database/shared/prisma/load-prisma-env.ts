@@ -4,16 +4,19 @@ import process from 'node:process';
 
 export function loadPrismaEnv(projectRootPath: string) {
   try {
-    if (!process.env.MYSQL_SSL_CA || !process.env.MYSQL_CLIENT_IDENTITY) {
-      throw new Error('MYSQL_SSL_CA or MYSQL_CLIENT_IDENTITY is not set');
-    }
+    let MYSQL_SSL_CA = process.env.MYSQL_SSL_CA;
+    let MYSQL_CLIENT_IDENTITY = process.env.MYSQL_CLIENT_IDENTITY;
 
-    const MYSQL_SSL_CA = path.join(projectRootPath, process.env.MYSQL_SSL_CA);
-    const MYSQL_CLIENT_IDENTITY = path.join(
-      projectRootPath,
-      process.env.MYSQL_CLIENT_IDENTITY,
-    );
-    if (!existsSync(MYSQL_SSL_CA) || !existsSync(MYSQL_CLIENT_IDENTITY)) {
+    if (MYSQL_SSL_CA) {
+      MYSQL_SSL_CA = path.join(projectRootPath, MYSQL_SSL_CA);
+    }
+    if (MYSQL_CLIENT_IDENTITY) {
+      MYSQL_CLIENT_IDENTITY = path.join(projectRootPath, MYSQL_CLIENT_IDENTITY);
+    }
+    if (
+      (MYSQL_SSL_CA && !existsSync(MYSQL_SSL_CA)) ||
+      (MYSQL_CLIENT_IDENTITY && !existsSync(MYSQL_CLIENT_IDENTITY))
+    ) {
       throw new Error('MYSQL_SSL_CA or MYSQL_CLIENT_IDENTITY is not exists');
     }
 
@@ -37,9 +40,13 @@ export function loadPrismaEnv(projectRootPath: string) {
         'MYSQL_USER or MYSQL_PASSWORD or MYSQL_HOST or MYSQL_PORT or MYSQL_DATABASE or MYSQL_DATABASE_SHADOW or PKCS12_IDENTITY_PASSWORD is not set',
       );
     }
-
-    process.env.MYSQL_DATABASE_URL = `mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DATABASE}?sslidentity=${MYSQL_CLIENT_IDENTITY}&sslpassword=${PKCS12_IDENTITY_PASSWORD}&sslcert=${MYSQL_SSL_CA}`;
-    process.env.MYSQL_DATABASE_SHADOW_URL = `mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DATABASE_SHADOW}?sslidentity=${MYSQL_CLIENT_IDENTITY}&sslpassword=${PKCS12_IDENTITY_PASSWORD}&sslcert=${MYSQL_SSL_CA}`;
+    if (MYSQL_SSL_CA) {
+      process.env.MYSQL_DATABASE_URL = `mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DATABASE}?sslidentity=${MYSQL_CLIENT_IDENTITY}&sslpassword=${PKCS12_IDENTITY_PASSWORD}&sslcert=${MYSQL_SSL_CA}`;
+      process.env.MYSQL_DATABASE_SHADOW_URL = `mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DATABASE_SHADOW}?sslidentity=${MYSQL_CLIENT_IDENTITY}&sslpassword=${PKCS12_IDENTITY_PASSWORD}&sslcert=${MYSQL_SSL_CA}`;
+    } else {
+      process.env.MYSQL_DATABASE_URL = `mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DATABASE}`;
+      process.env.MYSQL_DATABASE_SHADOW_URL = `mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DATABASE_SHADOW}`;
+    }
   } catch (error) {
     console.error(error);
     process.exit(1);

@@ -46,7 +46,7 @@ function remove_image() {
 
 function build_image() {
   log "Info: Building docker image"
-  if docker build . -f "${SCRIPT_DIR}/Dockerfile" -t "${IMAGE_NAME}" --build-arg PORT="${PORT}" >>${LOG_FILE} 2>&1; then
+  if docker build . -f "${SCRIPT_DIR}/Dockerfile" --platform linux/amd64 -t "${IMAGE_NAME}" --build-arg PORT="${PORT}" >>${LOG_FILE} 2>&1; then
     log "Docker image '${IMAGE_NAME}' built successfully."
   else
     log_error "build failed, Check ${LOG_FILE} for more details"

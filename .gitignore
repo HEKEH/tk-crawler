@@ -27,3 +27,5 @@ backup
 .env.production
 
 certs/production
+
+docker-images

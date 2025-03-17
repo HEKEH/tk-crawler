@@ -106,7 +106,7 @@ importers:
         specifier: ^1.11.13
         version: 1.11.13
       electron:
-        specifier: ^34.3.0
+        specifier: ^34.3.2
         version: 34.3.3
       electron-builder:
         specifier: ^25.1.8
@@ -160,7 +160,7 @@ importers:
         specifier: ^4.1.1
         version: 4.1.2(vite@5.4.14)(vue@3.5.13)
       electron:
-        specifier: ^34.3.0
+        specifier: ^34.3.2
         version: 34.3.3
       electron-builder:
         specifier: ^25.1.8
@@ -256,7 +256,7 @@ importers:
         specifier: ^4.1.1
         version: 4.1.2(vite@5.4.14)(vue@3.5.13)
       electron:
-        specifier: ^34.3.0
+        specifier: ^34.3.2
         version: 34.3.3
       electron-builder:
         specifier: ^25.1.8
@@ -297,6 +297,9 @@ importers:
 
   apps/server:
     dependencies:
+      '@tk-crawler/database':
+        specifier: workspace:*
+        version: link:../../packages/database
       axios:
         specifier: ^1.7.9
         version: 1.8.3
@@ -349,9 +352,6 @@ importers:
       '@tk-crawler/biz-shared':
         specifier: workspace:*
         version: link:../../packages/biz-shared
-      '@tk-crawler/database':
-        specifier: workspace:*
-        version: link:../../packages/database
       '@tk-crawler/shared':
         specifier: workspace:*
         version: link:../../packages/shared
@@ -433,7 +433,7 @@ importers:
   packages/electron-utils:
     devDependencies:
       electron:
-        specifier: ^34.3.0
+        specifier: ^34.3.2
         version: 34.3.3
 
   packages/play:

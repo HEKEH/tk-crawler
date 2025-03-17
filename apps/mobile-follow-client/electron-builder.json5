@@ -3,7 +3,7 @@
   $schema: 'https://raw.githubusercontent.com/electron-userland/electron-builder/master/packages/app-builder-lib/scheme.json',
   appId: 'com.wt.tk-mobile-follow-client',
   asar: true,
-  productName: 'TK IOS Follow Client',
+  productName: 'TK自动关注助手',
   directories: {
     output: 'release/${version}',
   },
@@ -12,7 +12,6 @@
     target: ['dmg'],
     icon: 'build/icons/icon.icns',
     artifactName: '${productName}-Mac-${version}-Installer.${ext}',
-    displayName: 'TK手机端自动关注助手',
   },
   win: {
     target: [
@@ -29,7 +28,6 @@
     perMachine: false,
     allowToChangeInstallationDirectory: true,
     deleteAppDataOnUninstall: false,
-    displayName: 'TK手机端自动关注助手',
   },
   linux: {
     target: ['AppImage'],

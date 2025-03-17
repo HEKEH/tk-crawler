@@ -8,7 +8,7 @@ import type {
   GetAnchorFrom87ListResponseData,
 } from '@tk-crawler/biz-shared';
 import { mysqlClient } from '@tk-crawler/database/mysql';
-import { isEmpty, transObjectValuesToString } from '@tk-crawler/shared';
+import { isEmpty, transObjectValuesToString, xss } from '@tk-crawler/shared';
 import { logger } from '../../infra/logger';
 import { transformAnchorFilterValuesToFilterValues } from './filter';
 // 获取列表
@@ -66,7 +66,7 @@ export async function createOrUpdateAnchorFrom87(
   const res = await mysqlClient.prismaClient.$transaction(async tx => {
     const data = _data.map(anchor => ({
       account_id: BigInt(anchor.account_id),
-      account: anchor.account,
+      account: xss(anchor.account),
 
       // 钻石相关
       day_diamond_val: anchor.day_diamond_val,

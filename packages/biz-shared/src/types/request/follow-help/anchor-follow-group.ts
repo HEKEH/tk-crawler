@@ -80,7 +80,7 @@ export interface DeleteAnchorFollowGroupResponse {
 
 export interface UpdateAnchorFollowGroupRequest {
   id: string;
-  name: string;
+  name?: string;
   added_anchor_ids?: string[];
   removed_anchor_ids?: string[];
 }

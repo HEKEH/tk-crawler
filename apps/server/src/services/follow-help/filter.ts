@@ -4,6 +4,7 @@ import type {
   AnchorFrom87ListFilter,
   AnchorFrom87WhereInput,
 } from '@tk-crawler/biz-shared';
+import { xss } from '@tk-crawler/shared';
 
 export function transformAnchorFilterValuesToFilterValues(
   filterValues?: AnchorFrom87ListFilter,
@@ -22,7 +23,7 @@ export function transformAnchorFilterValuesToFilterValues(
 
   if (search) {
     filter.account = {
-      contains: search,
+      contains: xss(search),
     };
   }
   return filter;

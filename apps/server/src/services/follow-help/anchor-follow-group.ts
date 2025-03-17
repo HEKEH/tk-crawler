@@ -14,7 +14,7 @@ import type {
 } from '@tk-crawler/biz-shared';
 import assert from 'node:assert';
 import { mysqlClient } from '@tk-crawler/database/mysql';
-import { isEmpty, transObjectValuesToString } from '@tk-crawler/shared';
+import { isEmpty, transObjectValuesToString, xss } from '@tk-crawler/shared';
 import { logger } from '../../infra/logger';
 import { transformGroupFilterValuesToFilterValues } from './filter';
 
@@ -144,7 +144,10 @@ export async function createAnchorFollowGroup(
 
     // 创建分组
     const group = await tx.anchorFollowGroup.create({
-      data: groupData,
+      data: {
+        ...groupData,
+        name: xss(name),
+      },
     });
 
     // 创建关联关系
@@ -168,20 +171,23 @@ export async function updateAnchorFollowGroup(
 ): Promise<void> {
   logger.info('[Update Anchor Follow Group]', { data });
 
-  const { id, added_anchor_ids, removed_anchor_ids, ...updateData } = data;
+  const { id, added_anchor_ids, removed_anchor_ids, name } = data;
 
   await mysqlClient.prismaClient.$transaction(async tx => {
-    const { name } = updateData;
-    const existGroup = await tx.anchorFollowGroup.findFirst({
-      where: { name, id: { not: BigInt(id) } },
-      select: { id: true },
-    });
-    assert(!existGroup, '分组名称已存在');
-    // 更新分组信息
-    await tx.anchorFollowGroup.update({
-      where: { id: BigInt(id) },
-      data: updateData,
-    });
+    if (name) {
+      const existGroup = await tx.anchorFollowGroup.findFirst({
+        where: { name, id: { not: BigInt(id) } },
+        select: { id: true },
+      });
+      assert(!existGroup, '分组名称已存在');
+      // 更新分组信息
+      await tx.anchorFollowGroup.update({
+        where: { id: BigInt(id) },
+        data: {
+          name: xss(name),
+        },
+      });
+    }
 
     if (removed_anchor_ids?.length) {
       await tx.anchorFollowGroupRelation.deleteMany({

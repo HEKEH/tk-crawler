@@ -2,6 +2,7 @@ import type { ExecOptions } from 'node:child_process';
 import { exec } from 'node:child_process';
 import { access, readFile, stat, writeFile } from 'node:fs/promises';
 import { platform } from 'node:os';
+import { join } from 'node:path';
 import process from 'node:process';
 import { promisify } from 'node:util';
 import { log, logError } from '@tk-crawler/script-tools';
@@ -14,6 +15,7 @@ interface Config {
 
 // --- 换项目时需要修改的部分 ---
 const PROJECT_NAME = 'tk-crawler-redis';
+const PROJECT_ROOT_PATH = join(__dirname, '../../../../../');
 const IMAGE_NAME = 'tk-crawler/custom-redis';
 const IMAGE_VERSION = '0.0.1';
 // 重新构建需要检查的关键文件
@@ -149,7 +151,7 @@ async function main() {
 
     const config: Config = {
       env,
-      envFile: `.env.${env}`,
+      envFile: join(PROJECT_ROOT_PATH, `.env.${env}`),
       lastBuildFile: '.last_build',
     };
     process.env.IMAGE_NAME = IMAGE_NAME;

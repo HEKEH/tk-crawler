@@ -1,6 +1,7 @@
 import { existsSync, mkdirSync } from 'node:fs';
-import path from 'node:path';
-import process from 'node:process';
+import { homedir } from 'node:os';
+import path, { join } from 'node:path';
+import process, { platform } from 'node:process';
 import log4js from 'log4js';
 
 class Logger {
@@ -85,7 +86,12 @@ class Logger {
     let basePath: string;
 
     if (process.env.NODE_ENV === 'production') {
-      basePath = '/logs/tk-crawler-server';
+      basePath =
+        platform === 'darwin'
+          ? join(homedir(), 'Library/Logs/tk-crawler-server')
+          : platform === 'linux'
+            ? '/var/log/tk-crawler-server'
+            : join(process.cwd(), 'logs/tk-crawler-server');
     } else {
       // 开发环境使用项目目录
       basePath = path.join(process.cwd(), 'logs');

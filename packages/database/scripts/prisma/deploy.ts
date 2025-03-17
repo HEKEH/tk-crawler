@@ -5,7 +5,8 @@ import { loadPrismaEnv } from '../../shared/prisma/load-prisma-env';
 
 function main() {
   try {
-    loadPrismaEnv();
+    const projectRootPath = path.resolve(__dirname, '../../../../');
+    loadPrismaEnv(projectRootPath);
     const rootDir = path.resolve(__dirname, '../../');
     // 构建 schema 文件的路径
     const schemaPath = path.join(rootDir, './shared/prisma/schema.prisma');

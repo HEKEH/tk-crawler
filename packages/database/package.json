@@ -13,9 +13,9 @@
     "mysql:docker-start:dev": "cross-env ts-node $npm_package_config_tsNodeConfig ./scripts/docker/mysql/start.ts development",
     "mysql:docker-start:prod": "cross-env ts-node $npm_package_config_tsNodeConfig ./scripts/docker/mysql/start.ts production",
     "prisma:generate": "cross-env prisma generate --schema ./shared/prisma/schema.prisma",
-    "prisma:migrate": "cross-env dotenv -e .env.development -- ts-node $npm_package_config_tsNodeConfig ./scripts/prisma/migrate.ts",
-    "prisma:deploy:prod": "cross-env dotenv -e .env.production -- ts-node $npm_package_config_tsNodeConfig ./scripts/prisma/deploy.ts",
-    "debug:env": "cross-env dotenv -e .env.development -- node -e \"console.log(process.env.MYSQL_DATABASE_URL)\""
+    "prisma:migrate": "cross-env dotenv -e ../../.env.development -- ts-node $npm_package_config_tsNodeConfig ./scripts/prisma/migrate.ts",
+    "prisma:deploy:prod": "cross-env dotenv -e ../../.env.production -- ts-node $npm_package_config_tsNodeConfig ./scripts/prisma/deploy.ts",
+    "debug:env": "cross-env dotenv -e ../../.env.development -- node -e \"console.log(process.env.MYSQL_DATABASE_URL)\""
   },
   "dependencies": {
     "@prisma/client": "^6.4.1",

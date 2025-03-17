@@ -143,10 +143,10 @@ export class CollectPageView implements IView {
       await this._refreshRunningStatus();
     } catch (error) {
       if ((error as any)?.code === 'ERR_CONNECTION_TIMED_OUT') {
-        logger.error('Open tiktok login page timeout:', error);
+        logger.error('Open collect page timeout:', error);
         this._setStatus(COLLECT_PAGE_HELP_STATUS.timeout);
       } else {
-        logger.error('Open tiktok login page error:', error);
+        logger.error('Open collect page error:', error);
         this._setStatus(COLLECT_PAGE_HELP_STATUS.fail);
       }
     }

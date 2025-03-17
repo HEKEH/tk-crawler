@@ -1,6 +1,12 @@
 import type { ExecOptions } from 'node:child_process';
 import { exec } from 'node:child_process';
-import { existsSync } from 'node:fs';
+import {
+  copyFileSync,
+  existsSync,
+  mkdirSync,
+  readdirSync,
+  rmSync,
+} from 'node:fs';
 import { access, readFile, stat, writeFile } from 'node:fs/promises';
 import { platform } from 'node:os';
 import { join } from 'node:path';
@@ -20,6 +26,7 @@ interface Config {
 
 // --- 换项目时需要修改的部分 ---
 const PROJECT_NAME = 'tk-crawler-mysql';
+const PROJECT_ROOT_PATH = join(__dirname, '../../../../../');
 function getImageName(env: string): string {
   return `tk-crawler/custom-mysql-${env}`;
 }
@@ -56,6 +63,22 @@ function loadEnvFile(envFile: string): void {
 
 function getCertDir(env: string): string {
   return `certs/${env}`;
+}
+
+// 复制目录函数
+function copyDir(src: string, dest: string) {
+  // 清空目标目录
+  if (existsSync(dest)) {
+    rmSync(dest, { recursive: true, force: true });
+  }
+  mkdirSync(dest, { recursive: true });
+
+  const files = readdirSync(src);
+  for (const file of files) {
+    const srcPath = join(src, file);
+    const destPath = join(dest, file);
+    copyFileSync(srcPath, destPath);
+  }
 }
 
 // --- 换项目时需要修改的部分 ---
@@ -175,7 +198,7 @@ async function main() {
     const env = process.argv[2] || 'development';
     const config: Config = {
       env,
-      envFile: `../../../.env.${env}`,
+      envFile: join(PROJECT_ROOT_PATH, `.env.${env}`),
       lastBuildFile: `.last_build_${env}`,
       imageName: getImageName(env),
       certDir: getCertDir(env),
@@ -193,6 +216,14 @@ async function main() {
         absoluteCertDir,
         process.env.PKCS12_IDENTITY_PASSWORD!,
       );
+      // 复制证书文件到项目根目录
+      const rootCertDir = join(PROJECT_ROOT_PATH, config.certDir);
+      if (existsSync(rootCertDir)) {
+        rmSync(rootCertDir, { recursive: true, force: true });
+      }
+      mkdirSync(rootCertDir, { recursive: true });
+      copyDir(absoluteCertDir, rootCertDir);
+
       log({
         projectName: PROJECT_NAME,
         message: 'SSL certificates generated successfully',

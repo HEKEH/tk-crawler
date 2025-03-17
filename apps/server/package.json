@@ -14,7 +14,7 @@
   ],
   "scripts": {
     "dev": "cross-env NODE_ENV=development dotenv -e ../../.env.development nodemon",
-    "build": "rm -rf dist && tsup --config tsconfig.build.json ./src/index.ts --format cjs --minify",
+    "build": "rm -rf dist && tsup --config tsup.config.ts",
     "start": "cross-env NODE_ENV=production dotenv -e ${GLOBAL_DOTENV_CONFIG_PATH:-../../.env.production} node dist/index.js",
     "prod:start": "cross-env dotenv -e ${GLOBAL_DOTENV_CONFIG_PATH:-../../.env.production} pm2-runtime start ecosystem.config.js --env production",
     "prod:restart": "cross-env dotenv -e ${GLOBAL_DOTENV_CONFIG_PATH:-../../.env.production} pm2 restart ecosystem.config.js --env production",
@@ -26,10 +26,6 @@
     "preinstall": "npx only-allow pnpm"
   },
   "dependencies": {
-    "@tk-crawler/biz-shared": "workspace:*",
-    "@tk-crawler/database": "workspace:*",
-    "@tk-crawler/shared": "workspace:*",
-    "assert": "^2.1.0",
     "axios": "^1.7.9",
     "bcryptjs": "^2.4.3",
     "cross-env": "^7.0.3",
@@ -42,13 +38,14 @@
     "koa-bodyparser": "^4.4.1",
     "koa-router": "^13.0.1",
     "lodash": "^4.17.21",
-    "mongoose": "^8.9.2",
     "pm2": "^5.4.3",
-    "socket.io": "^4.8.1",
     "uuid": "^11.0.3",
     "xss": "^1.0.15"
   },
   "devDependencies": {
+    "@tk-crawler/biz-shared": "workspace:*",
+    "@tk-crawler/database": "workspace:*",
+    "@tk-crawler/shared": "workspace:*",
     "@types/bcryptjs": "^2.4.6",
     "@types/ioredis": "^5.0.0",
     "@types/koa": "^2.15.0",

@@ -2,18 +2,15 @@ import { existsSync } from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
 
-export function loadPrismaEnv() {
+export function loadPrismaEnv(projectRootPath: string) {
   try {
-    // 获取项目根目录路径
-    const rootDir = path.resolve(__dirname, '../../');
-
     if (!process.env.MYSQL_SSL_CA || !process.env.MYSQL_CLIENT_IDENTITY) {
       throw new Error('MYSQL_SSL_CA or MYSQL_CLIENT_IDENTITY is not set');
     }
 
-    const MYSQL_SSL_CA = path.join(rootDir, process.env.MYSQL_SSL_CA);
+    const MYSQL_SSL_CA = path.join(projectRootPath, process.env.MYSQL_SSL_CA);
     const MYSQL_CLIENT_IDENTITY = path.join(
-      rootDir,
+      projectRootPath,
       process.env.MYSQL_CLIENT_IDENTITY,
     );
     if (!existsSync(MYSQL_SSL_CA) || !existsSync(MYSQL_CLIENT_IDENTITY)) {

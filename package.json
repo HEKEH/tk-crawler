@@ -13,6 +13,7 @@
     "dev": "cross-env ts-node --project ./tsconfig.node.json --files -r tsconfig-paths/register ./scripts/dev-start.ts",
     "build": "cross-env turbo build",
     "build:server": "cross-env turbo build --filter=@tk-crawler/server",
+    "prisma:generate": "cd packages/database && pnpm prisma:generate",
     "lint": "eslint",
     "prepare": "husky install",
     "preinstall": "npx only-allow pnpm"

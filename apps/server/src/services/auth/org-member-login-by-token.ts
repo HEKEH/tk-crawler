@@ -4,7 +4,7 @@ import type {
 } from '@tk-crawler/biz-shared';
 import assert from 'node:assert';
 import { OrganizationStatus, OrgMemberStatus } from '@tk-crawler/biz-shared';
-import { mysqlClient } from '@tk-crawler/database/mysql';
+import { mysqlClient } from '@tk-crawler/database';
 import dayjs from 'dayjs';
 import { logger } from '../../infra/logger';
 import { BusinessError, parseToken } from '../../utils';

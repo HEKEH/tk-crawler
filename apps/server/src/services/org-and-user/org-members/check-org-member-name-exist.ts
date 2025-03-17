@@ -1,4 +1,4 @@
-import { mysqlClient } from '@tk-crawler/database/mysql';
+import { mysqlClient } from '@tk-crawler/database';
 
 export async function checkOrgMemberNameExist(
   username: string,

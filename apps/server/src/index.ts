@@ -1,9 +1,9 @@
 import process from 'node:process';
 import {
+  mysqlClient,
   redisClient,
   setLogger as setDatabaseLogger,
 } from '@tk-crawler/database';
-import { mysqlClient } from '@tk-crawler/database/mysql';
 import initApp from './app';
 import config from './config';
 import { logger } from './infra/logger';

@@ -1,5 +1,5 @@
-import path from 'node:path';
-import { name } from './package.json';
+const path = require('node:path');
+const { name } = require('./package.json');
 
 module.exports = {
   apps: [

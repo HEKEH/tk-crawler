@@ -4,8 +4,8 @@ import { defineConfig } from 'tsup';
 export default defineConfig({
   entry: ['src/index.ts'],
   format: ['cjs'],
-  minify: true,
-  clean: true,
+  minify: false,
+  clean: false,
   esbuildOptions(options) {
     options.alias = {
       '@tk-crawler/shared': resolve(__dirname, '../../packages/shared/src'),
@@ -13,7 +13,6 @@ export default defineConfig({
         __dirname,
         '../../packages/biz-shared/src',
       ),
-      '@tk-crawler/database': resolve(__dirname, '../../packages/database/src'),
     };
   },
 });

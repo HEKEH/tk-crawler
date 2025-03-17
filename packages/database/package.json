@@ -2,12 +2,28 @@
   "name": "@tk-crawler/database",
   "version": "0.0.0",
   "private": true,
-  "files": [],
+  "exports": {
+    ".": {
+      "import": {
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "default": "./dist/index.js"
+      }
+    }
+  },
+  "main": "./dist/index.js",
+  "files": [
+    "dist",
+    "package.json",
+    "shared/prisma/schema.prisma"
+  ],
   "config": {
     "tsNodeConfig": "--project ../../tsconfig.node.json --files -r tsconfig-paths/register"
   },
   "scripts": {
     "preinstall": "npx only-allow pnpm && pnpm prisma:generate",
+    "build": "rm -rf dist && tsup --config tsup.config.ts",
     "redis:docker-start:dev": "cross-env ts-node $npm_package_config_tsNodeConfig ./scripts/docker/redis/start.ts development",
     "redis:docker-start:prod": "cross-env ts-node $npm_package_config_tsNodeConfig ./scripts/docker/redis/start.ts production",
     "mysql:docker-start:dev": "cross-env ts-node $npm_package_config_tsNodeConfig ./scripts/docker/mysql/start.ts development",

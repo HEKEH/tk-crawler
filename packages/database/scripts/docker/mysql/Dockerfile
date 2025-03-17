@@ -1,5 +1,8 @@
 FROM mysql:9.2.0
 
+# 安装或更新系统的OpenSSL
+RUN microdnf update && microdnf install -y openssl
+
 ARG CERT_DIR
 
 # 创建必要的目录

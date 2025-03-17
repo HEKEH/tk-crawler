@@ -22,10 +22,12 @@
     "prod:delete": "cross-env pm2 delete ecosystem.config.js",
     "prod:log": "cross-env pm2 logs",
     "prod:flush": "cross-env pm2 flush",
+    "docker:build": "./scripts/docker/build-docker-image.sh",
     "lint": "eslint",
     "preinstall": "npx only-allow pnpm"
   },
   "dependencies": {
+    "@tk-crawler/database": "workspace:*",
     "axios": "^1.7.9",
     "bcryptjs": "^2.4.3",
     "cross-env": "^7.0.3",
@@ -45,7 +47,6 @@
   },
   "devDependencies": {
     "@tk-crawler/biz-shared": "workspace:*",
-    "@tk-crawler/database": "workspace:*",
     "@tk-crawler/shared": "workspace:*",
     "@types/bcryptjs": "^2.4.6",
     "@types/koa": "^2.15.0",

@@ -4,6 +4,5 @@ import { loadPrismaEnv } from '../../shared/prisma/load-prisma-env';
 
 export function loadMysqlEnvironment() {
   const projectRootPath = resolve(process.cwd(), '../../');
-  console.log(projectRootPath);
   loadPrismaEnv(projectRootPath);
 }

@@ -13,7 +13,7 @@ import type {
   UpdateAnchorFollowGroupRequest,
 } from '@tk-crawler/biz-shared';
 import assert from 'node:assert';
-import { mysqlClient } from '@tk-crawler/database/mysql';
+import { mysqlClient } from '@tk-crawler/database';
 import { isEmpty, transObjectValuesToString, xss } from '@tk-crawler/shared';
 import { logger } from '../../infra/logger';
 import { transformGroupFilterValuesToFilterValues } from './filter';

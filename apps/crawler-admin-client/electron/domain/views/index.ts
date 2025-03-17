@@ -39,7 +39,8 @@ export class ViewsManager {
 
   init() {
     this._baseWindow = new BaseWindow({
-      fullscreen: true,
+      width: 1200,
+      height: 800,
       icon: path.join(process.env.VITE_PUBLIC, 'appicon.svg'),
     });
     this._mainView = new MainView({

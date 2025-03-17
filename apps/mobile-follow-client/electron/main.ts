@@ -36,8 +36,8 @@ async function main() {
   // explicitly with Cmd + Q.
   app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
-      app.quit();
       globalManager.destroy();
+      app.quit();
     }
   });
 }

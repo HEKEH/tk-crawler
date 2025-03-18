@@ -9,6 +9,8 @@
 ```bash
 pnpm docker:redis:dev
 pnpm docker:mysql:dev
+pnpm prisma:migrate
+pnpm prisma:seed
 ```
 
 启动服务

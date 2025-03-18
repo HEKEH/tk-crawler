@@ -22,8 +22,10 @@
     "build:mobile-follow-client": "cross-env turbo build --filter=tk-mobile-follow-client",
     "build:main-web": "cross-env turbo build --filter=@tk-crawler/main-web",
     "docker:mysql:dev": "cd packages/database && pnpm run mysql:docker-start:dev",
-    "docker:redis:dev": "cd packages/database && pnpm run redis:docker-start:dev",
+    "prisma:migrate": "cd packages/database && pnpm prisma:migrate",
+    "prisma:seed": "cd packages/database && pnpm prisma:seed",
     "prisma:generate": "cd packages/database && pnpm prisma:generate",
+    "docker:redis:dev": "cd packages/database && pnpm run redis:docker-start:dev",
     "lint": "eslint",
     "prepare": "husky install",
     "preinstall": "npx only-allow pnpm"

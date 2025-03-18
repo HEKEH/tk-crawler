@@ -112,6 +112,8 @@ model Organization {
   inviteChecks         AnchorInviteCheck[]
   taskAssigns          TaskAssign[]
   anchorConnects       AnchorConnect[]
+  AnchorFollowGroup    AnchorFollowGroup[]
+  AnchorFrom87         AnchorFrom87[]
 }
 
 // 机构用户表
@@ -178,9 +180,10 @@ model AnchorConnect {
 // 下面是临时表
 
 model AnchorFrom87 {
-  id         BigInt @id @default(autoincrement())
-  account_id BigInt @unique @db.UnsignedBigInt
-  account    String @unique @db.VarChar(30)
+  id         BigInt  @id @default(autoincrement())
+  org_id     BigInt? @db.UnsignedBigInt
+  account_id BigInt  @unique @db.UnsignedBigInt
+  account    String  @unique @db.VarChar(30)
 
   // 钻石相关
   day_diamond_val      Int @default(0)
@@ -205,18 +208,24 @@ model AnchorFrom87 {
   created_at                DateTime                    @default(now())
   updated_at                DateTime                    @updatedAt
   AnchorFollowGroupRelation AnchorFollowGroupRelation[]
+  organization              Organization?               @relation(fields: [org_id], references: [id], onDelete: Cascade)
 
   @@index([account])
   @@index([account_id])
   @@index([country_code])
+  @@index([org_id])
 }
 
 model AnchorFollowGroup {
   id                        BigInt                      @id @default(autoincrement()) @db.UnsignedBigInt
+  org_id                    BigInt?                     @db.UnsignedBigInt
   name                      String                      @unique @db.VarChar(30)
   created_at                DateTime                    @default(now())
   updated_at                DateTime                    @updatedAt
+  organization              Organization?               @relation(fields: [org_id], references: [id], onDelete: Cascade)
   AnchorFollowGroupRelation AnchorFollowGroupRelation[]
+
+  @@index([org_id])
 }
 
 model AnchorFollowGroupRelation {

@@ -2,7 +2,10 @@ import { RequestErrorType } from '@tk-crawler/biz-shared';
 import { ElectronRenderListeners } from '@tk-crawler/electron-utils/render';
 import { MessageCenter } from '@tk-crawler/shared';
 import { MessageQueue } from '@tk-crawler/view-shared';
-import { CheckNetworkResultType } from '@tk-mobile-follow-client/shared';
+import {
+  CheckNetworkResultType,
+  MOCK_ORG_ID,
+} from '@tk-mobile-follow-client/shared';
 import { markRaw } from 'vue';
 import { CUSTOM_EVENTS } from '../constants';
 import { checkNetwork } from '../requests';
@@ -15,7 +18,7 @@ export default class GlobalStore {
 
   /** TODO: 获取当前机构id，目前是demo id */
   get orgId() {
-    return '1';
+    return MOCK_ORG_ID;
   }
 
   private _networkStatus: CheckNetworkResultType =

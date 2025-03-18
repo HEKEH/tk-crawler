@@ -9,6 +9,7 @@ import {
   COLLECT_PAGE_HELP_RUNNING_STATUS,
   COLLECT_PAGE_HELP_STATUS,
   COLLECT_PAGE_HELP_WIDTH,
+  MOCK_ORG_ID,
 } from '@tk-mobile-follow-client/shared';
 import { ipcMain, WebContentsView } from 'electron';
 import { isDevelopment, RENDERER_DIST, VITE_DEV_SERVER_URL } from '../../env';
@@ -270,6 +271,7 @@ export class CollectPageView implements IView {
                     const anchorList = json.rows as AnchorFrom87RawData[];
                     const resp = await createOrUpdateAnchorFrom87({
                       list: anchorList,
+                      org_id: MOCK_ORG_ID,
                     });
                     if (resp.status_code === RESPONSE_CODE.SUCCESS) {
                       this._helpView?.webContents.send(

@@ -3,6 +3,7 @@ import { execSync } from 'node:child_process';
 import path from 'node:path';
 import process from 'node:process';
 import { loadPrismaScriptEnv } from './load-prisma-script-env';
+import { runSeed } from './run-seed';
 
 function getAdditionalArgs(): string {
   const args = process.argv;
@@ -21,7 +22,7 @@ function getAdditionalArgs(): string {
   return args.slice(scriptIndex + 1).join(' ');
 }
 
-function main() {
+async function main() {
   try {
     loadPrismaScriptEnv();
     const rootDir = path.resolve(__dirname, '../../');
@@ -40,6 +41,7 @@ function main() {
     });
 
     console.log('Database deploy completed successfully');
+    await runSeed();
   } catch (error) {
     console.error('Deploy failed:', error);
     process.exit(1);

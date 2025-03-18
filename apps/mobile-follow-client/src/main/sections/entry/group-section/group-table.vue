@@ -126,7 +126,7 @@ async function deleteItem(item: AnchorFollowGroupItem) {
   } catch {
     return;
   }
-  await deleteAnchorFollowGroup({ id: [item.id] });
+  await deleteAnchorFollowGroup({ id: [item.id], org_id: globalStore.orgId });
   ElMessage.success({ message: '删除成功', type: 'success', duration: 2000 });
   await refetch();
 }
@@ -161,6 +161,7 @@ async function handleBatchDelete() {
     return;
   }
   const { data, status_code } = await deleteAnchorFollowGroup({
+    org_id: globalStore.orgId,
     id: selectedRows.value.map(item => item.id),
   });
   if (status_code !== RESPONSE_CODE.SUCCESS) {
@@ -193,10 +194,10 @@ async function handleClearData() {
       showCancelButton: true,
       confirmButtonText: '确定',
       cancelButtonText: '取消',
-      customClass: 'custom-clear-message-box',
     });
 
     const resp = await clearAnchorFollowGroup({
+      org_id: globalStore.orgId,
       filter:
         state.clearType === 'all'
           ? undefined
@@ -389,18 +390,5 @@ onActivated(refetch);
   justify-content: flex-end;
   margin-top: 1rem;
   padding-right: 1rem;
-}
-
-.custom-clear-message-box {
-  :global(.el-radio) {
-    display: block;
-    margin-left: 0;
-    margin-bottom: 8px;
-    height: 32px;
-    line-height: 32px;
-  }
-  :global(.el-message-box__message) {
-    padding-top: 8px;
-  }
 }
 </style>

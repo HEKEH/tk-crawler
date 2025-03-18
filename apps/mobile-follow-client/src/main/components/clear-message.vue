@@ -54,14 +54,12 @@ function handleUpdate(val: 'all' | 'filtered') {
 
 .radio-group {
   display: flex;
-  gap: 12px;
   margin: 16px 0;
   flex-direction: column;
   align-items: flex-start;
 }
 
 .radio-item {
-  height: 32px;
   margin: 0;
 }
 

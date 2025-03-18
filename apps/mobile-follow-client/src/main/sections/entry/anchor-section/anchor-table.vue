@@ -259,7 +259,6 @@ async function handleClearData() {
       showCancelButton: true,
       confirmButtonText: '确定',
       cancelButtonText: '取消',
-      customClass: 'custom-clear-message-box',
     });
 
     const resp = await clearAnchorFrom87({
@@ -631,18 +630,5 @@ const columns = computed<Column<AnchorFrom87>[]>(() => [
   justify-content: flex-end;
   margin-top: 1rem;
   padding-right: 1rem;
-}
-
-.custom-clear-message-box {
-  :global(.el-radio) {
-    display: block;
-    margin-left: 0;
-    margin-bottom: 8px;
-    height: 32px;
-    line-height: 32px;
-  }
-  :global(.el-message-box__message) {
-    padding-top: 8px;
-  }
 }
 </style>

@@ -67,17 +67,18 @@ export async function getAnchorFrom87List(
 export async function createOrUpdateAnchorFrom87(
   request: CreateOrUpdateAnchorFrom87Request,
 ): Promise<{ created_count: number; updated_count: number }> {
-  const orgId = request.org_id;
-  assert(orgId, '机构id不能为空');
   const _data = request.list;
   logger.info('[Create Or Update Anchor From 87]', {
     dataLength: _data.length,
   });
 
+  assert(request.org_id, '机构id不能为空');
+  const orgId = BigInt(request.org_id);
+
   const res = await mysqlClient.prismaClient.$transaction(async tx => {
     const data = _data.map(anchor => ({
       account_id: BigInt(anchor.account_id),
-      org_id: BigInt(orgId),
+      org_id: orgId,
       account: xss(anchor.account),
 
       // 钻石相关
@@ -115,7 +116,7 @@ export async function createOrUpdateAnchorFrom87(
         account_id: {
           in: account_ids,
         },
-        org_id: BigInt(orgId),
+        org_id: orgId,
       },
       select: {
         account_id: true,

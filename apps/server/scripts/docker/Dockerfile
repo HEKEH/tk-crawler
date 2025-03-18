@@ -14,6 +14,9 @@ RUN apt-get update -y && apt-get install -y openssl
 ARG PNPM_HOME="/pnpm"
 ARG NODE_ENV=production
 
+ARG ENV_FILE="./.env.production"
+ARG PORT
+
 # 设置环境变量
 ENV PATH="${PNPM_HOME}:${PATH}" \
   NODE_ENV="${NODE_ENV}" \
@@ -33,7 +36,7 @@ RUN pnpm prisma:generate
 ENV NODE_ENV=production
 RUN pnpm run build:server
 RUN pnpm --filter @tk-crawler/server --prod deploy /deploy/@tk-crawler/server
-RUN cp -r .env.production /deploy
+RUN cp ${ENV_FILE} /deploy/.env.production
 RUN mkdir -p /deploy/certs
 RUN cp -r certs/production /deploy/certs
 RUN echo "Builder Success 🎉"
@@ -48,7 +51,6 @@ COPY --from=builder /deploy /app
 
 WORKDIR /app/@tk-crawler/server
 
-ARG PORT
 EXPOSE ${PORT}
 
 CMD ["npm", "run", "start"]

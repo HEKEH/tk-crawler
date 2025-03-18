@@ -1,6 +1,26 @@
 #!/bin/bash
 
+ENV_FILE="./.env.production"
 IMAGE_NAME="tk-crawler-server"
+
+# 处理参数
+while getopts "e:i:" opt; do
+  case $opt in
+  e)
+    ENV_FILE=$OPTARG
+    ;;
+  i)
+    IMAGE_NAME=$OPTARG
+    ;;
+  \?)
+    echo "无效选项: -$OPTARG" >&2
+    exit 1
+    ;;
+  esac
+done
+
+echo "使用环境文件: $ENV_FILE"
+echo "构建镜像名称: $IMAGE_NAME"
 
 SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
 LOG_FILE=${SCRIPT_DIR}/build-image.log
@@ -23,7 +43,6 @@ function log_error() {
 }
 
 function load_port_from_env_file() {
-  local ENV_FILE="./.env.production"
   local PORT_VAR_NAME="SERVER_PORT"
 
   if [ ! -f "$ENV_FILE" ]; then
@@ -46,7 +65,7 @@ function remove_image() {
 
 function build_image() {
   log "Info: Building docker image"
-  if docker build . -f "${SCRIPT_DIR}/Dockerfile" --platform linux/amd64 -t "${IMAGE_NAME}" --build-arg PORT="${PORT}" >>${LOG_FILE} 2>&1; then
+  if docker build . -f "${SCRIPT_DIR}/Dockerfile" --platform linux/amd64 -t "${IMAGE_NAME}" --build-arg ENV_FILE="${ENV_FILE}" --build-arg PORT="${PORT}" >>${LOG_FILE} 2>&1; then
     log "Docker image '${IMAGE_NAME}' built successfully."
   else
     log_error "build failed, Check ${LOG_FILE} for more details"

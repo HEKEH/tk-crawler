@@ -180,10 +180,10 @@ model AnchorConnect {
 // 下面是临时表
 
 model AnchorFrom87 {
-  id         BigInt  @id @default(autoincrement())
+  id         BigInt  @id @default(autoincrement()) @db.UnsignedBigInt
   org_id     BigInt? @db.UnsignedBigInt
-  account_id BigInt  @unique @db.UnsignedBigInt
-  account    String  @unique @db.VarChar(30)
+  account_id BigInt  @db.UnsignedBigInt
+  account    String  @db.VarChar(30)
 
   // 钻石相关
   day_diamond_val      Int @default(0)
@@ -210,6 +210,7 @@ model AnchorFrom87 {
   AnchorFollowGroupRelation AnchorFollowGroupRelation[]
   organization              Organization?               @relation(fields: [org_id], references: [id], onDelete: Cascade)
 
+  @@unique([org_id, account_id])
   @@index([account])
   @@index([account_id])
   @@index([country_code])
@@ -235,7 +236,7 @@ model AnchorFollowGroupRelation {
   created_at   DateTime          @default(now())
   updated_at   DateTime          @updatedAt
   group        AnchorFollowGroup @relation(fields: [group_id], references: [id], onDelete: Cascade)
-  AnchorFrom87 AnchorFrom87      @relation(fields: [anchor_id], references: [account_id], onDelete: Cascade)
+  AnchorFrom87 AnchorFrom87      @relation(fields: [anchor_id], references: [id], onDelete: Cascade)
 
   @@unique([group_id, anchor_id])
   @@index([anchor_id])

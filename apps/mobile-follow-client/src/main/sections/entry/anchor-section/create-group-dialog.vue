@@ -10,7 +10,9 @@ import CreateGroupForm from './create-group-form.vue';
 const props = defineProps<{
   visible: boolean;
   anchors: AnchorFrom87[];
-  submit: (data: CreateAnchorFollowGroupRequest) => Promise<void>;
+  submit: (
+    data: Omit<CreateAnchorFollowGroupRequest, 'org_id'>,
+  ) => Promise<void>;
 }>();
 
 const emit = defineEmits<{
@@ -24,7 +26,7 @@ function handleClose() {
 function handleSubmit(data: CreateGroupFormValues) {
   return props.submit({
     ...data,
-    anchor_ids: props.anchors.map(item => item.account_id),
+    anchor_table_ids: props.anchors.map(item => item.id),
   });
 }
 </script>

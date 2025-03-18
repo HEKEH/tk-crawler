@@ -7,10 +7,12 @@ import type {
 import { xss } from '@tk-crawler/shared';
 
 export function transformAnchorFilterValuesToFilterValues(
-  filterValues?: AnchorFrom87ListFilter,
+  filterValues: AnchorFrom87ListFilter | undefined,
+  orgId: string,
 ): AnchorFrom87WhereInput {
   const { has_grouped, search, ...filterRest } = filterValues ?? {};
   const filter: AnchorFrom87WhereInput = filterRest;
+  filter.org_id = BigInt(orgId);
   if (has_grouped !== undefined) {
     filter.AnchorFollowGroupRelation = has_grouped
       ? {
@@ -30,10 +32,12 @@ export function transformAnchorFilterValuesToFilterValues(
 }
 
 export function transformGroupFilterValuesToFilterValues(
-  filterValues?: AnchorFollowGroupListFilter,
+  filterValues: AnchorFollowGroupListFilter | undefined,
+  orgId: string,
 ): AnchorFollowGroupWhereInput {
   const { search, ...filterRest } = filterValues ?? {};
   const filter: AnchorFollowGroupWhereInput = filterRest;
+  filter.org_id = BigInt(orgId);
 
   if (search) {
     filter.name = {

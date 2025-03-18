@@ -22,6 +22,7 @@ import {
   deleteAnchorFollowGroup,
   getAnchorFollowGroupList,
 } from '../../../requests';
+import { useGlobalStore } from '../../../utils/vue';
 import {
   DefaultFilterViewValues,
   type FilterViewValues,
@@ -32,6 +33,8 @@ import GroupFilter from './group-filter.vue';
 defineOptions({
   name: 'GroupTable',
 });
+
+const globalStore = useGlobalStore();
 
 const tableRef = ref<InstanceType<typeof ElTable>>();
 const pageNum = ref(1);
@@ -58,6 +61,7 @@ const { data, isLoading, isError, error, refetch } = useQuery<
 >({
   queryKey: [
     'anchor-follow-groups',
+    globalStore.orgId,
     pageNum,
     pageSize,
     sortField,
@@ -70,11 +74,15 @@ const { data, isLoading, isError, error, refetch } = useQuery<
       ? { [sortField.value]: sortOrder.value === 'ascending' ? 'asc' : 'desc' }
       : undefined;
     const response = await getAnchorFollowGroupList({
+      org_id: globalStore.orgId,
       page_num: pageNum.value,
       page_size: pageSize.value,
       order_by: orderBy,
       filter: transformFilterViewValuesToFilterValues(filters.value),
     });
+    if (response.status_code !== RESPONSE_CODE.SUCCESS) {
+      throw new Error(response.message);
+    }
     return response.data;
   },
   placeholderData: previousData => previousData,

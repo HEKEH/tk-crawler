@@ -1,5 +1,6 @@
 export interface AnchorFrom87 {
   id: string;
+  org_id: string;
   account_id: string;
   account: string;
 
@@ -33,5 +34,5 @@ export interface AnchorFrom87 {
 
 export type AnchorFrom87RawData = Omit<
   AnchorFrom87,
-  'created_at' | 'updated_at' | 'has_grouped' | 'id'
+  'created_at' | 'updated_at' | 'has_grouped' | 'id' | 'org_id'
 >;

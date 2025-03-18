@@ -5,6 +5,7 @@ import type { AnchorFrom87, AnchorFrom87RawData } from '../../follow-help';
 
 export interface CreateOrUpdateAnchorFrom87Request {
   list: AnchorFrom87RawData[];
+  org_id: string;
 }
 
 export interface CreateOrUpdateAnchorFrom87Response {
@@ -26,7 +27,8 @@ export type AnchorFrom87ListFilter = AnchorFrom87WhereInput & {
 export interface GetAnchorFrom87ListRequest {
   page_num: number;
   page_size: number;
-  filter?: AnchorFrom87ListFilter;
+  org_id: string;
+  filter: AnchorFrom87ListFilter;
   order_by?: Prisma.AnchorFrom87OrderByWithRelationInput;
   search?: string;
 }
@@ -44,6 +46,7 @@ export interface GetAnchorFrom87ListResponse {
 
 export interface DeleteAnchorFrom87Request {
   id: string[];
+  org_id: string;
 }
 
 export interface DeleteAnchorFrom87Response {
@@ -56,6 +59,7 @@ export interface DeleteAnchorFrom87Response {
 
 export interface ClearAnchorFrom87Request {
   filter?: AnchorFrom87ListFilter;
+  org_id: string;
 }
 
 export interface ClearAnchorFrom87Response {

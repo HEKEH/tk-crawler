@@ -7,6 +7,7 @@ import type {
   GetAnchorFrom87ListRequest,
   GetAnchorFrom87ListResponseData,
 } from '@tk-crawler/biz-shared';
+import assert from 'node:assert';
 import { mysqlClient } from '@tk-crawler/database';
 import { isEmpty, transObjectValuesToString, xss } from '@tk-crawler/shared';
 import { logger } from '../../infra/logger';
@@ -16,13 +17,17 @@ export async function getAnchorFrom87List(
   data: GetAnchorFrom87ListRequest,
 ): Promise<GetAnchorFrom87ListResponseData> {
   logger.info('[Get Anchor From 87 List]', { data });
+  assert(data.org_id, '机构id不能为空');
   const orderBy = isEmpty(data.order_by)
     ? {
         updated_at: 'desc' as const, // 默认按更新时间倒序排序
       }
     : data.order_by!;
 
-  const filter = transformAnchorFilterValuesToFilterValues(data.filter);
+  const filter = transformAnchorFilterValuesToFilterValues(
+    data.filter,
+    data.org_id,
+  );
   const [anchors, total] = await Promise.all([
     mysqlClient.prismaClient.anchorFrom87.findMany({
       where: filter,
@@ -45,7 +50,11 @@ export async function getAnchorFrom87List(
 
   return {
     list: anchors.map(({ AnchorFollowGroupRelation, ...anchor }) => {
-      const res = transObjectValuesToString(anchor, ['account_id', 'id']);
+      const res = transObjectValuesToString(anchor, [
+        'account_id',
+        'id',
+        'org_id',
+      ]);
       return Object.assign(res, {
         has_grouped: AnchorFollowGroupRelation.length > 0,
       });
@@ -58,6 +67,8 @@ export async function getAnchorFrom87List(
 export async function createOrUpdateAnchorFrom87(
   request: CreateOrUpdateAnchorFrom87Request,
 ): Promise<{ created_count: number; updated_count: number }> {
+  const orgId = request.org_id;
+  assert(orgId, '机构id不能为空');
   const _data = request.list;
   logger.info('[Create Or Update Anchor From 87]', {
     dataLength: _data.length,
@@ -66,6 +77,7 @@ export async function createOrUpdateAnchorFrom87(
   const res = await mysqlClient.prismaClient.$transaction(async tx => {
     const data = _data.map(anchor => ({
       account_id: BigInt(anchor.account_id),
+      org_id: BigInt(orgId),
       account: xss(anchor.account),
 
       // 钻石相关
@@ -103,6 +115,7 @@ export async function createOrUpdateAnchorFrom87(
         account_id: {
           in: account_ids,
         },
+        org_id: BigInt(orgId),
       },
       select: {
         account_id: true,
@@ -135,7 +148,12 @@ export async function createOrUpdateAnchorFrom87(
       await Promise.all(
         toUpdate.map(anchor =>
           tx.anchorFrom87.update({
-            where: { account_id: anchor.account_id },
+            where: {
+              org_id_account_id: {
+                org_id: BigInt(orgId),
+                account_id: anchor.account_id,
+              },
+            },
             data: anchor,
           }),
         ),
@@ -161,6 +179,7 @@ export async function deleteAnchorFrom87(
       id: {
         in: data.id.map(BigInt),
       },
+      org_id: BigInt(data.org_id),
     },
   });
 
@@ -177,21 +196,12 @@ export async function clearAnchorFrom87(
 ): Promise<ClearAnchorFrom87Response['data']> {
   logger.info('[Clear Anchor From 87]', data);
 
-  let deletedCount = 0;
+  // 使用 Prisma deleteMany
+  const result = await mysqlClient.prismaClient.anchorFrom87.deleteMany({
+    where: transformAnchorFilterValuesToFilterValues(data.filter, data.org_id),
+  });
 
-  if (isEmpty(data.filter)) {
-    deletedCount = await mysqlClient.prismaClient.anchorFrom87.count();
-
-    // 执行删除
-    await mysqlClient.prismaClient.$executeRaw`DELETE FROM AnchorFrom87`;
-  } else {
-    // 使用 Prisma deleteMany
-    const result = await mysqlClient.prismaClient.anchorFrom87.deleteMany({
-      where: transformAnchorFilterValuesToFilterValues(data.filter),
-    });
-
-    deletedCount = result.count;
-  }
+  const deletedCount = result.count;
 
   logger.info('[Clear Anchor From 87 Result]', { deletedCount });
 

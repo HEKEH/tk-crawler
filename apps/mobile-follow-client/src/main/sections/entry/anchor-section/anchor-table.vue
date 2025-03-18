@@ -38,6 +38,7 @@ import {
   deleteAnchorFrom87,
   getAnchorFrom87List,
 } from '../../../requests';
+import { useGlobalStore } from '../../../utils/vue';
 import AnchorFilter from './anchor-filter.vue';
 import CreateGroupDialog from './create-group-dialog.vue';
 import {
@@ -49,6 +50,8 @@ import {
 defineOptions({
   name: 'AnchorTable',
 });
+
+const globalStore = useGlobalStore();
 
 const tableRef = shallowRef<InstanceType<typeof ElTableV2>>();
 const pageNum = ref(1);
@@ -78,7 +81,14 @@ function handleFilterReset() {
 const { data, isLoading, isError, error, refetch } = useQuery<
   GetAnchorFrom87ListResponseData | undefined
 >({
-  queryKey: ['anchors-from-87', pageNum, pageSize, sortState, filters],
+  queryKey: [
+    'anchors-from-87',
+    globalStore.orgId,
+    pageNum,
+    pageSize,
+    sortState,
+    filters,
+  ],
   retry: false,
   queryFn: async () => {
     const orderBy =
@@ -89,8 +99,12 @@ const { data, isLoading, isError, error, refetch } = useQuery<
       page_num: pageNum.value,
       page_size: pageSize.value,
       order_by: orderBy,
+      org_id: globalStore.orgId,
       filter: transformFilterViewValuesToFilterValues(filters.value),
     });
+    if (response.status_code !== RESPONSE_CODE.SUCCESS) {
+      throw new Error(response.message);
+    }
     return response.data;
   },
   placeholderData: previousData => previousData,
@@ -149,7 +163,7 @@ async function deleteItem(item: AnchorFrom87) {
   } catch {
     return;
   }
-  await deleteAnchorFrom87({ id: [item.id] });
+  await deleteAnchorFrom87({ id: [item.id], org_id: globalStore.orgId });
   ElMessage.success({
     message: `删除主播 ${item.account} 成功`,
     type: 'success',
@@ -179,10 +193,13 @@ function openCreateGroupDialog() {
 function closeCreateGroupDialog() {
   createGroupDialogVisible.value = false;
 }
-async function handleGroupCreateSubmit(data: CreateAnchorFollowGroupRequest) {
+async function handleGroupCreateSubmit(
+  data: Omit<CreateAnchorFollowGroupRequest, 'org_id'>,
+) {
   const res = await createAnchorFollowGroup({
     name: data.name,
-    anchor_ids: data.anchor_ids,
+    anchor_table_ids: data.anchor_table_ids,
+    org_id: globalStore.orgId,
   });
   if (res.status_code !== RESPONSE_CODE.SUCCESS) {
     return;
@@ -211,6 +228,7 @@ async function handleBatchDelete() {
   }
   const { data, status_code } = await deleteAnchorFrom87({
     id: selectedRows.value.map(item => item.id),
+    org_id: globalStore.orgId,
   });
   if (status_code !== RESPONSE_CODE.SUCCESS) {
     return;
@@ -249,6 +267,7 @@ async function handleClearData() {
         state.clearType === 'all'
           ? undefined
           : transformFilterViewValuesToFilterValues(filters.value),
+      org_id: globalStore.orgId,
     });
     if (resp.status_code !== RESPONSE_CODE.SUCCESS) {
       return;

@@ -23,6 +23,7 @@ export async function getAnchorFollowGroupList(
   data: GetAnchorFollowGroupListRequest,
 ): Promise<GetAnchorFollowGroupListResponseData> {
   logger.info('[Get Anchor Follow Group List]', { data });
+  assert(data.org_id, '机构ID不能为空');
   const _orderBy = isEmpty(data.order_by)
     ? {
         updated_at: 'desc' as const, // 默认按更新时间倒序排序
@@ -35,7 +36,10 @@ export async function getAnchorFollowGroupList(
       _count: anchors_count,
     };
   }
-  const filter = transformGroupFilterValuesToFilterValues(data.filter);
+  const filter = transformGroupFilterValuesToFilterValues(
+    data.filter,
+    data.org_id,
+  );
   const [groups, total] = await Promise.all([
     mysqlClient.prismaClient.anchorFollowGroup.findMany({
       where: filter,
@@ -59,6 +63,7 @@ export async function getAnchorFollowGroupList(
     list: groups.map(({ _count, ...group }) => ({
       ...group,
       id: group.id.toString(),
+      org_id: group.org_id.toString(),
       anchors_count: _count.AnchorFollowGroupRelation,
     })),
     total,
@@ -70,9 +75,10 @@ export async function getAnchorFollowGroup(
   data: GetAnchorFollowGroupRequest,
 ): Promise<GetAnchorFollowGroupResponse['data']> {
   logger.info('[Get Anchor Follow Group]', { data });
+  assert(data.org_id, '机构ID不能为空');
 
   const group = await mysqlClient.prismaClient.anchorFollowGroup.findUnique({
-    where: { id: BigInt(data.id) },
+    where: { id: BigInt(data.id), org_id: BigInt(data.org_id) },
     include: {
       AnchorFollowGroupRelation: {
         include: {
@@ -90,10 +96,14 @@ export async function getAnchorFollowGroup(
     {
       ...rest,
       anchors: AnchorFollowGroupRelation.map(relation =>
-        transObjectValuesToString(relation.AnchorFrom87, ['account_id', 'id']),
+        transObjectValuesToString(relation.AnchorFrom87, [
+          'account_id',
+          'id',
+          'org_id',
+        ]),
       ),
     },
-    ['id'],
+    ['id', 'org_id'],
   );
 }
 
@@ -102,13 +112,18 @@ export async function getAnchorFollowGroupWithAnchorIds(
   data: GetAnchorFollowGroupWithAnchorIdsRequest,
 ): Promise<GetAnchorFollowGroupWithAnchorIdsResponse['data']> {
   logger.info('[Get Anchor Follow Group With Anchor Ids]', { data });
+  assert(data.org_id, '机构ID不能为空');
 
   const group = await mysqlClient.prismaClient.anchorFollowGroup.findUnique({
-    where: { id: BigInt(data.id) },
+    where: { id: BigInt(data.id), org_id: BigInt(data.org_id) },
     include: {
       AnchorFollowGroupRelation: {
-        select: {
-          anchor_id: true,
+        include: {
+          AnchorFrom87: {
+            select: {
+              account_id: true,
+            },
+          },
         },
       },
     },
@@ -119,9 +134,9 @@ export async function getAnchorFollowGroupWithAnchorIds(
   const { AnchorFollowGroupRelation, ...rest } = group;
 
   return {
-    ...transObjectValuesToString(rest, ['id']),
+    ...transObjectValuesToString(rest, ['id', 'org_id']),
     anchor_ids: AnchorFollowGroupRelation.map(relation =>
-      relation.anchor_id.toString(),
+      relation.AnchorFrom87.account_id.toString(),
     ),
   };
 }
@@ -132,12 +147,13 @@ export async function createAnchorFollowGroup(
 ): Promise<{ id: string }> {
   logger.info('[Create Anchor Follow Group]', { data });
 
-  const { anchor_ids, ...groupData } = data;
+  const { anchor_table_ids, org_id, name } = data;
+
+  assert(org_id, '机构ID不能为空');
 
   return await mysqlClient.prismaClient.$transaction(async tx => {
-    const { name } = groupData;
     const existGroup = await tx.anchorFollowGroup.findFirst({
-      where: { name },
+      where: { name, org_id: BigInt(org_id) },
       select: { id: true },
     });
     assert(!existGroup, '分组名称已存在');
@@ -145,17 +161,17 @@ export async function createAnchorFollowGroup(
     // 创建分组
     const group = await tx.anchorFollowGroup.create({
       data: {
-        ...groupData,
         name: xss(name),
+        org_id: BigInt(org_id),
       },
     });
 
     // 创建关联关系
-    if (anchor_ids?.length) {
+    if (anchor_table_ids?.length) {
       await tx.anchorFollowGroupRelation.createMany({
-        data: anchor_ids.map(anchor_id => ({
+        data: anchor_table_ids.map(anchor_table_id => ({
           group_id: group.id,
-          anchor_id: BigInt(anchor_id),
+          anchor_table_id: BigInt(anchor_table_id),
         })),
         skipDuplicates: true,
       });
@@ -171,41 +187,43 @@ export async function updateAnchorFollowGroup(
 ): Promise<void> {
   logger.info('[Update Anchor Follow Group]', { data });
 
-  const { id, added_anchor_ids, removed_anchor_ids, name } = data;
+  const { id, org_id, added_anchor_table_ids, removed_anchor_table_ids, name } =
+    data;
+  assert(org_id, '机构ID不能为空');
 
   await mysqlClient.prismaClient.$transaction(async tx => {
     if (name) {
       const existGroup = await tx.anchorFollowGroup.findFirst({
-        where: { name, id: { not: BigInt(id) } },
+        where: { name, id: { not: BigInt(id) }, org_id: BigInt(org_id) },
         select: { id: true },
       });
       assert(!existGroup, '分组名称已存在');
       // 更新分组信息
       await tx.anchorFollowGroup.update({
-        where: { id: BigInt(id) },
+        where: { id: BigInt(id), org_id: BigInt(org_id) },
         data: {
           name: xss(name),
         },
       });
     }
 
-    if (removed_anchor_ids?.length) {
+    if (removed_anchor_table_ids?.length) {
       await tx.anchorFollowGroupRelation.deleteMany({
         where: {
           group_id: BigInt(id),
-          anchor_id: {
-            in: removed_anchor_ids.map(BigInt),
+          anchor_table_id: {
+            in: removed_anchor_table_ids.map(BigInt),
           },
         },
       });
     }
 
-    if (added_anchor_ids?.length) {
+    if (added_anchor_table_ids?.length) {
       // 创建新关联
       await tx.anchorFollowGroupRelation.createMany({
-        data: added_anchor_ids.map(anchor_id => ({
+        data: added_anchor_table_ids.map(anchor_table_id => ({
           group_id: BigInt(id),
-          anchor_id: BigInt(anchor_id),
+          anchor_table_id: BigInt(anchor_table_id),
         })),
         skipDuplicates: true,
       });
@@ -218,12 +236,14 @@ export async function deleteAnchorFollowGroup(
   data: DeleteAnchorFollowGroupRequest,
 ): Promise<DeleteAnchorFollowGroupResponse['data']> {
   logger.info('[Delete Anchor Follow Group]', { data });
+  assert(data.org_id, '机构ID不能为空');
 
   const res = await mysqlClient.prismaClient.anchorFollowGroup.deleteMany({
     where: {
       id: {
         in: data.id.map(BigInt),
       },
+      org_id: BigInt(data.org_id),
     },
   });
 
@@ -235,22 +255,14 @@ export async function clearAnchorFollowGroup(
   data: ClearAnchorFollowGroupRequest,
 ): Promise<ClearAnchorFollowGroupResponse['data']> {
   logger.info('[Clear Anchor Follow Group]', { data });
+  assert(data.org_id, '机构ID不能为空');
 
-  let deletedCount = 0;
+  // 使用 Prisma deleteMany
+  const result = await mysqlClient.prismaClient.anchorFollowGroup.deleteMany({
+    where: transformGroupFilterValuesToFilterValues(data.filter, data.org_id),
+  });
 
-  if (isEmpty(data.filter)) {
-    deletedCount = await mysqlClient.prismaClient.anchorFollowGroup.count();
-
-    // 执行删除
-    await mysqlClient.prismaClient.$executeRaw`DELETE FROM AnchorFollowGroup`;
-  } else {
-    // 使用 Prisma deleteMany
-    const result = await mysqlClient.prismaClient.anchorFollowGroup.deleteMany({
-      where: transformGroupFilterValuesToFilterValues(data.filter),
-    });
-
-    deletedCount = result.count;
-  }
+  const deletedCount = result.count;
 
   logger.info('[Clear Anchor Follow Group Result]', { deletedCount });
 

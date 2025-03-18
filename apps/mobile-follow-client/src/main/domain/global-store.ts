@@ -13,6 +13,11 @@ export default class GlobalStore {
 
   private _isInitialized: boolean = false;
 
+  /** TODO: 获取当前机构id，目前是demo id */
+  get orgId() {
+    return '1';
+  }
+
   private _networkStatus: CheckNetworkResultType =
     CheckNetworkResultType.SUCCESS;
 

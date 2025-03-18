@@ -7,8 +7,9 @@ import type {
 } from '../../follow-help';
 
 export interface CreateAnchorFollowGroupRequest {
+  org_id: string;
   name: string;
-  anchor_ids: string[];
+  anchor_table_ids: string[];
 }
 
 export interface CreateAnchorFollowGroupResponse {
@@ -19,10 +20,12 @@ export interface CreateAnchorFollowGroupResponse {
 export type AnchorFollowGroupWhereInput = Prisma.AnchorFollowGroupWhereInput;
 
 export type AnchorFollowGroupListFilter = AnchorFollowGroupWhereInput & {
+  org_id: string;
   search?: string;
 };
 
 export interface GetAnchorFollowGroupListRequest {
+  org_id: string;
   page_num: number;
   page_size: number;
   filter?: AnchorFollowGroupListFilter;
@@ -48,6 +51,7 @@ export interface GetAnchorFollowGroupListResponse {
 
 export interface GetAnchorFollowGroupRequest {
   id: string;
+  org_id: string;
 }
 
 export interface GetAnchorFollowGroupResponse {
@@ -58,6 +62,7 @@ export interface GetAnchorFollowGroupResponse {
 
 export interface GetAnchorFollowGroupWithAnchorIdsRequest {
   id: string;
+  org_id: string;
 }
 
 export interface GetAnchorFollowGroupWithAnchorIdsResponse {
@@ -67,6 +72,7 @@ export interface GetAnchorFollowGroupWithAnchorIdsResponse {
 }
 
 export interface DeleteAnchorFollowGroupRequest {
+  org_id: string;
   id: string[];
 }
 
@@ -79,10 +85,11 @@ export interface DeleteAnchorFollowGroupResponse {
 }
 
 export interface UpdateAnchorFollowGroupRequest {
+  org_id: string;
   id: string;
   name?: string;
-  added_anchor_ids?: string[];
-  removed_anchor_ids?: string[];
+  added_anchor_table_ids?: string[];
+  removed_anchor_table_ids?: string[];
 }
 
 export interface UpdateAnchorFollowGroupResponse {
@@ -91,7 +98,8 @@ export interface UpdateAnchorFollowGroupResponse {
 }
 
 export interface ClearAnchorFollowGroupRequest {
-  filter?: Prisma.AnchorFollowGroupWhereInput;
+  org_id: string;
+  filter?: AnchorFollowGroupListFilter;
 }
 
 export interface ClearAnchorFollowGroupResponse {

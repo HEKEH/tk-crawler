@@ -70,7 +70,7 @@ model LiveAdminUserRegionRelation {
   region  String        @db.VarChar(2)
   user    LiveAdminUser @relation(fields: [user_id], references: [id])
 
-  @@unique([user_id, region])
+  @@unique([user_id, region], name: "user_id_region")
   @@index([user_id])
   @@index([region])
 }
@@ -141,7 +141,7 @@ model OrgRegionRelation {
   region String       @db.VarChar(2)
   org    Organization @relation(fields: [org_id], references: [id], onDelete: Cascade)
 
-  @@unique([org_id, region])
+  @@unique([org_id, region], name: "org_id_region")
   @@index([org_id])
   @@index([region])
 }
@@ -158,7 +158,7 @@ model TaskAssign {
   anchor       Anchor       @relation(fields: [anchor_id], references: [user_id], onDelete: Cascade)
   orgUser      OrgUser      @relation(fields: [org_user_id], references: [id], onDelete: Cascade)
 
-  @@unique([org_id, anchor_id])
+  @@unique([org_id, anchor_id], name: "org_id_anchor_id")
   @@index([org_id])
   @@index([org_user_id])
 }
@@ -180,10 +180,10 @@ model AnchorConnect {
 // 下面是临时表
 
 model AnchorFrom87 {
-  id         BigInt  @id @default(autoincrement()) @db.UnsignedBigInt
-  org_id     BigInt? @db.UnsignedBigInt
-  account_id BigInt  @db.UnsignedBigInt
-  account    String  @db.VarChar(30)
+  id         BigInt @id @default(autoincrement()) @db.UnsignedBigInt
+  org_id     BigInt @db.UnsignedBigInt
+  account_id BigInt @db.UnsignedBigInt
+  account    String @db.VarChar(30)
 
   // 钻石相关
   day_diamond_val      Int @default(0)
@@ -210,7 +210,7 @@ model AnchorFrom87 {
   AnchorFollowGroupRelation AnchorFollowGroupRelation[]
   organization              Organization?               @relation(fields: [org_id], references: [id], onDelete: Cascade)
 
-  @@unique([org_id, account_id])
+  @@unique([org_id, account_id], name: "org_id_account_id")
   @@index([account])
   @@index([account_id])
   @@index([country_code])
@@ -219,26 +219,27 @@ model AnchorFrom87 {
 
 model AnchorFollowGroup {
   id                        BigInt                      @id @default(autoincrement()) @db.UnsignedBigInt
-  org_id                    BigInt?                     @db.UnsignedBigInt
-  name                      String                      @unique @db.VarChar(30)
+  org_id                    BigInt                      @db.UnsignedBigInt
+  name                      String                      @db.VarChar(30)
   created_at                DateTime                    @default(now())
   updated_at                DateTime                    @updatedAt
   organization              Organization?               @relation(fields: [org_id], references: [id], onDelete: Cascade)
   AnchorFollowGroupRelation AnchorFollowGroupRelation[]
 
+  @@unique([org_id, name], name: "org_id_name")
   @@index([org_id])
 }
 
 model AnchorFollowGroupRelation {
-  id           BigInt            @id @default(autoincrement())
-  anchor_id    BigInt            @db.UnsignedBigInt
-  group_id     BigInt            @db.UnsignedBigInt
-  created_at   DateTime          @default(now())
-  updated_at   DateTime          @updatedAt
-  group        AnchorFollowGroup @relation(fields: [group_id], references: [id], onDelete: Cascade)
-  AnchorFrom87 AnchorFrom87      @relation(fields: [anchor_id], references: [id], onDelete: Cascade)
+  id              BigInt            @id @default(autoincrement())
+  anchor_table_id BigInt            @db.UnsignedBigInt
+  group_id        BigInt            @db.UnsignedBigInt
+  created_at      DateTime          @default(now())
+  updated_at      DateTime          @updatedAt
+  group           AnchorFollowGroup @relation(fields: [group_id], references: [id], onDelete: Cascade)
+  AnchorFrom87    AnchorFrom87      @relation(fields: [anchor_table_id], references: [id], onDelete: Cascade)
 
-  @@unique([group_id, anchor_id])
-  @@index([anchor_id])
+  @@unique([group_id, anchor_table_id], name: "group_id_anchor_table_id")
+  @@index([anchor_table_id])
   @@index([group_id])
 }

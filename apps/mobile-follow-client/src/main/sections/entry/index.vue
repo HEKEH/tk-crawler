@@ -89,7 +89,6 @@ const MenuList = [
     flex: 1;
     height: 100%;
     overflow: hidden;
-    padding: 1rem 0.5rem 0.5rem 1rem;
   }
   .side-menus {
     width: 100%;

@@ -39,6 +39,15 @@ defineOptions({
   name: 'AnchorCommentGroupTable',
 });
 
+const emits = defineEmits<{
+  (e: 'deleteItems', templateGroupIds: string[]): void;
+  (e: 'templateGroupManage', templateGroup: AnchorCommentTemplateGroup): void;
+}>();
+
+function onTemplateGroupManage(templateGroup: AnchorCommentTemplateGroup) {
+  emits('templateGroupManage', templateGroup);
+}
+
 const globalStore = useGlobalStore();
 
 const tableRef = ref<InstanceType<typeof ElTable>>();
@@ -136,6 +145,7 @@ async function deleteItem(item: AnchorCommentTemplateGroup) {
     org_id: globalStore.orgId,
   });
   ElMessage.success({ message: '删除成功', type: 'success', duration: 2000 });
+  emits('deleteItems', [item.id]);
   await refetch();
 }
 
@@ -168,9 +178,11 @@ async function handleBatchDelete() {
   } catch {
     return;
   }
+
+  const itemsIds = selectedRows.value.map(item => item.id);
   const { data, status_code } = await deleteAnchorCommentTemplateGroup({
     org_id: globalStore.orgId,
-    ids: selectedRows.value.map(item => item.id),
+    ids: itemsIds,
   });
   if (status_code !== RESPONSE_CODE.SUCCESS) {
     return;
@@ -181,6 +193,7 @@ async function handleBatchDelete() {
     type: 'success',
     duration: 2000,
   });
+  emits('deleteItems', itemsIds);
   await refetch();
 }
 
@@ -221,6 +234,8 @@ async function handleClearData() {
       type: 'success',
       duration: 2000,
     });
+
+    emits('deleteItems', resp.data!.deleted_ids);
 
     await refetch();
   } catch {}
@@ -360,7 +375,7 @@ async function handleCreateOrEdit(data: Partial<AnchorCommentTemplateGroup>) {
           </template>
         </ElTableColumn>
 
-        <ElTableColumn fixed="right" label="操作" min-width="120">
+        <ElTableColumn fixed="right" label="操作" min-width="180">
           <template #default="scope">
             <div>
               <ElButton
@@ -370,6 +385,14 @@ async function handleCreateOrEdit(data: Partial<AnchorCommentTemplateGroup>) {
                 @click.prevent="onEditItem(scope.row)"
               >
                 编辑
+              </ElButton>
+              <ElButton
+                link
+                type="primary"
+                size="small"
+                @click.prevent="onTemplateGroupManage(scope.row)"
+              >
+                模板组管理
               </ElButton>
               <ElButton
                 link

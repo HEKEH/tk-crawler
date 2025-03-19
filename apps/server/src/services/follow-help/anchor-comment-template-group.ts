@@ -177,17 +177,32 @@ export async function deleteAnchorCommentTemplateGroup(
   assert(data.org_id, '机构ID不能为空');
   assert(data.ids && data.ids.length > 0, '分组ID不能为空');
 
-  const res =
-    await mysqlClient.prismaClient.anchorCommentTemplateGroup.deleteMany({
-      where: {
-        id: {
-          in: data.ids.map(BigInt),
-        },
-        org_id: BigInt(data.org_id),
+  return await mysqlClient.prismaClient.$transaction(async prisma => {
+    const filter = {
+      id: {
+        in: data.ids.map(BigInt),
       },
+      org_id: BigInt(data.org_id),
+    };
+    // 先查询符合条件的记录，获取它们的ID
+    const recordsToDelete = await prisma.anchorCommentTemplateGroup.findMany({
+      where: filter,
+      select: { id: true },
     });
 
-  return { deleted_count: res.count };
+    // 提取ID列表
+    const deletedIds = recordsToDelete.map(record => record.id.toString());
+
+    // 执行删除操作
+    const deleteResult = await prisma.anchorCommentTemplateGroup.deleteMany({
+      where: filter,
+    });
+
+    return {
+      deleted_count: deleteResult.count,
+      deleted_ids: deletedIds,
+    };
+  });
 }
 
 // 清空评论模板分组
@@ -196,18 +211,26 @@ export async function clearAnchorCommentTemplateGroup(
 ): Promise<ClearAnchorCommentTemplateGroupResponse['data']> {
   logger.info('[Clear Anchor Comment Template Group]', { data });
   assert(data.org_id, '机构ID不能为空');
-
-  // 使用 Prisma deleteMany
-  const result =
-    await mysqlClient.prismaClient.anchorCommentTemplateGroup.deleteMany({
-      where: transformTemplateGroupFilterValues(data.filter, data.org_id),
+  // 使用事务确保操作的原子性
+  return await mysqlClient.prismaClient.$transaction(async prisma => {
+    const filter = transformTemplateGroupFilterValues(data.filter, data.org_id);
+    // 先查询符合条件的记录，获取它们的ID
+    const recordsToDelete = await prisma.anchorCommentTemplateGroup.findMany({
+      where: filter,
+      select: { id: true },
     });
 
-  const deletedCount = result.count;
+    // 提取ID列表
+    const deletedIds = recordsToDelete.map(record => record.id.toString());
 
-  logger.info('[Clear Anchor Comment Template Group Result]', { deletedCount });
+    // 执行删除操作
+    const deleteResult = await prisma.anchorCommentTemplateGroup.deleteMany({
+      where: filter,
+    });
 
-  return {
-    deleted_count: deletedCount,
-  };
+    return {
+      deleted_count: deleteResult.count,
+      deleted_ids: deletedIds,
+    };
+  });
 }

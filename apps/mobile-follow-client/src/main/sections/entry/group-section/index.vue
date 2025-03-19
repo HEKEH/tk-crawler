@@ -22,6 +22,7 @@ defineOptions({
   align-items: center;
   overflow: hidden;
   row-gap: 1rem;
+  padding: 1rem 0.5rem 0.5rem 1rem;
   .group-table {
     flex: 1;
   }

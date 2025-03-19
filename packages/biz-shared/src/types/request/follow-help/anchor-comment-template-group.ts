@@ -87,7 +87,8 @@ export interface DeleteAnchorCommentTemplateGroupRequest {
 
 export interface DeleteAnchorCommentTemplateGroupResponse {
   status_code: RESPONSE_CODE;
-  data: {
+  data?: {
+    deleted_ids: string[];
     deleted_count: number;
   };
   message?: string;
@@ -100,7 +101,8 @@ export interface ClearAnchorCommentTemplateGroupRequest {
 
 export interface ClearAnchorCommentTemplateGroupResponse {
   status_code: RESPONSE_CODE;
-  data: {
+  data?: {
+    deleted_ids: string[];
     deleted_count: number;
   };
   message?: string;

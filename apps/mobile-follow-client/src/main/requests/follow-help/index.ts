@@ -148,3 +148,5 @@ export function clearAnchorFollowGroup(
     params,
   });
 }
+
+export * from './anchor-comment-template';

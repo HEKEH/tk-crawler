@@ -1,4 +1,8 @@
 import type {
+  AnchorCommentTemplateGroupListFilter,
+  AnchorCommentTemplateGroupWhereInput,
+  AnchorCommentTemplateListFilter,
+  AnchorCommentTemplateWhereInput,
   AnchorFollowGroupListFilter,
   AnchorFollowGroupWhereInput,
   AnchorFrom87ListFilter,
@@ -45,4 +49,53 @@ export function transformGroupFilterValuesToFilterValues(
     };
   }
   return filter;
+}
+
+export function transformTemplateGroupFilterValues(
+  filter: AnchorCommentTemplateGroupListFilter | undefined,
+  orgId: string,
+): AnchorCommentTemplateGroupWhereInput {
+  const { search, ...rest } = filter ?? {};
+  const result: AnchorCommentTemplateGroupWhereInput = {
+    ...rest,
+    org_id: BigInt(orgId),
+  };
+
+  // 添加搜索条件
+  if (search) {
+    result.name = {
+      contains: search,
+    };
+  }
+
+  return result;
+}
+
+export function transformTemplateFilterValues(
+  filter: AnchorCommentTemplateListFilter | undefined,
+  orgId: string,
+): AnchorCommentTemplateWhereInput {
+  const { search, ...rest } = filter ?? {};
+  const result: AnchorCommentTemplateWhereInput = {
+    ...rest,
+    org_id: BigInt(orgId),
+  };
+
+  // 添加搜索条件
+  if (search) {
+    result.OR = [
+      {
+        content: {
+          contains: search,
+        },
+      },
+      {
+        label: {
+          contains: search,
+        },
+      },
+    ];
+  }
+
+  return result;
 }

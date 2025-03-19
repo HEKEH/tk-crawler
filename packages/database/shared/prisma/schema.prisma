@@ -98,22 +98,24 @@ model AnchorInviteCheck {
 
 // 机构表
 model Organization {
-  id                   BigInt              @id @default(autoincrement()) @db.UnsignedBigInt
-  name                 String              @unique @db.VarChar(100)
-  membership_start_at  DateTime?           @db.DateTime(3)
-  membership_expire_at DateTime?           @db.DateTime(3)
-  status               Int                 @db.UnsignedTinyInt
-  remark               String?             @db.VarChar(200)
-  created_at           DateTime            @default(now()) @db.DateTime(3)
-  updated_at           DateTime            @updatedAt @db.DateTime(3)
-  liveAdminUsers       LiveAdminUser[]
-  orgUsers             OrgUser[]
-  regions              OrgRegionRelation[]
-  inviteChecks         AnchorInviteCheck[]
-  taskAssigns          TaskAssign[]
-  anchorConnects       AnchorConnect[]
-  AnchorFollowGroup    AnchorFollowGroup[]
-  AnchorFrom87         AnchorFrom87[]
+  id                         BigInt                       @id @default(autoincrement()) @db.UnsignedBigInt
+  name                       String                       @unique @db.VarChar(100)
+  membership_start_at        DateTime?                    @db.DateTime(3)
+  membership_expire_at       DateTime?                    @db.DateTime(3)
+  status                     Int                          @db.UnsignedTinyInt
+  remark                     String?                      @db.VarChar(200)
+  created_at                 DateTime                     @default(now()) @db.DateTime(3)
+  updated_at                 DateTime                     @updatedAt @db.DateTime(3)
+  liveAdminUsers             LiveAdminUser[]
+  orgUsers                   OrgUser[]
+  regions                    OrgRegionRelation[]
+  inviteChecks               AnchorInviteCheck[]
+  taskAssigns                TaskAssign[]
+  anchorConnects             AnchorConnect[]
+  AnchorFollowGroup          AnchorFollowGroup[]
+  AnchorFrom87               AnchorFrom87[]
+  AnchorCommentTemplateGroup AnchorCommentTemplateGroup[]
+  AnchorCommentTemplate      AnchorCommentTemplate[]
 }
 
 // 机构用户表
@@ -242,4 +244,38 @@ model AnchorFollowGroupRelation {
   @@unique([group_id, anchor_table_id], name: "group_id_anchor_table_id")
   @@index([anchor_table_id])
   @@index([group_id])
+}
+
+/**
+ * 主播评论模板组
+ */
+model AnchorCommentTemplateGroup {
+  id                    BigInt                  @id @default(autoincrement()) @db.UnsignedBigInt
+  org_id                BigInt                  @db.UnsignedBigInt
+  name                  String                  @db.VarChar(30)
+  created_at            DateTime                @default(now())
+  updated_at            DateTime                @updatedAt
+  organization          Organization            @relation(fields: [org_id], references: [id], onDelete: Cascade)
+  AnchorCommentTemplate AnchorCommentTemplate[]
+
+  @@unique([org_id, name], name: "org_id_name")
+  @@index([org_id])
+}
+
+/**
+ * 主播评论模板
+ */
+model AnchorCommentTemplate {
+  id           BigInt                     @id @default(autoincrement()) @db.UnsignedBigInt
+  org_id       BigInt                     @db.UnsignedBigInt
+  group_id     BigInt                     @db.UnsignedBigInt
+  content      String                     @db.Text
+  label        String?                    @db.VarChar(30)
+  created_at   DateTime                   @default(now())
+  updated_at   DateTime                   @updatedAt
+  group        AnchorCommentTemplateGroup @relation(fields: [group_id], references: [id], onDelete: Cascade)
+  organization Organization               @relation(fields: [org_id], references: [id], onDelete: Cascade)
+
+  @@index([group_id])
+  @@index([org_id])
 }

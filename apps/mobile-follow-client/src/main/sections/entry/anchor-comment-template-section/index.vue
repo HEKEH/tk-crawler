@@ -58,7 +58,7 @@ function onTemplateGroupManage(templateGroup: AnchorCommentTemplateGroup) {
         />
         <AnchorCommentTemplateTable
           v-else-if="tab.type === TabType.Templates"
-          :template-group="(tab as TemplatesTabModel).templateGroup"
+          :templateGroupId="(tab as TemplatesTabModel).templateGroup.id"
         />
       </ElTabPane>
     </ElTabs>

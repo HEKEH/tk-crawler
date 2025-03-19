@@ -8,7 +8,7 @@ export interface CreateAnchorCommentTemplateRequest {
   group_id: string;
   templates: Omit<
     AnchorCommentTemplate,
-    'id' | 'group_id' | 'created_at' | 'updated_at'
+    'id' | 'group_id' | 'created_at' | 'updated_at' | 'org_id'
   >[];
 }
 

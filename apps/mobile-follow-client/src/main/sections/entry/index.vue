@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ElMenu, ElMenuItem } from 'element-plus';
 import { ref } from 'vue';
+import AnchorCommentTemplateSection from './anchor-comment-template-section/index.vue';
 import AnchorSection from './anchor-section/index.vue';
 import GroupSection from './group-section/index.vue';
 
@@ -11,6 +12,7 @@ defineOptions({
 enum MenuType {
   ANCHOR = 'anchor',
   GROUP = 'group',
+  ANCHOR_COMMENT_TEMPLATE = 'anchor-comment-template',
 }
 
 const currentMenu = ref<MenuType>(MenuType.ANCHOR);
@@ -27,6 +29,10 @@ const MenuList = [
   {
     type: MenuType.GROUP,
     label: '分组管理',
+  },
+  {
+    type: MenuType.ANCHOR_COMMENT_TEMPLATE,
+    label: '主播评论模板',
   },
 ];
 </script>
@@ -52,9 +58,16 @@ const MenuList = [
       <KeepAlive>
         <AnchorSection v-if="currentMenu === MenuType.ANCHOR" />
       </KeepAlive>
-      <Suspense v-if="currentMenu === MenuType.GROUP">
-        <GroupSection />
-      </Suspense>
+      <KeepAlive>
+        <Suspense v-if="currentMenu === MenuType.GROUP">
+          <GroupSection />
+        </Suspense>
+      </KeepAlive>
+      <KeepAlive>
+        <Suspense v-if="currentMenu === MenuType.ANCHOR_COMMENT_TEMPLATE">
+          <AnchorCommentTemplateSection />
+        </Suspense>
+      </KeepAlive>
     </div>
   </div>
 </template>

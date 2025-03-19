@@ -22,6 +22,7 @@ import {
   ElTableColumn,
   ElTag,
 } from 'element-plus';
+import { omit } from 'lodash';
 import { markRaw, onBeforeUnmount, ref } from 'vue';
 import {
   createOrg,
@@ -104,10 +105,6 @@ function refresh() {
   });
 }
 
-const formDialogVisible = ref(false);
-const formData = ref<Partial<OrganizationItem>>();
-const formMode = ref<'create' | 'edit'>('create');
-
 async function toggleDisableItem(row: OrganizationItem) {
   let updateResp: UpdateOrgResponse;
   if (row.status === OrganizationStatus.normal) {
@@ -152,6 +149,10 @@ async function deleteOrganization(item: OrganizationItem) {
   }
 }
 
+const formDialogVisible = ref(false);
+const formData = ref<Partial<OrganizationItem>>();
+const formMode = ref<'create' | 'edit'>('create');
+
 function onAddItem() {
   formData.value = undefined;
   formMode.value = 'create';
@@ -172,7 +173,9 @@ async function handleCreateOrEdit(data: Partial<OrganizationItem>) {
   if (formMode.value === 'create') {
     result = await createOrg(data as CreateOrgRequest);
   } else {
-    result = await updateOrg(data as UpdateOrgRequest);
+    result = await updateOrg(
+      omit(data, ['created_at', 'updated_at']) as UpdateOrgRequest,
+    );
   }
   if (result.status_code !== RESPONSE_CODE.SUCCESS) {
     return;

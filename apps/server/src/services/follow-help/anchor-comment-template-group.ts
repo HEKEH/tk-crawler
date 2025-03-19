@@ -24,11 +24,18 @@ export async function getAnchorCommentTemplateGroupList(
   logger.info('[Get Anchor Comment Template Group List]', { data });
   assert(data.org_id, '机构ID不能为空');
 
-  const orderBy = isEmpty(data.order_by)
+  const _orderBy = isEmpty(data.order_by)
     ? {
         updated_at: 'desc' as const, // 默认按更新时间倒序排序
       }
     : data.order_by!;
+
+  const { templates_count, ...orderBy } = _orderBy;
+  if (templates_count) {
+    orderBy.AnchorCommentTemplate = {
+      _count: templates_count,
+    };
+  }
 
   const filter = transformTemplateGroupFilterValues(data.filter, data.org_id);
 

@@ -106,4 +106,9 @@ followHelpRouter.post(
   FollowHelpController.deleteAnchorCommentTemplateGroup,
 );
 
+followHelpRouter.post(
+  '/clear-comment-template-group',
+  FollowHelpController.clearAnchorCommentTemplateGroup,
+);
+
 export default followHelpRouter;

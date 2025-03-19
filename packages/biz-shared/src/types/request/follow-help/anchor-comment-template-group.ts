@@ -38,12 +38,17 @@ export type AnchorCommentTemplateGroupListFilter =
     search?: string;
   };
 
+export type GetAnchorCommentTemplateGroupListOrderBy =
+  Prisma.AnchorCommentTemplateGroupOrderByWithRelationInput & {
+    templates_count?: 'asc' | 'desc';
+  };
+
 export interface GetAnchorCommentTemplateGroupListRequest {
   page_num: number;
   page_size: number;
   org_id: string;
   filter?: AnchorCommentTemplateGroupListFilter;
-  order_by?: Prisma.AnchorCommentTemplateGroupOrderByWithRelationInput;
+  order_by?: GetAnchorCommentTemplateGroupListOrderBy;
 }
 
 export interface GetAnchorCommentTemplateGroupListResponseData {

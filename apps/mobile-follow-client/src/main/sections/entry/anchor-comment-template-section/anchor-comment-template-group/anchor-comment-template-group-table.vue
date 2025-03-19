@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import type {
-  AnchorFollowGroupItem,
-  GetAnchorFollowGroupListResponseData,
+  AnchorCommentTemplateGroup,
+  CreateAnchorCommentTemplateGroupResponse,
+  GetAnchorCommentTemplateGroupListResponseData,
+  UpdateAnchorCommentTemplateGroupResponse,
 } from '@tk-crawler/biz-shared';
 import { RefreshRight } from '@element-plus/icons-vue';
 import { useQuery } from '@tanstack/vue-query';
@@ -16,22 +18,25 @@ import {
   ElTableColumn,
 } from 'element-plus';
 import { computed, h, onActivated, reactive, ref } from 'vue';
-import ClearMessage from '../../../components/clear-message.vue';
+import ClearMessage from '../../../../components/clear-message.vue';
 import {
-  clearAnchorFollowGroup,
-  deleteAnchorFollowGroup,
-  getAnchorFollowGroupList,
-} from '../../../requests';
-import { useGlobalStore } from '../../../utils/vue';
+  clearAnchorCommentTemplateGroup,
+  createAnchorCommentTemplateGroup,
+  deleteAnchorCommentTemplateGroup,
+  getAnchorCommentTemplateGroupList,
+  updateAnchorCommentTemplateGroup,
+} from '../../../../requests';
+import { useGlobalStore } from '../../../../utils/vue';
+import AnchorCommentTemplateGroupFilter from './anchor-comment-template-group-filter.vue';
 import {
   DefaultFilterViewValues,
   type FilterViewValues,
   transformFilterViewValuesToFilterValues,
 } from './filter';
-import GroupFilter from './group-filter.vue';
+import TemplateGroupFormDialog from './template-group-dialog.vue';
 
 defineOptions({
-  name: 'GroupTable',
+  name: 'AnchorCommentGroupTable',
 });
 
 const globalStore = useGlobalStore();
@@ -39,7 +44,7 @@ const globalStore = useGlobalStore();
 const tableRef = ref<InstanceType<typeof ElTable>>();
 const pageNum = ref(1);
 const pageSize = ref(20);
-const sortField = ref<keyof AnchorFollowGroupItem>();
+const sortField = ref<keyof AnchorCommentTemplateGroup>();
 const sortOrder = ref<'ascending' | 'descending'>();
 
 // 过滤条件
@@ -57,10 +62,10 @@ function handleFilterReset() {
 }
 
 const { data, isLoading, isError, error, refetch } = useQuery<
-  GetAnchorFollowGroupListResponseData | undefined
+  GetAnchorCommentTemplateGroupListResponseData | undefined
 >({
   queryKey: [
-    'anchor-follow-groups',
+    'anchor-comment-template-groups',
     globalStore.orgId,
     pageNum,
     pageSize,
@@ -73,7 +78,7 @@ const { data, isLoading, isError, error, refetch } = useQuery<
     const orderBy = sortField.value
       ? { [sortField.value]: sortOrder.value === 'ascending' ? 'asc' : 'desc' }
       : undefined;
-    const response = await getAnchorFollowGroupList({
+    const response = await getAnchorCommentTemplateGroupList({
       org_id: globalStore.orgId,
       page_num: pageNum.value,
       page_size: pageSize.value,
@@ -93,7 +98,7 @@ function handleSortChange({
   prop,
   order,
 }: {
-  prop: keyof AnchorFollowGroupItem;
+  prop: keyof AnchorCommentTemplateGroup;
   order: 'ascending' | 'descending' | null;
 }) {
   sortField.value = order ? prop : undefined;
@@ -115,10 +120,10 @@ async function refresh() {
   });
 }
 
-// 删除分组
-async function deleteItem(item: AnchorFollowGroupItem) {
+// 删除模板分组
+async function deleteItem(item: AnchorCommentTemplateGroup) {
   try {
-    await ElMessageBox.confirm(`确定要删除分组 ${item.name} 吗？`, {
+    await ElMessageBox.confirm(`确定要删除模板分组 ${item.name} 吗？`, {
       type: 'warning',
       confirmButtonText: '确定',
       cancelButtonText: '取消',
@@ -126,7 +131,10 @@ async function deleteItem(item: AnchorFollowGroupItem) {
   } catch {
     return;
   }
-  await deleteAnchorFollowGroup({ id: [item.id], org_id: globalStore.orgId });
+  await deleteAnchorCommentTemplateGroup({
+    ids: [item.id],
+    org_id: globalStore.orgId,
+  });
   ElMessage.success({ message: '删除成功', type: 'success', duration: 2000 });
   await refetch();
 }
@@ -139,10 +147,10 @@ function handlePageSizeChange(_pageSize: number) {
   pageSize.value = _pageSize;
 }
 
-const selectedRows = ref<AnchorFollowGroupItem[]>([]);
+const selectedRows = ref<AnchorCommentTemplateGroup[]>([]);
 
 // 处理选择变化
-function handleSelectionChange(rows: AnchorFollowGroupItem[]) {
+function handleSelectionChange(rows: AnchorCommentTemplateGroup[]) {
   selectedRows.value = rows;
 }
 const hasSelectedRows = computed(() => selectedRows.value.length > 0);
@@ -150,7 +158,7 @@ const hasSelectedRows = computed(() => selectedRows.value.length > 0);
 async function handleBatchDelete() {
   try {
     await ElMessageBox.confirm(
-      `确定要删除 ${selectedRows.value.length} 个分组吗？`,
+      `确定要删除 ${selectedRows.value.length} 个模板分组吗？`,
       {
         type: 'warning',
         confirmButtonText: '确定',
@@ -160,16 +168,16 @@ async function handleBatchDelete() {
   } catch {
     return;
   }
-  const { data, status_code } = await deleteAnchorFollowGroup({
+  const { data, status_code } = await deleteAnchorCommentTemplateGroup({
     org_id: globalStore.orgId,
-    id: selectedRows.value.map(item => item.id),
+    ids: selectedRows.value.map(item => item.id),
   });
   if (status_code !== RESPONSE_CODE.SUCCESS) {
     return;
   }
 
   ElMessage.success({
-    message: `共删除 ${data!.deleted_count} 个分组`,
+    message: `共删除 ${data!.deleted_count} 个模板分组`,
     type: 'success',
     duration: 2000,
   });
@@ -196,7 +204,7 @@ async function handleClearData() {
       cancelButtonText: '取消',
     });
 
-    const resp = await clearAnchorFollowGroup({
+    const resp = await clearAnchorCommentTemplateGroup({
       org_id: globalStore.orgId,
       filter:
         state.clearType === 'all'
@@ -209,7 +217,7 @@ async function handleClearData() {
     }
 
     ElMessage.success({
-      message: `共清空 ${resp.data!.deleted_count} 个分组`,
+      message: `共清空 ${resp.data!.deleted_count} 个模板分组`,
       type: 'success',
       duration: 2000,
     });
@@ -219,23 +227,73 @@ async function handleClearData() {
 }
 
 onActivated(refetch);
+
+const formDialogVisible = ref(false);
+const formData = ref<AnchorCommentTemplateGroup>();
+const formMode = ref<'create' | 'edit'>('create');
+
+function onAddItem() {
+  formData.value = undefined;
+  formMode.value = 'create';
+  formDialogVisible.value = true;
+}
+function onEditItem(item: AnchorCommentTemplateGroup) {
+  formData.value = item;
+  formMode.value = 'edit';
+  formDialogVisible.value = true;
+}
+function onCloseFormDialog() {
+  formDialogVisible.value = false;
+  formData.value = undefined;
+  formMode.value = 'create';
+}
+async function handleCreateOrEdit(data: Partial<AnchorCommentTemplateGroup>) {
+  let result:
+    | CreateAnchorCommentTemplateGroupResponse
+    | UpdateAnchorCommentTemplateGroupResponse;
+  if (formMode.value === 'create') {
+    result = await createAnchorCommentTemplateGroup({
+      org_id: globalStore.orgId,
+      name: data.name!,
+    });
+  } else {
+    result = await updateAnchorCommentTemplateGroup({
+      id: formData.value!.id,
+      org_id: globalStore.orgId,
+      name: data.name!,
+    });
+  }
+  if (result.status_code !== RESPONSE_CODE.SUCCESS) {
+    return;
+  }
+  await refetch();
+  onCloseFormDialog();
+  ElMessage.success('保存成功');
+}
 </script>
 
 <template>
-  <div v-loading="isLoading || isRefreshing" class="group-table">
-    <div v-if="isError" class="group-table-error">
+  <div
+    v-loading="isLoading || isRefreshing"
+    class="comment-template-group-table"
+  >
+    <div v-if="isError" class="comment-template-group-table-error">
       {{ error?.message }}
     </div>
     <template v-if="!isError">
       <div class="filter-row">
-        <GroupFilter
+        <AnchorCommentTemplateGroupFilter
           :model-value="filters"
           @change="handleFilterChange"
           @reset="handleFilterReset"
         />
       </div>
       <div class="header-row">
-        <div class="left-part"></div>
+        <div class="left-part">
+          <ElButton size="small" type="primary" @click="onAddItem">
+            添加模板组
+          </ElButton>
+        </div>
         <div class="right-part">
           <ElButton
             :disabled="!hasSelectedRows"
@@ -274,8 +332,8 @@ onActivated(refetch);
         <!-- <ElTableColumn prop="id" label="分组ID" min-width="120" /> -->
         <ElTableColumn prop="name" label="分组名称" min-width="140" />
         <ElTableColumn
-          prop="anchors_count"
-          label="主播账号数量"
+          prop="templates_count"
+          label="模板数量"
           min-width="140"
           sortable="custom"
         />
@@ -307,6 +365,14 @@ onActivated(refetch);
             <div>
               <ElButton
                 link
+                type="primary"
+                size="small"
+                @click.prevent="onEditItem(scope.row)"
+              >
+                编辑
+              </ElButton>
+              <ElButton
+                link
                 type="danger"
                 size="small"
                 @click.prevent="deleteItem(scope.row)"
@@ -332,10 +398,17 @@ onActivated(refetch);
       </div>
     </template>
   </div>
+  <TemplateGroupFormDialog
+    :visible="formDialogVisible"
+    :mode="formMode"
+    :initial-data="formData"
+    :submit="handleCreateOrEdit"
+    @close="onCloseFormDialog"
+  />
 </template>
 
 <style scoped>
-.group-table {
+.comment-template-group-table {
   position: relative;
   flex: 1;
   height: 100%;
@@ -377,7 +450,7 @@ onActivated(refetch);
   color: var(--el-color-primary);
 }
 
-.group-table-error {
+.comment-template-group-table-error {
   display: flex;
   align-items: center;
   justify-content: center;

@@ -20,7 +20,6 @@ export interface CreateAnchorFollowGroupResponse {
 export type AnchorFollowGroupWhereInput = Prisma.AnchorFollowGroupWhereInput;
 
 export type AnchorFollowGroupListFilter = AnchorFollowGroupWhereInput & {
-  org_id: string;
   search?: string;
 };
 

@@ -22,8 +22,8 @@
     "prod:delete": "cross-env pm2 delete ecosystem.config.js",
     "prod:log": "cross-env pm2 logs",
     "prod:flush": "cross-env pm2 flush",
-    "docker:build": "./scripts/docker/build-docker-image.sh",
-    "docker:build:local": "./scripts/docker/build-docker-image.sh -e ./.env.production.local -i tk-crawler-server-local",
+    "docker:build": "./scripts/docker/build-docker-image.sh && pnpm docker:output",
+    "docker:build:local": "./scripts/docker/build-docker-image.sh -e ./.env.local.production -i tk-crawler-server-local",
     "docker:output": "docker save -o ./docker-images/tk-crawler-server.tar tk-crawler-server:latest",
     "lint": "eslint",
     "preinstall": "npx only-allow pnpm"

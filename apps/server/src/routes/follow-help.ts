@@ -54,4 +54,56 @@ followHelpRouter.post(
   FollowHelpController.clearAnchorFollowGroup,
 );
 
+// 评论模板相关路由
+followHelpRouter.post(
+  '/get-comment-template-list',
+  FollowHelpController.getAnchorCommentTemplateList,
+);
+
+followHelpRouter.post(
+  '/create-comment-template',
+  FollowHelpController.createAnchorCommentTemplate,
+);
+
+followHelpRouter.post(
+  '/update-comment-template',
+  FollowHelpController.updateAnchorCommentTemplate,
+);
+
+followHelpRouter.post(
+  '/delete-comment-template',
+  FollowHelpController.deleteAnchorCommentTemplate,
+);
+
+followHelpRouter.post(
+  '/clear-comment-template',
+  FollowHelpController.clearAnchorCommentTemplate,
+);
+
+// 评论模板分组相关路由
+followHelpRouter.post(
+  '/get-comment-template-group-list',
+  FollowHelpController.getAnchorCommentTemplateGroupList,
+);
+
+followHelpRouter.post(
+  '/get-comment-template-group',
+  FollowHelpController.getAnchorCommentTemplateGroupById,
+);
+
+followHelpRouter.post(
+  '/create-comment-template-group',
+  FollowHelpController.createAnchorCommentTemplateGroup,
+);
+
+followHelpRouter.post(
+  '/update-comment-template-group',
+  FollowHelpController.updateAnchorCommentTemplateGroup,
+);
+
+followHelpRouter.post(
+  '/delete-comment-template-group',
+  FollowHelpController.deleteAnchorCommentTemplateGroup,
+);
+
 export default followHelpRouter;

@@ -1,18 +1,12 @@
 <script setup lang="ts">
-import type {
-  AnchorFrom87,
-  CreateAnchorFollowGroupRequest,
-} from '@tk-crawler/biz-shared';
-import type { GroupFormValues } from './group-form.vue';
+import type { GroupFormValues } from '../anchor-section/group-form.vue';
 import { ElDialog, ElScrollbar } from 'element-plus';
-import CreateGroupForm from './group-form.vue';
+import GroupForm from '../anchor-section/group-form.vue';
 
 const props = defineProps<{
   visible: boolean;
-  anchors: AnchorFrom87[];
-  submit: (
-    data: Omit<CreateAnchorFollowGroupRequest, 'org_id'>,
-  ) => Promise<void>;
+  submit: (data: GroupFormValues) => Promise<void>;
+  initialData?: Partial<GroupFormValues>;
 }>();
 
 const emit = defineEmits<{
@@ -24,10 +18,7 @@ function handleClose() {
 }
 
 function handleSubmit(data: GroupFormValues) {
-  return props.submit({
-    ...data,
-    anchor_table_ids: props.anchors.map(item => item.id),
-  });
+  return props.submit(data);
 }
 </script>
 
@@ -40,8 +31,11 @@ function handleSubmit(data: GroupFormValues) {
     @close="handleClose"
   >
     <ElScrollbar>
-      <div class="description">共选中 {{ props.anchors.length }} 个主播</div>
-      <CreateGroupForm :submit="handleSubmit" @cancel="handleClose" />
+      <GroupForm
+        :initial-data="initialData"
+        :submit="handleSubmit"
+        @cancel="handleClose"
+      />
     </ElScrollbar>
   </ElDialog>
 </template>

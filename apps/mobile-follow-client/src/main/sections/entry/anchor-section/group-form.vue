@@ -9,12 +9,13 @@ import {
 } from 'element-plus';
 import { reactive, ref } from 'vue';
 
-export interface CreateGroupFormValues {
+export interface GroupFormValues {
   name: string;
 }
 
 const props = defineProps<{
-  submit: (data: CreateGroupFormValues) => void;
+  initialData?: Partial<GroupFormValues>;
+  submit: (data: GroupFormValues) => void;
 }>();
 
 const emit = defineEmits<{
@@ -23,8 +24,8 @@ const emit = defineEmits<{
 
 const formRef = ref<FormInstance>();
 
-const form = reactive<CreateGroupFormValues>({
-  name: '',
+const form = reactive<GroupFormValues>({
+  name: props.initialData?.name || '',
 });
 
 const rules: FormRules = {

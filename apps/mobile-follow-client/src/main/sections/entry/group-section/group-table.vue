@@ -2,6 +2,7 @@
 import type {
   AnchorFollowGroupItem,
   GetAnchorFollowGroupListResponseData,
+  UpdateAnchorFollowGroupResponse,
 } from '@tk-crawler/biz-shared';
 import { RefreshRight } from '@element-plus/icons-vue';
 import { useQuery } from '@tanstack/vue-query';
@@ -21,6 +22,7 @@ import {
   clearAnchorFollowGroup,
   deleteAnchorFollowGroup,
   getAnchorFollowGroupList,
+  updateAnchorFollowGroup,
 } from '../../../requests';
 import { useGlobalStore } from '../../../utils/vue';
 import {
@@ -29,6 +31,7 @@ import {
   transformFilterViewValuesToFilterValues,
 } from './filter';
 import GroupFilter from './group-filter.vue';
+import GroupFormDialog from './group-form-dialog.vue';
 
 defineOptions({
   name: 'GroupTable',
@@ -219,6 +222,33 @@ async function handleClearData() {
 }
 
 onActivated(refetch);
+
+const formDialogVisible = ref(false);
+const formData = ref<AnchorFollowGroupItem>();
+
+function onEditItem(item: AnchorFollowGroupItem) {
+  formData.value = item;
+  formDialogVisible.value = true;
+}
+function onCloseFormDialog() {
+  formDialogVisible.value = false;
+  formData.value = undefined;
+}
+async function handleEdit(data: Partial<AnchorFollowGroupItem>) {
+  const result: UpdateAnchorFollowGroupResponse = await updateAnchorFollowGroup(
+    {
+      id: formData.value!.id,
+      org_id: globalStore.orgId,
+      name: data.name!,
+    },
+  );
+  if (result.status_code !== RESPONSE_CODE.SUCCESS) {
+    return;
+  }
+  await refetch();
+  onCloseFormDialog();
+  ElMessage.success('保存成功');
+}
 </script>
 
 <template>
@@ -307,6 +337,14 @@ onActivated(refetch);
             <div>
               <ElButton
                 link
+                type="primary"
+                size="small"
+                @click.prevent="onEditItem(scope.row)"
+              >
+                编辑
+              </ElButton>
+              <ElButton
+                link
                 type="danger"
                 size="small"
                 @click.prevent="deleteItem(scope.row)"
@@ -332,6 +370,12 @@ onActivated(refetch);
       </div>
     </template>
   </div>
+  <GroupFormDialog
+    :visible="formDialogVisible"
+    :initial-data="formData"
+    :submit="handleEdit"
+    @close="onCloseFormDialog"
+  />
 </template>
 
 <style scoped>

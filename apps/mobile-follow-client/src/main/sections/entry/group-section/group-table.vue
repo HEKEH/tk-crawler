@@ -260,7 +260,7 @@ onActivated(refetch);
         ref="tableRef"
         :data="data?.list"
         style="width: 100%"
-        height="calc(100% - 130px)"
+        max-height="calc(100% - 130px)"
         :default-sort="
           sortField && sortOrder
             ? { prop: sortField, order: sortOrder }

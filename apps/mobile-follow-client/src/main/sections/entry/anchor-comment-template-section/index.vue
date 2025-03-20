@@ -1,15 +1,15 @@
 <script setup lang="ts">
+import type { AnchorCommentTemplateGroup } from '@tk-crawler/biz-shared';
 import { ElTabPane, ElTabs } from 'element-plus';
 import { reactive } from 'vue';
 import AnchorCommentTemplateGroupTable from './anchor-comment-template-group-table/index.vue';
+import AnchorCommentTemplateTable from './anchor-comment-template-table/index.vue';
 import TabsManageModel from './tabs-manage-model';
 import {
   generateTemplateTabId,
   TemplatesTabModel,
 } from './tabs-manage-model/comment-templates-tab-model';
 import { TabType } from './tabs-manage-model/types';
-import AnchorCommentTemplateTable from './anchor-comment-template-table/index.vue';
-import { AnchorCommentTemplateGroup } from '@tk-crawler/biz-shared';
 
 defineOptions({
   name: 'GroupSection',
@@ -58,7 +58,7 @@ function onTemplateGroupManage(templateGroup: AnchorCommentTemplateGroup) {
         />
         <AnchorCommentTemplateTable
           v-else-if="tab.type === TabType.Templates"
-          :templateGroupId="(tab as TemplatesTabModel).templateGroup.id"
+          :template-group-id="(tab as TemplatesTabModel).templateGroup.id"
         />
       </ElTabPane>
     </ElTabs>
@@ -77,6 +77,10 @@ function onTemplateGroupManage(templateGroup: AnchorCommentTemplateGroup) {
   }
   :global(.el-tabs--border-card) {
     border: unset;
+    :global(.el-tab-pane) {
+      height: 100%;
+      overflow: hidden;
+    }
   }
 }
 </style>

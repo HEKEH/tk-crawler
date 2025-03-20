@@ -46,6 +46,7 @@ export class ViewsManager implements TkLoginViewContext {
       width: 1200,
       height: 800,
       icon: path.join(process.env.VITE_PUBLIC, 'appicon.svg'),
+      autoHideMenuBar: true,
     });
     this._mainView = new MainView({
       parentWindow: this._baseWindow,

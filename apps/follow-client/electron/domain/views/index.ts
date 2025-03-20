@@ -119,12 +119,12 @@ export class ViewsManager implements TkLoginViewContext {
     this.allViews.forEach(view => {
       view?.destroy();
     });
-    this._baseWindow?.removeAllListeners();
-    if (this._baseWindow?.isVisible()) {
-      this._baseWindow.close();
+    if (this._baseWindow && !this._baseWindow.isDestroyed()) {
+      this._baseWindow.removeAllListeners();
+      this._baseWindow.destroy();
+      this._baseWindow = null;
     }
     this._currentView = null;
-    this._baseWindow = null;
     this._clearAllViewVariables();
   }
 }

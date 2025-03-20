@@ -48,6 +48,9 @@ export class CollectPageView implements IView {
   }
 
   private _onResize() {
+    if (this._parentWindow.isDestroyed()) {
+      return;
+    }
     const bounds = this._parentWindow.getBounds();
     if (this._status === COLLECT_PAGE_HELP_STATUS.opened) {
       const sidebarWidth = Math.min(COLLECT_PAGE_HELP_WIDTH, bounds.width);
@@ -300,7 +303,10 @@ export class CollectPageView implements IView {
         this._onResize();
       };
       this._parentWindow.on('resize', onResize);
-      this._removeResizeListener = onResize;
+      this._removeResizeListener = () => {
+        this._parentWindow.removeListener('resize', onResize);
+        this._removeResizeListener = null;
+      };
       await this._openHelpView();
       await this._openThirdPartyPageView();
     } catch (error) {
@@ -310,7 +316,6 @@ export class CollectPageView implements IView {
 
   close() {
     this._removeResizeListener?.();
-    this._removeResizeListener = null;
     this._removeEventHandlers();
     this._closeThirdPartyPageView();
     this._closeHelpView();

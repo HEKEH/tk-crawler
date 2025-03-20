@@ -246,7 +246,10 @@ export class TKAutoFollowView {
         this._onResize();
       };
       this._parentWindow.on('resize', onResize);
-      this._removeResizeListener = onResize;
+      this._removeResizeListener = () => {
+        this._parentWindow.removeListener('resize', onResize);
+        this._removeResizeListener = null;
+      };
       await this._openHelpView();
       await this._openTKPageView();
     } catch (error) {
@@ -371,7 +374,6 @@ export class TKAutoFollowView {
 
   close() {
     this._removeResizeListener?.();
-    this._removeResizeListener = null;
     this._removeEventHandlers();
     this._closeTKPageView();
     this._closeHelpView();

@@ -66,6 +66,9 @@ export class TKLoginView implements IView {
   }
 
   private _onResize() {
+    if (this._parentWindow.isDestroyed()) {
+      return;
+    }
     const bounds = this._parentWindow.getBounds();
     if (this._status === LOGIN_TIKTOK_STATUS.opened) {
       const sidebarWidth = Math.min(LOGIN_HELP_WIDTH, bounds.width);
@@ -281,7 +284,9 @@ export class TKLoginView implements IView {
         this._onResize();
       };
       this._parentWindow.on('resize', onResize);
-      this._removeResizeListener = onResize;
+      this._removeResizeListener = () => {
+        this._parentWindow.removeListener('resize', onResize);
+      };
       await this._openHelpView();
       await this._openTKPageView();
     } catch (error) {

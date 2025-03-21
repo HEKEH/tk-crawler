@@ -8,8 +8,14 @@
     output: 'release/${version}',
   },
   files: ['dist', 'dist-electron'],
+  publish: [
+    {
+      provider: 'generic',
+      url: 'http://pan.xnhelper.site/1820428/tk/mobile-follow-client',
+    },
+  ],
   mac: {
-    target: ['dmg'],
+    target: ['dmg', 'zip'],
     icon: 'build/icons/icon.icns',
     artifactName: '${productName}-Mac-${version}-Installer.${ext}',
   },

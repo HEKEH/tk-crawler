@@ -132,3 +132,5 @@ export function bindViewToWindowBounds(
     window.removeListener('resize', setBounds);
   };
 }
+
+export * from './auto-updater';

@@ -1,6 +1,6 @@
 {
   "name": "tk-mobile-follow-client",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "description": "TK Follow Client",
   "main": "dist-electron/main.js",
   "scripts": {
@@ -8,7 +8,6 @@
     "build": "vue-tsc && vite build --mode production && electron-builder -mw",
     "preview": "vite preview"
   },
-  "dependencies": {},
   "devDependencies": {
     "@tanstack/vue-query": "^5.66.11",
     "@types/global-agent": "^2.1.3",

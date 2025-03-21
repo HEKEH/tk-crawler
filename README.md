@@ -24,3 +24,9 @@ pnpm dev:server
 ```bash
 pnpm dev:mobile-follow-client
 ```
+
+### 打包自动关注助手客户端
+
+```bash
+pnpm build:mobile-follow-client
+```

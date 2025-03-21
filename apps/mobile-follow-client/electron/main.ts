@@ -5,10 +5,15 @@ import { initProxy, RENDERER_DIST, VITE_DEV_SERVER_URL } from './env';
 import path from 'node:path';
 import process from 'node:process';
 // import { createRequire } from 'node:module'
-import { AutoUpdater, setElectronLang } from '@tk-crawler/electron-utils/main';
+import {
+  AutoUpdater,
+  getAppInstallUrl,
+  setElectronLang,
+} from '@tk-crawler/electron-utils/main';
 import { app, BaseWindow } from 'electron';
 import { GlobalManager } from './domain';
 import { logger } from './infra/logger';
+import { PRODUCT_NAME, PUBLISH_URL } from '@tk-mobile-follow-client/shared';
 
 // const require = createRequire(import.meta.url)
 // const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -19,7 +24,10 @@ process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL
 
 async function main() {
   setElectronLang('en-US');
-  const autoUpdater = new AutoUpdater(logger);
+  const autoUpdater = new AutoUpdater(
+    logger,
+    getAppInstallUrl(PRODUCT_NAME, PUBLISH_URL),
+  );
 
   await app.whenReady();
   await initProxy();

@@ -436,6 +436,9 @@ importers:
         specifier: ^34.3.2
         version: 34.3.3
     devDependencies:
+      electron-builder:
+        specifier: ^25.1.8
+        version: 25.1.8(electron-builder-squirrel-windows@25.1.8)
       electron-updater:
         specifier: ^6.3.9
         version: 6.3.9

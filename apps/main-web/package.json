@@ -2,6 +2,7 @@
   "name": "@tk-crawler/main-web",
   "version": "0.0.1",
   "description": "TK Crawler Main Web",
+  "author": "Will Ho",
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc && vite build",

@@ -7,8 +7,10 @@ export class AutoUpdater {
 
   /** 已经在更新过程中 */
   private _isInUpdatingProcess = false;
-  constructor(logger: Logger) {
+  private _appInstallUrl: string;
+  constructor(logger: Logger, appInstallUrl: string) {
     this._logger = logger;
+    this._appInstallUrl = appInstallUrl;
     this.init();
   }
 
@@ -53,8 +55,7 @@ export class AutoUpdater {
           .showMessageBox({
             type: 'error',
             title: '更新出错',
-            message:
-              '由于软件没有有效证书，无法自动更新。请手动下载最新版本更新。',
+            message: `由于软件没有有效证书，无法自动更新。请打开链接手动下载安装文件: ${this._appInstallUrl}`,
             buttons: ['确定'],
           })
           .finally(() => {

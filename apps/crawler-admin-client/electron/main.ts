@@ -9,7 +9,12 @@ import { setLogger } from '@tk-crawler/core';
 import { app, BaseWindow } from 'electron';
 import { logger } from './infra/logger';
 import { GlobalManager } from './domain';
-import { setElectronLang } from '@tk-crawler/electron-utils/main';
+import {
+  AutoUpdater,
+  getAppInstallUrl,
+  setElectronLang,
+} from '@tk-crawler/electron-utils/main';
+import { PRODUCT_NAME, PUBLISH_URL } from '@tk-crawler-admin-client/shared';
 
 // const require = createRequire(import.meta.url)
 // const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -21,10 +26,16 @@ process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL
 async function main() {
   setLogger(logger);
   setElectronLang('en-US');
+  const autoUpdater = new AutoUpdater(
+    logger,
+    getAppInstallUrl(PRODUCT_NAME, PUBLISH_URL),
+  );
   await app.whenReady();
   await initProxy();
   const globalManager = GlobalManager.getInstance();
   await globalManager.start();
+
+  autoUpdater.checkForUpdates();
 
   app.on('activate', async () => {
     // On OS X it's common to re-create a window in the app when the
@@ -32,6 +43,7 @@ async function main() {
     if (BaseWindow.getAllWindows().length === 0) {
       await globalManager.start();
     }
+    autoUpdater.checkForUpdates();
   });
   // Quit when all windows are closed, except on macOS. There, it's common
   // for applications and their menu bar to stay active until the user quits

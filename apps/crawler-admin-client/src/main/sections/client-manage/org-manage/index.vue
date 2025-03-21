@@ -99,7 +99,6 @@ function resetSort() {
 }
 function refresh() {
   isRefreshing.value = true;
-  resetSort();
   return refetch().finally(() => {
     isRefreshing.value = false;
   });
@@ -221,9 +220,14 @@ function onManageOrgMembers(org: OrganizationItem) {
     <template v-if="!isError">
       <div class="header-row">
         <div class="left-part">
-          <ElButton type="primary" @click="onAddItem"> 添加机构 </ElButton>
+          <ElButton size="small" type="primary" @click="onAddItem">
+            添加机构
+          </ElButton>
         </div>
         <div class="right-part">
+          <ElButton type="default" size="small" @click="resetSort">
+            重置排序
+          </ElButton>
           <ElIcon class="header-row-icon" @click="refresh">
             <RefreshRight />
           </ElIcon>
@@ -417,16 +421,18 @@ function onManageOrgMembers(org: OrganizationItem) {
     .left-part {
       display: flex;
       align-items: center;
+      padding-left: 0.5rem;
     }
     .right-part {
       display: flex;
       align-items: center;
+      padding-right: 0.5rem;
     }
   }
   .header-row-icon {
     cursor: pointer;
     font-size: 18px;
-    margin-right: 0.5rem;
+    margin-left: 0.5rem;
     &:hover {
       color: var(--el-color-primary);
     }

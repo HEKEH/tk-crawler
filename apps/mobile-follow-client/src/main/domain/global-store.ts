@@ -101,12 +101,6 @@ export default class GlobalStore {
     this._isInitialized = true;
   }
 
-  // async startAutoFollow(userIds: string[]) {
-  //   await startAutoFollow(userIds);
-  // }
-
-  async stop() {}
-
   setCurrentMenu(menu: Menu) {
     this._currentMenu = menu;
   }

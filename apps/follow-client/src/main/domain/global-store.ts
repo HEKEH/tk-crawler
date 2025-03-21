@@ -97,8 +97,6 @@ export default class GlobalStore {
     await startAutoFollow(userIds);
   }
 
-  async stop() {}
-
   setCurrentMenu(menu: Menu) {
     this._currentMenu = menu;
   }

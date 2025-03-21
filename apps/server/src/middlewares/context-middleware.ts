@@ -1,10 +1,6 @@
 import type { Context, Next } from 'koa';
-import {
-  ACCEPT_LANGUAGES,
-  I18N_LANGUAGE,
-  LANGUAGE_HEADER_KEY,
-  LOG_ID_HEADER_KEY,
-} from '@tk-crawler/shared';
+import { LANGUAGE_HEADER_KEY, LOG_ID_HEADER_KEY } from '@tk-crawler/biz-shared';
+import { ACCEPT_LANGUAGES, I18N_LANGUAGE } from '@tk-crawler/shared';
 import { v4 as uuid } from 'uuid';
 import config from '../config';
 import i18n from '../i18n';

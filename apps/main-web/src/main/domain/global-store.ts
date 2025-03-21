@@ -84,9 +84,7 @@ export default class GlobalStore {
   private async _loginByToken() {
     const token = await getToken();
     if (token) {
-      const resp = await loginByToken({
-        token,
-      });
+      const resp = await loginByToken(token);
       if (resp.status_code === RESPONSE_CODE.SUCCESS) {
         this._handleLoginSuccess(resp.data!);
       }
@@ -126,8 +124,6 @@ export default class GlobalStore {
       throw error;
     }
   }
-
-  async stop() {}
 
   clear() {
     this._userProfile.clear();

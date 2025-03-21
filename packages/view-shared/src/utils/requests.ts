@@ -7,6 +7,7 @@ import { ElNotification } from 'element-plus';
 
 interface CommonRequestParams<RequestParams>
   extends Omit<SharedCommonRequestParams<RequestParams>, 'onBusinessError'> {
+  hideErrorNotify?: boolean;
   onTokenInvalid?: () => void;
 }
 
@@ -15,13 +16,16 @@ export async function commonRequest<
   RequestParams extends Record<string, any> = Record<string, any>,
 >({
   onTokenInvalid,
+  hideErrorNotify,
   ...requestParams
 }: CommonRequestParams<RequestParams>): Promise<ResponseData> {
   const data = await sharedCommonRequest<ResponseData>(requestParams);
   if (data.status_code !== RESPONSE_CODE.SUCCESS) {
-    ElNotification.error({
-      message: data.message,
-    });
+    if (!hideErrorNotify) {
+      ElNotification.error({
+        message: data.message,
+      });
+    }
     if (data.status_code === RESPONSE_CODE.TOKEN_INVALID) {
       onTokenInvalid?.();
     }

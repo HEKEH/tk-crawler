@@ -103,7 +103,6 @@ function resetSort() {
 }
 function refresh() {
   isRefreshing.value = true;
-  resetSort();
   return refetch().finally(() => {
     isRefreshing.value = false;
   });
@@ -202,9 +201,14 @@ async function handleSubmitCreateOrEdit(data: Partial<OrgMemberItem>) {
     <template v-if="!isError">
       <div class="header-row">
         <div class="left-part">
-          <ElButton type="primary" @click="onAddItem"> 添加机构成员 </ElButton>
+          <ElButton size="small" type="primary" @click="onAddItem">
+            添加机构成员
+          </ElButton>
         </div>
         <div class="right-part">
+          <ElButton type="default" size="small" @click="resetSort">
+            重置排序
+          </ElButton>
           <ElIcon class="header-row-icon" @click="refresh">
             <RefreshRight />
           </ElIcon>
@@ -350,16 +354,18 @@ async function handleSubmitCreateOrEdit(data: Partial<OrgMemberItem>) {
     .left-part {
       display: flex;
       align-items: center;
+      padding-left: 0.5rem;
     }
     .right-part {
       display: flex;
       align-items: center;
+      padding-right: 0.5rem;
     }
   }
   .header-row-icon {
     cursor: pointer;
     font-size: 18px;
-    margin-right: 0.5rem;
+    margin-left: 0.5rem;
     &:hover {
       color: var(--el-color-primary);
     }

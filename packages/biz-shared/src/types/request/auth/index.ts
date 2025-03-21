@@ -6,12 +6,15 @@ export interface OrgMemberLoginRequest {
   password: string;
 }
 
-export interface OrgMemberLoginSuccessData {
+export interface OrgMemberUserInfoWithOrgInfo {
   user_info: Omit<OrgMemberItem, 'password'>;
   org_info: Omit<OrganizationItem, 'user_count'>;
 }
 
-export interface OrgMemberLoginResponseData extends OrgMemberLoginSuccessData {
+export type OrgMemberLoginSuccessData = OrgMemberUserInfoWithOrgInfo;
+
+export interface OrgMemberLoginResponseData
+  extends OrgMemberUserInfoWithOrgInfo {
   token: string;
 }
 
@@ -19,10 +22,6 @@ export interface OrgMemberLoginResponse {
   status_code: RESPONSE_CODE;
   data?: OrgMemberLoginResponseData;
   message?: string;
-}
-
-export interface OrgMemberLoginByTokenRequest {
-  token: string;
 }
 
 export type OrgMemberLoginByTokenResponseData = OrgMemberLoginSuccessData;

@@ -1,8 +1,9 @@
 import type { Context, Next } from 'koa';
 import { AssertionError } from 'node:assert';
-import { LOG_ID_HEADER_KEY, RESPONSE_CODE } from '@tk-crawler/shared';
+import { LOG_ID_HEADER_KEY } from '@tk-crawler/biz-shared';
+import { RESPONSE_CODE } from '@tk-crawler/shared';
 import { logger } from '../infra/logger';
-import { BusinessError } from '../utils';
+import { BusinessError, TokenInvalidError } from '../utils';
 
 export async function requestWrapMiddleware(ctx: Context, next: Next) {
   try {
@@ -25,6 +26,15 @@ export async function requestWrapMiddleware(ctx: Context, next: Next) {
     }
     logger.info(`[logId: ${ctx.logId}] [Response]`, ctx.body);
   } catch (error) {
+    if (error instanceof TokenInvalidError) {
+      ctx.status = 200;
+      ctx.body = {
+        status_code: RESPONSE_CODE.TOKEN_INVALID,
+        message: ctx.t(error.message),
+      };
+      logger.error(`[logId: ${ctx.logId}] [Token Invalid Error]`, error);
+      return;
+    }
     if (error instanceof AssertionError || error instanceof BusinessError) {
       ctx.status = 200;
       ctx.body = {

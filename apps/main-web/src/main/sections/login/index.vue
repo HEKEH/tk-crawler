@@ -30,7 +30,7 @@ const loginForm = reactive<OrgMemberLoginRequest>({
 const rules: Record<string, FormItemRule[]> = {
   username: [
     { required: true, message: '请输入用户名' },
-    { min: 3, max: 20, message: '长度在 3 到 20 个字符' },
+    { min: 2, max: 20, message: '长度在 2 到 20 个字符' },
   ],
   password: [
     { required: true, message: '请输入密码' },

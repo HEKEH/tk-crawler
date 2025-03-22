@@ -9,10 +9,11 @@ export interface CreateOrgMemberResponse {
   message?: string;
 }
 
-export type UpdateOrgMemberRequest = Partial<
-  Omit<CreateOrgMemberRequest, 'org_id'>
-> &
-  Pick<OrgMemberItem, 'id'>;
+export interface UpdateOrgMemberRequest {
+  org_id: string;
+  data: Partial<Omit<CreateOrgMemberRequest, 'org_id'>> &
+    Pick<OrgMemberItem, 'id'>;
+}
 
 export interface UpdateOrgMemberResponse {
   status_code: RESPONSE_CODE;
@@ -20,6 +21,7 @@ export interface UpdateOrgMemberResponse {
 }
 
 export interface DeleteOrgMemberRequest {
+  org_id: string;
   id: string;
 }
 
@@ -29,6 +31,7 @@ export interface DeleteOrgMemberResponse {
 }
 
 export interface GetOrgMemberListRequest {
+  org_id: string;
   page_num: number;
   page_size: number;
   filter?: Prisma.OrgUserWhereInput;

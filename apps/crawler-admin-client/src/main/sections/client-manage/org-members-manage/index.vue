@@ -70,12 +70,10 @@ const { data, isLoading, isError, error, refetch } = useQuery<
       ? { [sortField.value]: sortOrder.value === 'ascending' ? 'asc' : 'desc' }
       : undefined;
     const response = await getOrgMemberList({
+      org_id: props.model.org.id,
       page_num: pageNum.value,
       page_size: pageSize.value,
       order_by: orderBy,
-      filter: {
-        org_id: BigInt(props.model.org.id),
-      },
     });
     return response.data;
   },
@@ -125,13 +123,19 @@ async function toggleDisableItem(row: OrgMemberItem) {
       return;
     }
     updateResp = await updateOrgMember({
-      id: row.id,
-      status: OrgMemberStatus.disabled,
+      org_id: row.org_id,
+      data: {
+        id: row.id,
+        status: OrgMemberStatus.disabled,
+      },
     });
   } else {
     updateResp = await updateOrgMember({
-      id: row.id,
-      status: OrgMemberStatus.normal,
+      org_id: row.org_id,
+      data: {
+        id: row.id,
+        status: OrgMemberStatus.normal,
+      },
     });
   }
   if (updateResp.status_code === RESPONSE_CODE.SUCCESS) {
@@ -148,7 +152,10 @@ async function deleteItem(item: OrgMemberItem) {
   } catch {
     return;
   }
-  const resp = await deleteOrgMember({ id: item.id });
+  const resp = await deleteOrgMember({
+    id: item.id,
+    org_id: item.org_id,
+  });
   if (resp.status_code === RESPONSE_CODE.SUCCESS) {
     await refetch();
     ElMessage.success('删除成功');
@@ -180,9 +187,12 @@ async function handleSubmitCreateOrEdit(data: Partial<OrgMemberItem>) {
     } as CreateOrgMemberRequest);
   } else {
     result = await updateOrgMember({
-      ...data,
       org_id: orgId,
-    } as UpdateOrgMemberRequest);
+      data: {
+        ...data,
+        id: data.id!,
+      },
+    });
   }
   if (result.status_code !== RESPONSE_CODE.SUCCESS) {
     return;

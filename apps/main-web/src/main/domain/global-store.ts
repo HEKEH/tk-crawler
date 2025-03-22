@@ -2,6 +2,7 @@ import type {
   OrgMemberLoginRequest,
   OrgMemberLoginSuccessData,
 } from '@tk-crawler/biz-shared';
+import type { CustomRouteRecord } from '../router/route-records';
 import type { Menu } from '../types';
 import {
   InitializationState,
@@ -11,6 +12,10 @@ import {
 import { MessageQueue } from '@tk-crawler/view-shared';
 import { markRaw } from 'vue';
 import { login, loginByToken } from '../requests';
+import {
+  LoginRouteRecord,
+  SystemManagementRouteRecord,
+} from '../router/route-records';
 import { getToken, removeToken, setToken } from '../utils';
 import { UserProfile } from './user-profile';
 
@@ -27,6 +32,22 @@ export default class GlobalStore {
   );
 
   readonly messageCenter = markRaw(new MessageCenter());
+
+  get menus() {
+    let records: CustomRouteRecord[] = [];
+    if (!this.userProfile.hasLoggedIn) {
+      records = [LoginRouteRecord];
+    } else if (this.userProfile.isAdmin) {
+      records = [SystemManagementRouteRecord];
+    } else {
+      records = [];
+    }
+    return records.map(item => ({
+      menu: item.menu,
+      name: item.name,
+      path: item.path,
+    }));
+  }
 
   get userProfile() {
     return this._userProfile;

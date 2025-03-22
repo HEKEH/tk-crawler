@@ -2,11 +2,13 @@ import {
   type OrganizationItem,
   type OrgMemberItem,
   type OrgMemberLoginSuccessData,
+  OrgMemberRole,
   OrgMemberStatus,
 } from '@tk-crawler/biz-shared';
 
 export enum MembershipStatus {
-  normal = 'normal',
+  /** 会员 */
+  has_membership = 'has_membership',
   /** 过期 */
   expired = 'expired',
   /** 非会员 */
@@ -41,12 +43,16 @@ export class UserProfile {
 
   get membershipStatus(): MembershipStatus {
     if (this._userInfo?.status === OrgMemberStatus.normal) {
-      return MembershipStatus.normal;
+      return MembershipStatus.has_membership;
     }
     if (this._orgInfo?.membership_expire_at) {
       return MembershipStatus.expired;
     }
     return MembershipStatus.not_member;
+  }
+
+  get isAdmin() {
+    return this._userInfo?.role_id === OrgMemberRole.admin;
   }
 
   clear() {

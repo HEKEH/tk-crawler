@@ -3,9 +3,7 @@ import {
   Message,
   OfficeBuilding,
   Phone,
-  Setting,
   SwitchButton,
-  User,
 } from '@element-plus/icons-vue';
 import { OrgMemberRole } from '@tk-crawler/biz-shared';
 import {
@@ -83,7 +81,9 @@ async function handleLogout() {
             <ElIcon><OfficeBuilding /></ElIcon>
             <span>{{ orgInfo.name }}</span>
             <ElTag
-              v-if="userProfile.membershipStatus === MembershipStatus.normal"
+              v-if="
+                userProfile.membershipStatus === MembershipStatus.has_membership
+              "
               type="success"
               size="small"
             >

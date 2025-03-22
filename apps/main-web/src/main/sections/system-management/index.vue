@@ -1,17 +1,15 @@
 <script setup lang="ts">
 defineOptions({
-  name: 'Entry',
+  name: 'SystemManagement',
 });
 </script>
 
 <template>
-  <div class="entry">
-    主页
-  </div>
+  <div class="container">系统管理</div>
 </template>
 
 <style scoped>
-.entry {
+.container {
   position: relative;
   width: 100%;
   height: 100%;

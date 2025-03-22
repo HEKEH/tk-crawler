@@ -1,13 +1,13 @@
 import type { RouteRecordRaw } from 'vue-router';
 import { createRouter, createWebHistory } from 'vue-router';
-import { Menu } from '../types';
 import { getGlobalStore } from '../utils';
+import { LoginRouteRecord, SystemManagementRouteRecord } from './route-records';
 
 const routes: RouteRecordRaw[] = [
   {
-    path: '/login',
-    name: 'Login',
-    component: () => import('../sections/login/index.vue'),
+    path: LoginRouteRecord.path,
+    name: LoginRouteRecord.name,
+    component: LoginRouteRecord.component,
     beforeEnter: async (to, from, next) => {
       const globalStore = getGlobalStore();
       await globalStore.init();
@@ -15,13 +15,20 @@ const routes: RouteRecordRaw[] = [
         next('/');
         return;
       }
-      globalStore.currentMenu = Menu.Login;
+      globalStore.currentMenu = LoginRouteRecord.menu;
       next();
     },
   },
   {
     path: '/',
-    redirect: '/entry',
+    redirect: () => {
+      const globalStore = getGlobalStore();
+      const firstMenu = globalStore.menus[0];
+      if (firstMenu) {
+        return firstMenu.path;
+      }
+      return '';
+    },
     beforeEnter: async (to, from, next) => {
       const globalStore = getGlobalStore();
       await globalStore.init();
@@ -31,18 +38,14 @@ const routes: RouteRecordRaw[] = [
       }
       next();
     },
-    children: [
-      {
-        path: '/entry',
-        name: 'Entry',
-        component: () => import('../sections/entry/index.vue'),
-        beforeEnter: async (to, from, next) => {
-          const globalStore = getGlobalStore();
-          globalStore.currentMenu = Menu.Entry;
-          next();
-        },
+    children: [SystemManagementRouteRecord].map(menu => ({
+      ...menu,
+      beforeEnter: async (to, from, next) => {
+        const globalStore = getGlobalStore();
+        globalStore.currentMenu = menu.menu;
+        next();
       },
-    ],
+    })),
   },
 ];
 

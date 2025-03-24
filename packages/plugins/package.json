@@ -5,7 +5,7 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
+      "import": "./dist/index.mjs",
       "require": "./dist/index.js"
     }
   },
@@ -15,7 +15,6 @@
     "package.json"
   ],
   "scripts": {
-    "dts": "tsc --declaration --emitDeclarationOnly --outDir dist -p ./tsconfig.build.json",
     "build": "rm -rf dist && rollup --config rollup.config.mjs",
     "lint": "eslint",
     "preinstall": "npx only-allow pnpm"

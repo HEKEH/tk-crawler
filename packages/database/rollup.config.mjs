@@ -53,7 +53,7 @@ export default [
 
   // DTS 打包配置
   {
-    input: './dist/types/index.d.ts',
+    input: './dist/types/src/index.d.ts',
     output: {
       file: 'dist/index.d.ts',
       format: 'es',

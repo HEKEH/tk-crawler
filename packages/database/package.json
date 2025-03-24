@@ -4,15 +4,11 @@
   "private": true,
   "exports": {
     ".": {
-      "import": {
-        "default": "./dist/index.mjs"
-      },
-      "require": {
-        "default": "./dist/index.js"
-      }
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
     }
   },
-  "main": "./dist/index.js",
   "files": [
     "dist",
     "package.json",
@@ -24,7 +20,7 @@
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "postinstall": "pnpm prisma:generate",
-    "build": "rm -rf dist && tsup --config tsup.config.ts",
+    "build": "rm -rf dist && rollup --config rollup.config.mjs",
     "redis:docker-start:dev": "cross-env ts-node $npm_package_config_tsNodeConfig ./scripts/docker/redis/start.ts development",
     "redis:docker-start:prod": "cross-env ts-node $npm_package_config_tsNodeConfig ./scripts/docker/redis/start.ts production",
     "mysql:docker-start:dev": "cross-env ts-node $npm_package_config_tsNodeConfig ./scripts/docker/mysql/start.ts development",

@@ -1,7 +1,7 @@
 import type { DeleteOrgMemberRequest } from '@tk-crawler/biz-shared';
 import { mysqlClient } from '@tk-crawler/database';
-import { BusinessError } from 'apps/server/src/utils';
 import { logger } from '../../../infra/logger';
+import { BusinessError } from '../../../utils';
 
 export async function deleteOrgMember(
   data: DeleteOrgMemberRequest,

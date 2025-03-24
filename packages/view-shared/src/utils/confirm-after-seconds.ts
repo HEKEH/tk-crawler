@@ -6,7 +6,7 @@ const ConfirmButtonClass = 'confirm-after-seconds-btn';
 
 export async function confirmAfterSeconds(
   message: string,
-  seconds: number,
+  seconds: number = 2,
   options?: ElMessageBoxOptions,
 ) {
   let timer: NodeJS.Timeout | undefined;

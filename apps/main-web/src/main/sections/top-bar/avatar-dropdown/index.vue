@@ -5,6 +5,7 @@ import {
   Phone,
   SwitchButton,
 } from '@element-plus/icons-vue';
+import { useQueryClient } from '@tanstack/vue-query';
 import { OrgMemberRole } from '@tk-crawler/biz-shared';
 import {
   ElDivider,
@@ -26,6 +27,7 @@ const userProfile = computed(() => globalStore.userProfile);
 const userInfo = computed(() => userProfile.value.userInfo!);
 const orgInfo = computed(() => userProfile.value.orgInfo!);
 const router = useRouter();
+const queryClient = useQueryClient();
 
 async function handleLogout() {
   try {
@@ -37,6 +39,8 @@ async function handleLogout() {
   } catch {
     return;
   }
+  // 清空所有的swr请求缓存
+  await queryClient.invalidateQueries();
   await globalStore.logout();
   router.push('/login');
 }

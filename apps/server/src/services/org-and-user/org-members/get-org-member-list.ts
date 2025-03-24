@@ -15,9 +15,14 @@ export async function getOrgMemberList(
   const { org_id } = data;
   assert(org_id, 'org_id不能为空');
   const orderBy = isEmpty(data.order_by)
-    ? {
-        updated_at: 'desc' as const, // 默认按更新时间倒序排序
-      }
+    ? [
+        {
+          role_id: 'asc' as const, // 默认按角色id排序，管理员优先
+        },
+        {
+          updated_at: 'desc' as const, // 默认按更新时间倒序排序
+        },
+      ]
     : data.order_by!;
   const where: Prisma.OrgUserWhereInput = {
     org_id: BigInt(org_id),

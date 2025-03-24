@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type GlobalStore from './domain/global-store';
-import { ElNotification } from 'element-plus';
+import { ElConfigProvider, ElNotification } from 'element-plus';
+import zhCn from 'element-plus/es/locale/lang/zh-cn';
 import { computed, onBeforeUnmount, onErrorCaptured } from 'vue';
 
 import Homepage from './sections/homepage.vue';
@@ -28,13 +29,15 @@ onErrorCaptured(e => {
 </script>
 
 <template>
-  <div
-    v-if="isLoading"
-    v-loading="isLoading"
-    :style="{ width: '100%', height: '100%', overflow: 'hidden' }"
-    element-loading-text="加载中..."
-  />
-  <Homepage v-else />
+  <ElConfigProvider :locale="zhCn">
+    <div
+      v-if="isLoading"
+      v-loading="isLoading"
+      :style="{ width: '100%', height: '100%', overflow: 'hidden' }"
+      element-loading-text="加载中..."
+    />
+    <Homepage v-else />
+  </ElConfigProvider>
 </template>
 
 <style scoped></style>

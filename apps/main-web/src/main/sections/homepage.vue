@@ -27,6 +27,5 @@ defineOptions({
   height: calc(100% - var(--top-bar-height) - 30px);
   width: 100%;
   overflow: hidden;
-  padding: 2rem;
 }
 </style>

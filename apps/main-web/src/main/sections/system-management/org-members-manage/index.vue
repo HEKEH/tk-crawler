@@ -1,15 +1,14 @@
 <script setup lang="ts">
 import type {
-  CreateOrgRequest,
-  CreateOrgResponse,
-  GetOrgListResponseData,
-  OrganizationItem,
-  UpdateOrgRequest,
-  UpdateOrgResponse,
+  CreateOrgMemberRequest,
+  CreateOrgMemberResponse,
+  GetOrgMemberListResponseData,
+  OrgMemberItem,
+  UpdateOrgMemberResponse,
 } from '@tk-crawler/biz-shared';
 import { RefreshRight } from '@element-plus/icons-vue';
 import { useQuery } from '@tanstack/vue-query';
-import { OrganizationStatus } from '@tk-crawler/biz-shared';
+import { OrgMemberRole, OrgMemberStatus } from '@tk-crawler/biz-shared';
 import { formatDateTime, RESPONSE_CODE } from '@tk-crawler/shared';
 import { confirmAfterSeconds } from '@tk-crawler/view-shared';
 import {
@@ -22,60 +21,52 @@ import {
   ElTableColumn,
   ElTag,
 } from 'element-plus';
-import { omit } from 'lodash';
-import { markRaw, onBeforeUnmount, ref } from 'vue';
+import { ref } from 'vue';
 import {
-  createOrg,
-  deleteOrg,
-  getOrgList,
-  updateOrg,
-  updateOrgMembership,
+  createOrgMember,
+  deleteOrgMember,
+  getOrgMemberList,
+  updateOrgMember,
 } from '../../../requests';
-import OrgFormDialog from './org-form-dialog.vue';
-import OrgMembershipDialog from './org-membership-dialog.vue';
+import { getToken, useGlobalStore } from '../../../utils';
+import FormDialog from './member-form-dialog.vue';
 
 defineOptions({
-  name: 'OrgManage',
+  name: 'OrgMembersManage',
 });
 
-const props = defineProps<{
-  model: {
-    refresh?: () => void;
-    onOrgMembersManage: (org: OrganizationItem) => void;
-    onOrgDelete: (org: OrganizationItem) => void;
-  };
-}>();
+const OrgMemberRoleMap = {
+  [OrgMemberRole.admin]: '管理员',
+  [OrgMemberRole.member]: '普通成员',
+};
 
 const tableRef = ref<InstanceType<typeof ElTable>>();
 const pageNum = ref(1);
 const pageSize = ref(10);
-const sortField = ref<keyof OrganizationItem>();
+const sortField = ref<keyof OrgMemberItem>();
 const sortOrder = ref<'ascending' | 'descending'>();
+const globalStore = useGlobalStore();
 
 const { data, isLoading, isError, error, refetch } = useQuery<
-  GetOrgListResponseData | undefined
+  GetOrgMemberListResponseData | undefined
 >({
-  queryKey: ['orgs', pageNum, pageSize, sortField, sortOrder],
+  queryKey: ['client-org-members', pageNum, pageSize, sortField, sortOrder],
   retry: false,
   queryFn: async () => {
     const orderBy = sortField.value
       ? { [sortField.value]: sortOrder.value === 'ascending' ? 'asc' : 'desc' }
       : undefined;
-    const response = await getOrgList({
-      page_num: pageNum.value,
-      page_size: pageSize.value,
-      order_by: orderBy,
-    });
+    const response = await getOrgMemberList(
+      {
+        page_num: pageNum.value,
+        page_size: pageSize.value,
+        order_by: orderBy,
+      },
+      await getToken(),
+    );
     return response.data;
   },
   placeholderData: previousData => previousData,
-});
-
-// eslint-disable-next-line vue/no-mutating-props
-props.model.refresh = markRaw(refetch);
-onBeforeUnmount(() => {
-  // eslint-disable-next-line vue/no-mutating-props
-  props.model.refresh = undefined;
 });
 
 // 处理排序变化
@@ -83,7 +74,7 @@ function handleSortChange({
   prop,
   order,
 }: {
-  prop: keyof OrganizationItem;
+  prop: keyof OrgMemberItem;
   order: 'ascending' | 'descending' | null;
 }) {
   sortField.value = order ? prop : undefined;
@@ -104,11 +95,15 @@ function refresh() {
   });
 }
 
-async function toggleDisableItem(row: OrganizationItem) {
-  let updateResp: UpdateOrgResponse;
-  if (row.status === OrganizationStatus.normal) {
+const formDialogVisible = ref(false);
+const formData = ref<Partial<OrgMemberItem>>();
+const formMode = ref<'create' | 'edit'>('create');
+
+async function toggleDisableItem(row: OrgMemberItem) {
+  let updateResp: UpdateOrgMemberResponse;
+  if (row.status === OrgMemberStatus.normal) {
     try {
-      await ElMessageBox.confirm('确定要禁用该机构吗？', {
+      await ElMessageBox.confirm('确定要禁用该用户吗？', {
         type: 'warning',
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -116,47 +111,53 @@ async function toggleDisableItem(row: OrganizationItem) {
     } catch {
       return;
     }
-    updateResp = await updateOrg({
-      id: row.id,
-      status: OrganizationStatus.disabled,
-    });
+    updateResp = await updateOrgMember(
+      {
+        id: row.id,
+        status: OrgMemberStatus.disabled,
+      },
+      await getToken(),
+    );
   } else {
-    updateResp = await updateOrg({
-      id: row.id,
-      status: OrganizationStatus.normal,
-    });
+    updateResp = await updateOrgMember(
+      {
+        id: row.id,
+        status: OrgMemberStatus.normal,
+      },
+      await getToken(),
+    );
   }
   if (updateResp.status_code === RESPONSE_CODE.SUCCESS) {
     await refetch();
-    ElMessage.success('操作成功');
   }
 }
 
-async function deleteOrganization(item: OrganizationItem) {
+async function deleteItem(item: OrgMemberItem) {
   try {
-    const message = `确定要删除机构 ${item.name} 吗？删除后将无法恢复。一般情况下，更推荐使用禁用`;
-    await confirmAfterSeconds(message);
-    props.model.onOrgDelete(item);
+    await confirmAfterSeconds(
+      `确定要删除成员 ${item.username} 吗？删除后将无法恢复。一般情况下，更推荐使用禁用`,
+    );
   } catch {
     return;
   }
-  const resp = await deleteOrg({ id: item.id });
+  const resp = await deleteOrgMember(
+    {
+      id: item.id,
+    },
+    await getToken(),
+  );
   if (resp.status_code === RESPONSE_CODE.SUCCESS) {
     await refetch();
     ElMessage.success('删除成功');
   }
 }
 
-const formDialogVisible = ref(false);
-const formData = ref<Partial<OrganizationItem>>();
-const formMode = ref<'create' | 'edit'>('create');
-
 function onAddItem() {
   formData.value = undefined;
   formMode.value = 'create';
   formDialogVisible.value = true;
 }
-function onEditItem(item: OrganizationItem) {
+function onEditItem(item: OrgMemberItem) {
   formData.value = item;
   formMode.value = 'edit';
   formDialogVisible.value = true;
@@ -166,13 +167,20 @@ function onCloseFormDialog() {
   formData.value = undefined;
   formMode.value = 'create';
 }
-async function handleCreateOrEdit(data: Partial<OrganizationItem>) {
-  let result: CreateOrgResponse | UpdateOrgResponse;
+async function handleSubmitCreateOrEdit(data: Partial<OrgMemberItem>) {
+  let result: CreateOrgMemberResponse | UpdateOrgMemberResponse;
   if (formMode.value === 'create') {
-    result = await createOrg(data as CreateOrgRequest);
+    result = await createOrgMember(
+      data as CreateOrgMemberRequest,
+      await getToken(),
+    );
   } else {
-    result = await updateOrg(
-      omit(data, ['created_at', 'updated_at']) as UpdateOrgRequest,
+    result = await updateOrgMember(
+      {
+        id: data.id!,
+        ...data,
+      },
+      await getToken(),
     );
   }
   if (result.status_code !== RESPONSE_CODE.SUCCESS) {
@@ -182,45 +190,23 @@ async function handleCreateOrEdit(data: Partial<OrganizationItem>) {
   onCloseFormDialog();
   ElMessage.success('保存成功');
 }
-
-const orgMembershipDialogVisible = ref(false);
-const orgMembershipEditId = ref<string>();
-
-function openUpdateOrgMembershipDialog(item: OrganizationItem) {
-  orgMembershipEditId.value = item.id;
-  orgMembershipDialogVisible.value = true;
-}
-async function handleUpdateOrgMembership(data: { membership_days: number }) {
-  const resp = await updateOrgMembership({
-    id: orgMembershipEditId.value!,
-    membership_days: data.membership_days,
-  });
-  if (resp.status_code === RESPONSE_CODE.SUCCESS) {
-    await refetch();
-    onCloseOrgMembershipDialog();
-    ElMessage.success('保存成功');
-  }
-}
-function onCloseOrgMembershipDialog() {
-  orgMembershipDialogVisible.value = false;
-  orgMembershipEditId.value = undefined;
-}
-
-function onManageOrgMembers(org: OrganizationItem) {
-  props.model.onOrgMembersManage(org);
-}
 </script>
 
 <template>
-  <div v-loading="isLoading || isRefreshing" class="org-manage">
-    <div v-if="isError" class="org-manage-error">
+  <div v-loading="isLoading || isRefreshing" class="org-member-manage">
+    <div v-if="isError" class="org-member-manage-error">
       {{ error?.message }}
     </div>
     <template v-if="!isError">
       <div class="header-row">
         <div class="left-part">
-          <ElButton size="small" type="primary" @click="onAddItem">
-            添加机构
+          <ElButton
+            v-if="globalStore.userProfile.isAdmin"
+            size="small"
+            type="primary"
+            @click="onAddItem"
+          >
+            添加机构成员
           </ElButton>
         </div>
         <div class="right-part">
@@ -244,60 +230,39 @@ function onManageOrgMembers(org: OrganizationItem) {
         row-key="id"
         @sort-change="handleSortChange"
       >
-        <ElTableColumn fixed prop="id" label="机构ID" min-width="100" />
-        <ElTableColumn fixed prop="name" label="机构名称" min-width="100" />
+        <ElTableColumn fixed prop="id" label="ID" min-width="100" />
+        <ElTableColumn prop="username" label="登录名" min-width="120" />
+        <ElTableColumn prop="display_name" label="显示名" min-width="120" />
+        <ElTableColumn prop="email" label="邮箱" min-width="120">
+          <template #default="scope">
+            {{ scope.row.email || '-' }}
+          </template>
+        </ElTableColumn>
+        <ElTableColumn prop="mobile" label="手机号" min-width="120">
+          <template #default="scope">
+            {{ scope.row.mobile || '-' }}
+          </template>
+        </ElTableColumn>
+        <ElTableColumn prop="role_id" label="角色" min-width="100">
+          <template #default="scope">
+            {{ OrgMemberRoleMap[scope.row.role_id as OrgMemberRole] }}
+          </template>
+        </ElTableColumn>
         <ElTableColumn prop="status" label="状态" min-width="100">
           <template #default="scope">
             <ElTag
               :type="
-                scope.row.status === OrganizationStatus.normal
+                scope.row.status === OrgMemberStatus.normal
                   ? 'success'
                   : 'danger'
               "
             >
               {{
-                scope.row.status === OrganizationStatus.normal ? '正常' : '禁用'
+                scope.row.status === OrgMemberStatus.normal ? '正常' : '禁用'
               }}
             </ElTag>
           </template>
         </ElTableColumn>
-        <ElTableColumn
-          prop="membership_start_at"
-          label="会员开始时间"
-          min-width="180"
-          sortable="custom"
-        >
-          <template #default="scope">
-            {{ formatDateTime(scope.row.membership_start_at) }}
-          </template>
-        </ElTableColumn>
-        <ElTableColumn
-          prop="membership_expire_at"
-          label="会员到期时间"
-          min-width="180"
-          sortable="custom"
-        >
-          <template #default="scope">
-            {{ formatDateTime(scope.row.membership_expire_at) }}
-          </template>
-        </ElTableColumn>
-        <ElTableColumn
-          prop="if_membership_valid"
-          label="会员是否有效"
-          min-width="120"
-        >
-          <template #default="scope">
-            <ElTag :type="scope.row.if_membership_valid ? 'success' : 'danger'">
-              {{ scope.row.if_membership_valid ? '是' : '否' }}
-            </ElTag>
-          </template>
-        </ElTableColumn>
-        <ElTableColumn
-          sortable="custom"
-          prop="user_count"
-          label="用户数量"
-          min-width="120"
-        />
         <ElTableColumn
           prop="created_at"
           label="创建时间"
@@ -318,10 +283,14 @@ function onManageOrgMembers(org: OrganizationItem) {
             {{ formatDateTime(scope.row.updated_at) }}
           </template>
         </ElTableColumn>
-        <ElTableColumn prop="remark" label="备注" min-width="100" />
-        <ElTableColumn fixed="right" label="操作" min-width="220">
+        <ElTableColumn
+          v-if="globalStore.userProfile.isAdmin"
+          fixed="right"
+          label="操作"
+          min-width="220"
+        >
           <template #default="scope">
-            <div class="action-row">
+            <div>
               <ElButton
                 link
                 type="primary"
@@ -333,7 +302,7 @@ function onManageOrgMembers(org: OrganizationItem) {
               <ElButton
                 link
                 :type="
-                  scope.row.status === OrganizationStatus.normal
+                  scope.row.status === OrgMemberStatus.normal
                     ? 'danger'
                     : 'primary'
                 "
@@ -341,36 +310,16 @@ function onManageOrgMembers(org: OrganizationItem) {
                 @click.prevent="toggleDisableItem(scope.row)"
               >
                 {{
-                  scope.row.status === OrganizationStatus.normal
-                    ? '禁用'
-                    : '启用'
+                  scope.row.status === OrgMemberStatus.normal ? '禁用' : '启用'
                 }}
               </ElButton>
               <ElButton
                 link
                 type="danger"
                 size="small"
-                @click.prevent="deleteOrganization(scope.row)"
+                @click.prevent="deleteItem(scope.row)"
               >
-                删除机构
-              </ElButton>
-            </div>
-            <div class="action-row">
-              <ElButton
-                link
-                type="primary"
-                size="small"
-                @click.prevent="onManageOrgMembers(scope.row)"
-              >
-                管理成员
-              </ElButton>
-              <ElButton
-                link
-                type="primary"
-                size="small"
-                @click.prevent="openUpdateOrgMembershipDialog(scope.row)"
-              >
-                新增或延长会员
+                删除
               </ElButton>
             </div>
           </template>
@@ -391,23 +340,17 @@ function onManageOrgMembers(org: OrganizationItem) {
       </div>
     </template>
   </div>
-  <OrgFormDialog
+  <FormDialog
     :visible="formDialogVisible"
     :mode="formMode"
     :initial-data="formData"
-    :submit="handleCreateOrEdit"
+    :submit="handleSubmitCreateOrEdit"
     @close="onCloseFormDialog"
-  />
-
-  <OrgMembershipDialog
-    :visible="orgMembershipDialogVisible"
-    :submit="handleUpdateOrgMembership"
-    @close="onCloseOrgMembershipDialog"
   />
 </template>
 
 <style scoped>
-.org-manage {
+.org-member-manage {
   padding: 2rem 1rem;
   position: relative;
   flex: 1;
@@ -436,7 +379,7 @@ function onManageOrgMembers(org: OrganizationItem) {
       color: var(--el-color-primary);
     }
   }
-  .org-manage-error {
+  .org-member-manage-error {
     display: flex;
     align-items: center;
     justify-content: center;

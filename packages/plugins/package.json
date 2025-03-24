@@ -16,7 +16,7 @@
   ],
   "scripts": {
     "dts": "tsc --declaration --emitDeclarationOnly --outDir dist -p ./tsconfig.build.json",
-    "build": "rm -rf dist && tsup --config tsup.config.ts && pnpm dts",
+    "build": "rm -rf dist && rollup --config rollup.config.mjs",
     "lint": "eslint",
     "preinstall": "npx only-allow pnpm"
   },

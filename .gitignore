@@ -30,3 +30,7 @@ backup
 certs/production
 
 docker-images
+
+.rollup.cache
+
+*.tsbuildinfo

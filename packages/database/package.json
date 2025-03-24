@@ -22,7 +22,8 @@
     "tsNodeConfig": "--project ../../tsconfig.node.json --files -r tsconfig-paths/register"
   },
   "scripts": {
-    "preinstall": "npx only-allow pnpm && pnpm prisma:generate",
+    "preinstall": "npx only-allow pnpm",
+    "postinstall": "pnpm prisma:generate",
     "build": "rm -rf dist && tsup --config tsup.config.ts",
     "redis:docker-start:dev": "cross-env ts-node $npm_package_config_tsNodeConfig ./scripts/docker/redis/start.ts development",
     "redis:docker-start:prod": "cross-env ts-node $npm_package_config_tsNodeConfig ./scripts/docker/redis/start.ts production",

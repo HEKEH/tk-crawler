@@ -10,7 +10,7 @@ defineOptions({
 <template>
   <div class="top-bar">
     <div class="top-bar-left">
-      <img class="app-icon" src="/appicon.svg" alt="appicon" />
+      <img class="app-icon" src="/appicon.svg?url" alt="appicon" />
       <LeftMenus />
     </div>
     <div class="top-bar-right">

@@ -11,6 +11,10 @@ export function svgVueComponentPlugin() {
       if (!id.endsWith('.svg')) {
         return null;
       }
+      // 排除掉svg的url
+      if (id.endsWith('.svg?url')) {
+        return null;
+      }
 
       const svg = readFileSync(id, 'utf8');
       const { data } = optimize(svg, {

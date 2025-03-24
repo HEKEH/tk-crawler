@@ -41,7 +41,7 @@ export default [
       terser({
         compress: {
           dead_code: true,
-          drop_console: true, // 设置为 true 可以移除 console.* 调用
+          drop_console: false, // 设置为 true 可以移除 console.* 调用
           drop_debugger: true,
           pure_funcs: [], // 可以指定被视为副作用的函数
         },

@@ -2,17 +2,17 @@ import type { OrgMemberUserInfoWithOrgInfo } from '@tk-crawler/biz-shared';
 import { OrganizationStatus, OrgMemberStatus } from '@tk-crawler/biz-shared';
 import { mysqlClient } from '@tk-crawler/database';
 import dayjs from 'dayjs';
-import { parseToken, TokenInvalidError } from '../../utils';
+import { BusinessError, parseToken, TokenInvalidError } from '../../utils';
 
 /** jwt token登录 */
 export async function getOrgMemberInfoByToken(
   token: string | any | undefined,
 ): Promise<OrgMemberUserInfoWithOrgInfo> {
   if (!token) {
-    throw new TokenInvalidError('Token不能为空');
+    throw new BusinessError('Token不能为空');
   }
   if (typeof token !== 'string') {
-    throw new TokenInvalidError('Token必须为字符串');
+    throw new BusinessError('Token必须为字符串');
   }
   const { userId, expires } = parseToken(token);
   if (!userId || !expires) {

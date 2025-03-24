@@ -62,7 +62,7 @@ async function handleLogin() {
     const resp = await globalStore.login(loginForm);
     if (resp.status_code === RESPONSE_CODE.SUCCESS) {
       ElMessage.success('登录成功');
-      router.push('/entry');
+      router.push('/');
     }
   } finally {
     loading.value = false;

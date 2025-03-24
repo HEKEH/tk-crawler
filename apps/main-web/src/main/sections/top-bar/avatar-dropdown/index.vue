@@ -124,14 +124,10 @@ async function handleLogout() {
 
         <ElDivider />
         <ElDropdownMenu>
-          <!-- <ElDropdownItem>
-            <ElIcon><User /></ElIcon>
-            <span>个人主页</span>
+          <ElDropdownItem @click="handleLogout">
+            <ElIcon><SwitchButton /></ElIcon>
+            <span>修改密码</span>
           </ElDropdownItem>
-          <ElDropdownItem>
-            <ElIcon><Setting /></ElIcon>
-            <span>设置</span>
-          </ElDropdownItem> -->
           <ElDropdownItem @click="handleLogout">
             <ElIcon><SwitchButton /></ElIcon>
             <span>退出登录</span>

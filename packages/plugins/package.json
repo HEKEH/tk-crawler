@@ -1,0 +1,28 @@
+{
+  "name": "@tk-crawler/plugins",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "files": [
+    "dist",
+    "package.json"
+  ],
+  "scripts": {
+    "dts": "tsc --declaration --emitDeclarationOnly --outDir dist -p ./tsconfig.build.json",
+    "build": "rm -rf dist && tsup --config tsup.config.ts && pnpm dts",
+    "lint": "eslint",
+    "preinstall": "npx only-allow pnpm"
+  },
+  "dependencies": {
+    "@vue/compiler-sfc": "^3.5.13",
+    "svgo": "^3.3.2",
+    "vite": "^5.4.11"
+  }
+}

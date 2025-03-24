@@ -20,8 +20,10 @@
     "packages/play/**",
     "packages/script-tools/**",
     "packages/database/**",
+    "packages/plugins/src/**",
     "**/node_modules/**",
     "**/dist/**",
-    "**/vite.config.*"
+    "**/vite.config.*",
+    "**/tsup.config.*"
   ]
 }

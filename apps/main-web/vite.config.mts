@@ -1,6 +1,7 @@
 import type { AliasOptions, PluginOption } from 'vite';
 import { readFileSync } from 'node:fs';
 import path, { resolve } from 'node:path';
+import { svgVueComponentPlugin } from '@tk-crawler/plugins';
 import vue from '@vitejs/plugin-vue';
 import vueJsx from '@vitejs/plugin-vue-jsx';
 import { defineConfig } from 'vite';
@@ -39,6 +40,7 @@ export default defineConfig(({ mode }) => {
     plugins: [
       vue(),
       vueJsx() as PluginOption,
+      svgVueComponentPlugin(),
       cssInjectedByJsPlugin({
         styleId: 'main-web-style',
         relativeCSSInjection: true, // for multiple format

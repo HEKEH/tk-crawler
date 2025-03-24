@@ -24,7 +24,9 @@
     "packages/play/**/*",
     "packages/script-tools/**/*",
     "packages/database/**/*",
+    "packages/plugins/src/**/*",
     "**/vite.config.*",
+    "**/tsup.config.*",
     ".husky/**/*"
   ],
   "exclude": ["**/dist", "**/node_modules/**"]

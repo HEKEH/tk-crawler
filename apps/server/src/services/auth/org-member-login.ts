@@ -16,9 +16,12 @@ export async function orgMemberLogin(
   logger.info('[Org Member Login]', data);
   assert(data.username, '用户名不能为空');
   assert(data.password, '密码不能为空');
-  const user = await mysqlClient.prismaClient.orgUser.findFirst({
+  const user = await mysqlClient.prismaClient.orgUser.findUnique({
     where: {
       username: data.username,
+    },
+    include: {
+      organization: true,
     },
   });
   if (!user) {
@@ -27,20 +30,15 @@ export async function orgMemberLogin(
   if (user.status !== OrgMemberStatus.normal) {
     throw new BusinessError('用户已禁用, 请重新登录');
   }
-  const { password, ...rest } = user;
+  const { password, organization, ...rest } = user;
   if (!(await verifyPassword(data.password, password))) {
     throw new BusinessError('密码错误, 请重新登录');
   }
-  const org = await mysqlClient.prismaClient.organization.findUnique({
-    where: {
-      id: user.org_id,
-    },
-  });
-  if (!org) {
+  if (!organization) {
     throw new BusinessError('所属组织不存在, 可能已被删除，请重新登录');
   }
 
-  if (org.status !== OrganizationStatus.normal) {
+  if (organization.status !== OrganizationStatus.normal) {
     throw new BusinessError('所属组织已禁用, 请重新登录');
   }
 
@@ -52,11 +50,11 @@ export async function orgMemberLogin(
       org_id: rest.org_id.toString(),
     },
     org_info: {
-      ...org,
-      id: org.id.toString(),
+      ...organization,
+      id: organization.id.toString(),
       if_membership_valid:
-        Boolean(org.membership_expire_at) &&
-        dayjs(org.membership_expire_at).isAfter(new Date()),
+        Boolean(organization.membership_expire_at) &&
+        dayjs(organization.membership_expire_at).isAfter(new Date()),
     },
     token,
   };

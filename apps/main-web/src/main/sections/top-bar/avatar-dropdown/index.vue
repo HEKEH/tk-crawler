@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { OrgMemberChangePasswordRequest } from '@tk-crawler/biz-shared';
 import {
   Message,
   OfficeBuilding,
@@ -7,20 +8,25 @@ import {
 } from '@element-plus/icons-vue';
 import { useQueryClient } from '@tanstack/vue-query';
 import { OrgMemberRole } from '@tk-crawler/biz-shared';
+import { RESPONSE_CODE } from '@tk-crawler/shared/types';
 import {
   ElDivider,
   ElDropdown,
   ElDropdownItem,
   ElDropdownMenu,
   ElIcon,
+  ElMessage,
   ElMessageBox,
   ElTag,
 } from 'element-plus';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
+import Key from '../../../assets/icons/key.svg';
 import Avatar from '../../../components/avatar.vue';
 import { MembershipStatus } from '../../../domain/user-profile';
-import { useGlobalStore } from '../../../utils';
+import { changePassword } from '../../../requests';
+import { getToken, useGlobalStore } from '../../../utils';
+import PasswordChangeDialog from './password-change-dialog/index.vue';
 
 const globalStore = useGlobalStore();
 const userProfile = computed(() => globalStore.userProfile);
@@ -43,6 +49,14 @@ async function handleLogout() {
   await queryClient.invalidateQueries();
   await globalStore.logout();
   router.push('/login');
+}
+const passwordChangeDialogVisible = ref(false);
+async function handlePasswordChange(data: OrgMemberChangePasswordRequest) {
+  const result = await changePassword(data, await getToken());
+  if (result.status_code === RESPONSE_CODE.SUCCESS) {
+    ElMessage.success('修改密码成功');
+    passwordChangeDialogVisible.value = false;
+  }
 }
 </script>
 
@@ -124,8 +138,8 @@ async function handleLogout() {
 
         <ElDivider />
         <ElDropdownMenu>
-          <ElDropdownItem @click="handleLogout">
-            <ElIcon><SwitchButton /></ElIcon>
+          <ElDropdownItem @click="passwordChangeDialogVisible = true">
+            <ElIcon><Key /></ElIcon>
             <span>修改密码</span>
           </ElDropdownItem>
           <ElDropdownItem @click="handleLogout">
@@ -136,6 +150,11 @@ async function handleLogout() {
       </div>
     </template>
   </ElDropdown>
+  <PasswordChangeDialog
+    :visible="passwordChangeDialogVisible"
+    :submit="handlePasswordChange"
+    @close="passwordChangeDialogVisible = false"
+  />
 </template>
 
 <style scoped>

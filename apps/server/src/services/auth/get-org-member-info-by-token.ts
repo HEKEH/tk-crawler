@@ -7,6 +7,9 @@ import { BusinessError, parseToken, TokenInvalidError } from '../../utils';
 /** jwt token登录 */
 export async function getOrgMemberInfoByToken(
   token: string | any | undefined,
+  options?: {
+    fetchPassword?: boolean;
+  },
 ): Promise<OrgMemberUserInfoWithOrgInfo> {
   if (!token) {
     throw new BusinessError('Token不能为空');
@@ -26,7 +29,7 @@ export async function getOrgMemberInfoByToken(
       id: BigInt(userId),
     },
     omit: {
-      password: true,
+      password: !options?.fetchPassword,
     },
     include: {
       organization: true,

@@ -7,7 +7,14 @@ const authRouter = new Router({ prefix: '/auth' });
 authRouter.post('/org-member-login', AuthController.orgMemberLogin);
 authRouter.post(
   '/org-member-login-by-token',
-  clientTokenAuthMiddleware,
+  clientTokenAuthMiddleware(),
   AuthController.orgMemberLoginByToken,
 );
+
+authRouter.post(
+  '/change-password',
+  clientTokenAuthMiddleware({ fetchPassword: true }),
+  AuthController.changePassword,
+);
+
 export default authRouter;

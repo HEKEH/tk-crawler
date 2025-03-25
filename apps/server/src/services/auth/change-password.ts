@@ -1,0 +1,27 @@
+import type {
+  OrgMemberChangePasswordRequest,
+  OrgMemberItem,
+} from '@tk-crawler/biz-shared';
+import { mysqlClient } from '@tk-crawler/database';
+import { logger } from '../../infra/logger';
+import { BusinessError, hashPassword, verifyPassword } from '../../utils';
+
+export async function changePassword(
+  data: OrgMemberChangePasswordRequest,
+  user: OrgMemberItem,
+): Promise<void> {
+  logger.info('[Change Password]', data);
+  const { old_password, new_password } = data;
+  if (!(await verifyPassword(old_password, user.password))) {
+    throw new BusinessError('当前密码输入错误, 请重新输入');
+  }
+  const hashedPassword = await hashPassword(new_password);
+  await mysqlClient.prismaClient.orgUser.update({
+    where: {
+      id: BigInt(user.id),
+    },
+    data: {
+      password: hashedPassword,
+    },
+  });
+}

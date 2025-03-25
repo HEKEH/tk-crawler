@@ -7,7 +7,9 @@ export interface OrgMemberLoginRequest {
 }
 
 export interface OrgMemberUserInfoWithOrgInfo {
-  user_info: Omit<OrgMemberItem, 'password'>;
+  user_info: Omit<OrgMemberItem, 'password'> & {
+    password?: string;
+  };
   org_info: Omit<OrganizationItem, 'user_count'>;
 }
 
@@ -29,5 +31,15 @@ export type OrgMemberLoginByTokenResponseData = OrgMemberLoginSuccessData;
 export interface OrgMemberLoginByTokenResponse {
   status_code: RESPONSE_CODE;
   data?: OrgMemberLoginByTokenResponseData;
+  message?: string;
+}
+
+export interface OrgMemberChangePasswordRequest {
+  old_password: string;
+  new_password: string;
+}
+
+export interface OrgMemberChangePasswordResponse {
+  status_code: RESPONSE_CODE;
   message?: string;
 }

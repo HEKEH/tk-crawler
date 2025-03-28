@@ -1,28 +1,39 @@
 <script setup lang="ts">
 import { ElMenu, ElMenuItem } from 'element-plus';
-import { ref } from 'vue';
-import OrgMembersManage from './org-members-manage/index.vue';
+import { computed } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { useGlobalStore } from '../../utils';
+import GuildTable from './guild-table.vue';
 
 defineOptions({
-  name: 'SystemManagement',
+  name: 'GuildManagement',
 });
 
 enum MenuType {
-  USER = 'user',
+  TK_GUILD_USER = 'tk-guild-user',
 }
-
-const currentMenu = ref<MenuType>(MenuType.USER);
+const route = useRoute();
+const router = useRouter();
+const globalStore = useGlobalStore();
+const MenuList = computed(() =>
+  globalStore.userProfile.isAdmin
+    ? [
+        {
+          type: MenuType.TK_GUILD_USER,
+          label: 'TK公会账号管理',
+        },
+      ]
+    : [],
+);
+const currentMenu = computed(() => {
+  return (route.params.subMenu || MenuList.value[0]?.type) as MenuType;
+});
 
 function handleSelectMenu(key: string) {
-  currentMenu.value = key as MenuType;
+  router.push({
+    path: `/guild-management/${key as MenuType}`,
+  });
 }
-
-const MenuList = [
-  {
-    type: MenuType.USER,
-    label: '用户管理',
-  },
-];
 </script>
 
 <template>
@@ -44,7 +55,7 @@ const MenuList = [
     </div>
     <div class="right-part">
       <KeepAlive>
-        <OrgMembersManage v-if="currentMenu === MenuType.USER" />
+        <GuildTable v-if="currentMenu === MenuType.TK_GUILD_USER" />
       </KeepAlive>
     </div>
   </div>

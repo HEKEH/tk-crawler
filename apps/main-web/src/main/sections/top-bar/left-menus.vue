@@ -1,11 +1,16 @@
 <script setup lang="ts">
 import { ElLink } from 'element-plus';
+import { useRouter } from 'vue-router';
 import { useGlobalStore } from '../../utils';
 
 defineOptions({
   name: 'LeftMenus',
 });
 const globalStore = useGlobalStore();
+const router = useRouter();
+function handleClick(item: (typeof globalStore.menus)[number]) {
+  router.push(item.jumpTo ?? item.path);
+}
 </script>
 
 <template>
@@ -15,7 +20,7 @@ const globalStore = useGlobalStore();
         class="left-menu-item"
         :class="{ active: globalStore.currentMenu === item.menu }"
         :underline="false"
-        @click="$router.push(item.path)"
+        @click="handleClick(item)"
       >
         {{ item.name }}
       </ElLink>

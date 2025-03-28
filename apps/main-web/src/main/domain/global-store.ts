@@ -13,6 +13,7 @@ import { MessageQueue } from '@tk-crawler/view-shared';
 import { markRaw } from 'vue';
 import { login, loginByToken } from '../requests';
 import {
+  GuildManagementRouteRecord,
   LoginRouteRecord,
   SystemManagementRouteRecord,
 } from '../router/route-records';
@@ -38,7 +39,7 @@ export default class GlobalStore {
     if (!this.userProfile.hasLoggedIn) {
       records = [LoginRouteRecord];
     } else if (this.userProfile.isAdmin) {
-      records = [SystemManagementRouteRecord];
+      records = [SystemManagementRouteRecord, GuildManagementRouteRecord];
     } else {
       records = [];
     }
@@ -46,6 +47,7 @@ export default class GlobalStore {
       menu: item.menu,
       name: item.name,
       path: item.path,
+      jumpTo: item.jumpTo,
     }));
   }
 

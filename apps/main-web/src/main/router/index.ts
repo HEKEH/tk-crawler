@@ -1,7 +1,11 @@
 import type { RouteRecordRaw } from 'vue-router';
 import { createRouter, createWebHistory } from 'vue-router';
 import { getGlobalStore } from '../utils';
-import { LoginRouteRecord, SystemManagementRouteRecord } from './route-records';
+import {
+  GuildManagementRouteRecord,
+  LoginRouteRecord,
+  SystemManagementRouteRecord,
+} from './route-records';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -38,14 +42,16 @@ const routes: RouteRecordRaw[] = [
       }
       next();
     },
-    children: [SystemManagementRouteRecord].map(menu => ({
-      ...menu,
-      beforeEnter: async (to, from, next) => {
-        const globalStore = getGlobalStore();
-        globalStore.currentMenu = menu.menu;
-        next();
-      },
-    })),
+    children: [SystemManagementRouteRecord, GuildManagementRouteRecord].map(
+      menu => ({
+        ...menu,
+        beforeEnter: async (to, from, next) => {
+          const globalStore = getGlobalStore();
+          globalStore.currentMenu = menu.menu;
+          next();
+        },
+      }),
+    ),
   },
 ];
 

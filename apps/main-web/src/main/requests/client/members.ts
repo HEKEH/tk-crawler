@@ -22,7 +22,7 @@ export function getOrgMemberList(
   return commonRequest<GetOrgMemberListResponse>({
     baseURL: config.ownServerUrl,
     method: 'post',
-    path: '/client/get-org-member-list',
+    path: '/client/org-and-user/get-org-member-list',
     params,
     onTokenInvalid: redirectToLogin,
     headers: {
@@ -38,7 +38,7 @@ export function createOrgMember(
   return commonRequest<CreateOrgMemberResponse>({
     baseURL: config.ownServerUrl,
     method: 'post',
-    path: '/client/create-org-member',
+    path: '/client/org-and-user/create-org-member',
     params,
     onTokenInvalid: redirectToLogin,
     headers: {
@@ -54,7 +54,7 @@ export function updateOrgMember(
   return commonRequest<UpdateOrgMemberResponse>({
     baseURL: config.ownServerUrl,
     method: 'post',
-    path: '/client/update-org-member',
+    path: '/client/org-and-user/update-org-member',
     params,
     onTokenInvalid: redirectToLogin,
     headers: {
@@ -70,7 +70,7 @@ export function deleteOrgMember(
   return commonRequest<DeleteOrgMemberResponse>({
     baseURL: config.ownServerUrl,
     method: 'post',
-    path: '/client/delete-org-member',
+    path: '/client/org-and-user/delete-org-member',
     params,
     onTokenInvalid: redirectToLogin,
     headers: {

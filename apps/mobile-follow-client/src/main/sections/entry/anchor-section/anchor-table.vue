@@ -9,7 +9,7 @@ import type { Column, SortBy } from 'element-plus';
 import { RefreshRight } from '@element-plus/icons-vue';
 import { useQuery } from '@tanstack/vue-query';
 import { formatDateTime, RESPONSE_CODE } from '@tk-crawler/shared';
-import { useTableMultiSelect } from '@tk-crawler/view-shared';
+import { ClearMessage, useTableMultiSelect } from '@tk-crawler/view-shared';
 import {
   ElButton,
   ElCheckbox,
@@ -31,7 +31,6 @@ import {
   ref,
   shallowRef,
 } from 'vue';
-import ClearMessage from '../../../components/clear-message.vue';
 import {
   clearAnchorFrom87,
   createAnchorFollowGroup,

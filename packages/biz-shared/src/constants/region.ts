@@ -1,4 +1,4 @@
-import { Region } from '@tk-crawler/biz-shared';
+import { Region } from '../types';
 
 export const REGION_OPTIONS = [
   { label: '全部', value: 'all' },

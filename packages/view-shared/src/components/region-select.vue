@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { Region } from '@tk-crawler/biz-shared';
+import { REGION_OPTIONS } from '@tk-crawler/biz-shared';
 import { ElOption, ElSelect } from 'element-plus';
 import { computed, ref } from 'vue';
-import { REGION_OPTIONS } from '../constants';
 
 type RegionPropsValue = Region[] | 'all';
 type SelectValue = (Region | 'all')[];

@@ -28,7 +28,7 @@ import {
   getOrgMemberList,
   updateOrgMember,
 } from '../../../requests';
-import { getToken, useGlobalStore } from '../../../utils';
+import { useGlobalStore } from '../../../utils';
 import FormDialog from './member-form-dialog.vue';
 
 defineOptions({
@@ -50,7 +50,14 @@ const globalStore = useGlobalStore();
 const { data, isLoading, isError, error, refetch } = useQuery<
   GetOrgMemberListResponseData | undefined
 >({
-  queryKey: ['client-org-members', pageNum, pageSize, sortField, sortOrder],
+  queryKey: [
+    'client-org-members',
+    globalStore.token,
+    pageNum,
+    pageSize,
+    sortField,
+    sortOrder,
+  ],
   retry: false,
   queryFn: async () => {
     const orderBy = sortField.value
@@ -62,7 +69,7 @@ const { data, isLoading, isError, error, refetch } = useQuery<
         page_size: pageSize.value,
         order_by: orderBy,
       },
-      await getToken(),
+      globalStore.token,
     );
     return response.data;
   },
@@ -95,10 +102,6 @@ function refresh() {
   });
 }
 
-const formDialogVisible = ref(false);
-const formData = ref<Partial<OrgMemberItem>>();
-const formMode = ref<'create' | 'edit'>('create');
-
 async function toggleDisableItem(row: OrgMemberItem) {
   let updateResp: UpdateOrgMemberResponse;
   if (row.status === OrgMemberStatus.normal) {
@@ -116,7 +119,7 @@ async function toggleDisableItem(row: OrgMemberItem) {
         id: row.id,
         status: OrgMemberStatus.disabled,
       },
-      await getToken(),
+      globalStore.token,
     );
   } else {
     updateResp = await updateOrgMember(
@@ -124,7 +127,7 @@ async function toggleDisableItem(row: OrgMemberItem) {
         id: row.id,
         status: OrgMemberStatus.normal,
       },
-      await getToken(),
+      globalStore.token,
     );
   }
   if (updateResp.status_code === RESPONSE_CODE.SUCCESS) {
@@ -144,13 +147,17 @@ async function deleteItem(item: OrgMemberItem) {
     {
       id: item.id,
     },
-    await getToken(),
+    globalStore.token,
   );
   if (resp.status_code === RESPONSE_CODE.SUCCESS) {
     await refetch();
     ElMessage.success('删除成功');
   }
 }
+
+const formDialogVisible = ref(false);
+const formData = ref<Partial<OrgMemberItem>>();
+const formMode = ref<'create' | 'edit'>('create');
 
 function onAddItem() {
   formData.value = undefined;
@@ -172,7 +179,7 @@ async function handleSubmitCreateOrEdit(data: Partial<OrgMemberItem>) {
   if (formMode.value === 'create') {
     result = await createOrgMember(
       data as CreateOrgMemberRequest,
-      await getToken(),
+      globalStore.token,
     );
   } else {
     result = await updateOrgMember(
@@ -180,7 +187,7 @@ async function handleSubmitCreateOrEdit(data: Partial<OrgMemberItem>) {
         id: data.id!,
         ...data,
       },
-      await getToken(),
+      globalStore.token,
     );
   }
   if (result.status_code !== RESPONSE_CODE.SUCCESS) {

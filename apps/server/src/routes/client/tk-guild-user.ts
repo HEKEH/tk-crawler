@@ -1,5 +1,5 @@
 import Router from 'koa-router';
-import TKGuildUserController from '../../controllers/tk-guild-user';
+import TKGuildUserController from '../../controllers/client/tk-guild-user';
 import {
   checkIsAdminClientMiddleware,
   clientTokenAuthMiddleware,

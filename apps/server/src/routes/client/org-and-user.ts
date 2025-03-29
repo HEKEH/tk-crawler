@@ -5,7 +5,9 @@ import {
   clientTokenAuthMiddleware,
 } from '../../middlewares';
 
-const orgAndUserRouter = new Router();
+const orgAndUserRouter = new Router({
+  prefix: '/org-and-user',
+});
 
 orgAndUserRouter.use(clientTokenAuthMiddleware());
 

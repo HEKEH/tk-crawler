@@ -14,48 +14,52 @@ import {
   getTKGuildUserList,
   updateTKGuildUser,
   updateTKGuildUserCookie,
-} from '../services/tk-guild-user';
+} from '../../services/tk-guild-user';
 
 export default class TKGuildUserController {
   static async getTKGuildUserList(ctx: Context, next: Next) {
+    const { org_info } = ctx.clientInfo!;
     const data = ctx.getRequestData<GetTKGuildUserListRequest>();
     // Add org_id from context to the request data
     const requestWithOrgId = {
       ...data,
-      org_id: ctx.state.user.org_id,
+      org_id: org_info.id,
     };
     ctx.body = await getTKGuildUserList(requestWithOrgId);
     await next();
   }
 
   static async getTKGuildUserDetail(ctx: Context, next: Next) {
+    const { org_info } = ctx.clientInfo!;
     const data = ctx.getRequestData<GetTKGuildUserDetailRequest>();
     // Add org_id from context to the request data
     const requestWithOrgId = {
       ...data,
-      org_id: ctx.state.user.org_id,
+      org_id: org_info.id,
     };
     ctx.body = await getTKGuildUserDetail(requestWithOrgId);
     await next();
   }
 
   static async createTKGuildUser(ctx: Context, next: Next) {
+    const { org_info } = ctx.clientInfo!;
     const data = ctx.getRequestData<CreateTKGuildUserRequest>();
     // Add org_id from context to the request data
     const requestWithOrgId = {
       ...data,
-      org_id: ctx.state.user.org_id,
+      org_id: org_info.id,
     };
     ctx.body = await createTKGuildUser(requestWithOrgId);
     await next();
   }
 
   static async updateTKGuildUser(ctx: Context, next: Next) {
+    const { org_info } = ctx.clientInfo!;
     const data = ctx.getRequestData<UpdateTKGuildUserRequest>();
     // Add org_id from context to the request data
     const requestWithOrgId = {
       ...data,
-      org_id: ctx.state.user.org_id,
+      org_id: org_info.id,
     };
     await updateTKGuildUser(requestWithOrgId);
     ctx.body = ctx.t('Success');
@@ -63,22 +67,24 @@ export default class TKGuildUserController {
   }
 
   static async deleteTKGuildUser(ctx: Context, next: Next) {
+    const { org_info } = ctx.clientInfo!;
     const data = ctx.getRequestData<DeleteTKGuildUserRequest>();
     // Add org_id from context to the request data
     const requestWithOrgId = {
       ...data,
-      org_id: ctx.state.user.org_id,
+      org_id: org_info.id,
     };
     ctx.body = await deleteTKGuildUser(requestWithOrgId);
     await next();
   }
 
   static async updateTKGuildUserCookie(ctx: Context, next: Next) {
+    const { org_info } = ctx.clientInfo!;
     const data = ctx.getRequestData<UpdateTKGuildUserCookieRequest>();
     // Add org_id from context to the request data
     const requestWithOrgId = {
       ...data,
-      org_id: ctx.state.user.org_id,
+      org_id: org_info.id,
     };
     await updateTKGuildUserCookie(requestWithOrgId);
     ctx.body = ctx.t('Success');

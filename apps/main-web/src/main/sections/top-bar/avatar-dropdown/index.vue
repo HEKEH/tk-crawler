@@ -25,7 +25,7 @@ import Key from '../../../assets/icons/key.svg';
 import Avatar from '../../../components/avatar.vue';
 import { MembershipStatus } from '../../../domain/user-profile';
 import { changePassword } from '../../../requests';
-import { getToken, useGlobalStore } from '../../../utils';
+import { useGlobalStore } from '../../../utils';
 import PasswordChangeDialog from './password-change-dialog/index.vue';
 
 const globalStore = useGlobalStore();
@@ -52,7 +52,7 @@ async function handleLogout() {
 }
 const passwordChangeDialogVisible = ref(false);
 async function handlePasswordChange(data: OrgMemberChangePasswordRequest) {
-  const result = await changePassword(data, await getToken());
+  const result = await changePassword(data, globalStore.token);
   if (result.status_code === RESPONSE_CODE.SUCCESS) {
     ElMessage.success('修改密码成功');
     passwordChangeDialogVisible.value = false;

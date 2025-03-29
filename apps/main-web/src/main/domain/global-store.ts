@@ -23,6 +23,7 @@ import { UserProfile } from './user-profile';
 export default class GlobalStore {
   currentMenu: Menu | null = null;
   private _initializationState = new InitializationState();
+  private _token = '';
 
   private _userProfile = new UserProfile();
 
@@ -57,6 +58,10 @@ export default class GlobalStore {
 
   get isInitialized() {
     return this._initializationState.isInitialized;
+  }
+
+  get token() {
+    return this._token;
   }
 
   // private _eventListeners: Array<
@@ -107,6 +112,7 @@ export default class GlobalStore {
   private async _loginByToken() {
     const token = await getToken();
     if (token) {
+      this._token = token;
       const resp = await loginByToken(token);
       if (resp.status_code === RESPONSE_CODE.SUCCESS) {
         this._handleLoginSuccess(resp.data!);
@@ -118,6 +124,7 @@ export default class GlobalStore {
     const resp = await login(params);
     if (resp.status_code === RESPONSE_CODE.SUCCESS) {
       const data = resp.data!;
+      this._token = data.token;
       await setToken(data.token);
       this._handleLoginSuccess(data);
     }
@@ -149,6 +156,7 @@ export default class GlobalStore {
   }
 
   clear() {
+    this._token = '';
     this._userProfile.clear();
     // this._removeEventListeners();
   }

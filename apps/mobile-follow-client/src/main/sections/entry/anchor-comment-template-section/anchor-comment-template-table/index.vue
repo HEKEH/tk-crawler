@@ -8,6 +8,7 @@ import type {
 import { RefreshRight } from '@element-plus/icons-vue';
 import { useQuery } from '@tanstack/vue-query';
 import { formatDateTime, RESPONSE_CODE } from '@tk-crawler/shared';
+import { ClearMessage } from '@tk-crawler/view-shared';
 import {
   ElButton,
   ElIcon,
@@ -18,7 +19,6 @@ import {
   ElTableColumn,
 } from 'element-plus';
 import { computed, h, onActivated, reactive, ref, watch } from 'vue';
-import ClearMessage from '../../../../components/clear-message.vue';
 import {
   clearAnchorCommentTemplate,
   createAnchorCommentTemplate,

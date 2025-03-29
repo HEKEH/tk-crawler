@@ -9,5 +9,8 @@
   "peerDependencies": {
     "element-plus": "^2.9.6",
     "vue": "^3.5.12"
+  },
+  "devDependencies": {
+    "@tk-crawler/biz-shared": "workspace:*"
   }
 }

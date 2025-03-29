@@ -23,7 +23,7 @@ export enum TKGuildUserStatus {
   /** 等待查询 */
   WAITING = 1,
   /** 正常 */
-  ACTIVE = 2,
+  RUNNING = 2,
   /** 已停止 */
   STOPPED = 3,
   /** 有警告 */

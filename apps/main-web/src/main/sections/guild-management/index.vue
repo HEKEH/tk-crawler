@@ -3,7 +3,7 @@ import { ElMenu, ElMenuItem } from 'element-plus';
 import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useGlobalStore } from '../../utils';
-import GuildTable from './guild-table.vue';
+import TKGuildUserManage from './tk-guild-user-manage/index.vue';
 
 defineOptions({
   name: 'GuildManagement',
@@ -55,7 +55,7 @@ function handleSelectMenu(key: string) {
     </div>
     <div class="right-part">
       <KeepAlive>
-        <GuildTable v-if="currentMenu === MenuType.TK_GUILD_USER" />
+        <TKGuildUserManage v-if="currentMenu === MenuType.TK_GUILD_USER" />
       </KeepAlive>
     </div>
   </div>

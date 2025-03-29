@@ -1,33 +1,33 @@
 import Router from 'koa-router';
-import MemberController from '../controllers/client/member';
+import MemberController from '../../controllers/client/member';
 import {
   checkIsAdminClientMiddleware,
   clientTokenAuthMiddleware,
-} from '../middlewares';
+} from '../../middlewares';
 
-const clientRouter = new Router({ prefix: '/client' });
+const orgAndUserRouter = new Router();
 
-clientRouter.post(
+orgAndUserRouter.use(clientTokenAuthMiddleware());
+
+// org and user
+orgAndUserRouter.post(
   '/get-org-member-list',
-  clientTokenAuthMiddleware(),
   MemberController.getOrgMemberList,
 );
-clientRouter.post(
+orgAndUserRouter.post(
   '/create-org-member',
-  clientTokenAuthMiddleware(),
   checkIsAdminClientMiddleware,
   MemberController.createOrgMember,
 );
-clientRouter.post(
+orgAndUserRouter.post(
   '/update-org-member',
-  clientTokenAuthMiddleware(),
   checkIsAdminClientMiddleware,
   MemberController.updateOrgMember,
 );
-clientRouter.post(
+orgAndUserRouter.post(
   '/delete-org-member',
-  clientTokenAuthMiddleware(),
   checkIsAdminClientMiddleware,
   MemberController.deleteOrgMember,
 );
-export default clientRouter;
+
+export default orgAndUserRouter;

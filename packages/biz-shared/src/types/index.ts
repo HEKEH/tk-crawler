@@ -6,3 +6,4 @@ export * from './org-and-user';
 export * from './region';
 export * from './request';
 export * from './settings';
+export * from './tk-guild-user';

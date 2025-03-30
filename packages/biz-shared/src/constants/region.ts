@@ -1,6 +1,11 @@
 import { Region } from '../types';
 
-export const REGION_OPTIONS = [
+export interface RegionOption {
+  label: string;
+  value: 'all' | Region;
+}
+
+export const REGION_OPTIONS: RegionOption[] = [
   { label: '全部', value: 'all' },
   { label: '美国', value: Region.US },
   { label: '中国大陆', value: Region.CN },

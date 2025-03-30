@@ -51,6 +51,10 @@ export class UserProfile {
     return MembershipStatus.not_member;
   }
 
+  get hasMembership() {
+    return this.membershipStatus === MembershipStatus.has_membership;
+  }
+
   get isAdmin() {
     return this._userInfo?.role_id === OrgMemberRole.admin;
   }

@@ -14,7 +14,7 @@ export interface TKGuildUser {
   created_at: Date;
   updated_at: Date;
   organization?: OrganizationItem;
-  regions?: Region[];
+  regions: Region[];
 }
 
 export enum TKGuildUserStatus {

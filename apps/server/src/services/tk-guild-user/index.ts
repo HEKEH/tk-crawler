@@ -1,18 +1,24 @@
-import assert from 'node:assert';
-import {
-  type CreateTKGuildUserRequest,
-  type CreateTKGuildUserResponse,
-  type DeleteTKGuildUserRequest,
-  type DeleteTKGuildUserResponse,
-  type GetTKGuildUserDetailRequest,
-  type GetTKGuildUserListRequest,
-  type GetTKGuildUserListResponseData,
-  TKGuildUserStatus,
-  type UpdateTKGuildUserCookieRequest,
-  type UpdateTKGuildUserRequest,
+import type {
+  CreateTKGuildUserRequest,
+  CreateTKGuildUserResponse,
+  DeleteTKGuildUserRequest,
+  DeleteTKGuildUserResponse,
+  GetTKGuildUserDetailRequest,
+  GetTKGuildUserListRequest,
+  GetTKGuildUserListResponseData,
+  Region,
+  UpdateTKGuildUserCookieRequest,
+  UpdateTKGuildUserRequest,
 } from '@tk-crawler/biz-shared';
+import assert from 'node:assert';
+import { TKGuildUserStatus } from '@tk-crawler/biz-shared';
 import { mysqlClient } from '@tk-crawler/database';
-import { isEmpty, transObjectValuesToString, xss } from '@tk-crawler/shared';
+import {
+  isArrayEqual,
+  isEmpty,
+  transObjectValuesToString,
+  xss,
+} from '@tk-crawler/shared';
 import { logger } from '../../infra/logger';
 import { transformTKGuildUserFilterValues } from './filter';
 
@@ -41,6 +47,9 @@ export async function getTKGuildUserList(
       omit: {
         cookie: true,
       },
+      include: {
+        regions: true,
+      },
     }),
     mysqlClient.prismaClient.liveAdminUser.count({
       where: filter,
@@ -48,8 +57,11 @@ export async function getTKGuildUserList(
   ]);
 
   return {
-    list: users.map(user => {
-      return transObjectValuesToString(user, ['id', 'org_id']);
+    list: users.map(({ regions, ...user }) => {
+      return {
+        ...transObjectValuesToString(user, ['id', 'org_id']),
+        regions: regions.map(item => item.region as Region),
+      };
     }),
     total,
   };
@@ -106,6 +118,7 @@ export async function createTKGuildUser(
     const user = await tx.liveAdminUser.create({
       data: {
         ...restData,
+        status: TKGuildUserStatus.INACTIVE,
         org_id: BigInt(org_id),
       },
     });
@@ -139,7 +152,7 @@ export async function updateTKGuildUser(
         id: BigInt(id),
         org_id: BigInt(org_id),
       },
-      select: { id: true },
+      select: { id: true, username: true, password: true, regions: true },
     });
     assert(existUser, '用户不存在');
 
@@ -151,6 +164,14 @@ export async function updateTKGuildUser(
       updateData.username = xss(updateData.username);
     }
 
+    // 如果用户名或密码有变更，则将用户状态设置为未激活
+    if (
+      (updateData.username && updateData.username !== existUser.username) ||
+      (updateData.password && updateData.password !== existUser.password)
+    ) {
+      updateData.status = TKGuildUserStatus.INACTIVE;
+    }
+
     // Update user
     await tx.liveAdminUser.update({
       where: {
@@ -159,7 +180,14 @@ export async function updateTKGuildUser(
       data: updateData,
     });
 
-    if (regions?.length) {
+    if (
+      regions?.length &&
+      !isArrayEqual(
+        // 如果地区没有变化，则不提交地区，以免浪费资源
+        regions,
+        existUser.regions.map(item => item.region),
+      )
+    ) {
       // Update user regions
       await tx.liveAdminUserRegionRelation.deleteMany({
         where: {

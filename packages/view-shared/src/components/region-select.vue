@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Region } from '@tk-crawler/biz-shared';
+import type { Region, RegionOption } from '@tk-crawler/biz-shared';
 import { REGION_OPTIONS } from '@tk-crawler/biz-shared';
 import { ElOption, ElSelect } from 'element-plus';
 import { computed, ref } from 'vue';
@@ -16,10 +16,12 @@ const props = withDefaults(
     modelValue?: RegionPropsValue;
     placeholder?: string;
     showAll?: boolean;
+    regionOptions?: RegionOption[];
   }>(),
   {
     placeholder: '请选择国家/地区，支持搜索',
     showAll: true,
+    regionOptions: () => REGION_OPTIONS,
   },
 );
 
@@ -63,9 +65,9 @@ const value = computed<SelectValue>({
 
 const allOptions = computed(() => {
   if (props.showAll) {
-    return REGION_OPTIONS;
+    return props.regionOptions;
   }
-  return REGION_OPTIONS.filter(item => item.value !== 'all');
+  return props.regionOptions.filter(item => item.value !== 'all');
 });
 
 const options = computed(() => {

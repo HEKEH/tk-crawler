@@ -1,3 +1,5 @@
+import type { Region } from './region';
+
 export enum OrganizationStatus {
   /** 正常 */
   normal = 1,
@@ -26,6 +28,8 @@ export interface OrganizationItem {
   updated_at: Date;
   /** 用户数量 */
   user_count: number;
+  /** 地区 */
+  regions: Region[];
 }
 
 export enum OrgMemberStatus {

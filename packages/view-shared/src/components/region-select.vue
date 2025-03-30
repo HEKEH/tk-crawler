@@ -15,9 +15,11 @@ const props = withDefaults(
   defineProps<{
     modelValue?: RegionPropsValue;
     placeholder?: string;
+    showAll?: boolean;
   }>(),
   {
-    placeholder: '请选择国家/地区',
+    placeholder: '请选择国家/地区，支持搜索',
+    showAll: true,
   },
 );
 
@@ -37,6 +39,12 @@ function transToPropsValue(value: SelectValue): RegionPropsValue {
   return value as Region[];
 }
 
+const filterText = ref<string>();
+
+function handleFilter(query: string) {
+  filterText.value = query;
+}
+
 function handleChange(value: SelectValue) {
   emit('change', transToPropsValue(value));
 }
@@ -53,18 +61,19 @@ const value = computed<SelectValue>({
   },
 });
 
-const filterText = ref<string>();
-
-function handleFilter(query: string) {
-  filterText.value = query;
-}
+const allOptions = computed(() => {
+  if (props.showAll) {
+    return REGION_OPTIONS;
+  }
+  return REGION_OPTIONS.filter(item => item.value !== 'all');
+});
 
 const options = computed(() => {
   const q = filterText.value?.trim();
   if (!q) {
-    return REGION_OPTIONS;
+    return allOptions.value;
   }
-  return REGION_OPTIONS.filter(item => item.label.includes(q));
+  return allOptions.value.filter(item => item.label.includes(q));
 });
 </script>
 
@@ -76,6 +85,7 @@ const options = computed(() => {
     :placeholder="placeholder"
     filterable
     :filter-method="handleFilter"
+    :reserve-keyword="false"
     @change="handleChange"
   >
     <ElOption

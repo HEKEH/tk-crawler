@@ -15,10 +15,26 @@ export async function updateOrg(data: UpdateOrgRequest): Promise<void> {
       throw new BusinessError('组织名称已存在');
     }
   }
-  await mysqlClient.prismaClient.organization.update({
-    where: {
-      id: BigInt(data.id),
-    },
-    data: omit(data, ['id']),
+  const { regions, ...rest } = data;
+  await mysqlClient.prismaClient.$transaction(async tx => {
+    await tx.organization.update({
+      where: {
+        id: BigInt(rest.id),
+      },
+      data: omit(rest, ['id']),
+    });
+    if (regions && regions.length > 0) {
+      await tx.orgRegionRelation.deleteMany({
+        where: {
+          org_id: BigInt(rest.id),
+        },
+      });
+      await tx.orgRegionRelation.createMany({
+        data: regions.map(region => ({
+          org_id: BigInt(rest.id),
+          region,
+        })),
+      });
+    }
   });
 }

@@ -3,7 +3,8 @@ import {
   type OrganizationItem,
   OrganizationStatus,
 } from '@tk-crawler/biz-shared';
-import { CommonDatePickerShortcuts } from '@tk-crawler/shared';
+import { CommonDatePickerShortcuts, isArrayEqual } from '@tk-crawler/shared';
+import { RegionSelect } from '@tk-crawler/view-shared';
 import dayjs from 'dayjs';
 import {
   ElButton,
@@ -48,6 +49,7 @@ const rules: FormRules = {
     { min: 2, max: 30, message: '长度在 2 到 30 个字符' },
   ],
   status: [{ required: true, message: '请选择状态' }],
+  regions: [{ required: true, message: '请选择地区' }],
   membershipDates: [
     {
       validator: (rule, value, callback) => {
@@ -100,9 +102,17 @@ async function handleSubmit() {
             return;
           }
         }
+        // 如果地区没有变化，则不提交地区，以免浪费资源
+        const regions = isArrayEqual(
+          form.regions || [],
+          props.initialData?.regions || [],
+        )
+          ? undefined
+          : form.regions;
         await props.submit({
           name: form.name,
           status: form.status,
+          regions,
           membership_start_at: form.membership_start_at ?? null,
           membership_expire_at: form.membership_expire_at ?? null,
           remark: form.remark,
@@ -153,6 +163,10 @@ function handleCancel() {
         "
         :shortcuts="CommonDatePickerShortcuts"
       />
+    </ElFormItem>
+
+    <ElFormItem label="地区" prop="regions">
+      <RegionSelect v-model="form.regions" :show-all="false" />
     </ElFormItem>
 
     <ElFormItem label="状态" prop="status">

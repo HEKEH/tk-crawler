@@ -1,10 +1,10 @@
-import assert from 'node:assert';
-import {
-  OrganizationStatus,
-  type OrgMemberLoginRequest,
-  type OrgMemberLoginResponseData,
-  OrgMemberStatus,
+import type {
+  OrgMemberLoginRequest,
+  OrgMemberLoginResponseData,
+  Region,
 } from '@tk-crawler/biz-shared';
+import assert from 'node:assert';
+import { OrganizationStatus, OrgMemberStatus } from '@tk-crawler/biz-shared';
 import { mysqlClient } from '@tk-crawler/database';
 import dayjs from 'dayjs';
 import { logger } from '../../infra/logger';
@@ -21,7 +21,11 @@ export async function orgMemberLogin(
       username: data.username,
     },
     include: {
-      organization: true,
+      organization: {
+        include: {
+          regions: true,
+        },
+      },
     },
   });
   if (!user) {
@@ -51,6 +55,7 @@ export async function orgMemberLogin(
     },
     org_info: {
       ...organization,
+      regions: organization.regions.map(item => item.region as Region),
       id: organization.id.toString(),
       if_membership_valid:
         Boolean(organization.membership_expire_at) &&

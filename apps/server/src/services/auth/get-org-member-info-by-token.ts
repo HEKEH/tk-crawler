@@ -1,4 +1,7 @@
-import type { OrgMemberUserInfoWithOrgInfo } from '@tk-crawler/biz-shared';
+import type {
+  OrgMemberUserInfoWithOrgInfo,
+  Region,
+} from '@tk-crawler/biz-shared';
 import { OrganizationStatus, OrgMemberStatus } from '@tk-crawler/biz-shared';
 import { mysqlClient } from '@tk-crawler/database';
 import dayjs from 'dayjs';
@@ -32,7 +35,11 @@ export async function getOrgMemberInfoByToken(
       password: !options?.fetchPassword,
     },
     include: {
-      organization: true,
+      organization: {
+        include: {
+          regions: true,
+        },
+      },
     },
   });
   if (!user) {
@@ -50,6 +57,8 @@ export async function getOrgMemberInfoByToken(
     throw new TokenInvalidError('所属组织已禁用, 请重新登录');
   }
 
+  const orgRegions = org.regions.map(item => item.region as Region);
+
   return {
     user_info: {
       ...userRest,
@@ -58,6 +67,7 @@ export async function getOrgMemberInfoByToken(
     },
     org_info: {
       ...org,
+      regions: orgRegions,
       id: org.id.toString(),
       if_membership_valid:
         Boolean(org.membership_expire_at) &&

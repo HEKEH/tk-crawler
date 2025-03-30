@@ -1,6 +1,7 @@
 import type {
   GetOrgListRequest,
   GetOrgListResponseData,
+  Region,
 } from '@tk-crawler/biz-shared';
 import { mysqlClient } from '@tk-crawler/database';
 import { isEmpty } from '@tk-crawler/shared';
@@ -29,6 +30,7 @@ export async function getOrgList(
       take: data.page_size,
       orderBy,
       include: {
+        regions: true,
         _count: {
           select: {
             orgUsers: true,
@@ -41,9 +43,10 @@ export async function getOrgList(
     }),
   ]);
   return {
-    list: orgs.map(({ _count, ...org }) => ({
+    list: orgs.map(({ _count, regions, ...org }) => ({
       ...org,
       id: org.id.toString(),
+      regions: regions.map(item => item.region as Region),
       if_membership_valid:
         Boolean(org.membership_expire_at) &&
         dayjs(org.membership_expire_at).isAfter(new Date()),

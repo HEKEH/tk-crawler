@@ -249,3 +249,11 @@ export const REGION_OPTIONS = [
   { label: '赞比亚', value: Region.ZM },
   { label: '津巴布韦', value: Region.ZW },
 ];
+
+export const REGION_LABEL_MAP = REGION_OPTIONS.reduce(
+  (acc, item) => {
+    acc[item.value as Region] = item.label;
+    return acc;
+  },
+  {} as Record<Region, string>,
+);

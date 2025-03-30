@@ -4,12 +4,13 @@ import type {
   CreateOrgResponse,
   GetOrgListResponseData,
   OrganizationItem,
+  Region,
   UpdateOrgRequest,
   UpdateOrgResponse,
 } from '@tk-crawler/biz-shared';
 import { RefreshRight } from '@element-plus/icons-vue';
 import { useQuery } from '@tanstack/vue-query';
-import { OrganizationStatus } from '@tk-crawler/biz-shared';
+import { OrganizationStatus, REGION_LABEL_MAP } from '@tk-crawler/biz-shared';
 import { formatDateTime, RESPONSE_CODE } from '@tk-crawler/shared';
 import { confirmAfterSeconds } from '@tk-crawler/view-shared';
 import {
@@ -292,6 +293,19 @@ function onManageOrgMembers(org: OrganizationItem) {
             </ElTag>
           </template>
         </ElTableColumn>
+        <ElTableColumn prop="regions" label="地区" min-width="120">
+          <template #default="scope">
+            <div class="region-tags">
+              <ElTag
+                v-for="region in scope.row.regions"
+                :key="region"
+                type="success"
+              >
+                {{ REGION_LABEL_MAP[region as Region] }}
+              </ElTag>
+            </div>
+          </template>
+        </ElTableColumn>
         <ElTableColumn
           sortable="custom"
           prop="user_count"
@@ -448,6 +462,11 @@ function onManageOrgMembers(org: OrganizationItem) {
     justify-content: flex-end;
     margin-top: 1rem;
     padding-right: 1rem;
+  }
+  .region-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
   }
 }
 </style>

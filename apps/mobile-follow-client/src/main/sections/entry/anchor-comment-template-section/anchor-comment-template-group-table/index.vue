@@ -332,8 +332,7 @@ async function handleCreateOrEdit(data: Partial<AnchorCommentTemplateGroup>) {
       <ElTable
         ref="tableRef"
         :data="data?.list"
-        style="width: 100%"
-        max-height="calc(100% - 130px)"
+        class="main-table"
         :default-sort="
           sortField && sortOrder
             ? { prop: sortField, order: sortOrder }
@@ -434,9 +433,12 @@ async function handleCreateOrEdit(data: Partial<AnchorCommentTemplateGroup>) {
 .comment-template-group-table {
   position: relative;
   flex: 1;
-  height: 100%;
+  height: fit-content;
+  max-height: 100%;
   width: 100%;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .filter-row {
@@ -486,5 +488,9 @@ async function handleCreateOrEdit(data: Partial<AnchorCommentTemplateGroup>) {
   justify-content: flex-end;
   margin-top: 1rem;
   padding-right: 1rem;
+}
+.main-table {
+  flex: 1;
+  width: 100%;
 }
 </style>

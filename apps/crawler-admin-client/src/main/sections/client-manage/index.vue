@@ -62,5 +62,11 @@ function onCloseTab(tabId: string | number) {
     width: 100%;
     border-top: unset;
   }
+  :global(.el-tab-pane) {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+  }
 }
 </style>

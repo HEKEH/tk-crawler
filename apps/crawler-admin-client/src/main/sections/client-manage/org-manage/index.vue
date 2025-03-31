@@ -236,7 +236,7 @@ function onManageOrgMembers(org: OrganizationItem) {
       <ElTable
         ref="tableRef"
         :data="data?.list"
-        style="width: 100%"
+        class="main-table"
         :default-sort="
           sortField && sortOrder
             ? { prop: sortField, order: sortOrder }
@@ -424,9 +424,11 @@ function onManageOrgMembers(org: OrganizationItem) {
 .org-manage {
   padding: 2rem 1rem;
   position: relative;
-  flex: 1;
-  height: 100%;
+  height: fit-content;
+  max-height: 100%;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
   .header-row {
     margin-bottom: 1rem;
     display: flex;
@@ -467,6 +469,10 @@ function onManageOrgMembers(org: OrganizationItem) {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
+  }
+  .main-table {
+    flex: 1;
+    width: 100%;
   }
 }
 </style>

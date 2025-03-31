@@ -82,5 +82,11 @@ function onTemplateGroupManage(templateGroup: AnchorCommentTemplateGroup) {
       overflow: hidden;
     }
   }
+  :global(.el-tab-pane) {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+  }
 }
 </style>

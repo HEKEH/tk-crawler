@@ -78,6 +78,8 @@ function handleSelectMenu(key: string) {
     flex: 1;
     height: 100%;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
   }
   .side-menus {
     width: 100%;

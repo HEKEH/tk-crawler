@@ -94,7 +94,7 @@ const { data, isLoading, isError, error, refetch } = useQuery<
     }
     return response.data;
     // return {
-    //   list: new Array(50).fill(0).map((_, index) => ({
+    //   list: new Array(pageSize.value).fill(0).map((_, index) => ({
     //     ...response.data?.list![0],
     //     username: `用户${index}`,
     //     id: index.toString(),
@@ -374,8 +374,7 @@ onActivated(refetch);
       <ElTable
         ref="tableRef"
         :data="data?.list"
-        style="width: 100%"
-        max-height="calc(100% - 130px)"
+        class="main-table"
         :default-sort="
           sortField && sortOrder
             ? { prop: sortField, order: sortOrder }
@@ -504,9 +503,11 @@ onActivated(refetch);
 .tk-guild-user-table {
   padding: 2rem 1rem;
   position: relative;
-  flex: 1;
-  height: 100%;
+  height: fit-content;
+  max-height: 100%;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
   .header-row {
     margin-bottom: 1rem;
     display: flex;
@@ -542,6 +543,10 @@ onActivated(refetch);
     justify-content: flex-end;
     margin-top: 1rem;
     padding-right: 1rem;
+  }
+  .main-table {
+    flex: 1;
+    width: 100%;
   }
 }
 </style>

@@ -57,7 +57,7 @@ model LiveAdminUser {
   is_cookie_valid    Boolean?
   created_at         DateTime                      @default(now()) @db.DateTime(3)
   updated_at         DateTime                      @updatedAt @db.DateTime(3)
-  organization       Organization                  @relation(fields: [org_id], references: [id])
+  organization       Organization                  @relation(fields: [org_id], references: [id], onDelete: Cascade)
   regions            LiveAdminUserRegionRelation[]
   inviteChecks       AnchorInviteCheck[]
 
@@ -68,7 +68,7 @@ model LiveAdminUserRegionRelation {
   id      BigInt        @id @default(autoincrement()) @db.UnsignedBigInt
   user_id BigInt        @db.UnsignedBigInt
   region  String        @db.VarChar(2)
-  user    LiveAdminUser @relation(fields: [user_id], references: [id])
+  user    LiveAdminUser @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@unique([user_id, region], name: "user_id_region")
   @@index([user_id])

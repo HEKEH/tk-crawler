@@ -36,6 +36,7 @@ import {
 } from './filter';
 import TKGuildUserFilter from './guild-user-filter.vue';
 import FormDialog from './guild-user-form-dialog.vue';
+import VisiblePassword from '../../../components/visible-password.vue';
 
 defineOptions({
   name: 'TKGuildUserTable',
@@ -351,7 +352,7 @@ onActivated(refetch);
       <div class="header-row">
         <div class="left-part">
           <ElButton type="primary" size="small" @click="onAddItem">
-            新增用户
+            新增TK后台查询账号
           </ElButton>
         </div>
         <div class="right-part">
@@ -385,7 +386,12 @@ onActivated(refetch);
         @selection-change="handleSelectionChange"
       >
         <ElTableColumn type="selection" width="55" />
-        <ElTableColumn prop="username" label="用户名" min-width="120" />
+        <ElTableColumn prop="username" label="后台查询账号" min-width="200" />
+        <ElTableColumn prop="password" label="后台查询密码" min-width="160">
+          <template #default="scope">
+            <VisiblePassword :password="scope.row.password" />
+          </template>
+        </ElTableColumn>
         <ElTableColumn prop="regions" label="区域" min-width="120">
           <template #default="scope">
             {{

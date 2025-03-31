@@ -14,16 +14,21 @@ import type {
 } from '@tk-crawler/biz-shared';
 import { CLIENT_TOKEN_HEADER_KEY } from '@tk-crawler/biz-shared';
 
+import {
+  RESPONSE_CODE,
+  simpleDecrypt,
+  simpleEncrypt,
+} from '@tk-crawler/shared';
 import { commonRequest } from '@tk-crawler/view-shared';
 import config from '../../config';
 import { redirectToLogin } from '../../router';
 
 // Get TK Guild User list
-export function getTKGuildUserList(
+export async function getTKGuildUserList(
   params: GetTKGuildUserListRequest,
   token: string,
 ) {
-  return commonRequest<GetTKGuildUserListResponse>({
+  const response = await commonRequest<GetTKGuildUserListResponse>({
     baseURL: config.ownServerUrl,
     method: 'post',
     path: '/client/tk-guild-user/get-user-list',
@@ -33,14 +38,24 @@ export function getTKGuildUserList(
       [CLIENT_TOKEN_HEADER_KEY]: token,
     },
   });
+  if (response.status_code === RESPONSE_CODE.SUCCESS && response.data) {
+    response.data = {
+      ...response.data,
+      list: response.data?.list.map(item => ({
+        ...item,
+        password: simpleDecrypt(item.password, config.simplePasswordKey),
+      })),
+    };
+  }
+  return response;
 }
 
 // Get TK Guild User detail
-export function getTKGuildUserDetail(
+export async function getTKGuildUserDetail(
   params: GetTKGuildUserDetailRequest,
   token: string,
 ) {
-  return commonRequest<GetTKGuildUserDetailResponse>({
+  const response = await commonRequest<GetTKGuildUserDetailResponse>({
     baseURL: config.ownServerUrl,
     method: 'post',
     path: '/client/tk-guild-user/get-user-detail',
@@ -50,13 +65,27 @@ export function getTKGuildUserDetail(
       [CLIENT_TOKEN_HEADER_KEY]: token,
     },
   });
+  if (response.status_code === RESPONSE_CODE.SUCCESS && response.data) {
+    response.data = {
+      ...response.data,
+      password: simpleDecrypt(response.data.password, config.simplePasswordKey),
+    };
+  }
+  return response;
 }
 
 // Create TK Guild User
 export function createTKGuildUser(
-  params: CreateTKGuildUserRequest,
+  _params: CreateTKGuildUserRequest,
   token: string,
 ) {
+  let params = _params;
+  if (params.password) {
+    params = {
+      ...params,
+      password: simpleEncrypt(params.password, config.simplePasswordKey),
+    };
+  }
   return commonRequest<CreateTKGuildUserResponse>({
     baseURL: config.ownServerUrl,
     method: 'post',
@@ -71,9 +100,19 @@ export function createTKGuildUser(
 
 // Update TK Guild User
 export function updateTKGuildUser(
-  params: UpdateTKGuildUserRequest,
+  _params: UpdateTKGuildUserRequest,
   token: string,
 ) {
+  let params = _params;
+  if (params.data.password) {
+    params = {
+      ...params,
+      data: {
+        ...params.data,
+        password: simpleEncrypt(params.data.password, config.simplePasswordKey),
+      },
+    };
+  }
   return commonRequest<UpdateTKGuildUserResponse>({
     baseURL: config.ownServerUrl,
     method: 'post',

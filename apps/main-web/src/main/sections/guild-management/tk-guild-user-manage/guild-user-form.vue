@@ -50,10 +50,10 @@ const form = reactive<GuildUserFormValues>({
 
 const rules: FormRules = {
   username: [
-    { required: true, message: '请输入组名' },
+    { required: true, message: '请输入后台查询账号' },
     { min: 2, max: 30, message: '长度在 2 到 30 个字符' },
   ],
-  password: [{ required: true, message: '请输入密码' }],
+  password: [{ required: true, message: '请输入后台查询密码' }],
   regions: [{ required: true, message: '请选择国家/地区' }],
   max_query_per_hour: [{ required: true, message: '请输入每小时查询次数' }],
   max_query_per_day: [{ required: true, message: '请输入每天查询次数' }],
@@ -106,11 +106,11 @@ const regionOptions = computed(() => {
     label-width="140px"
     label-position="right"
   >
-    <ElFormItem label="用户名" prop="username">
-      <ElInput v-model="form.username" placeholder="请输入用户名" />
+    <ElFormItem label="后台查询账号" prop="username">
+      <ElInput v-model="form.username" placeholder="请输入后台查询账号" />
     </ElFormItem>
-    <ElFormItem label="密码" prop="password">
-      <ElInput v-model="form.password" placeholder="请输入密码" />
+    <ElFormItem label="后台查询密码" prop="password">
+      <ElInput v-model="form.password" placeholder="请输入后台查询密码" />
     </ElFormItem>
     <ElFormItem label="国家/地区" prop="regions">
       <RegionSelect

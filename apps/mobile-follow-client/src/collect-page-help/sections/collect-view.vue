@@ -47,17 +47,18 @@ onBeforeUnmount(() => {
       <br />
       为了加快采集速度，建议每页条数改为200。
     </div>
-    <div
+    <!-- <div
       v-loading="true"
       class="loading"
       element-loading-text="自动采集中，请在右侧页面进行数据搜索"
-    ></div>
+    ></div> -->
+    <div class="tip">正在自动采集中...<br />请在右侧页面获取您想要的数据 →</div>
   </div>
 </template>
 
 <style scoped>
 .description {
-  font-size: 14px;
+  font-size: 15px;
 }
 .block {
   display: flex;
@@ -65,11 +66,17 @@ onBeforeUnmount(() => {
   align-items: center;
   row-gap: 10px;
 }
-.loading {
+.tip {
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  color: var(--el-color-primary);
+}
+/* .loading {
   width: 100%;
   height: 20px;
   :global(.path) {
     r: 14px !important;
   }
-}
+} */
 </style>

@@ -3,6 +3,9 @@
   "compilerOptions": {
     "composite": true,
     "jsx": "preserve",
+    "jsxFactory": "h",
+    "jsxFragmentFactory": "Fragment",
+    "jsxImportSource": "vue",
     "lib": ["ES2018", "DOM", "DOM.Iterable"],
     "module": "esnext",
     "moduleResolution": "node",

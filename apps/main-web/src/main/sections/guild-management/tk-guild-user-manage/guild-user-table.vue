@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="tsx">
 import type {
   CreateTKGuildUserRequest,
   CreateTKGuildUserResponse,
@@ -9,11 +9,18 @@ import type {
 } from '@tk-crawler/biz-shared';
 import { RefreshRight } from '@element-plus/icons-vue';
 import { useQuery } from '@tanstack/vue-query';
-import { REGION_LABEL_MAP, TKGuildUserStatus } from '@tk-crawler/biz-shared';
+import {
+  MAIN_APP_PRODUCT_NAME,
+  MAIN_APP_PUBLISH_URL,
+  REGION_LABEL_MAP,
+  TKGuildUserStatus,
+} from '@tk-crawler/biz-shared';
 import { formatDateTime, RESPONSE_CODE } from '@tk-crawler/shared';
+import { getPlatform } from '@tk-crawler/view-shared';
 import {
   ElButton,
   ElIcon,
+  ElLink,
   ElMessage,
   ElMessageBox,
   ElPagination,
@@ -22,6 +29,7 @@ import {
   ElTag,
 } from 'element-plus';
 import { computed, onActivated, ref } from 'vue';
+import VisiblePassword from '../../../components/visible-password.vue';
 import {
   createTKGuildUser,
   deleteTKGuildUser,
@@ -30,6 +38,7 @@ import {
   stopTKGuildUserAccount,
   updateTKGuildUser,
 } from '../../../requests';
+import { isInElectronApp } from '../../../utils';
 import { useGlobalStore } from '../../../utils/vue';
 import {
   DefaultFilterViewValues,
@@ -38,7 +47,6 @@ import {
 } from './filter';
 import TKGuildUserFilter from './guild-user-filter.vue';
 import FormDialog from './guild-user-form-dialog.vue';
-import VisiblePassword from '../../../components/visible-password.vue';
 
 defineOptions({
   name: 'TKGuildUserTable',
@@ -344,15 +352,67 @@ async function onStartOrStop(item: TKGuildUser) {
     await refetch();
     ElMessage.success('成功停止');
   } else {
-    const result = await startTKGuildUserAccount(
-      { user_id: item.id },
-      globalStore.token,
-    );
-    if (result.status_code !== RESPONSE_CODE.SUCCESS) {
+    if (!isInElectronApp()) {
+      try {
+        const platform = getPlatform();
+        await ElMessageBox({
+          title: '提示',
+          message: (
+            <div>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  flexWrap: 'wrap',
+                }}
+              >
+                当前浏览器环境无法支持启动账号功能，请在
+                <p style={{ fontWeight: 'bold', whiteSpace: 'wrap' }}>
+                  {MAIN_APP_PRODUCT_NAME}
+                </p>
+                中启动。
+              </div>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  flexWrap: 'wrap',
+                }}
+              >
+                如果你尚未安装应用，请前往
+                <ElLink
+                  style={{ display: 'inline-block' }}
+                  href={
+                    platform === 'Mac'
+                      ? `${MAIN_APP_PUBLISH_URL}/${MAIN_APP_PRODUCT_NAME}-Mac-Installer.dmg`
+                      : `${MAIN_APP_PUBLISH_URL}/${MAIN_APP_PRODUCT_NAME}-Windows-Installer.exe`
+                  }
+                  target="_blank"
+                  type="primary"
+                  underline={false}
+                >
+                  下载页面
+                </ElLink>
+                安装。
+              </div>
+            </div>
+          ),
+          type: 'warning',
+          confirmButtonText: '确定',
+        });
+      } catch {}
       return;
     }
-    await refetch();
-    ElMessage.success('成功启动');
+    console.log('In Electron App');
+    // const result = await startTKGuildUserAccount(
+    //   { user_id: item.id },
+    //   globalStore.token,
+    // );
+    // if (result.status_code !== RESPONSE_CODE.SUCCESS) {
+    //   return;
+    // }
+    // await refetch();
+    // ElMessage.success('成功启动');
   }
 }
 

@@ -86,3 +86,22 @@ export interface UpdateTKGuildUserCookieResponse {
   status_code: RESPONSE_CODE;
   message?: string;
 }
+
+export interface StartTKLiveAdminAccountRequest {
+  user_id: string;
+  // cookie: string;
+}
+
+export interface StartTKLiveAdminAccountResponse {
+  status_code: RESPONSE_CODE;
+  message?: string;
+}
+
+export interface StopTKLiveAdminAccountRequest {
+  user_id: string;
+}
+
+export interface StopTKLiveAdminAccountResponse {
+  status_code: RESPONSE_CODE;
+  message?: string;
+}

@@ -7,8 +7,10 @@ import type {
   GetTKGuildUserDetailResponse,
   GetTKGuildUserListRequest,
   GetTKGuildUserListResponse,
-  UpdateTKGuildUserCookieRequest,
-  UpdateTKGuildUserCookieResponse,
+  StartTKLiveAdminAccountRequest,
+  StartTKLiveAdminAccountResponse,
+  StopTKLiveAdminAccountRequest,
+  StopTKLiveAdminAccountResponse,
   UpdateTKGuildUserRequest,
   UpdateTKGuildUserResponse,
 } from '@tk-crawler/biz-shared';
@@ -143,14 +145,48 @@ export function deleteTKGuildUser(
 }
 
 // Update TK Guild User Cookie
-export function updateTKGuildUserCookie(
-  params: UpdateTKGuildUserCookieRequest,
+// export function updateTKGuildUserCookie(
+//   params: UpdateTKGuildUserCookieRequest,
+//   token: string,
+// ) {
+//   return commonRequest<UpdateTKGuildUserCookieResponse>({
+//     baseURL: config.ownServerUrl,
+//     method: 'post',
+//     path: '/client/tk-guild-user/update-user-cookie',
+//     params,
+//     onTokenInvalid: redirectToLogin,
+//     headers: {
+//       [CLIENT_TOKEN_HEADER_KEY]: token,
+//     },
+//   });
+// }
+
+// Start TK Guild User
+export function startTKGuildUserAccount(
+  params: StartTKLiveAdminAccountRequest,
   token: string,
 ) {
-  return commonRequest<UpdateTKGuildUserCookieResponse>({
+  return commonRequest<StartTKLiveAdminAccountResponse>({
     baseURL: config.ownServerUrl,
     method: 'post',
-    path: '/client/tk-guild-user/update-user-cookie',
+    path: '/client/tk-guild-user/start-live-admin-account',
+    params,
+    onTokenInvalid: redirectToLogin,
+    headers: {
+      [CLIENT_TOKEN_HEADER_KEY]: token,
+    },
+  });
+}
+
+// Stop TK Guild User
+export function stopTKGuildUserAccount(
+  params: StopTKLiveAdminAccountRequest,
+  token: string,
+) {
+  return commonRequest<StopTKLiveAdminAccountResponse>({
+    baseURL: config.ownServerUrl,
+    method: 'post',
+    path: '/client/tk-guild-user/stop-live-admin-account',
     params,
     onTokenInvalid: redirectToLogin,
     headers: {

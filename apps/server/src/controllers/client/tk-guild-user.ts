@@ -3,7 +3,8 @@ import type {
   DeleteTKGuildUserRequest,
   GetTKGuildUserDetailRequest,
   GetTKGuildUserListRequest,
-  UpdateTKGuildUserCookieRequest,
+  StartTKLiveAdminAccountRequest,
+  StopTKLiveAdminAccountRequest,
   UpdateTKGuildUserRequest,
 } from '@tk-crawler/biz-shared';
 import type { Context, Next } from 'koa';
@@ -12,8 +13,9 @@ import {
   deleteTKGuildUser,
   getTKGuildUserDetail,
   getTKGuildUserList,
+  startLiveAdminAccount,
+  stopLiveAdminAccount,
   updateTKGuildUser,
-  updateTKGuildUserCookie,
 } from '../../services/tk-guild-user';
 
 export default class TKGuildUserController {
@@ -78,15 +80,41 @@ export default class TKGuildUserController {
     await next();
   }
 
-  static async updateTKGuildUserCookie(ctx: Context, next: Next) {
+  // static async updateTKGuildUserCookie(ctx: Context, next: Next) {
+  //   const { org_info } = ctx.clientInfo!;
+  //   const data = ctx.getRequestData<UpdateTKGuildUserCookieRequest>();
+  //   // Add org_id from context to the request data
+  //   const requestWithOrgId = {
+  //     ...data,
+  //     org_id: org_info.id,
+  //   };
+  //   await updateTKGuildUserCookie(requestWithOrgId);
+  //   ctx.body = ctx.t('Success');
+  //   await next();
+  // }
+
+  static async startLiveAdminAccount(ctx: Context, next: Next) {
     const { org_info } = ctx.clientInfo!;
-    const data = ctx.getRequestData<UpdateTKGuildUserCookieRequest>();
+    const data = ctx.getRequestData<StartTKLiveAdminAccountRequest>();
     // Add org_id from context to the request data
     const requestWithOrgId = {
       ...data,
       org_id: org_info.id,
     };
-    await updateTKGuildUserCookie(requestWithOrgId);
+    await startLiveAdminAccount(requestWithOrgId);
+    ctx.body = ctx.t('Success');
+    await next();
+  }
+
+  static async stopLiveAdminAccount(ctx: Context, next: Next) {
+    const { org_info } = ctx.clientInfo!;
+    const data = ctx.getRequestData<StopTKLiveAdminAccountRequest>();
+    // Add org_id from context to the request data
+    const requestWithOrgId = {
+      ...data,
+      org_id: org_info.id,
+    };
+    await stopLiveAdminAccount(requestWithOrgId);
     ctx.body = ctx.t('Success');
     await next();
   }

@@ -3,6 +3,8 @@ import type {
   OrgMemberItem,
 } from '@tk-crawler/biz-shared';
 import { mysqlClient } from '@tk-crawler/database';
+import { simpleDecrypt } from '@tk-crawler/shared';
+import config from '../../config';
 import { logger } from '../../infra/logger';
 import { BusinessError, hashPassword, verifyPassword } from '../../utils';
 
@@ -11,7 +13,14 @@ export async function changePassword(
   user: OrgMemberItem,
 ): Promise<void> {
   logger.info('[Change Password]', data);
-  const { old_password, new_password } = data;
+  const old_password = simpleDecrypt(
+    data.old_password,
+    config.simplePasswordKey,
+  );
+  const new_password = simpleDecrypt(
+    data.new_password,
+    config.simplePasswordKey,
+  );
   if (!(await verifyPassword(old_password, user.password))) {
     throw new BusinessError('当前密码输入错误, 请重新输入');
   }

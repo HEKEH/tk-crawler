@@ -6,19 +6,21 @@ import type {
 import assert from 'node:assert';
 import { OrganizationStatus, OrgMemberStatus } from '@tk-crawler/biz-shared';
 import { mysqlClient } from '@tk-crawler/database';
+import { simpleDecrypt } from '@tk-crawler/shared/utils';
 import dayjs from 'dayjs';
+import config from '../../config';
 import { logger } from '../../infra/logger';
 import { BusinessError, generateToken, verifyPassword } from '../../utils';
 
 export async function orgMemberLogin(
-  data: OrgMemberLoginRequest,
+  request: OrgMemberLoginRequest,
 ): Promise<OrgMemberLoginResponseData> {
-  logger.info('[Org Member Login]', data);
-  assert(data.username, '用户名不能为空');
-  assert(data.password, '密码不能为空');
+  logger.info('[Org Member Login]', request);
+  assert(request.username, '用户名不能为空');
+  assert(request.password, '密码不能为空');
   const user = await mysqlClient.prismaClient.orgUser.findUnique({
     where: {
-      username: data.username,
+      username: request.username,
     },
     include: {
       organization: {
@@ -35,7 +37,11 @@ export async function orgMemberLogin(
     throw new BusinessError('用户已禁用, 请重新登录');
   }
   const { password, organization, ...rest } = user;
-  if (!(await verifyPassword(data.password, password))) {
+  const passwordDecrypted = simpleDecrypt(
+    request.password,
+    config.simplePasswordKey,
+  );
+  if (!(await verifyPassword(passwordDecrypted, password))) {
     throw new BusinessError('密码错误, 请重新登录');
   }
   if (!organization) {

@@ -7,7 +7,6 @@ import type {
   GetTKGuildUserListRequest,
   GetTKGuildUserListResponseData,
   Region,
-  UpdateTKGuildUserCookieRequest,
   UpdateTKGuildUserRequest,
 } from '@tk-crawler/biz-shared';
 import assert from 'node:assert';
@@ -228,38 +227,4 @@ export async function deleteTKGuildUser(
   });
 }
 
-// Update TK Guild User Cookie
-export async function updateTKGuildUserCookie(
-  data: UpdateTKGuildUserCookieRequest & { org_id: string },
-): Promise<void> {
-  logger.info('[Update TK Guild User Cookie]', { data });
-
-  const { id, cookie, org_id } = data;
-  assert(id, '用户ID不能为空');
-  assert(cookie, 'Cookie不能为空');
-  assert(org_id, '机构ID不能为空');
-
-  await mysqlClient.prismaClient.$transaction(async tx => {
-    // Check if user exists
-    const existUser = await tx.liveAdminUser.findUnique({
-      where: {
-        id: BigInt(id),
-        org_id: BigInt(org_id),
-      },
-      select: { id: true },
-    });
-
-    assert(existUser, '用户不存在');
-
-    await tx.liveAdminUser.update({
-      where: {
-        id: BigInt(id),
-        org_id: BigInt(org_id),
-      },
-      data: {
-        cookie,
-        status: TKGuildUserStatus.WAITING,
-      },
-    });
-  });
-}
+export * from './start-or-stop-account';

@@ -30,9 +30,19 @@ tkGuildUserRouter.post('/create-user', TKGuildUserController.createTKGuildUser);
 
 tkGuildUserRouter.post('/update-user', TKGuildUserController.updateTKGuildUser);
 
+// tkGuildUserRouter.post(
+//   '/update-user-cookie',
+//   TKGuildUserController.updateTKGuildUserCookie,
+// );
+
 tkGuildUserRouter.post(
-  '/update-user-cookie',
-  TKGuildUserController.updateTKGuildUserCookie,
+  '/start-live-admin-account',
+  TKGuildUserController.startLiveAdminAccount,
+);
+
+tkGuildUserRouter.post(
+  '/stop-live-admin-account',
+  TKGuildUserController.stopLiveAdminAccount,
 );
 
 export default tkGuildUserRouter;

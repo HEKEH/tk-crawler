@@ -26,8 +26,10 @@ import {
   createTKGuildUser,
   deleteTKGuildUser,
   getTKGuildUserList,
+  startTKGuildUserAccount,
+  stopTKGuildUserAccount,
   updateTKGuildUser,
-} from '../../../requests/client/tk-guild-user';
+} from '../../../requests';
 import { useGlobalStore } from '../../../utils/vue';
 import {
   DefaultFilterViewValues,
@@ -260,39 +262,6 @@ async function handleSubmitCreateOrEdit(data: Partial<TKGuildUser>) {
   ElMessage.success('保存成功');
 }
 
-// 更新用户状态
-async function toggleUserStatus(user: TKGuildUser) {
-  const newStatus =
-    user.status === TKGuildUserStatus.RUNNING
-      ? TKGuildUserStatus.STOPPED
-      : TKGuildUserStatus.RUNNING;
-
-  const response = await updateTKGuildUser(
-    {
-      data: {
-        id: user.id,
-        status: newStatus,
-      },
-    },
-    globalStore.token,
-  );
-
-  if (response.status_code === RESPONSE_CODE.SUCCESS) {
-    ElMessage.success({
-      message: '状态更新成功',
-      type: 'success',
-      duration: 2000,
-    });
-    await refetch();
-  } else {
-    ElMessage.error({
-      message: response.message || '更新失败',
-      type: 'error',
-      duration: 2000,
-    });
-  }
-}
-
 // 获取状态标签类型
 function getStatusTagType(status: TKGuildUserStatus) {
   switch (status) {
@@ -330,6 +299,60 @@ function getStatusText(status: TKGuildUserStatus) {
       return '有警告';
     default:
       return '未知';
+  }
+}
+
+function getStartOrStopButtonText(status: TKGuildUserStatus) {
+  if (
+    [
+      TKGuildUserStatus.RUNNING,
+      TKGuildUserStatus.WARNING,
+      TKGuildUserStatus.WAITING,
+    ].includes(status)
+  ) {
+    return '停止';
+  }
+  if (status === TKGuildUserStatus.ERROR) {
+    return '重新启动';
+  }
+  return '启动';
+}
+
+function getStartOrStopType(status: TKGuildUserStatus): 'stop' | 'start' {
+  if (
+    [
+      TKGuildUserStatus.RUNNING,
+      TKGuildUserStatus.WARNING,
+      TKGuildUserStatus.WAITING,
+    ].includes(status)
+  ) {
+    return 'stop';
+  }
+  return 'start';
+}
+
+async function onStartOrStop(item: TKGuildUser) {
+  const type = getStartOrStopType(item.status);
+  if (type === 'stop') {
+    const result = await stopTKGuildUserAccount(
+      { user_id: item.id },
+      globalStore.token,
+    );
+    if (result.status_code !== RESPONSE_CODE.SUCCESS) {
+      return;
+    }
+    await refetch();
+    ElMessage.success('成功停止');
+  } else {
+    const result = await startTKGuildUserAccount(
+      { user_id: item.id },
+      globalStore.token,
+    );
+    if (result.status_code !== RESPONSE_CODE.SUCCESS) {
+      return;
+    }
+    await refetch();
+    ElMessage.success('成功启动');
   }
 }
 
@@ -387,6 +410,35 @@ onActivated(refetch);
       >
         <ElTableColumn type="selection" width="55" />
         <ElTableColumn prop="username" label="后台查询账号" min-width="200" />
+        <ElTableColumn
+          prop="status"
+          label="状态"
+          min-width="100"
+          sortable="custom"
+        >
+          <template #default="scope">
+            <ElTag :type="getStatusTagType(scope.row.status)">
+              {{ getStatusText(scope.row.status) }}
+            </ElTag>
+          </template>
+        </ElTableColumn>
+        <ElTableColumn label="启动/停止" min-width="120">
+          <template #default="scope">
+            <div class="operation-buttons">
+              <ElButton
+                size="small"
+                :type="
+                  getStartOrStopType(scope.row.status) === 'stop'
+                    ? 'danger'
+                    : 'success'
+                "
+                @click="onStartOrStop(scope.row)"
+              >
+                {{ getStartOrStopButtonText(scope.row.status) }}
+              </ElButton>
+            </div>
+          </template>
+        </ElTableColumn>
         <ElTableColumn prop="password" label="后台查询密码" min-width="160">
           <template #default="scope">
             <VisiblePassword :password="scope.row.password" />
@@ -399,18 +451,6 @@ onActivated(refetch);
                 .map(item => REGION_LABEL_MAP[item])
                 .join(', ') || '-'
             }}
-          </template>
-        </ElTableColumn>
-        <ElTableColumn
-          prop="status"
-          label="状态"
-          min-width="100"
-          sortable="custom"
-        >
-          <template #default="scope">
-            <ElTag :type="getStatusTagType(scope.row.status)">
-              {{ getStatusText(scope.row.status) }}
-            </ElTag>
           </template>
         </ElTableColumn>
         <ElTableColumn
@@ -443,7 +483,7 @@ onActivated(refetch);
             {{ formatDateTime(scope.row.updated_at) }}
           </template>
         </ElTableColumn>
-        <ElTableColumn label="操作" min-width="200" fixed="right">
+        <ElTableColumn label="操作" min-width="140" fixed="right">
           <template #default="scope">
             <div class="operation-buttons">
               <ElButton
@@ -452,21 +492,6 @@ onActivated(refetch);
                 @click="onEditItem(scope.row)"
               >
                 编辑
-              </ElButton>
-              <ElButton
-                size="small"
-                :type="
-                  scope.row.status === TKGuildUserStatus.RUNNING
-                    ? 'warning'
-                    : 'success'
-                "
-                @click="toggleUserStatus(scope.row)"
-              >
-                {{
-                  scope.row.status === TKGuildUserStatus.RUNNING
-                    ? '停止'
-                    : '启动'
-                }}
               </ElButton>
               <ElButton
                 size="small"

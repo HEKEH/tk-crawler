@@ -1,8 +1,7 @@
 /* eslint-disable perfectionist/sort-imports */
 // env需要最先运行
-import { initProxy, RENDERER_DIST, VITE_DEV_SERVER_URL } from './env';
+import { initProxy } from './env';
 
-import path from 'node:path';
 import process from 'node:process';
 // import { createRequire } from 'node:module'
 import {
@@ -10,17 +9,13 @@ import {
   getAppInstallUrl,
   setElectronLang,
 } from '@tk-crawler/electron-utils/main';
+import { PRODUCT_NAME, PUBLISH_URL } from '@tk-follow-client/shared';
 import { app, BaseWindow } from 'electron';
 import { GlobalManager } from './domain';
 import { logger } from './infra/logger';
-import { PRODUCT_NAME, PUBLISH_URL } from '@tk-follow-client/shared';
 
 // const require = createRequire(import.meta.url)
 // const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL
-  ? path.join(process.env.APP_ROOT, 'public')
-  : RENDERER_DIST;
 
 async function main() {
   setElectronLang('en-US');

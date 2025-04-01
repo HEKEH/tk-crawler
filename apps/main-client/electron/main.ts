@@ -2,15 +2,17 @@
 // env需要最先运行
 import { initProxy } from './env';
 
-import { setLogger } from '@tk-crawler/core';
 import process from 'node:process';
 // import { createRequire } from 'node:module'
-import { PRODUCT_NAME, PUBLISH_URL } from '@tk-crawler-admin-client/shared';
 import {
   AutoUpdater,
   getAppInstallUrl,
   setElectronLang,
 } from '@tk-crawler/electron-utils/main';
+import {
+  MAIN_APP_PRODUCT_NAME,
+  MAIN_APP_PUBLISH_URL,
+} from '@tk-crawler/main-client-shared';
 import { app, BaseWindow } from 'electron';
 import { GlobalManager } from './domain';
 import { logger } from './infra/logger';
@@ -19,12 +21,12 @@ import { logger } from './infra/logger';
 // const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 async function main() {
-  setLogger(logger);
   setElectronLang('en-US');
   const autoUpdater = new AutoUpdater(
     logger,
-    getAppInstallUrl(PRODUCT_NAME, PUBLISH_URL),
+    getAppInstallUrl(MAIN_APP_PRODUCT_NAME, MAIN_APP_PUBLISH_URL),
   );
+
   await app.whenReady();
   await initProxy();
   const globalManager = GlobalManager.getInstance();

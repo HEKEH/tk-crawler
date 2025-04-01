@@ -1,4 +1,4 @@
-import type { OrganizationItem } from '@tk-crawler/biz-shared/index';
+import type { OrganizationItem } from '@tk-crawler/biz-shared';
 import type { ClientTabModel } from './types';
 import { ClientTabType } from './types';
 

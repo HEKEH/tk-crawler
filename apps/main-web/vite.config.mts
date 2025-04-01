@@ -20,6 +20,10 @@ export default defineConfig(({ mode }) => {
       __dirname,
       '../../packages/biz-shared/src',
     ),
+    '@tk-crawler/main-client-shared': resolve(
+      __dirname,
+      '../../packages/main-client-shared/src',
+    ),
     '@tk-crawler/electron-utils': resolve(
       __dirname,
       '../../packages/electron-utils/src',

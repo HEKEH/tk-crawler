@@ -9,12 +9,11 @@ import type {
 } from '@tk-crawler/biz-shared';
 import { RefreshRight } from '@element-plus/icons-vue';
 import { useQuery } from '@tanstack/vue-query';
+import { REGION_LABEL_MAP, TKGuildUserStatus } from '@tk-crawler/biz-shared';
 import {
   MAIN_APP_PRODUCT_NAME,
   MAIN_APP_PUBLISH_URL,
-  REGION_LABEL_MAP,
-  TKGuildUserStatus,
-} from '@tk-crawler/biz-shared';
+} from '@tk-crawler/main-client-shared';
 import { formatDateTime, RESPONSE_CODE } from '@tk-crawler/shared';
 import { getPlatform } from '@tk-crawler/view-shared';
 import {
@@ -361,27 +360,34 @@ async function onStartOrStop(item: TKGuildUser) {
             <div>
               <div
                 style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  flexWrap: 'wrap',
+                  width: '100%',
                 }}
               >
-                当前浏览器环境无法支持启动账号功能，请在
-                <p style={{ fontWeight: 'bold', whiteSpace: 'wrap' }}>
+                浏览器环境无法支持启动账号功能，请在
+                <span
+                  style={{
+                    fontWeight: 'bold',
+                    marginRight: '0.5rem',
+                    marginLeft: '0.5rem',
+                  }}
+                >
                   {MAIN_APP_PRODUCT_NAME}
-                </p>
+                </span>
                 中启动。
               </div>
               <div
                 style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  flexWrap: 'wrap',
+                  width: '100%',
                 }}
               >
                 如果你尚未安装应用，请前往
                 <ElLink
-                  style={{ display: 'inline-block' }}
+                  style={{
+                    display: 'inline-block',
+                    verticalAlign: 'baseline',
+                    marginRight: '0.5rem',
+                    marginLeft: '0.5rem',
+                  }}
                   href={
                     platform === 'Mac'
                       ? `${MAIN_APP_PUBLISH_URL}/${MAIN_APP_PRODUCT_NAME}-Mac-Installer.dmg`

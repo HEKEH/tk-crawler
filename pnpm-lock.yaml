@@ -467,6 +467,12 @@ importers:
         specifier: ^6.3.9
         version: 6.3.9
 
+  packages/main-client-shared:
+    devDependencies:
+      '@tk-crawler/shared':
+        specifier: workspace:*
+        version: link:../shared
+
   packages/play:
     dependencies:
       '@tk-crawler/biz-shared':

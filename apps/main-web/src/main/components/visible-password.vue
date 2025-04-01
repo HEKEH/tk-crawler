@@ -11,17 +11,19 @@ const passwordVisible = ref(false);
 
 const passwordRef = ref<HTMLDivElement | null>(null);
 
-const selectAllText = () => {
+function selectAllText() {
   if (passwordRef.value) {
     const selection = window.getSelection();
-    if (!selection) return;
+    if (!selection) {
+      return;
+    }
     const range = document.createRange();
     range.selectNodeContents(passwordRef.value);
 
     selection.removeAllRanges();
     selection.addRange(range);
   }
-};
+}
 
 async function handleClick(e: MouseEvent) {
   e.stopPropagation();
@@ -29,9 +31,9 @@ async function handleClick(e: MouseEvent) {
   await nextTick();
   selectAllText();
 }
-const handleClose = () => {
+function handleClose() {
   passwordVisible.value = false;
-};
+}
 document.addEventListener('click', handleClose);
 onBeforeUnmount(() => {
   document.removeEventListener('click', handleClose);
@@ -39,7 +41,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="visible-password" @click="handleClick" ref="passwordRef">
+  <div ref="passwordRef" class="visible-password" @click="handleClick">
     {{ passwordVisible ? props.password : '********' }}
   </div>
 </template>

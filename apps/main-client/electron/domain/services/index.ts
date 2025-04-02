@@ -1,11 +1,14 @@
-import type { MessageCenter } from '@tk-crawler/shared';
 import type { ViewsManager } from '../views';
+import { TIKTOK_LIVE_ADMIN_URL } from '@tk-crawler/biz-shared';
 import {
   CheckNetworkResultType,
   CUSTOM_EVENTS,
+  TOKEN_EVENTS,
 } from '@tk-crawler/main-client-shared';
+import { checkNetwork, type MessageCenter } from '@tk-crawler/shared';
 import { ipcMain } from 'electron';
 import { logger } from '../../infra/logger';
+import { getToken, removeToken, saveToken } from './token';
 
 export class Services {
   private _viewManager: ViewsManager;
@@ -60,15 +63,18 @@ export class Services {
       return this._viewManager.openCollectPage();
     });
     this._addEventHandler(CUSTOM_EVENTS.CHECK_NETWORK, async () => {
-      // 当前场景不需要检查tiktok网络
-      return CheckNetworkResultType.SUCCESS;
-      // const res = await checkNetwork(TK_URL);
-      // logger.info('[checkNetwork]', res);
-      // // 如果有必要可以再细分
-      // return res
-      //   ? CheckNetworkResultType.SUCCESS
-      //   : CheckNetworkResultType.ERROR;
+      const res = await checkNetwork(TIKTOK_LIVE_ADMIN_URL);
+      logger.info('[checkNetwork]', res);
+      // 如果有必要可以再细分
+      return res
+        ? CheckNetworkResultType.SUCCESS
+        : CheckNetworkResultType.ERROR;
     });
+    this._addEventHandler(TOKEN_EVENTS.GET_TOKEN, getToken);
+    this._addEventHandler(TOKEN_EVENTS.SET_TOKEN, (_, token) =>
+      saveToken(token),
+    );
+    this._addEventHandler(TOKEN_EVENTS.REMOVE_TOKEN, removeToken);
   }
 
   destroy() {

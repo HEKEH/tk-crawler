@@ -1,16 +1,24 @@
+import { TOKEN_EVENTS } from '@tk-crawler/main-client-shared';
+import { isInElectronApp } from './electron';
 import { localStorageStore } from './local-storage-store';
 
 export async function getToken(): Promise<string> {
-  // TODO, 需要处理electron的场景
+  if (isInElectronApp()) {
+    return window.ipcRenderer.invoke(TOKEN_EVENTS.GET_TOKEN);
+  }
   return localStorageStore.getItem('token');
 }
 
 export async function setToken(token: string): Promise<void> {
-  // TODO, 需要处理electron的场景
+  if (isInElectronApp()) {
+    return window.ipcRenderer.invoke(TOKEN_EVENTS.SET_TOKEN, token);
+  }
   localStorageStore.setItem('token', token);
 }
 
 export async function removeToken(): Promise<void> {
-  // TODO, 需要处理electron的场景
+  if (isInElectronApp()) {
+    return window.ipcRenderer.invoke(TOKEN_EVENTS.REMOVE_TOKEN);
+  }
   localStorageStore.removeItem('token');
 }

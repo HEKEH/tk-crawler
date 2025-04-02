@@ -3,9 +3,9 @@ import process from 'node:process';
 import { app } from 'electron';
 import { isProduction } from '../env';
 
-export function getTiktokCookiePath() {
+export function getTokenPath() {
   if (isProduction) {
-    return path.join(app.getPath('userData'), 'tiktok-cookies');
+    return path.join(app.getPath('userData'), 'client-token');
   }
-  return path.join(process.cwd(), 'tiktok-cookies');
+  return path.join(process.cwd(), 'client-token');
 }

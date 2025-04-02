@@ -1,6 +1,5 @@
+import { TIKTOK_LIVE_ADMIN_URL } from '@tk-crawler/biz-shared';
 import { USER_AGENT } from '../constants';
-
-export const TIKTOK_LIVE_ADMIN_URL = 'https://live-backstage.tiktok.com';
 
 export const COMMON_TIKTOK_LIVE_ADMIN_HEADERS = {
   accept: 'application/json, text/plain, */*',

@@ -54,7 +54,7 @@ export class Services {
 
   init() {
     this._addEventHandler(CUSTOM_EVENTS.GO_TO_COLLECT_PAGE, async () => {
-      logger.info('[Switch TikTok Account]');
+      logger.info('[Go To Collect Page]');
       return this._viewManager.openCollectPage();
     });
     this._addEventHandler(CUSTOM_EVENTS.CHECK_NETWORK, async () => {

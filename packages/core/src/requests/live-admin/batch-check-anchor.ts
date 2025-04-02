@@ -1,14 +1,12 @@
 import type { BatchCheckAnchorResponse } from './types';
+import { TIKTOK_LIVE_ADMIN_URL } from '@tk-crawler/biz-shared';
 import { commonPostRequest } from '../utils/common-request';
 import { getUrl } from '../utils/get-url';
 import {
   getInformalMessageToken,
   getXBogusForTiktokLiveAdmin,
 } from '../utils/params';
-import {
-  COMMON_TIKTOK_LIVE_ADMIN_HEADERS,
-  TIKTOK_LIVE_ADMIN_URL,
-} from './constants';
+import { COMMON_TIKTOK_LIVE_ADMIN_HEADERS } from './constants';
 
 export interface BatchCheckAnchorParams {
   displayIds: string[];

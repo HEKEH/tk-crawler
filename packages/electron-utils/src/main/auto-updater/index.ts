@@ -97,7 +97,6 @@ export class AutoUpdater {
     if (this._isInUpdatingProcess) {
       return;
     }
-    const result = await autoUpdater.checkForUpdates();
-    this._logger.info('更新检查结果', result);
+    await autoUpdater.checkForUpdates();
   }
 }

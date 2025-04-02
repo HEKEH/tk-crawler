@@ -89,7 +89,7 @@ export interface UpdateTKGuildUserCookieResponse {
 
 export interface StartTKLiveAdminAccountRequest {
   user_id: string;
-  // cookie: string;
+  cookie: string;
 }
 
 export interface StartTKLiveAdminAccountResponse {

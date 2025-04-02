@@ -1,10 +1,14 @@
 import { getElectronBuilderConfig } from '../../packages/electron-utils/electron-builder';
-import { APP_ID, PRODUCT_NAME, PUBLISH_URL } from './shared/constants';
+import {
+  MAIN_APP_ID,
+  MAIN_APP_PRODUCT_NAME,
+  MAIN_APP_PUBLISH_URL,
+} from '../../packages/main-client-shared/src/constants/build';
 
 const config = getElectronBuilderConfig({
-  appId: APP_ID,
-  productName: PRODUCT_NAME,
-  publishUrl: PUBLISH_URL,
+  appId: MAIN_APP_ID,
+  productName: MAIN_APP_PRODUCT_NAME,
+  publishUrl: MAIN_APP_PUBLISH_URL,
 });
 
 export default config;

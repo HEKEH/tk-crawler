@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ArrowLeftBold } from '@element-plus/icons-vue';
 import {
-  COLLECT_PAGE_HELP_EVENTS,
-  COLLECT_PAGE_HELP_RUNNING_STATUS,
+  GUILD_COOKIE_PAGE_HELP_EVENTS,
+  GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS,
 } from '@tk-crawler/main-client-shared';
 import { ElButton, ElIcon } from 'element-plus';
 import { onBeforeUnmount, ref } from 'vue';
@@ -13,10 +13,10 @@ defineOptions({
   name: 'MainView',
 });
 
-const status = ref(COLLECT_PAGE_HELP_RUNNING_STATUS.stateless);
+const status = ref(GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS.stateless);
 async function updateStatus() {
   status.value = await window.ipcRenderer.invoke(
-    COLLECT_PAGE_HELP_EVENTS.GET_RUNNING_STATUS,
+    GUILD_COOKIE_PAGE_HELP_EVENTS.GET_RUNNING_STATUS,
   );
 }
 updateStatus();
@@ -26,13 +26,15 @@ onBeforeUnmount(() => {
 });
 
 async function backToMainView() {
-  await window.ipcRenderer.invoke(COLLECT_PAGE_HELP_EVENTS.BACK_TO_MAIN_VIEW);
+  await window.ipcRenderer.invoke(
+    GUILD_COOKIE_PAGE_HELP_EVENTS.BACK_TO_MAIN_VIEW,
+  );
 }
 </script>
 
 <template>
   <div
-    v-loading="status === COLLECT_PAGE_HELP_RUNNING_STATUS.stateless"
+    v-loading="status === GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS.stateless"
     class="main-view-container"
   >
     <div class="view-header">
@@ -41,10 +43,10 @@ async function backToMainView() {
       </ElButton>
     </div>
     <NotLoginView
-      v-if="status === COLLECT_PAGE_HELP_RUNNING_STATUS.not_login"
+      v-if="status === GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS.not_login"
     />
     <CollectView
-      v-else-if="status === COLLECT_PAGE_HELP_RUNNING_STATUS.running"
+      v-else-if="status === GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS.running"
     />
   </div>
 </template>

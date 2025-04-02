@@ -1,3 +1,4 @@
+import type { TKGuildUser } from '@tk-crawler/biz-shared';
 import type { ViewsManager } from '../views';
 import { TIKTOK_LIVE_ADMIN_URL } from '@tk-crawler/biz-shared';
 import {
@@ -58,10 +59,16 @@ export class Services {
   }
 
   init() {
-    this._addEventHandler(CUSTOM_EVENTS.GO_TO_COLLECT_PAGE, async () => {
-      logger.info('[Switch TikTok Account]');
-      return this._viewManager.openCollectPage();
-    });
+    this._addEventHandler(
+      CUSTOM_EVENTS.GO_TO_GUILD_COOKIE_PAGE,
+      async (
+        _: Electron.IpcMainInvokeEvent,
+        data: { guildUser: TKGuildUser },
+      ) => {
+        logger.info('[GO TO GUILD COOKIE PAGE]', data);
+        return this._viewManager.openCookiePage(data);
+      },
+    );
     this._addEventHandler(CUSTOM_EVENTS.CHECK_NETWORK, async () => {
       const res = await checkNetwork(TIKTOK_LIVE_ADMIN_URL);
       logger.info('[checkNetwork]', res);

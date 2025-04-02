@@ -4,10 +4,10 @@ import type { IView } from './types';
 import path from 'node:path';
 import { findElement } from '@tk-crawler/electron-utils/main';
 import {
-  COLLECT_PAGE_HELP_EVENTS,
-  COLLECT_PAGE_HELP_RUNNING_STATUS,
-  COLLECT_PAGE_HELP_STATUS,
-  COLLECT_PAGE_HELP_WIDTH,
+  GUILD_COOKIE_PAGE_HELP_EVENTS,
+  GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS,
+  GUILD_COOKIE_PAGE_HELP_STATUS,
+  GUILD_COOKIE_PAGE_HELP_WIDTH,
   MOCK_ORG_ID,
 } from '@tk-crawler/main-client-shared';
 import { RESPONSE_CODE } from '@tk-crawler/shared';
@@ -18,18 +18,18 @@ import { createOrUpdateAnchorFrom87 } from '../../requests';
 
 const TK_87_URL = 'http://tk.87cloud.cn/';
 
-export class CollectPageView implements IView {
+export class CookiePageView implements IView {
   private _parentWindow: BaseWindow;
 
   private _thirdPartyView: WebContentsView | null = null;
 
   private _helpView: WebContentsView | null = null;
 
-  private _status: COLLECT_PAGE_HELP_STATUS =
-    COLLECT_PAGE_HELP_STATUS.stateless;
+  private _status: GUILD_COOKIE_PAGE_HELP_STATUS =
+    GUILD_COOKIE_PAGE_HELP_STATUS.stateless;
 
-  private _runningStatus: COLLECT_PAGE_HELP_RUNNING_STATUS =
-    COLLECT_PAGE_HELP_RUNNING_STATUS.stateless;
+  private _runningStatus: GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS =
+    GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS.stateless;
 
   private _openTurnId: number = 0;
 
@@ -42,7 +42,7 @@ export class CollectPageView implements IView {
     this._backToMainView = props.backToMainView;
   }
 
-  private _setStatus(status: COLLECT_PAGE_HELP_STATUS) {
+  private _setStatus(status: GUILD_COOKIE_PAGE_HELP_STATUS) {
     this._status = status;
     this._onResize();
   }
@@ -52,8 +52,8 @@ export class CollectPageView implements IView {
       return;
     }
     const bounds = this._parentWindow.getBounds();
-    if (this._status === COLLECT_PAGE_HELP_STATUS.opened) {
-      const sidebarWidth = Math.min(COLLECT_PAGE_HELP_WIDTH, bounds.width);
+    if (this._status === GUILD_COOKIE_PAGE_HELP_STATUS.opened) {
+      const sidebarWidth = Math.min(GUILD_COOKIE_PAGE_HELP_WIDTH, bounds.width);
       this._helpView?.setBounds({
         x: 0,
         y: 0,
@@ -87,11 +87,11 @@ export class CollectPageView implements IView {
       });
       if (VITE_DEV_SERVER_URL) {
         await this._helpView.webContents.loadURL(
-          `${VITE_DEV_SERVER_URL}collect-page-help.html`,
+          `${VITE_DEV_SERVER_URL}guild-cookie-page-help.html`,
         );
       } else {
         await this._helpView.webContents.loadFile(
-          path.join(RENDERER_DIST, 'collect-page-help.html'),
+          path.join(RENDERER_DIST, 'guild-cookie-page-help.html'),
         );
       }
       if (isDevelopment) {
@@ -108,14 +108,14 @@ export class CollectPageView implements IView {
 
   private async _refreshRunningStatus() {
     if (!this._thirdPartyView) {
-      this._runningStatus = COLLECT_PAGE_HELP_RUNNING_STATUS.stateless;
+      this._runningStatus = GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS.stateless;
       return;
     }
     const element = await findElement(this._thirdPartyView, '.user-menu');
     if (element.success) {
-      this._runningStatus = COLLECT_PAGE_HELP_RUNNING_STATUS.running;
+      this._runningStatus = GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS.running;
     } else {
-      this._runningStatus = COLLECT_PAGE_HELP_RUNNING_STATUS.not_login;
+      this._runningStatus = GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS.not_login;
     }
   }
 
@@ -123,7 +123,7 @@ export class CollectPageView implements IView {
     this._openTurnId++;
     const currentOpenTurnId = this._openTurnId;
     this._thirdPartyView = new WebContentsView();
-    this._setStatus(COLLECT_PAGE_HELP_STATUS.loading);
+    this._setStatus(GUILD_COOKIE_PAGE_HELP_STATUS.loading);
     try {
       this._thirdPartyView.webContents.setUserAgent(
         'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
@@ -142,16 +142,16 @@ export class CollectPageView implements IView {
         }
       }
       this._parentWindow.contentView.addChildView(this._thirdPartyView);
-      this._setStatus(COLLECT_PAGE_HELP_STATUS.opened);
+      this._setStatus(GUILD_COOKIE_PAGE_HELP_STATUS.opened);
       this._watchAnchorListFetch();
       await this._refreshRunningStatus();
     } catch (error) {
       if ((error as any)?.code === 'ERR_CONNECTION_TIMED_OUT') {
-        logger.error('Open collect page timeout:', error);
-        this._setStatus(COLLECT_PAGE_HELP_STATUS.timeout);
+        logger.error('Open cookie page timeout:', error);
+        this._setStatus(GUILD_COOKIE_PAGE_HELP_STATUS.timeout);
       } else {
-        logger.error('Open collect page error:', error);
-        this._setStatus(COLLECT_PAGE_HELP_STATUS.fail);
+        logger.error('Open cookie page error:', error);
+        this._setStatus(GUILD_COOKIE_PAGE_HELP_STATUS.fail);
       }
     }
   }
@@ -166,7 +166,7 @@ export class CollectPageView implements IView {
     if (this._thirdPartyView) {
       this._thirdPartyView.webContents.debugger.detach();
       this._closeView(this._thirdPartyView);
-      this._runningStatus = COLLECT_PAGE_HELP_RUNNING_STATUS.stateless;
+      this._runningStatus = GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS.stateless;
       this._thirdPartyView = null;
     }
   }
@@ -194,26 +194,29 @@ export class CollectPageView implements IView {
   }
 
   private _addEventHandlers() {
-    this._addEventHandler(COLLECT_PAGE_HELP_EVENTS.GET_STATUS, () => {
+    this._addEventHandler(GUILD_COOKIE_PAGE_HELP_EVENTS.GET_STATUS, () => {
       return this._status;
     });
     this._addEventHandler(
-      COLLECT_PAGE_HELP_EVENTS.REFRESH_RUNNING_STATUS,
+      GUILD_COOKIE_PAGE_HELP_EVENTS.REFRESH_RUNNING_STATUS,
       async () => {
         await this._refreshRunningStatus();
       },
     );
-    this._addEventHandler(COLLECT_PAGE_HELP_EVENTS.GET_RUNNING_STATUS, () => {
-      return this._runningStatus;
-    });
     this._addEventHandler(
-      COLLECT_PAGE_HELP_EVENTS.RETRY_OPEN_PAGE,
+      GUILD_COOKIE_PAGE_HELP_EVENTS.GET_RUNNING_STATUS,
+      () => {
+        return this._runningStatus;
+      },
+    );
+    this._addEventHandler(
+      GUILD_COOKIE_PAGE_HELP_EVENTS.RETRY_OPEN_PAGE,
       async () => {
         await this._reopenThirdPartyPageView();
       },
     );
     this._addEventHandler(
-      COLLECT_PAGE_HELP_EVENTS.BACK_TO_MAIN_VIEW,
+      GUILD_COOKIE_PAGE_HELP_EVENTS.BACK_TO_MAIN_VIEW,
       async () => {
         await this._backToMainView();
       },
@@ -278,7 +281,7 @@ export class CollectPageView implements IView {
                     });
                     if (resp.status_code === RESPONSE_CODE.SUCCESS) {
                       this._helpView?.webContents.send(
-                        COLLECT_PAGE_HELP_EVENTS.ANCHOR_LIST_FETCHED,
+                        GUILD_COOKIE_PAGE_HELP_EVENTS.ANCHOR_LIST_FETCHED,
                         { anchorList, createCount: resp.data!.created_count },
                       );
                     }
@@ -319,7 +322,7 @@ export class CollectPageView implements IView {
     this._removeEventHandlers();
     this._closeThirdPartyPageView();
     this._closeHelpView();
-    this._setStatus(COLLECT_PAGE_HELP_STATUS.stateless);
+    this._setStatus(GUILD_COOKIE_PAGE_HELP_STATUS.stateless);
   }
 
   destroy() {

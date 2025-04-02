@@ -1,17 +1,17 @@
 <script setup lang="ts">
+import {
+  GUILD_COOKIE_PAGE_HELP_EVENTS,
+  GUILD_COOKIE_PAGE_HELP_STATUS,
+} from '@tk-crawler/main-client-shared';
 import { ElButton } from 'element-plus';
 import { onBeforeUnmount, ref } from 'vue';
-import {
-  COLLECT_PAGE_HELP_EVENTS,
-  COLLECT_PAGE_HELP_STATUS,
-} from '../main/constants';
 import MainView from './sections/main-view.vue';
 import 'element-plus/dist/index.css';
 
-const status = ref(COLLECT_PAGE_HELP_STATUS.stateless);
+const status = ref(GUILD_COOKIE_PAGE_HELP_STATUS.stateless);
 async function updateStatus() {
   status.value = await window.ipcRenderer.invoke(
-    COLLECT_PAGE_HELP_EVENTS.GET_STATUS,
+    GUILD_COOKIE_PAGE_HELP_EVENTS.GET_STATUS,
   );
 }
 updateStatus();
@@ -20,27 +20,27 @@ onBeforeUnmount(() => {
   clearInterval(intervalId);
 });
 function onRetry() {
-  window.ipcRenderer.invoke(COLLECT_PAGE_HELP_EVENTS.RETRY_OPEN_PAGE);
+  window.ipcRenderer.invoke(GUILD_COOKIE_PAGE_HELP_EVENTS.RETRY_OPEN_PAGE);
 }
 </script>
 
 <template>
   <div
-    v-loading="status === COLLECT_PAGE_HELP_STATUS.loading"
+    v-loading="status === GUILD_COOKIE_PAGE_HELP_STATUS.loading"
     class="container"
     element-loading-text="加载中..."
   >
-    <template v-if="status === COLLECT_PAGE_HELP_STATUS.timeout">
+    <template v-if="status === GUILD_COOKIE_PAGE_HELP_STATUS.timeout">
       <div class="tip-text">
         请求超时，请检查是否开启VPN，且VPN是否开启了全局代理
       </div>
       <ElButton type="primary" @click="onRetry">点击重试</ElButton>
     </template>
-    <template v-else-if="status === COLLECT_PAGE_HELP_STATUS.fail">
+    <template v-else-if="status === GUILD_COOKIE_PAGE_HELP_STATUS.fail">
       <div class="tip-text">打开登录页失败，请检查网络</div>
       <ElButton type="primary" @click="onRetry">点击重试</ElButton>
     </template>
-    <MainView v-else-if="status === COLLECT_PAGE_HELP_STATUS.opened" />
+    <MainView v-else-if="status === GUILD_COOKIE_PAGE_HELP_STATUS.opened" />
   </div>
 </template>
 

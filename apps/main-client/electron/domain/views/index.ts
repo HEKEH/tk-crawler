@@ -1,10 +1,11 @@
+import type { TKGuildUser } from '@tk-crawler/biz-shared';
 import type { MessageCenter } from '@tk-crawler/shared';
 import type { Subscription } from 'rxjs';
 import type { IView } from './types';
 import path from 'node:path';
 import process from 'node:process';
 import { BaseWindow } from 'electron';
-import { CollectPageView } from './collect-page-view';
+import { CookiePageView } from './cookie-page-view';
 import { MainView } from './main-view';
 
 export class ViewsManager {
@@ -14,7 +15,7 @@ export class ViewsManager {
 
   private _mainView: MainView | null = null;
 
-  private _collectPageView: CollectPageView | null = null;
+  private _cookiePageView: CookiePageView | null = null;
 
   private _messageCenter: MessageCenter;
 
@@ -23,12 +24,12 @@ export class ViewsManager {
   private _onClose: () => void;
 
   private get allViews() {
-    return [this._mainView, this._collectPageView];
+    return [this._mainView, this._cookiePageView];
   }
 
   private _clearAllViewVariables() {
     this._mainView = null;
-    this._collectPageView = null;
+    this._cookiePageView = null;
   }
 
   constructor(props: { messageCenter: MessageCenter; onClose: () => void }) {
@@ -47,7 +48,7 @@ export class ViewsManager {
       parentWindow: this._baseWindow,
       messageCenter: this._messageCenter,
     });
-    this._collectPageView = new CollectPageView({
+    this._cookiePageView = new CookiePageView({
       parentWindow: this._baseWindow,
       backToMainView: () => {
         this._toMainView();
@@ -83,9 +84,9 @@ export class ViewsManager {
     await this._currentView.show();
   }
 
-  /** 回到登录页 */
-  async openCollectPage() {
-    await this._changeView(this._collectPageView!);
+  async openCookiePage(data: { guildUser: TKGuildUser }) {
+    console.log('[OPEN COOKIE PAGE]', data);
+    await this._changeView(this._cookiePageView!);
   }
 
   private _clearSubscriptions() {

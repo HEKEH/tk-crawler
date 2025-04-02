@@ -2,7 +2,7 @@
 import type { AnchorFrom87RawData } from '@tk-crawler/biz-shared';
 import type { IpcRendererEvent } from 'electron';
 import { ElectronRenderListeners } from '@tk-crawler/electron-utils/render';
-import { COLLECT_PAGE_HELP_EVENTS } from '@tk-crawler/main-client-shared';
+import { GUILD_COOKIE_PAGE_HELP_EVENTS } from '@tk-crawler/main-client-shared';
 import { MessageQueue } from '@tk-crawler/view-shared';
 import { markRaw, onBeforeUnmount } from 'vue';
 
@@ -29,12 +29,12 @@ function onAnchorListFetched(
 const electronRenderListeners = ElectronRenderListeners.getInstance();
 
 electronRenderListeners.on(
-  COLLECT_PAGE_HELP_EVENTS.ANCHOR_LIST_FETCHED,
+  GUILD_COOKIE_PAGE_HELP_EVENTS.ANCHOR_LIST_FETCHED,
   onAnchorListFetched,
 );
 onBeforeUnmount(() => {
   electronRenderListeners.off(
-    COLLECT_PAGE_HELP_EVENTS.ANCHOR_LIST_FETCHED,
+    GUILD_COOKIE_PAGE_HELP_EVENTS.ANCHOR_LIST_FETCHED,
     onAnchorListFetched,
   );
 });

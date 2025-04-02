@@ -1,5 +1,6 @@
 import type { AliasOptions, InlineConfig, PluginOption } from 'vite';
 import type { ElectronSimpleOptions } from 'vite-plugin-electron/simple';
+import { readFileSync } from 'node:fs';
 import path, { resolve } from 'node:path';
 import process from 'node:process';
 import vue from '@vitejs/plugin-vue';
@@ -12,9 +13,9 @@ import { createHtmlPlugin } from 'vite-plugin-html';
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   const isProduction = mode === 'production';
-  // const pkg = JSON.parse(
-  //   readFileSync(new URL('./package.json', import.meta.url), 'utf8'),
-  // );
+  const pkg = JSON.parse(
+    readFileSync(new URL('./package.json', import.meta.url), 'utf8'),
+  );
   const alias: AliasOptions = {
     '@tk-crawler/shared': resolve(__dirname, '../../packages/shared/src'),
     '@tk-crawler/biz-shared': resolve(
@@ -82,18 +83,18 @@ export default defineConfig(({ mode }) => {
       }),
       createHtmlPlugin({
         pages: [
-          // {
-          //   filename: 'index.html',
-          //   template: 'index.html',
-          //   injectOptions: {
-          //     data: {
-          //       title: pkg.description,
-          //     },
-          //   },
-          // },
           {
-            filename: 'collect-page-help.html',
-            template: 'collect-page-help.html',
+            filename: 'index.html',
+            template: 'index.html',
+            injectOptions: {
+              data: {
+                title: pkg.description,
+              },
+            },
+          },
+          {
+            filename: 'guild-cookie-page-help.html',
+            template: 'guild-cookie-page-help.html',
           },
         ],
       }),
@@ -104,10 +105,10 @@ export default defineConfig(({ mode }) => {
       outDir: 'dist',
       rollupOptions: {
         input: {
-          // main: path.resolve(__dirname, 'index.html'),
-          'collect-page-help': path.resolve(
+          main: path.resolve(__dirname, 'index.html'),
+          'guild-cookie-page-help': path.resolve(
             __dirname,
-            'collect-page-help.html',
+            'guild-cookie-page-help.html',
           ),
         },
       },

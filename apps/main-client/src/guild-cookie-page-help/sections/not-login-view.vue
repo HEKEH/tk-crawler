@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { COLLECT_PAGE_HELP_EVENTS } from '@tk-crawler/main-client-shared';
+import { GUILD_COOKIE_PAGE_HELP_EVENTS } from '@tk-crawler/main-client-shared';
 import { ElButton } from 'element-plus';
 
 defineOptions({
@@ -8,7 +8,7 @@ defineOptions({
 
 async function nextStep() {
   await window.ipcRenderer.invoke(
-    COLLECT_PAGE_HELP_EVENTS.REFRESH_RUNNING_STATUS,
+    GUILD_COOKIE_PAGE_HELP_EVENTS.REFRESH_RUNNING_STATUS,
   );
 }
 </script>

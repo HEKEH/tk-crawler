@@ -1,12 +1,10 @@
 import type {
   StartTKLiveAdminAccountRequest,
   StopTKLiveAdminAccountRequest,
-
-  UpdateTKGuildUserCookieRequest } from '@tk-crawler/biz-shared';
-import assert from 'node:assert';
-import {
-  TKGuildUserStatus,
+  UpdateTKGuildUserCookieRequest,
 } from '@tk-crawler/biz-shared';
+import assert from 'node:assert';
+import { TKGuildUserStatus } from '@tk-crawler/biz-shared';
 import { mysqlClient } from '@tk-crawler/database';
 import { logger } from '../../infra/logger';
 import { BusinessError } from '../../utils';
@@ -50,8 +48,9 @@ export async function updateTKGuildUserCookie(
 export async function startLiveAdminAccount(
   data: StartTKLiveAdminAccountRequest & { org_id: string },
 ): Promise<void> {
-  const { user_id, org_id } = data;
+  const { user_id, org_id, cookie } = data;
   assert(user_id, '用户ID不能为空');
+  assert(cookie, 'Cookie不能为空');
   const user = await mysqlClient.prismaClient.liveAdminUser.findUnique({
     where: {
       id: BigInt(user_id),
@@ -76,7 +75,7 @@ export async function startLiveAdminAccount(
       where: {
         id: BigInt(user_id),
       },
-      data: { status: TKGuildUserStatus.WAITING },
+      data: { status: TKGuildUserStatus.WAITING, cookie },
     });
     // TODO: 启动用户
   });

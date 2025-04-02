@@ -11,6 +11,7 @@ import { RefreshRight } from '@element-plus/icons-vue';
 import { useQuery } from '@tanstack/vue-query';
 import { REGION_LABEL_MAP, TKGuildUserStatus } from '@tk-crawler/biz-shared';
 import {
+  CUSTOM_EVENTS,
   MAIN_APP_PRODUCT_NAME,
   MAIN_APP_PUBLISH_URL,
 } from '@tk-crawler/main-client-shared';
@@ -27,13 +28,12 @@ import {
   ElTableColumn,
   ElTag,
 } from 'element-plus';
-import { computed, onActivated, ref } from 'vue';
+import { computed, onActivated, ref, toRaw } from 'vue';
 import VisiblePassword from '../../../components/visible-password.vue';
 import {
   createTKGuildUser,
   deleteTKGuildUser,
   getTKGuildUserList,
-  startTKGuildUserAccount,
   stopTKGuildUserAccount,
   updateTKGuildUser,
 } from '../../../requests';
@@ -409,16 +409,9 @@ async function onStartOrStop(item: TKGuildUser) {
       } catch {}
       return;
     }
-    console.log('In Electron App');
-    // const result = await startTKGuildUserAccount(
-    //   { user_id: item.id },
-    //   globalStore.token,
-    // );
-    // if (result.status_code !== RESPONSE_CODE.SUCCESS) {
-    //   return;
-    // }
-    // await refetch();
-    // ElMessage.success('成功启动');
+    await window.ipcRenderer.invoke(CUSTOM_EVENTS.GO_TO_GUILD_COOKIE_PAGE, {
+      guildUser: toRaw(item),
+    });
   }
 }
 

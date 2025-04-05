@@ -132,3 +132,70 @@ export function bindViewToWindowBounds(
     window.removeListener('resize', setBounds);
   };
 }
+
+export const InputEventFunctionStr = `
+function inputEvent(input, value) {
+  // 获取 React 实例
+  const reactInstance = Object.keys(input).find(key =>
+    key.startsWith('__reactProps$') ||
+    key.startsWith('__reactEventHandlers$')
+  );
+
+  if (reactInstance) {
+    // 找到 React 的 onChange 处理器
+    const reactProps = input[reactInstance];
+
+    // 设置值
+    input.value = value;
+
+    // 如果存在 onChange 处理器，直接调用它
+    if (reactProps.onChange) {
+      // 创建一个模拟的 React 合成事件
+      const fakeEvent = {
+        target: input,
+        currentTarget: input,
+        preventDefault: () => {},
+        stopPropagation: () => {},
+        bubbles: true,
+        cancelable: true,
+        type: 'change'
+      };
+
+      // 调用 React 的 onChange 处理器
+      reactProps.onChange(fakeEvent);
+    }
+  }
+}
+`;
+
+// export const ElementClickEventFunctionStr = `
+// function elementClickEvent(element) {
+//   // 获取 React 实例
+//   const reactInstance = Object.keys(element).find(key =>
+//     key.startsWith('__reactProps$') ||
+//     key.startsWith('__reactEventHandlers$')
+//   );
+
+//   if (reactInstance) {
+//     // 找到 React 的 onChange 处理器
+//     const reactProps = input[reactInstance];
+
+//     // 如果存在 onClick 处理器，直接调用它
+//     if (reactProps.onClick) {
+//       // 创建一个模拟的 React 合成事件
+//       const fakeEvent = {
+//         target: element,
+//         currentTarget: element,
+//         preventDefault: () => {},
+//         stopPropagation: () => {},
+//         bubbles: true,
+//         cancelable: true,
+//         type: 'click',
+//       };
+
+//       // 调用 React 的 onChange 处理器
+//       reactProps.onClick(fakeEvent);
+//     }
+//   }
+// }
+// `;

@@ -4,7 +4,6 @@ export const GUILD_COOKIE_PAGE_HELP_EVENTS = {
   REFRESH_RUNNING_STATUS: 'guild-cookie:refresh-running-status',
   RETRY_OPEN_PAGE: 'guild-cookie:retry-open-page',
   BACK_TO_MAIN_VIEW: 'guild-cookie:back-to-main-view',
-  ANCHOR_LIST_FETCHED: 'guild-cookie:anchor-list-fetched',
 };
 
 export enum GUILD_COOKIE_PAGE_HELP_STATUS {
@@ -18,7 +17,8 @@ export enum GUILD_COOKIE_PAGE_HELP_STATUS {
 export enum GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS {
   stateless = 'stateless',
   not_login = 'not_login',
-  running = 'running',
+  logged_in = 'logged_in',
+  unknown = 'unknown',
 }
 
 export const GUILD_COOKIE_PAGE_HELP_WIDTH = 350;

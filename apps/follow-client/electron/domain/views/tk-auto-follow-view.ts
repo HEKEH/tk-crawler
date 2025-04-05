@@ -388,6 +388,6 @@ export class TKAutoFollowView {
   }
 }
 
-export async function sleep(ms: number) {
+async function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }

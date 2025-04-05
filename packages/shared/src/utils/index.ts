@@ -1,6 +1,7 @@
 import './bigint';
 
 export * from './array';
+export * from './async';
 export * from './concurrent-limit-task-queue';
 export * from './datetime';
 export * from './format';

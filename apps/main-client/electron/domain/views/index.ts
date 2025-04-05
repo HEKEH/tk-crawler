@@ -85,7 +85,7 @@ export class ViewsManager {
   }
 
   async openCookiePage(data: { guildUser: TKGuildUser }) {
-    console.log('[OPEN COOKIE PAGE]', data);
+    this._cookiePageView!.setGuildUser(data.guildUser);
     await this._changeView(this._cookiePageView!);
   }
 

@@ -1,22 +1,23 @@
-import type { AnchorFrom87RawData } from '@tk-crawler/biz-shared';
+import type { TKGuildUser } from '@tk-crawler/biz-shared';
 import type { BaseWindow } from 'electron';
 import type { IView } from './types';
 import path from 'node:path';
-import { findElement } from '@tk-crawler/electron-utils/main';
+import { TIKTOK_LIVE_ADMIN_URL } from '@tk-crawler/biz-shared';
+import {
+  findElement,
+  InputEventFunctionStr,
+  loadThirdPartyURL,
+} from '@tk-crawler/electron-utils/main';
 import {
   GUILD_COOKIE_PAGE_HELP_EVENTS,
   GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS,
   GUILD_COOKIE_PAGE_HELP_STATUS,
   GUILD_COOKIE_PAGE_HELP_WIDTH,
-  MOCK_ORG_ID,
 } from '@tk-crawler/main-client-shared';
-import { RESPONSE_CODE } from '@tk-crawler/shared';
+import { sleep } from '@tk-crawler/shared';
 import { ipcMain, WebContentsView } from 'electron';
 import { isDevelopment, RENDERER_DIST, VITE_DEV_SERVER_URL } from '../../env';
 import { logger } from '../../infra/logger';
-import { createOrUpdateAnchorFrom87 } from '../../requests';
-
-const TK_87_URL = 'http://tk.87cloud.cn/';
 
 export class CookiePageView implements IView {
   private _parentWindow: BaseWindow;
@@ -30,6 +31,8 @@ export class CookiePageView implements IView {
 
   private _runningStatus: GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS =
     GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS.stateless;
+
+  private _guildUser: TKGuildUser | undefined;
 
   private _openTurnId: number = 0;
 
@@ -111,25 +114,54 @@ export class CookiePageView implements IView {
       this._runningStatus = GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS.stateless;
       return;
     }
-    const element = await findElement(this._thirdPartyView, '.user-menu');
-    if (element.success) {
-      this._runningStatus = GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS.running;
-    } else {
+    const loginButton = await findElement(
+      this._thirdPartyView,
+      'button[data-id="login"]',
+    );
+    if (loginButton.success) {
       this._runningStatus = GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS.not_login;
+      return;
     }
+    const avatarElem = await findElement(
+      this._thirdPartyView,
+      '.semi-avatar-circle',
+    );
+    if (avatarElem.success) {
+      this._runningStatus = GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS.logged_in;
+      return;
+    }
+    this._runningStatus = GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS.unknown;
+    logger.error('Unknown running status');
+  }
+
+  private _loadThirdPartyURL(view: WebContentsView, url: string) {
+    return loadThirdPartyURL(view, url, error => {
+      logger.error('Load third party url error:', error);
+    });
   }
 
   private async _openThirdPartyPageView() {
     this._openTurnId++;
     const currentOpenTurnId = this._openTurnId;
-    this._thirdPartyView = new WebContentsView();
+    if (!this._guildUser) {
+      throw new Error('Guild user is not set');
+    }
+    this._thirdPartyView = new WebContentsView({
+      webPreferences: {
+        partition: `persist:tk-live-admin-user-${this._guildUser.username}`,
+      },
+    });
     this._setStatus(GUILD_COOKIE_PAGE_HELP_STATUS.loading);
     try {
       this._thirdPartyView.webContents.setUserAgent(
         'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
       );
       // 加载目标网页
-      await this._thirdPartyView.webContents.loadURL(TK_87_URL);
+      await this._loadThirdPartyURL(
+        this._thirdPartyView,
+        TIKTOK_LIVE_ADMIN_URL,
+      );
+      await sleep(2000);
       if (currentOpenTurnId !== this._openTurnId) {
         // 已过时
         return;
@@ -143,8 +175,8 @@ export class CookiePageView implements IView {
       }
       this._parentWindow.contentView.addChildView(this._thirdPartyView);
       this._setStatus(GUILD_COOKIE_PAGE_HELP_STATUS.opened);
-      this._watchAnchorListFetch();
       await this._refreshRunningStatus();
+      await this._inputLoginInfo();
     } catch (error) {
       if ((error as any)?.code === 'ERR_CONNECTION_TIMED_OUT') {
         logger.error('Open cookie page timeout:', error);
@@ -230,73 +262,64 @@ export class CookiePageView implements IView {
     this._eventNames = [];
   }
 
-  private _watchAnchorListFetch(): void {
-    if (!this._thirdPartyView) {
-      return;
-    }
-    const webContents = this._thirdPartyView.webContents;
-
-    // 附加调试器
-    if (!webContents.debugger.isAttached()) {
-      try {
-        webContents.debugger.attach('1.3');
-        webContents.debugger.sendCommand('Network.enable');
-
-        const anchorListRequestIdSet = new Set<string>();
-        const postRequestIdSet = new Set<string>();
-
-        // 监听响应
-        webContents.debugger.on('message', async (event, method, params) => {
-          if (method === 'Network.requestWillBeSent') {
-            const { requestId, request } = params;
-            if (request.method === 'POST') {
-              postRequestIdSet.add(requestId);
-            }
-          } else if (method === 'Network.responseReceived') {
-            const { requestId, response } = params;
-            // 检查是否是我们感兴趣的URL
-            if (
-              response.url.includes('/system/anchor/list') &&
-              response.status === 200 &&
-              postRequestIdSet.has(requestId)
-            ) {
-              anchorListRequestIdSet.add(requestId);
-            }
-          } else if (method === 'Network.loadingFinished') {
-            if (anchorListRequestIdSet.has(params.requestId)) {
-              try {
-                // 获取响应体
-                const responseBody = await webContents.debugger.sendCommand(
-                  'Network.getResponseBody',
-                  { requestId: params.requestId },
-                );
-                const { body } = responseBody;
-                if (typeof body === 'string' && body.startsWith('{')) {
-                  const json = JSON.parse(body);
-                  if (json.code === 0) {
-                    const anchorList = json.rows as AnchorFrom87RawData[];
-                    const resp = await createOrUpdateAnchorFrom87({
-                      list: anchorList,
-                      org_id: MOCK_ORG_ID,
-                    });
-                    if (resp.status_code === RESPONSE_CODE.SUCCESS) {
-                      this._helpView?.webContents.send(
-                        GUILD_COOKIE_PAGE_HELP_EVENTS.ANCHOR_LIST_FETCHED,
-                        { anchorList, createCount: resp.data!.created_count },
-                      );
-                    }
-                  }
-                }
-              } catch (err) {
-                console.error('Failed to get response body:', err);
-              }
-            }
-          }
+  private async _inputLoginInfo() {
+    const webContents = this._thirdPartyView!.webContents;
+    if (webContents.isLoading()) {
+      await new Promise(resolve => {
+        webContents.on('did-finish-load', () => {
+          resolve(true);
         });
-      } catch (err) {
-        console.error('Failed to attach debugger:', err);
-      }
+      });
     }
+    const { username, password } = this._guildUser!;
+    const result = await webContents.executeJavaScript(`
+      (async function() {
+        function sleep(ms) {
+          return new Promise(resolve => setTimeout(resolve, ms));
+        }
+        ${InputEventFunctionStr}
+        try {
+          const loginButton = document.querySelector('button[data-id="login"]');
+          if (!loginButton) {
+            return { success: false, error: 'login button not found' };
+          }
+          loginButton.click();
+          await sleep(500);
+          const loginForm = document.querySelector('form[data-id="login-form-login-email"]');
+          if (!loginForm) {
+            return { success: false, error: 'login form not found' };
+          }
+          const emailInput = loginForm.querySelector('#email');
+          if (!emailInput) {
+            return { success: false, error: 'email input not found' };
+          }
+          inputEvent(emailInput, '${username}');
+          const passwordInput = loginForm.querySelector('#password');
+          if (!passwordInput) {
+            return { success: false, error: 'password input not found' };
+          }
+          inputEvent(passwordInput, '${password}');
+
+          await sleep(500);
+
+          const loginSubmitButton = document.querySelector('button[data-id="login-primary-button"]');
+          if (!loginSubmitButton) {
+            return { success: false, error: 'login submit button not found' };
+          }
+          loginSubmitButton.click();
+          await sleep(1000);
+
+          return { success: true };
+        } catch (error) {
+          return { success: false, error: error.message };
+        }
+      })();
+    `);
+    logger.info('[cookie-page-view] inputLoginInfo:', result);
+  }
+
+  setGuildUser(guildUser: TKGuildUser) {
+    this._guildUser = guildUser;
   }
 
   async show() {

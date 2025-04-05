@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { GUILD_COOKIE_PAGE_HELP_EVENTS } from '@tk-crawler/main-client-shared';
-import { ElButton } from 'element-plus';
+import { ElLink } from 'element-plus';
 
 defineOptions({
   name: 'NotLoginView',
@@ -16,9 +16,27 @@ async function nextStep() {
 <template>
   <div class="block">
     <div class="description">
-      您似乎尚未登录，请在右侧页面登录后，再点击下方按钮
+      目前正在使用您填写的用户密码尝试登录，如果登录成功，请点击
+      <ElLink
+        type="primary"
+        :underline="false"
+        style="vertical-align: baseline"
+        @click="nextStep"
+      >
+        下一步
+      </ElLink>
     </div>
-    <ElButton type="primary" @click="nextStep">下一步</ElButton>
+    <div class="description">
+      如果无法自动登录成功，请手动登录后，再点击
+      <ElLink
+        type="primary"
+        :underline="false"
+        style="vertical-align: baseline"
+        @click="nextStep"
+      >
+        下一步
+      </ElLink>
+    </div>
   </div>
 </template>
 

@@ -6,7 +6,7 @@ import {
 } from '@tk-crawler/main-client-shared';
 import { ElButton, ElIcon } from 'element-plus';
 import { onBeforeUnmount, ref } from 'vue';
-import CollectView from './collect-view.vue';
+import LoggedInView from './logged-in-view.vue';
 import NotLoginView from './not-login-view.vue';
 
 defineOptions({
@@ -45,8 +45,8 @@ async function backToMainView() {
     <NotLoginView
       v-if="status === GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS.not_login"
     />
-    <CollectView
-      v-else-if="status === GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS.running"
+    <LoggedInView
+      v-else-if="status === GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS.logged_in"
     />
   </div>
 </template>

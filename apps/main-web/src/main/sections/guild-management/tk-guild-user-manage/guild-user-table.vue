@@ -7,7 +7,7 @@ import type {
   TKGuildUser,
   UpdateTKGuildUserResponse,
 } from '@tk-crawler/biz-shared';
-import { RefreshRight } from '@element-plus/icons-vue';
+import { CopyDocument, RefreshRight } from '@element-plus/icons-vue';
 import { useQuery } from '@tanstack/vue-query';
 import { REGION_LABEL_MAP, TKGuildUserStatus } from '@tk-crawler/biz-shared';
 import {
@@ -16,7 +16,7 @@ import {
   MAIN_APP_PUBLISH_URL,
 } from '@tk-crawler/main-client-shared';
 import { formatDateTime, RESPONSE_CODE } from '@tk-crawler/shared';
-import { getPlatform } from '@tk-crawler/view-shared';
+import { copyToClipboard, getPlatform } from '@tk-crawler/view-shared';
 import {
   ElButton,
   ElIcon,
@@ -27,6 +27,7 @@ import {
   ElTable,
   ElTableColumn,
   ElTag,
+  ElTooltip,
 } from 'element-plus';
 import { computed, onActivated, ref, toRaw } from 'vue';
 import VisiblePassword from '../../../components/visible-password.vue';
@@ -317,12 +318,12 @@ function getStartOrStopButtonText(status: TKGuildUserStatus) {
       TKGuildUserStatus.WAITING,
     ].includes(status)
   ) {
-    return '停止';
+    return '停止查询';
   }
   if (status === TKGuildUserStatus.ERROR) {
-    return '重新启动';
+    return '点击重新启动';
   }
-  return '启动';
+  return '点击启动查询';
 }
 
 function getStartOrStopType(status: TKGuildUserStatus): 'stop' | 'start' {
@@ -503,7 +504,7 @@ onActivated(refetch);
             <VisiblePassword :password="scope.row.password" />
           </template>
         </ElTableColumn>
-        <ElTableColumn prop="regions" label="区域" min-width="120">
+        <ElTableColumn prop="regions" label="地区名称" min-width="120">
           <template #default="scope">
             {{
               (scope.row.regions as Region[])
@@ -516,11 +517,13 @@ onActivated(refetch);
           prop="max_query_per_day"
           label="每天最大查询次数"
           min-width="160"
+          sortable="custom"
         />
         <ElTableColumn
           prop="max_query_per_hour"
           label="每小时最大查询次数"
-          min-width="160"
+          min-width="180"
+          sortable="custom"
         />
         <ElTableColumn
           prop="created_at"
@@ -540,6 +543,21 @@ onActivated(refetch);
         >
           <template #default="scope">
             {{ formatDateTime(scope.row.updated_at) }}
+          </template>
+        </ElTableColumn>
+        <ElTableColumn prop="cookie" label="Cookie" min-width="200">
+          <template #default="scope">
+            <div v-if="scope.row.cookie" class="cookie">
+              <span class="cookie-text">{{ scope.row.cookie }}</span>
+              <ElTooltip content="复制Cookie" placement="top">
+                <ElIcon
+                  class="copy-icon"
+                  @click="copyToClipboard(scope.row.cookie)"
+                >
+                  <CopyDocument />
+                </ElIcon>
+              </ElTooltip>
+            </div>
           </template>
         </ElTableColumn>
         <ElTableColumn label="操作" min-width="140" fixed="right">
@@ -637,6 +655,25 @@ onActivated(refetch);
   .main-table {
     flex: 1;
     width: 100%;
+  }
+  .cookie {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    .cookie-text {
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .copy-icon {
+      cursor: pointer;
+      margin-left: 0.5rem;
+      &:hover {
+        color: var(--el-color-primary);
+      }
+    }
   }
 }
 </style>

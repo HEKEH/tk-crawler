@@ -18,7 +18,7 @@ function finish() {
     </div>
     <ElImage class="image" src="/images/live-admin-verify-popup.png" />
     <div class="description">
-      如果您看到如下页面，则表明激活成功。此时请点击按钮
+      如果您看到如下页面，则表明激活成功。此时请点击右侧完成按钮 →
       <ElButton type="primary" size="small" @click="finish"> 完成 </ElButton>
     </div>
     <ElImage class="image" src="/images/account-activate-finish.png" />

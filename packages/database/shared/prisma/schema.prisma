@@ -47,7 +47,7 @@ model Anchor {
 
 model LiveAdminUser {
   id                 BigInt                        @id @default(autoincrement()) @db.UnsignedBigInt
-  username           String                        @unique @db.VarChar(24)
+  username           String                        @unique @db.VarChar(50)
   password           String                        @db.VarChar(128)
   org_id             BigInt                        @db.UnsignedBigInt
   status             Int                           @db.UnsignedTinyInt

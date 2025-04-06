@@ -438,6 +438,7 @@ export class CookiePageView implements IView {
         await sleep(1000);
       }
     }
+    await sleep(1500);
     if (isActivateSuccess) {
       this._finishActivate();
     }

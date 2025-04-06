@@ -6,7 +6,6 @@ import { TIKTOK_LIVE_ADMIN_URL } from '@tk-crawler/biz-shared';
 import {
   findElement,
   InputEventFunctionStr,
-  loadThirdPartyURL,
 } from '@tk-crawler/electron-utils/main';
 import {
   GUILD_COOKIE_PAGE_HELP_EVENTS,
@@ -14,10 +13,14 @@ import {
   GUILD_COOKIE_PAGE_HELP_STATUS,
   GUILD_COOKIE_PAGE_HELP_WIDTH,
 } from '@tk-crawler/main-client-shared';
-import { sleep } from '@tk-crawler/shared';
+import { RESPONSE_CODE, sleep } from '@tk-crawler/shared';
 import { ipcMain, WebContentsView } from 'electron';
 import { isDevelopment, RENDERER_DIST, VITE_DEV_SERVER_URL } from '../../env';
 import { logger } from '../../infra/logger';
+import { startTKGuildUserAccount } from '../../requests/tk-guild-user';
+import { getToken } from '../services/token';
+
+const DEMO_ANCHOR = 'arxigosvstiktok';
 
 export class CookiePageView implements IView {
   private _parentWindow: BaseWindow;
@@ -131,13 +134,11 @@ export class CookiePageView implements IView {
       return;
     }
     this._runningStatus = GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS.unknown;
-    logger.error('Unknown running status');
+    logger.info('[cookie-page-view] Unknown running status');
   }
 
   private _loadThirdPartyURL(view: WebContentsView, url: string) {
-    return loadThirdPartyURL(view, url, error => {
-      logger.error('Load third party url error:', error);
-    });
+    return view.webContents.loadURL(url);
   }
 
   private async _openThirdPartyPageView() {
@@ -176,7 +177,16 @@ export class CookiePageView implements IView {
       this._parentWindow.contentView.addChildView(this._thirdPartyView);
       this._setStatus(GUILD_COOKIE_PAGE_HELP_STATUS.opened);
       await this._refreshRunningStatus();
-      await this._inputLoginInfo();
+
+      if (
+        this._runningStatus === GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS.not_login
+      ) {
+        await this._tryLogin();
+      } else if (
+        this._runningStatus === GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS.logged_in
+      ) {
+        await this._handleLoginSuccess();
+      }
     } catch (error) {
       if ((error as any)?.code === 'ERR_CONNECTION_TIMED_OUT') {
         logger.error('Open cookie page timeout:', error);
@@ -253,6 +263,18 @@ export class CookiePageView implements IView {
         await this._backToMainView();
       },
     );
+    this._addEventHandler(
+      GUILD_COOKIE_PAGE_HELP_EVENTS.CHECK_IF_LOGIN_SUCCESS,
+      async () => {
+        const isLoginSuccess = await this._checkIfLoginSuccess();
+        if (isLoginSuccess) {
+          this._handleLoginSuccess();
+        }
+      },
+    );
+    this._addEventHandler(GUILD_COOKIE_PAGE_HELP_EVENTS.FINISH, async () => {
+      await this._finishActivate();
+    });
   }
 
   private _removeEventHandlers() {
@@ -262,7 +284,11 @@ export class CookiePageView implements IView {
     this._eventNames = [];
   }
 
-  private async _inputLoginInfo() {
+  private get isClosed() {
+    return this._thirdPartyView === null;
+  }
+
+  private async _tryLogin() {
     const webContents = this._thirdPartyView!.webContents;
     if (webContents.isLoading()) {
       await new Promise(resolve => {
@@ -272,7 +298,7 @@ export class CookiePageView implements IView {
       });
     }
     const { username, password } = this._guildUser!;
-    const result = await webContents.executeJavaScript(`
+    const operationResult = await webContents.executeJavaScript(`
       (async function() {
         function sleep(ms) {
           return new Promise(resolve => setTimeout(resolve, ms));
@@ -307,7 +333,6 @@ export class CookiePageView implements IView {
             return { success: false, error: 'login submit button not found' };
           }
           loginSubmitButton.click();
-          await sleep(1000);
 
           return { success: true };
         } catch (error) {
@@ -315,7 +340,164 @@ export class CookiePageView implements IView {
         }
       })();
     `);
-    logger.info('[cookie-page-view] inputLoginInfo:', result);
+    logger.info('[cookie-page-view] tryLogin:', operationResult);
+    if (!operationResult.success) {
+      return;
+    }
+    let isLoginSuccess = false;
+    let tryCount = 0;
+    await sleep(1000);
+    while (
+      !isLoginSuccess &&
+      tryCount < 20 &&
+      this._guildUser &&
+      !this.isClosed
+    ) {
+      isLoginSuccess = await this._checkIfLoginSuccess();
+      tryCount++;
+      if (!isLoginSuccess) {
+        await sleep(1000);
+      }
+    }
+    if (isLoginSuccess) {
+      this._handleLoginSuccess();
+    }
+  }
+
+  private async _checkIfLoginSuccess() {
+    await this._refreshRunningStatus();
+    if (this.isClosed) {
+      return false;
+    }
+    const isLoginSuccess =
+      this._runningStatus === GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS.logged_in;
+    return isLoginSuccess;
+  }
+
+  private async _handleLoginSuccess() {
+    const webContents = this._thirdPartyView!.webContents;
+    const operationResult = await webContents.executeJavaScript(`
+      (async function() {
+        function sleep(ms) {
+          return new Promise(resolve => setTimeout(resolve, ms));
+        }
+        ${InputEventFunctionStr}
+        try {
+          const navigationList = document.querySelector('.semi-navigation-vertical .semi-navigation-list');
+          if (!navigationList) {
+            return { success: false, error: 'navigationList not found' };
+          }
+          const workspaceButton = navigationList.childNodes[0];
+          if (!workspaceButton) {
+            return { success: false, error: 'workspaceButton not found' };
+          }
+          workspaceButton.click();
+          await sleep(1000);
+          const scoutCreatorsTabBar = document.querySelector('.semi-tabs[data-id="TodoTaskStageCard2"] #semiTab1');
+          if (!scoutCreatorsTabBar) {
+            return { success: false, error: 'scoutCreatorsTabBar not found' };
+          }
+          scoutCreatorsTabBar.click();
+          await sleep(500);
+          const inviteCreatorsButton = document.querySelector('button[data-id="agent-workplace-add-host"]');
+          if (!inviteCreatorsButton) {
+            return { success: false, error: 'inviteCreatorsButton not found' };
+          }
+          inviteCreatorsButton.click();
+          await sleep(1000);
+          const inviteHostTextArea = document.querySelector('textarea[data-testid="inviteHostTextArea"]');
+          if (!inviteHostTextArea) {
+            return { success: false, error: 'inviteHostTextArea not found' };
+          }
+          inputEvent(inviteHostTextArea, '${DEMO_ANCHOR}');
+          await sleep(200);
+          const nextButton = document.querySelector('button[data-id="invite-host-next"]');
+          if (!nextButton) {
+            return { success: false, error: 'nextButton not found' };
+          }
+          nextButton.click();
+          await sleep(500);
+
+          return { success: true };
+        } catch (error) {
+          return { success: false, error: error.message };
+        }
+      })();
+    `);
+    logger.info('[cookie-page-view] handleLoginSuccess:', operationResult);
+    if (!operationResult.success) {
+      return;
+    }
+    let isActivateSuccess = false;
+    let tryCount = 0;
+    await sleep(1000);
+    while (!isActivateSuccess && tryCount < 20 && !this.isClosed) {
+      isActivateSuccess = await this._checkIfFinishActivate();
+      tryCount++;
+      if (!isActivateSuccess) {
+        await sleep(1000);
+      }
+    }
+    if (isActivateSuccess) {
+      this._finishActivate();
+    }
+  }
+
+  private async _checkIfFinishActivate() {
+    const { success } = await findElement(
+      this._thirdPartyView!,
+      'div[data-id="host-info"] div[data-id="host-table"]',
+    );
+    return success;
+  }
+
+  private async _getCookies(): Promise<Electron.Cookie[]> {
+    if (!this._thirdPartyView) {
+      return [];
+    }
+    const session = this._thirdPartyView.webContents.session;
+    try {
+      const cookies = await session.cookies.get({});
+      return cookies;
+    } catch (error) {
+      console.error('Failed to get cookies:', error);
+      throw error;
+    }
+  }
+
+  private async _finishActivate() {
+    const cookies = await this._getCookies();
+    logger.info('[cookie-page-view] finishActivate cookies:', cookies);
+    const cookieString = cookies
+      .map(cookie => `${cookie.name}=${cookie.value}`)
+      .join('; ');
+    const token = getToken();
+    if (!token) {
+      logger.error('[cookie-page-view] finishActivate: Token is not found');
+      return;
+    }
+    try {
+      const response = await startTKGuildUserAccount(
+        {
+          user_id: this._guildUser!.id,
+          cookie: cookieString,
+        },
+        token,
+      );
+      if (response.status_code !== RESPONSE_CODE.SUCCESS) {
+        this._helpView?.webContents.send(
+          GUILD_COOKIE_PAGE_HELP_EVENTS.REQUEST_ERROR,
+          `保存失败: ${response.message}`,
+        );
+        return;
+      }
+      this._backToMainView();
+    } catch (error) {
+      this._helpView?.webContents.send(
+        GUILD_COOKIE_PAGE_HELP_EVENTS.REQUEST_ERROR,
+        `保存失败: ${(error as any).message}`,
+      );
+    }
   }
 
   setGuildUser(guildUser: TKGuildUser) {
@@ -346,6 +528,7 @@ export class CookiePageView implements IView {
     this._closeThirdPartyPageView();
     this._closeHelpView();
     this._setStatus(GUILD_COOKIE_PAGE_HELP_STATUS.stateless);
+    this._guildUser = undefined;
   }
 
   destroy() {

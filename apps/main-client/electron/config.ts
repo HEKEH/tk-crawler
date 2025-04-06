@@ -16,7 +16,7 @@ if (!CLIENT_MAIN_WEB_URL) {
 }
 
 const config = {
-  ownServerUrl: CLIENT_OWN_SERVER_URL,
-  mainWebUrl: CLIENT_MAIN_WEB_URL,
+  ownServerUrl: CLIENT_OWN_SERVER_URL as string,
+  mainWebUrl: CLIENT_MAIN_WEB_URL as string,
 };
 export default config;

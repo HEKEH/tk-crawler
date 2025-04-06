@@ -1,12 +1,9 @@
-import type { RequestErrorType } from '@tk-crawler/biz-shared';
 import type { MessageCenter } from '@tk-crawler/shared';
 import type { BaseWindow } from 'electron';
 import type { Subscription } from 'rxjs';
 import type { IView } from './types';
 import path from 'node:path';
-import { CrawlerMessage } from '@tk-crawler/biz-shared';
 import { bindViewToWindowBounds } from '@tk-crawler/electron-utils/main';
-import { CUSTOM_EVENTS } from '@tk-crawler/main-client-shared';
 import { globalShortcut, WebContentsView } from 'electron';
 import config from '../../config';
 import { isDevelopment } from '../../env';
@@ -30,19 +27,19 @@ export class MainView implements IView {
   }) {
     this._parentWindow = props.parentWindow;
     this._messageCenter = props.messageCenter;
-    this._subscriptions.push(
-      this._messageCenter.addListener(
-        CrawlerMessage.REQUEST_ERROR,
-        (errorType: RequestErrorType) => {
-          this._onRequestError(errorType);
-        },
-      ),
-    );
+    // this._subscriptions.push(
+    //   this._messageCenter.addListener(
+    //     CrawlerMessage.REQUEST_ERROR,
+    //     (errorType: RequestErrorType) => {
+    //       this._onRequestError(errorType);
+    //     },
+    //   ),
+    // );
   }
 
-  private _onRequestError(errorType: RequestErrorType) {
-    this._view?.webContents.send(CUSTOM_EVENTS.REQUEST_ERROR, errorType);
-  }
+  // private _onRequestError(errorType: RequestErrorType) {
+  //   this._view?.webContents.send(CUSTOM_EVENTS.REQUEST_ERROR, errorType);
+  // }
 
   async show() {
     if (this._view && !this._isVisible) {

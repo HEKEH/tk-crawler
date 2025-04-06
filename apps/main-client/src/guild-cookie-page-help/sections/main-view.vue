@@ -8,6 +8,9 @@ import { ElButton, ElIcon } from 'element-plus';
 import { onBeforeUnmount, ref } from 'vue';
 import LoggedInView from './logged-in-view.vue';
 import NotLoginView from './not-login-view.vue';
+import { MessageQueue } from '@tk-crawler/view-shared';
+import { ElectronRenderListeners } from '@tk-crawler/electron-utils/render';
+import { IpcRendererEvent } from 'electron';
 
 defineOptions({
   name: 'MainView',
@@ -30,6 +33,31 @@ async function backToMainView() {
     GUILD_COOKIE_PAGE_HELP_EVENTS.BACK_TO_MAIN_VIEW,
   );
 }
+
+const messageQueue = new MessageQueue({
+  messageOffset: 200,
+});
+
+const electronRenderListeners = ElectronRenderListeners.getInstance();
+
+function handleRequestError(_: IpcRendererEvent, message: string) {
+  messageQueue.showMessage({
+    message,
+    type: 'error',
+  });
+}
+
+electronRenderListeners.on(
+  GUILD_COOKIE_PAGE_HELP_EVENTS.REQUEST_ERROR,
+  handleRequestError,
+);
+
+onBeforeUnmount(() => {
+  electronRenderListeners.off(
+    GUILD_COOKIE_PAGE_HELP_EVENTS.REQUEST_ERROR,
+    handleRequestError,
+  );
+});
 </script>
 
 <template>

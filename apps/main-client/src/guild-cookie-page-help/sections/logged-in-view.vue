@@ -1,22 +1,33 @@
 <script setup lang="ts">
+import { GUILD_COOKIE_PAGE_HELP_EVENTS } from '@tk-crawler/main-client-shared';
+import { ElImage, ElButton } from 'element-plus';
+
 defineOptions({
   name: 'LoggedInView',
 });
+function finish() {
+  window.ipcRenderer.invoke(GUILD_COOKIE_PAGE_HELP_EVENTS.FINISH);
+}
 </script>
 
 <template>
   <div class="block">
-    <!-- <div class="description">
-      右侧页面表格中的主播信息会被自动采集。
-      <br />
-      为了加快采集速度，建议每页条数改为200。
+    <div class="tip">正在尝试激活账号...</div>
+    <div class="description">
+      激活过程中有可能遇到如下验证弹窗，此时需要您在页面手动操作来通过验证。
     </div>
-    <div class="tip">正在自动采集中...<br />请在右侧页面获取您想要的数据 →</div> -->
+    <ElImage class="image" src="/images/live-admin-verify-popup.png" />
+    <div class="description">
+      如果您看到如下页面，则表明激活成功。此时请点击按钮
+      <ElButton type="primary" size="small" @click="finish"> 完成 </ElButton>
+    </div>
+    <ElImage class="image" src="/images/account-activate-finish.png" />
   </div>
 </template>
 
 <style scoped>
 .description {
+  width: 100%;
   font-size: 15px;
 }
 .block {
@@ -31,11 +42,9 @@ defineOptions({
   text-align: center;
   color: var(--el-color-primary);
 }
-/* .loading {
-  width: 100%;
-  height: 20px;
-  :global(.path) {
-    r: 14px !important;
-  }
-} */
+.image {
+  background-color: #f5f7fa;
+  border-radius: 4px;
+  padding: 4px;
+}
 </style>

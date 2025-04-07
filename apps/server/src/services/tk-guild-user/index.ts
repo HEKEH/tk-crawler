@@ -84,11 +84,10 @@ export async function createTKGuildUser(
 ): Promise<CreateTKGuildUserResponse['data']> {
   logger.info('[Create TK Guild User]', { data });
 
-  const { username, password, org_id, area } = data;
+  const { username, password, org_id } = data;
   assert(username, '用户名不能为空');
   assert(password, '密码不能为空');
   assert(org_id, '机构ID不能为空');
-  assert(area, '地区不能为空');
 
   return await mysqlClient.prismaClient.$transaction(async tx => {
     const existUser = await tx.liveAdminUser.findFirst({

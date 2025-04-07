@@ -14,7 +14,7 @@ export interface TKGuildUser {
   created_at: Date;
   updated_at: Date;
   organization?: OrganizationItem;
-  area: Area;
+  area?: Area;
   faction_id: number | null;
 }
 

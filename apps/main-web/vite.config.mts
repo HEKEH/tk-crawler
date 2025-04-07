@@ -32,6 +32,7 @@ export default defineConfig(({ mode }) => {
       __dirname,
       '../../packages/view-shared/src',
     ),
+    '@tk-crawler/styles': resolve(__dirname, '../../packages/styles'),
   };
 
   const envConfig = {

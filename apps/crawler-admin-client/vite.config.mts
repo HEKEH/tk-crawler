@@ -32,6 +32,7 @@ export default defineConfig(({ mode }) => {
       __dirname,
       '../../packages/electron-utils/src',
     ),
+    '@tk-crawler/styles': resolve(__dirname, '../../packages/styles'),
   };
 
   const envConfig = {

@@ -3,8 +3,7 @@ import { vLoading } from 'element-plus';
 import { createApp } from 'vue';
 
 import App from './App.vue';
-import './styles/global.scss';
-import './styles/theme.scss';
+import '@tk-crawler/styles';
 import './style.css';
 
 function init() {

@@ -400,7 +400,7 @@ async function onStartOrStop(item: TKGuildUser) {
                   }
                   target="_blank"
                   type="primary"
-                  underline={false}
+                  underline
                 >
                   下载页面
                 </ElLink>
@@ -508,7 +508,12 @@ onActivated(refetch);
             <VisiblePassword :password="scope.row.password" />
           </template>
         </ElTableColumn>
-        <ElTableColumn prop="area" label="分区" min-width="160">
+        <ElTableColumn
+          prop="area"
+          label="分区"
+          sortable="custom"
+          min-width="160"
+        >
           <template #default="scope">
             <div class="area-with-tooltip">
               {{ AREA_NAME_MAP[scope.row.area as Area] || '-' }}

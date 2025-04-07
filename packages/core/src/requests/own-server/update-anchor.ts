@@ -2,9 +2,9 @@ import type {
   UpdateAnchorRequest,
   UpdateAnchorResponse,
 } from '@tk-crawler/biz-shared';
+import { getUrl } from '@tk-crawler/shared';
 import { getConfig } from '../../config';
 import { commonPostRequest } from '../utils/common-request';
-import { getUrl } from '../utils/get-url';
 
 export async function updateAnchor(
   data: UpdateAnchorRequest,

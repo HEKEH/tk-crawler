@@ -1,7 +1,4 @@
-import {
-  getInformalMessageToken,
-  getVerifyFp,
-} from '@tk-crawler/core/requests/utils/params';
+import { getInformalMessageToken, getVerifyFp } from '@tk-crawler/biz-shared';
 
 export function getTokens() {
   return {

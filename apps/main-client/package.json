@@ -10,6 +10,10 @@
     "build": "npm run check-production-env && vue-tsc && vite build && electron-builder --config electron-builder.ts",
     "preview": "vite preview"
   },
+  "dependencies": {
+    "canvas": "^3.0.1",
+    "jsdom": "^26.0.0"
+  },
   "devDependencies": {
     "@tanstack/vue-query": "^5.66.11",
     "@types/global-agent": "^2.1.3",

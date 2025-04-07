@@ -1556,10 +1556,10 @@ var bytedAcrawlerExports = (function (e, t) {
             //   t &&
             //   t.startsWith('Mozilla/') &&
             //   globalThis &&
-            //   globalThis.$USER_AGENT
+            //   globalThis.$CUSTOM_USER_AGENT
             // ) {
             //   // 替换为正确的user-agent
-            //   t = globalThis.$USER_AGENT;
+            //   t = globalThis.$CUSTOM_USER_AGENT;
             // }
             var u, ib;
             ib = [0];

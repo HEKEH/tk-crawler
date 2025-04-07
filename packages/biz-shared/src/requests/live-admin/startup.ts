@@ -1,13 +1,15 @@
 import type { AxiosRequestConfig } from 'axios';
 import type { StartupResponse } from './types';
-import { TIKTOK_LIVE_ADMIN_URL } from '@tk-crawler/biz-shared';
+import {
+  COMMON_TIKTOK_LIVE_ADMIN_HEADERS,
+  getInformalMessageToken,
+  getXBogus,
+  TIKTOK_LIVE_ADMIN_URL,
+} from '@tk-crawler/biz-shared';
+import { getUrl, type Logger } from '@tk-crawler/shared';
 import axios from 'axios';
-import { getLogger } from '../..';
-import { getUrl } from '../utils/get-url';
-import { getInformalMessageToken, getXBogus } from '../utils/params';
-import { COMMON_TIKTOK_LIVE_ADMIN_HEADERS } from './constants';
 
-export async function startup(cookie: string) {
+export async function startup(cookie: string, logger: Logger) {
   const headers = {
     ...COMMON_TIKTOK_LIVE_ADMIN_HEADERS,
     Cookie: cookie,
@@ -23,7 +25,6 @@ export async function startup(cookie: string) {
   const xBogus = getXBogus(url);
   url = `${url}&X-Bogus=${xBogus}`;
 
-  const logger = getLogger();
   try {
     const config: AxiosRequestConfig = {
       method: 'get',

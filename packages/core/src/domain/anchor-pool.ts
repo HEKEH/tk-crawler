@@ -41,7 +41,7 @@ class StopCrawlError extends Error {
 }
 
 /** 当前主播的集合 */
-export default class AnchorPool {
+export class AnchorPool {
   private _region: Region[] | 'all' = 'all';
 
   private _taskQueue: FrequencyLimitTaskQueue = new FrequencyLimitTaskQueue({

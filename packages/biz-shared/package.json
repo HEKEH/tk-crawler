@@ -6,7 +6,9 @@
   "scripts": {
     "preinstall": "npx only-allow pnpm"
   },
-  "dependencies": {},
+  "dependencies": {
+    "tk-crack": "workspace:*"
+  },
   "devDependencies": {
     "@tk-crawler/shared": "workspace:*"
   }

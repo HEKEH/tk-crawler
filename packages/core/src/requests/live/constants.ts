@@ -1,6 +1,11 @@
-import { DefaultRegion, Region } from '@tk-crawler/biz-shared';
-import { getRandomArrayElement } from '../../utils';
-import { BROWSER_NAME, BROWSER_VERSION, USER_AGENT } from '../constants';
+import {
+  BROWSER_NAME,
+  BROWSER_VERSION,
+  DefaultRegion,
+  Region,
+  USER_AGENT,
+} from '@tk-crawler/biz-shared';
+import { getRandomArrayElement } from '@tk-crawler/shared';
 
 export const TIKTOK_URL = 'https://www.tiktok.com';
 export const TIKTOK_WEBCAST_URL = 'https://webcast.tiktok.com';

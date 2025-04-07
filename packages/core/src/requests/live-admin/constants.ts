@@ -1,5 +1,4 @@
-import { TIKTOK_LIVE_ADMIN_URL } from '@tk-crawler/biz-shared';
-import { USER_AGENT } from '../constants';
+import { TIKTOK_LIVE_ADMIN_URL, USER_AGENT } from '@tk-crawler/biz-shared';
 
 export const COMMON_TIKTOK_LIVE_ADMIN_HEADERS = {
   accept: 'application/json, text/plain, */*',

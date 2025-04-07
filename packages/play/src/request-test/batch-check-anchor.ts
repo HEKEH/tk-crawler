@@ -1,5 +1,6 @@
+import { getFactionIdAndArea } from '@tk-crawler/biz-shared';
 import { batchCheckAnchor } from '@tk-crawler/core/requests/live-admin';
-import { getFactionId } from '@tk-crawler/core/requests/live-admin/get-faction-id';
+import logger from '../logger';
 
 const ESData = {
   displayIds: ['tamara_bareta_directos', 'agua.cristalina1'],
@@ -20,7 +21,7 @@ const ESData = {
 
 export default async function batchCheckAnchorTest() {
   const data = ESData;
-  const factionId = await getFactionId(data.cookie);
+  const { factionId } = (await getFactionIdAndArea(data.cookie, logger)) || {};
   if (!factionId) {
     throw new Error('Faction id get failed');
   }

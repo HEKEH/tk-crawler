@@ -221,6 +221,13 @@ importers:
         version: 2.2.8(typescript@5.5.4)
 
   apps/main-client:
+    dependencies:
+      canvas:
+        specifier: ^3.0.1
+        version: 3.1.0
+      jsdom:
+        specifier: ^26.0.0
+        version: 26.0.0(canvas@3.1.0)
     devDependencies:
       '@tanstack/vue-query':
         specifier: ^5.66.11
@@ -459,6 +466,10 @@ importers:
         version: 3.1.9
 
   packages/biz-shared:
+    dependencies:
+      tk-crack:
+        specifier: workspace:*
+        version: link:../tk-crack
     devDependencies:
       '@tk-crawler/shared':
         specifier: workspace:*
@@ -574,6 +585,9 @@ importers:
       dayjs:
         specifier: ^1.11.13
         version: 1.11.13
+      qs:
+        specifier: ^6.13.1
+        version: 6.14.0
       rxjs:
         specifier: ^7.8.1
         version: 7.8.2
@@ -584,6 +598,9 @@ importers:
       '@types/crypto-js':
         specifier: ^4.2.2
         version: 4.2.2
+      '@types/qs':
+        specifier: ^6.9.17
+        version: 6.9.18
 
   packages/tk-crack:
     dependencies:

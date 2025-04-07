@@ -1,10 +1,10 @@
 import type { NumberString } from '@tk-crawler/shared';
 import type { WithRegion } from '../../../types';
 import type { TikTokQueryTokens } from '../types';
+import { getXBogus } from '@tk-crawler/biz-shared';
+import { getUrl } from '@tk-crawler/shared';
 import { commonPostRequest } from '../../utils/common-request';
 import { getTiktokCookie } from '../../utils/cookie';
-import { getUrl } from '../../utils/get-url';
-import { getXBogus } from '../../utils/params';
 import {
   COMMON_TIKTOK_HEADERS,
   COMMON_TIKTOK_QUERY,

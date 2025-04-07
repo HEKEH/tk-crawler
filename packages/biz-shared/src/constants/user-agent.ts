@@ -4,4 +4,4 @@ export const BROWSER_VERSION =
 export const BROWSER_NAME = 'Mozilla';
 export const USER_AGENT = `${BROWSER_NAME}/${BROWSER_VERSION}`;
 
-(globalThis as any).$USER_AGENT = USER_AGENT;
+(globalThis as any).$CUSTOM_USER_AGENT = USER_AGENT;

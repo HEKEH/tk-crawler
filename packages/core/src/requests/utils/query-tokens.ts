@@ -1,4 +1,4 @@
-import { getInformalMessageToken, getVerifyFp } from './params';
+import { getInformalMessageToken, getVerifyFp } from '@tk-crawler/biz-shared';
 
 export function getQueryTokens() {
   return {

@@ -6,22 +6,22 @@ import {
   CrawlerMessage,
   tiktokRequestErrorHandler,
 } from '@tk-crawler/biz-shared';
-import { IntervalRunner } from '../infra/interval-runner';
+import {
+  getRandomArrayElementWithWeight,
+  IntervalRunner,
+  setIntervalImmediate,
+} from '@tk-crawler/shared';
 import { getLogger } from '../infra/logger';
 import { DRAWER_TABS_SCENE, getDrawerTabs, getFeed } from '../requests/live';
 import { ChannelId } from '../requests/live/constants';
+
 import {
   type ChannelSubTagMap,
   getChannelParamsByChannelId,
   getRandomChannelId,
 } from '../requests/utils/params';
-
 import { getQueryTokens } from '../requests/utils/query-tokens';
-import {
-  getRandomArrayElementWithWeight,
-  setIntervalImmediate,
-} from '../utils';
-import AnchorPool from './anchor-pool';
+import { AnchorPool } from './anchor-pool';
 
 const TOKEN_UPDATE_INTERVAL = 5000; // 5s更新一次
 

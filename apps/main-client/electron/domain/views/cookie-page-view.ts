@@ -490,9 +490,9 @@ export class CookiePageView implements IView {
           GUILD_COOKIE_PAGE_HELP_EVENTS.REQUEST_ERROR,
           `保存失败: ${response.message}`,
         );
-        return;
+      } else {
+        this._backToMainView();
       }
-      this._backToMainView();
     } catch (error) {
       this._helpView?.webContents.send(
         GUILD_COOKIE_PAGE_HELP_EVENTS.REQUEST_ERROR,

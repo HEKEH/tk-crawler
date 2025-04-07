@@ -115,7 +115,7 @@ const regionOptions = computed(() => {
     <ElFormItem label="国家/地区" prop="regions">
       <RegionSelect
         v-model="form.regions"
-        :region-options="regionOptions"
+        :options="regionOptions"
         :show-all="false"
       />
     </ElFormItem>

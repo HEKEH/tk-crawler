@@ -4,7 +4,7 @@ import {
   OrganizationStatus,
 } from '@tk-crawler/biz-shared';
 import { CommonDatePickerShortcuts, isArrayEqual } from '@tk-crawler/shared';
-import { RegionSelect } from '@tk-crawler/view-shared';
+import { AreaSelectMultiple } from '@tk-crawler/view-shared';
 import dayjs from 'dayjs';
 import {
   ElButton,
@@ -165,8 +165,8 @@ function handleCancel() {
       />
     </ElFormItem>
 
-    <ElFormItem label="地区" prop="regions">
-      <RegionSelect v-model="form.regions" :show-all="false" />
+    <ElFormItem label="区域" prop="areas">
+      <AreaSelectMultiple v-model="form.areas" :show-all="false" />
     </ElFormItem>
 
     <ElFormItem label="状态" prop="status">

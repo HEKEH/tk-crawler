@@ -1,6 +1,5 @@
 import { randomBytes } from 'node:crypto';
 // 用于tiktok直播管理后台
-import webmssdk from 'tk-crack/webmssdk';
 // 用于tiktok
 import webmssdk170 from 'tk-crack/webmssdk-170';
 // import xBogus from 'tk-crack/xbogus-old';
@@ -169,36 +168,36 @@ export function getXBogus(
   return res;
 }
 
-let webmssdkInitiated = false;
+// let webmssdkInitiated = false;
 
-function initWebmssdk() {
-  if (webmssdkInitiated) {
-    return;
-  }
-  webmssdkInitiated = true;
-  webmssdk.init({
-    aid: 1,
-    isSDK: false,
-    boe: false,
-    enablePathList: [],
-    region: 'sg-tiktok',
-    mode: 513,
-  });
-}
+// function initWebmssdk() {
+//   if (webmssdkInitiated) {
+//     return;
+//   }
+//   webmssdkInitiated = true;
+//   webmssdk.init({
+//     aid: 1,
+//     isSDK: false,
+//     boe: false,
+//     enablePathList: [],
+//     region: 'sg-tiktok',
+//     mode: 513,
+//   });
+// }
 
-/** 在Live管理中使用 */
-export function getXBogusForTiktokLiveAdmin(
-  url: string,
-  body?: string | Record<string, any>,
-): string {
-  initWebmssdk();
-  let _body;
-  if (body) {
-    _body = typeof body === 'string' ? body : JSON.stringify(body);
-  }
-  const res = webmssdk.getXBogus(url, _body);
-  return res;
-}
+// /** 在Live管理中使用。暂时弃用 */
+// export function getXBogusForTiktokLiveAdmin(
+//   url: string,
+//   body?: string | Record<string, any>,
+// ): string {
+//   initWebmssdk();
+//   let _body;
+//   if (body) {
+//     _body = typeof body === 'string' ? body : JSON.stringify(body);
+//   }
+//   const res = webmssdk.getXBogus(url, _body);
+//   return res;
+// }
 
 const VERIFY_FP_CHARS =
   'ABCDEFGHIGKLMNOPQRSTUVWXYZabcdefghigklmnopqrstuvwxyz0123456789_';

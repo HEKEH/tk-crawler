@@ -1,3 +1,4 @@
+import type { Area } from './area';
 import type { Region } from './region';
 
 export enum OrganizationStatus {
@@ -30,6 +31,8 @@ export interface OrganizationItem {
   user_count: number;
   /** 地区 */
   regions: Region[];
+  /** 区域 */
+  areas?: Area[];
 }
 
 export enum OrgMemberStatus {

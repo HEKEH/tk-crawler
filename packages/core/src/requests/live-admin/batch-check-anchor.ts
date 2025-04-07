@@ -2,41 +2,27 @@ import type { BatchCheckAnchorResponse } from './types';
 import { TIKTOK_LIVE_ADMIN_URL } from '@tk-crawler/biz-shared';
 import { commonPostRequest } from '../utils/common-request';
 import { getUrl } from '../utils/get-url';
-import {
-  getInformalMessageToken,
-  getXBogusForTiktokLiveAdmin,
-} from '../utils/params';
+import { getInformalMessageToken, getXBogus } from '../utils/params';
 import { COMMON_TIKTOK_LIVE_ADMIN_HEADERS } from './constants';
 
 export interface BatchCheckAnchorParams {
   displayIds: string[];
   cookie: string;
+  factionId: string;
 }
 
-// kickofffupdates
-// mitchaustin10
-// mintyaxelive
-// paul_mcnally_
-// await batchCheckAnchor({
-//   displayIds: [
-//     'kickofffupdates',
-//     'mitchaustin10',
-//     'mintyaxelive',
-//     'paul_mcnally_',
-//   ],
-//   cookie: TEMP_COOKIE,
-// });
-
 /** 获取主播的签约状态 */
-export function batchCheckAnchor({
+export async function batchCheckAnchor({
   displayIds,
   cookie,
+  factionId,
 }: BatchCheckAnchorParams) {
   const body = JSON.stringify({
     DisplayIDList: displayIds,
   });
   const headers = {
     ...COMMON_TIKTOK_LIVE_ADMIN_HEADERS,
+    'faction-id': factionId,
     cookie,
   };
   const url = getUrl({
@@ -46,7 +32,7 @@ export function batchCheckAnchor({
       msToken: getInformalMessageToken(),
     },
   });
-  const xBogus = getXBogusForTiktokLiveAdmin(url, body);
+  const xBogus = getXBogus(url, body);
   return commonPostRequest<BatchCheckAnchorResponse>({
     url: `${url}&X-Bogus=${xBogus}`,
     headers,

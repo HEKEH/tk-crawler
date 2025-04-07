@@ -16,12 +16,12 @@ const props = withDefaults(
     modelValue?: RegionPropsValue;
     placeholder?: string;
     showAll?: boolean;
-    regionOptions?: RegionOption[];
+    options?: RegionOption[];
   }>(),
   {
     placeholder: '请选择国家/地区，支持搜索',
     showAll: true,
-    regionOptions: () => REGION_OPTIONS,
+    options: () => REGION_OPTIONS,
   },
 );
 
@@ -65,12 +65,12 @@ const value = computed<SelectValue>({
 
 const allOptions = computed(() => {
   if (props.showAll) {
-    return props.regionOptions;
+    return props.options;
   }
-  return props.regionOptions.filter(item => item.value !== 'all');
+  return props.options.filter(item => item.value !== 'all');
 });
 
-const options = computed(() => {
+const showOptions = computed(() => {
   const q = filterText.value?.trim();
   if (!q) {
     return allOptions.value;
@@ -91,7 +91,7 @@ const options = computed(() => {
     @change="handleChange"
   >
     <ElOption
-      v-for="option in options"
+      v-for="option in showOptions"
       :key="option.value"
       :label="option.label"
       :value="option.value"

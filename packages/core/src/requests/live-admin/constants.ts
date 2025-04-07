@@ -6,7 +6,6 @@ export const COMMON_TIKTOK_LIVE_ADMIN_HEADERS = {
   'accept-language': 'zh-TW,zh;q=0.9,en-US;q=0.8,en;q=0.7',
   'cache-control': 'no-cache',
   'content-type': 'application/json',
-  'faction-id': '107003',
   origin: TIKTOK_LIVE_ADMIN_URL,
   pragma: 'no-cache',
   priority: 'u=1, i',
@@ -20,7 +19,7 @@ export const COMMON_TIKTOK_LIVE_ADMIN_HEADERS = {
   'sec-fetch-site': 'same-origin',
   'user-agent': USER_AGENT,
   'x-appid': '1180',
-  'x-csrf-token': 'qYlITCdN-By_oK8eCLyPdibdsqkyQ8J6oF4k',
+  'x-csrf-token': 'undefined',
   'x-language': 'zh-CN',
 };
 

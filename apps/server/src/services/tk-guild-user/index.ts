@@ -12,11 +12,7 @@ import type {
 import assert from 'node:assert';
 import { TKGuildUserStatus } from '@tk-crawler/biz-shared';
 import { mysqlClient } from '@tk-crawler/database';
-import {
-  isEmpty,
-  transObjectValuesToString,
-  xss,
-} from '@tk-crawler/shared';
+import { isEmpty, transObjectValuesToString, xss } from '@tk-crawler/shared';
 import { logger } from '../../infra/logger';
 import { transformTKGuildUserFilterValues } from './filter';
 
@@ -30,7 +26,7 @@ export async function getTKGuildUserList(
 
   const _orderBy = isEmpty(data.order_by)
     ? {
-        updated_at: 'desc' as const, // Default sort by updated_at desc
+        id: 'asc' as const,
       }
     : data.order_by!;
 

@@ -48,9 +48,11 @@ export async function updateTKGuildUserCookie(
 export async function startLiveAdminAccount(
   data: StartTKLiveAdminAccountRequest & { org_id: string },
 ): Promise<void> {
-  const { user_id, org_id, cookie } = data;
+  const { user_id, org_id, cookie, faction_id, area } = data;
   assert(user_id, '用户ID不能为空');
   assert(cookie, 'Cookie不能为空');
+  assert(faction_id, '分区ID不能为空');
+  assert(area, '区域不能为空');
   const user = await mysqlClient.prismaClient.liveAdminUser.findUnique({
     where: {
       id: BigInt(user_id),
@@ -75,7 +77,7 @@ export async function startLiveAdminAccount(
       where: {
         id: BigInt(user_id),
       },
-      data: { status: TKGuildUserStatus.WAITING, cookie },
+      data: { status: TKGuildUserStatus.WAITING, cookie, faction_id, area },
     });
     // TODO: 启动用户
   });

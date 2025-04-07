@@ -37,7 +37,7 @@ function onRetry() {
       <ElButton type="primary" @click="onRetry">点击重试</ElButton>
     </template>
     <template v-else-if="status === GUILD_COOKIE_PAGE_HELP_STATUS.fail">
-      <div class="tip-text">打开登录页失败，请检查网络</div>
+      <div class="tip-text">打开TK直播公会后台页失败，请检查网络</div>
       <ElButton type="primary" @click="onRetry">点击重试</ElButton>
     </template>
     <MainView v-else-if="status === GUILD_COOKIE_PAGE_HELP_STATUS.opened" />

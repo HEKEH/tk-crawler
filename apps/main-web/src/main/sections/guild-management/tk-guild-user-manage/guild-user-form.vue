@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import type { TKGuildUser } from '@tk-crawler/biz-shared';
-import { AREA_OPTIONS } from '@tk-crawler/biz-shared';
-import { AreaSelectSingle } from '@tk-crawler/view-shared';
 import {
   ElButton,
   ElForm,
@@ -11,12 +9,11 @@ import {
   type FormInstance,
   type FormRules,
 } from 'element-plus';
-import { computed, reactive, ref } from 'vue';
-import { useGlobalStore } from '../../../utils';
+import { reactive, ref } from 'vue';
 
 export type GuildUserFormValues = Pick<
   TKGuildUser,
-  'username' | 'password' | 'area' | 'max_query_per_hour' | 'max_query_per_day'
+  'username' | 'password' | 'max_query_per_hour' | 'max_query_per_day'
 >;
 
 const props = defineProps<{
@@ -37,7 +34,7 @@ const formRef = ref<FormInstance>();
 const form = reactive<Partial<GuildUserFormValues>>({
   username: props.initialData?.username || '',
   password: props.initialData?.password || '',
-  area: props.initialData?.area,
+  // area: props.initialData?.area,
   max_query_per_hour:
     props.initialData?.max_query_per_hour || DEFAULT_MAX_QUERY_PER_HOUR,
   max_query_per_day:
@@ -50,7 +47,7 @@ const rules: FormRules = {
     { min: 2, max: 30, message: '长度在 2 到 30 个字符' },
   ],
   password: [{ required: true, message: '请输入后台查询密码' }],
-  area: [{ required: true, message: '请选择分区' }],
+  // area: [{ required: true, message: '请选择分区' }],
   max_query_per_hour: [{ required: true, message: '请输入每小时查询次数' }],
   max_query_per_day: [{ required: true, message: '请输入每天查询次数' }],
 };
@@ -69,7 +66,7 @@ async function handleSubmit() {
         await props.submit({
           username: form.username!,
           password: form.password!,
-          area: form.area!,
+          // area: form.area!,
           max_query_per_hour: form.max_query_per_hour!,
           max_query_per_day: form.max_query_per_day!,
         });
@@ -86,12 +83,12 @@ function handleCancel() {
   emit('cancel');
 }
 
-const globalStore = useGlobalStore();
+// const globalStore = useGlobalStore();
 
-const areaOptions = computed(() => {
-  const areasSet = new Set(globalStore.userProfile.orgInfo?.areas);
-  return AREA_OPTIONS.filter(item => areasSet.has(item.value));
-});
+// const areaOptions = computed(() => {
+//   const areasSet = new Set(globalStore.userProfile.orgInfo?.areas);
+//   return AREA_OPTIONS.filter(item => areasSet.has(item.value));
+// });
 </script>
 
 <template>
@@ -108,13 +105,13 @@ const areaOptions = computed(() => {
     <ElFormItem label="后台查询密码" prop="password">
       <ElInput v-model="form.password" placeholder="请输入后台查询密码" />
     </ElFormItem>
-    <ElFormItem label="分区" prop="area">
+    <!-- <ElFormItem label="分区" prop="area">
       <AreaSelectSingle
         v-model="form.area"
         :options="areaOptions"
         :show-all="false"
       />
-    </ElFormItem>
+    </ElFormItem> -->
     <ElFormItem label="每小时查询次数" prop="max_query_per_hour">
       <ElInputNumber
         :model-value="form.max_query_per_hour ?? undefined"

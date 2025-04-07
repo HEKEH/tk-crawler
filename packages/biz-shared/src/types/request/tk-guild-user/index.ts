@@ -1,5 +1,6 @@
 import type { Prisma } from '.prisma/client';
 import type { RESPONSE_CODE } from '@tk-crawler/shared';
+import type { Area } from '../../area';
 import type { TKGuildUser } from '../../tk-guild-user';
 
 // 创建用户请求和响应
@@ -90,6 +91,8 @@ export interface UpdateTKGuildUserCookieResponse {
 export interface StartTKLiveAdminAccountRequest {
   user_id: string;
   cookie: string;
+  faction_id: number;
+  area: Area;
 }
 
 export interface StartTKLiveAdminAccountResponse {

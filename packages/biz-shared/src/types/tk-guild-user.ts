@@ -15,6 +15,7 @@ export interface TKGuildUser {
   updated_at: Date;
   organization?: OrganizationItem;
   area: Area;
+  faction_id: number | null;
 }
 
 export enum TKGuildUserStatus {

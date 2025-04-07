@@ -20,7 +20,7 @@ export async function getOrgMemberList(
           role_id: 'asc' as const, // 默认按角色id排序，管理员优先
         },
         {
-          updated_at: 'desc' as const, // 默认按更新时间倒序排序
+          id: 'asc' as const,
         },
       ]
     : data.order_by!;

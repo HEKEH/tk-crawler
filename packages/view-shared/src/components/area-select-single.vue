@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { Area, AreaOption } from '@tk-crawler/biz-shared';
-import { InfoFilled } from '@element-plus/icons-vue';
 import { AREA_OPTIONS } from '@tk-crawler/biz-shared';
-import { ElIcon, ElOption, ElSelect, ElTooltip } from 'element-plus';
+import { ElOption, ElSelect } from 'element-plus';
 import { computed, ref } from 'vue';
+import AreaTooltipIcon from './area-tooltip-icon.vue';
 
 defineOptions({
   name: 'AreaSelectSingle',
@@ -89,15 +89,7 @@ const showOptions = computed(() => {
     >
       <div class="option-with-description">
         <span>{{ option.label }}</span>
-        <ElTooltip
-          v-if="option.description"
-          popper-style="max-width: 200px;"
-          :content="option.description"
-          placement="top"
-          effect="light"
-        >
-          <ElIcon class="info-icon"><InfoFilled /></ElIcon>
-        </ElTooltip>
+        <AreaTooltipIcon :area="option.value as Area" />
       </div>
     </ElOption>
   </ElSelect>
@@ -107,12 +99,6 @@ const showOptions = computed(() => {
 .option-with-description {
   display: flex;
   align-items: center;
-}
-
-.info-icon {
-  margin-left: 5px;
-  font-size: 14px;
-  color: #909399;
-  cursor: help;
+  column-gap: 6px;
 }
 </style>

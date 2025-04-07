@@ -1,4 +1,5 @@
 import type {
+  Area,
   CreateTKGuildUserRequest,
   CreateTKGuildUserResponse,
   DeleteTKGuildUserRequest,
@@ -6,14 +7,12 @@ import type {
   GetTKGuildUserDetailRequest,
   GetTKGuildUserListRequest,
   GetTKGuildUserListResponseData,
-  Region,
   UpdateTKGuildUserRequest,
 } from '@tk-crawler/biz-shared';
 import assert from 'node:assert';
 import { TKGuildUserStatus } from '@tk-crawler/biz-shared';
 import { mysqlClient } from '@tk-crawler/database';
 import {
-  isArrayEqual,
   isEmpty,
   transObjectValuesToString,
   xss,
@@ -43,9 +42,6 @@ export async function getTKGuildUserList(
       skip: (data.page_num - 1) * data.page_size,
       take: data.page_size,
       orderBy: _orderBy,
-      include: {
-        regions: true,
-      },
     }),
     mysqlClient.prismaClient.liveAdminUser.count({
       where: filter,
@@ -53,10 +49,10 @@ export async function getTKGuildUserList(
   ]);
 
   return {
-    list: users.map(({ regions, ...user }) => {
+    list: users.map(({ area, ...user }) => {
       return {
         ...transObjectValuesToString(user, ['id', 'org_id']),
-        regions: regions.map(item => item.region as Region),
+        area: area as Area,
       };
     }),
     total,
@@ -92,11 +88,11 @@ export async function createTKGuildUser(
 ): Promise<CreateTKGuildUserResponse['data']> {
   logger.info('[Create TK Guild User]', { data });
 
-  const { username, password, org_id, regions } = data;
+  const { username, password, org_id, area } = data;
   assert(username, '用户名不能为空');
   assert(password, '密码不能为空');
   assert(org_id, '机构ID不能为空');
-  assert(regions && regions.length > 0, '地区不能为空');
+  assert(area, '地区不能为空');
 
   return await mysqlClient.prismaClient.$transaction(async tx => {
     const existUser = await tx.liveAdminUser.findFirst({
@@ -108,7 +104,7 @@ export async function createTKGuildUser(
 
     assert(!existUser, '用户已存在，不能重复添加');
 
-    const { org_id, regions, ...restData } = data;
+    const { org_id, ...restData } = data;
 
     // Create user
     const user = await tx.liveAdminUser.create({
@@ -117,13 +113,6 @@ export async function createTKGuildUser(
         status: TKGuildUserStatus.INACTIVE,
         org_id: BigInt(org_id),
       },
-    });
-    // 创建用户地区关系
-    await tx.liveAdminUserRegionRelation.createMany({
-      data: [...new Set(regions!)].map(region => ({
-        user_id: user.id,
-        region,
-      })),
     });
     return { id: user.id.toString() };
   });
@@ -148,16 +137,19 @@ export async function updateTKGuildUser(
         id: BigInt(id),
         org_id: BigInt(org_id),
       },
-      select: { id: true, username: true, password: true, regions: true },
+      select: { id: true, username: true, password: true },
     });
     assert(existUser, '用户不存在');
 
     // eslint-disable-next-line ts/no-unused-vars
-    const { id: _, regions, ...updateData } = data.data;
+    const { id: _, ...updateData } = data.data;
 
     // Apply XSS protection to string fields
     if (updateData.username) {
       updateData.username = xss(updateData.username);
+    }
+    if (updateData.area) {
+      updateData.area = xss(updateData.area);
     }
 
     // 如果用户名或密码有变更，则将用户状态设置为未激活
@@ -175,30 +167,6 @@ export async function updateTKGuildUser(
       },
       data: updateData,
     });
-
-    if (
-      regions?.length &&
-      !isArrayEqual(
-        // 如果地区没有变化，则不提交地区，以免浪费资源
-        regions,
-        existUser.regions.map(item => item.region),
-      )
-    ) {
-      // Update user regions
-      await tx.liveAdminUserRegionRelation.deleteMany({
-        where: {
-          user_id: BigInt(id),
-        },
-      });
-
-      // Create new user regions
-      await tx.liveAdminUserRegionRelation.createMany({
-        data: [...new Set(regions!)].map(region => ({
-          user_id: BigInt(id),
-          region,
-        })),
-      });
-    }
   });
 }
 

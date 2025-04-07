@@ -1,7 +1,7 @@
 import type {
+  Area,
   OrgMemberLoginRequest,
   OrgMemberLoginResponseData,
-  Region,
 } from '@tk-crawler/biz-shared';
 import assert from 'node:assert';
 import { OrganizationStatus, OrgMemberStatus } from '@tk-crawler/biz-shared';
@@ -25,7 +25,7 @@ export async function orgMemberLogin(
     include: {
       organization: {
         include: {
-          regions: true,
+          areas: true,
         },
       },
     },
@@ -61,7 +61,7 @@ export async function orgMemberLogin(
     },
     org_info: {
       ...organization,
-      regions: organization.regions.map(item => item.region as Region),
+      areas: organization.areas.map(item => item.area as Area),
       id: organization.id.toString(),
       if_membership_valid:
         Boolean(organization.membership_expire_at) &&

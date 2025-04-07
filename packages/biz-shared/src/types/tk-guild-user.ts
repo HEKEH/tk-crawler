@@ -1,5 +1,5 @@
+import type { Area } from './area';
 import type { OrganizationItem } from './org-and-user';
-import type { Region } from './region';
 
 export interface TKGuildUser {
   id: string;
@@ -14,7 +14,7 @@ export interface TKGuildUser {
   created_at: Date;
   updated_at: Date;
   organization?: OrganizationItem;
-  regions: Region[];
+  area: Area;
 }
 
 export enum TKGuildUserStatus {

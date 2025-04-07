@@ -1,22 +1,26 @@
 <script setup lang="tsx">
 import type {
+  Area,
   CreateTKGuildUserRequest,
   CreateTKGuildUserResponse,
   GetTKGuildUserListResponseData,
-  Region,
   TKGuildUser,
   UpdateTKGuildUserResponse,
 } from '@tk-crawler/biz-shared';
 import { CopyDocument, RefreshRight } from '@element-plus/icons-vue';
 import { useQuery } from '@tanstack/vue-query';
-import { REGION_LABEL_MAP, TKGuildUserStatus } from '@tk-crawler/biz-shared';
+import { AREA_NAME_MAP, TKGuildUserStatus } from '@tk-crawler/biz-shared';
 import {
   CUSTOM_EVENTS,
   MAIN_APP_PRODUCT_NAME,
   MAIN_APP_PUBLISH_URL,
 } from '@tk-crawler/main-client-shared';
 import { formatDateTime, RESPONSE_CODE } from '@tk-crawler/shared';
-import { copyToClipboard, getPlatform } from '@tk-crawler/view-shared';
+import {
+  AreaTooltipIcon,
+  copyToClipboard,
+  getPlatform,
+} from '@tk-crawler/view-shared';
 import {
   ElButton,
   ElIcon,
@@ -504,13 +508,12 @@ onActivated(refetch);
             <VisiblePassword :password="scope.row.password" />
           </template>
         </ElTableColumn>
-        <ElTableColumn prop="regions" label="地区名称" min-width="120">
+        <ElTableColumn prop="area" label="分区" min-width="160">
           <template #default="scope">
-            {{
-              (scope.row.regions as Region[])
-                .map(item => REGION_LABEL_MAP[item])
-                .join(', ') || '-'
-            }}
+            <div class="area-with-tooltip">
+              {{ AREA_NAME_MAP[scope.row.area as Area] || '-' }}
+              <AreaTooltipIcon :area="scope.row.area as Area" />
+            </div>
           </template>
         </ElTableColumn>
         <ElTableColumn
@@ -674,6 +677,11 @@ onActivated(refetch);
         color: var(--el-color-primary);
       }
     }
+  }
+  .area-with-tooltip {
+    display: flex;
+    align-items: center;
+    column-gap: 6px;
   }
 }
 </style>

@@ -1,5 +1,4 @@
 import type { Area } from './area';
-import type { Region } from './region';
 
 export enum OrganizationStatus {
   /** 正常 */
@@ -29,10 +28,8 @@ export interface OrganizationItem {
   updated_at: Date;
   /** 用户数量 */
   user_count: number;
-  /** 地区 */
-  regions: Region[];
-  /** 区域 */
-  areas?: Area[];
+  /** 分区 */
+  areas: Area[];
 }
 
 export enum OrgMemberStatus {

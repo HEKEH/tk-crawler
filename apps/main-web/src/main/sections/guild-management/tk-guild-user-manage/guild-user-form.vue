@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { Region, TKGuildUser } from '@tk-crawler/biz-shared';
-import { REGION_OPTIONS } from '@tk-crawler/biz-shared';
-import { RegionSelect } from '@tk-crawler/view-shared';
+import type { TKGuildUser } from '@tk-crawler/biz-shared';
+import { AREA_OPTIONS } from '@tk-crawler/biz-shared';
+import { AreaSelectSingle } from '@tk-crawler/view-shared';
 import {
   ElButton,
   ElForm,
@@ -16,11 +16,7 @@ import { useGlobalStore } from '../../../utils';
 
 export type GuildUserFormValues = Pick<
   TKGuildUser,
-  | 'username'
-  | 'password'
-  | 'regions'
-  | 'max_query_per_hour'
-  | 'max_query_per_day'
+  'username' | 'password' | 'area' | 'max_query_per_hour' | 'max_query_per_day'
 >;
 
 const props = defineProps<{
@@ -38,10 +34,10 @@ const DEFAULT_MAX_QUERY_PER_DAY = 280;
 
 const formRef = ref<FormInstance>();
 
-const form = reactive<GuildUserFormValues>({
+const form = reactive<Partial<GuildUserFormValues>>({
   username: props.initialData?.username || '',
   password: props.initialData?.password || '',
-  regions: props.initialData?.regions || [],
+  area: props.initialData?.area,
   max_query_per_hour:
     props.initialData?.max_query_per_hour || DEFAULT_MAX_QUERY_PER_HOUR,
   max_query_per_day:
@@ -54,7 +50,7 @@ const rules: FormRules = {
     { min: 2, max: 30, message: '长度在 2 到 30 个字符' },
   ],
   password: [{ required: true, message: '请输入后台查询密码' }],
-  regions: [{ required: true, message: '请选择国家/地区' }],
+  area: [{ required: true, message: '请选择分区' }],
   max_query_per_hour: [{ required: true, message: '请输入每小时查询次数' }],
   max_query_per_day: [{ required: true, message: '请输入每天查询次数' }],
 };
@@ -71,11 +67,11 @@ async function handleSubmit() {
       isLoading.value = true;
       try {
         await props.submit({
-          username: form.username,
-          password: form.password,
-          regions: form.regions,
-          max_query_per_hour: form.max_query_per_hour,
-          max_query_per_day: form.max_query_per_day,
+          username: form.username!,
+          password: form.password!,
+          area: form.area!,
+          max_query_per_hour: form.max_query_per_hour!,
+          max_query_per_day: form.max_query_per_day!,
         });
       } finally {
         isLoading.value = false;
@@ -92,9 +88,9 @@ function handleCancel() {
 
 const globalStore = useGlobalStore();
 
-const regionOptions = computed(() => {
-  const regionSet = new Set(globalStore.userProfile.orgInfo?.regions);
-  return REGION_OPTIONS.filter(item => regionSet.has(item.value as Region));
+const areaOptions = computed(() => {
+  const areasSet = new Set(globalStore.userProfile.orgInfo?.areas);
+  return AREA_OPTIONS.filter(item => areasSet.has(item.value));
 });
 </script>
 
@@ -112,10 +108,10 @@ const regionOptions = computed(() => {
     <ElFormItem label="后台查询密码" prop="password">
       <ElInput v-model="form.password" placeholder="请输入后台查询密码" />
     </ElFormItem>
-    <ElFormItem label="国家/地区" prop="regions">
-      <RegionSelect
-        v-model="form.regions"
-        :options="regionOptions"
+    <ElFormItem label="分区" prop="area">
+      <AreaSelectSingle
+        v-model="form.area"
+        :options="areaOptions"
         :show-all="false"
       />
     </ElFormItem>

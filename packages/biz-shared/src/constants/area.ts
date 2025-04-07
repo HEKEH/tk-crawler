@@ -162,24 +162,15 @@ export const REGION_AREA_MAP: { [key in Region]?: Area } = (() => {
 export interface AreaOption {
   label: string;
   value: Area;
-  description?: string;
 }
 
-function getAreaAndDescription(area: Area): {
-  value: Area;
-  description?: string;
-} {
+function getAreaDescription(area: Area): string | undefined {
   const regions = AREA_REGIONS_MAP[area];
   if (regions.length === 1) {
-    return {
-      value: area,
-    };
+    return undefined;
   }
   const regionLabels = regions.map(region => REGION_LABEL_MAP[region]);
-  return {
-    value: area,
-    description: `具体包括以下国家或区域: ${regionLabels.join(', ')}`,
-  };
+  return `包括: ${regionLabels.join(', ')}`;
 }
 
 export const AREA_OPTIONS: AreaOption[] = [
@@ -210,9 +201,12 @@ export const AREA_OPTIONS: AreaOption[] = [
   { label: '葡萄牙', value: Area.PT_PLUS },
   { label: '新加坡', value: Area.SG },
   // { label: '美国及加拿大', value: Area.US_PLUS },
-].map(item => {
-  return {
-    label: item.label,
-    ...getAreaAndDescription(item.value),
-  };
-});
+];
+
+export const AREA_DESCRIPTION_MAP = Object.fromEntries(
+  AREA_OPTIONS.map(item => [item.value, getAreaDescription(item.value)]),
+) as Record<Area, string>;
+
+export const AREA_NAME_MAP: Record<Area, string> = Object.fromEntries(
+  AREA_OPTIONS.map(item => [item.value, item.label]),
+) as Record<Area, string>;

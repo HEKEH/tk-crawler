@@ -4,15 +4,14 @@ import type {
   CreateOrgResponse,
   GetOrgListResponseData,
   OrganizationItem,
-  Region,
   UpdateOrgRequest,
   UpdateOrgResponse,
 } from '@tk-crawler/biz-shared';
 import { RefreshRight } from '@element-plus/icons-vue';
 import { useQuery } from '@tanstack/vue-query';
-import { OrganizationStatus, REGION_LABEL_MAP } from '@tk-crawler/biz-shared';
+import { AREA_NAME_MAP, OrganizationStatus } from '@tk-crawler/biz-shared';
 import { formatDateTime, RESPONSE_CODE } from '@tk-crawler/shared';
-import { confirmAfterSeconds } from '@tk-crawler/view-shared';
+import { AreaTooltipIcon, confirmAfterSeconds } from '@tk-crawler/view-shared';
 import {
   ElButton,
   ElIcon,
@@ -293,15 +292,17 @@ function onManageOrgMembers(org: OrganizationItem) {
             </ElTag>
           </template>
         </ElTableColumn>
-        <ElTableColumn prop="regions" label="地区" min-width="120">
+        <ElTableColumn prop="areas" label="分区" min-width="160">
           <template #default="scope">
-            <div class="region-tags">
+            <div class="area-tag">
               <ElTag
-                v-for="region in scope.row.regions"
-                :key="region"
+                v-for="area in (scope.row as OrganizationItem).areas"
+                :key="area"
                 type="success"
+                class="area-tag-item"
               >
-                {{ REGION_LABEL_MAP[region as Region] }}
+                {{ AREA_NAME_MAP[area] }}
+                <AreaTooltipIcon :area="area" />
               </ElTag>
             </div>
           </template>
@@ -465,7 +466,7 @@ function onManageOrgMembers(org: OrganizationItem) {
     margin-top: 1rem;
     padding-right: 1rem;
   }
-  .region-tags {
+  .area-tag {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
@@ -473,6 +474,13 @@ function onManageOrgMembers(org: OrganizationItem) {
   .main-table {
     flex: 1;
     width: 100%;
+  }
+  .area-tag-item {
+    :global(.el-tag__content) {
+      display: flex;
+      align-items: center;
+      column-gap: 6px;
+    }
   }
 }
 </style>

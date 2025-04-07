@@ -49,7 +49,7 @@ const rules: FormRules = {
     { min: 2, max: 30, message: '长度在 2 到 30 个字符' },
   ],
   status: [{ required: true, message: '请选择状态' }],
-  regions: [{ required: true, message: '请选择地区' }],
+  areas: [{ required: true, message: '请选择地区' }],
   membershipDates: [
     {
       validator: (rule, value, callback) => {
@@ -103,16 +103,16 @@ async function handleSubmit() {
           }
         }
         // 如果地区没有变化，则不提交地区，以免浪费资源
-        const regions = isArrayEqual(
-          form.regions || [],
-          props.initialData?.regions || [],
+        const areas = isArrayEqual(
+          form.areas || [],
+          props.initialData?.areas || [],
         )
           ? undefined
-          : form.regions;
+          : form.areas;
         await props.submit({
           name: form.name,
           status: form.status,
-          regions,
+          areas,
           membership_start_at: form.membership_start_at ?? null,
           membership_expire_at: form.membership_expire_at ?? null,
           remark: form.remark,

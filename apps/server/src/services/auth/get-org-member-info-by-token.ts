@@ -1,6 +1,6 @@
 import type {
+  Area,
   OrgMemberUserInfoWithOrgInfo,
-  Region,
 } from '@tk-crawler/biz-shared';
 import { OrganizationStatus, OrgMemberStatus } from '@tk-crawler/biz-shared';
 import { mysqlClient } from '@tk-crawler/database';
@@ -37,7 +37,7 @@ export async function getOrgMemberInfoByToken(
     include: {
       organization: {
         include: {
-          regions: true,
+          areas: true,
         },
       },
     },
@@ -57,7 +57,7 @@ export async function getOrgMemberInfoByToken(
     throw new TokenInvalidError('所属组织已禁用, 请重新登录');
   }
 
-  const orgRegions = org.regions.map(item => item.region as Region);
+  const orgAreas = org.areas.map(item => item.area as Area);
 
   return {
     user_info: {
@@ -67,7 +67,7 @@ export async function getOrgMemberInfoByToken(
     },
     org_info: {
       ...org,
-      regions: orgRegions,
+      areas: orgAreas,
       id: org.id.toString(),
       if_membership_valid:
         Boolean(org.membership_expire_at) &&

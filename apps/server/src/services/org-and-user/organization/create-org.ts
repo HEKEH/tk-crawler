@@ -10,16 +10,16 @@ export async function createOrg(data: CreateOrgRequest): Promise<void> {
   if (await checkOrgNameExist(data.name)) {
     throw new BusinessError('组织名称已存在');
   }
-  const { regions, ...rest } = data;
-  assert(regions && regions.length > 0, '地区不能为空');
+  const { areas, ...rest } = data;
+  assert(areas && areas.length > 0, '地区不能为空');
   await mysqlClient.prismaClient.$transaction(async tx => {
     const org = await tx.organization.create({
       data: rest,
     });
-    await tx.orgRegionRelation.createMany({
-      data: regions.map(region => ({
+    await tx.orgAreaRelation.createMany({
+      data: areas.map(area => ({
         org_id: org.id,
-        region,
+        area,
       })),
     });
   });

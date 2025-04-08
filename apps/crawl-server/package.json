@@ -1,5 +1,5 @@
 {
-  "name": "@tk-crawler/crawler-server",
+  "name": "@tk-crawler/crawl-server",
   "version": "0.0.0",
   "exports": {
     ".": {
@@ -23,8 +23,8 @@
     "prod:log": "cross-env pm2 logs",
     "prod:flush": "cross-env pm2 flush",
     "docker:build": "./scripts/docker/build-docker-image.sh && pnpm docker:output",
-    "docker:build:local": "./scripts/docker/build-docker-image.sh -e ./.env.local.production -i tk-crawler-server-local",
-    "docker:output": "docker save -o ./docker-images/tk-crawler-server.tar tk-crawler-server:latest",
+    "docker:build:local": "./scripts/docker/build-docker-image.sh -e ./.env.local.production -i tk-crawler-crawl-server-local",
+    "docker:output": "docker save -o ./docker-images/tk-crawler-crawl-server.tar tk-crawler-crawl-server:latest",
     "lint": "eslint",
     "preinstall": "npx only-allow pnpm"
   },

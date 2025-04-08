@@ -11,7 +11,7 @@
   "include": [
     "scripts/**/*",
     "apps/server/**/*",
-    "apps/crawler-server/**/*",
+    "apps/crawl-server/**/*",
     "apps/crawler-admin-client/electron/**/*",
     "apps/crawler-admin-client/shared/**/*",
     "apps/follow-client/electron/**/*",

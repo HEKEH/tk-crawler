@@ -96,77 +96,7 @@ importers:
         specifier: ^4.3.0
         version: 4.5.3(@types/node@22.13.10)(rollup@4.37.0)(typescript@5.5.4)(vite@5.4.14)
 
-  apps/crawler-admin-client:
-    dependencies:
-      canvas:
-        specifier: ^3.0.1
-        version: 3.1.0
-      jsdom:
-        specifier: ^26.0.0
-        version: 26.0.0(canvas@3.1.0)
-    devDependencies:
-      '@tanstack/vue-query':
-        specifier: ^5.66.11
-        version: 5.68.0(vue@3.5.13)
-      '@tk-crawler/core':
-        specifier: workspace:*
-        version: link:../../packages/core
-      '@types/global-agent':
-        specifier: ^2.1.3
-        version: 2.1.3
-      '@types/lodash':
-        specifier: ^4.17.13
-        version: 4.17.16
-      '@vitejs/plugin-vue':
-        specifier: ^5.2.1
-        version: 5.2.2(vite@5.4.14)(vue@3.5.13)
-      '@vitejs/plugin-vue-jsx':
-        specifier: ^4.1.1
-        version: 4.1.2(vite@5.4.14)(vue@3.5.13)
-      dayjs:
-        specifier: ^1.11.13
-        version: 1.11.13
-      electron:
-        specifier: ^34.3.2
-        version: 34.3.3
-      electron-builder:
-        specifier: ^25.1.8
-        version: 25.1.8(electron-builder-squirrel-windows@25.1.8)
-      element-plus:
-        specifier: ^2.9.6
-        version: 2.9.6(vue@3.5.13)
-      get-system-proxy:
-        specifier: ^1.0.0
-        version: 1.0.0
-      global-agent:
-        specifier: ^3.0.0
-        version: 3.0.0
-      lodash:
-        specifier: ^4.17.21
-        version: 4.17.21
-      log4js:
-        specifier: ^6.9.1
-        version: 6.9.1
-      rxjs:
-        specifier: ^7.8.1
-        version: 7.8.2
-      vite-plugin-electron:
-        specifier: ^0.29.0
-        version: 0.29.0(vite-plugin-electron-renderer@0.14.6)
-      vite-plugin-electron-renderer:
-        specifier: ^0.14.6
-        version: 0.14.6
-      vite-plugin-html:
-        specifier: ^3.2.2
-        version: 3.2.2(vite@5.4.14)
-      vue:
-        specifier: ^3.5.12
-        version: 3.5.13(typescript@5.5.4)
-      vue-tsc:
-        specifier: ^2.0.26
-        version: 2.2.8(typescript@5.5.4)
-
-  apps/crawler-server:
+  apps/crawl-server:
     dependencies:
       '@tk-crawler/database':
         specifier: workspace:*
@@ -247,6 +177,76 @@ importers:
       nodemon:
         specifier: ^3.1.9
         version: 3.1.9
+
+  apps/crawler-admin-client:
+    dependencies:
+      canvas:
+        specifier: ^3.0.1
+        version: 3.1.0
+      jsdom:
+        specifier: ^26.0.0
+        version: 26.0.0(canvas@3.1.0)
+    devDependencies:
+      '@tanstack/vue-query':
+        specifier: ^5.66.11
+        version: 5.68.0(vue@3.5.13)
+      '@tk-crawler/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      '@types/global-agent':
+        specifier: ^2.1.3
+        version: 2.1.3
+      '@types/lodash':
+        specifier: ^4.17.13
+        version: 4.17.16
+      '@vitejs/plugin-vue':
+        specifier: ^5.2.1
+        version: 5.2.2(vite@5.4.14)(vue@3.5.13)
+      '@vitejs/plugin-vue-jsx':
+        specifier: ^4.1.1
+        version: 4.1.2(vite@5.4.14)(vue@3.5.13)
+      dayjs:
+        specifier: ^1.11.13
+        version: 1.11.13
+      electron:
+        specifier: ^34.3.2
+        version: 34.3.3
+      electron-builder:
+        specifier: ^25.1.8
+        version: 25.1.8(electron-builder-squirrel-windows@25.1.8)
+      element-plus:
+        specifier: ^2.9.6
+        version: 2.9.6(vue@3.5.13)
+      get-system-proxy:
+        specifier: ^1.0.0
+        version: 1.0.0
+      global-agent:
+        specifier: ^3.0.0
+        version: 3.0.0
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
+      log4js:
+        specifier: ^6.9.1
+        version: 6.9.1
+      rxjs:
+        specifier: ^7.8.1
+        version: 7.8.2
+      vite-plugin-electron:
+        specifier: ^0.29.0
+        version: 0.29.0(vite-plugin-electron-renderer@0.14.6)
+      vite-plugin-electron-renderer:
+        specifier: ^0.14.6
+        version: 0.14.6
+      vite-plugin-html:
+        specifier: ^3.2.2
+        version: 3.2.2(vite@5.4.14)
+      vue:
+        specifier: ^3.5.12
+        version: 3.5.13(typescript@5.5.4)
+      vue-tsc:
+        specifier: ^2.0.26
+        version: 2.2.8(typescript@5.5.4)
 
   apps/follow-client:
     devDependencies:

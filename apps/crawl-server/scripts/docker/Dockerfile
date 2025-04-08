@@ -34,8 +34,8 @@ ENV NODE_ENV=development
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --ignore-scripts
 RUN pnpm prisma:generate
 ENV NODE_ENV=production
-RUN pnpm run build:crawler-server
-RUN pnpm --filter @tk-crawler/crawler-server --prod deploy /deploy/@tk-crawler/crawler-server
+RUN pnpm run build:crawl-server
+RUN pnpm --filter @tk-crawler/crawl-server --prod deploy /deploy/@tk-crawler/crawl-server
 RUN cp ${ENV_FILE} /deploy/.env.production
 RUN mkdir -p /deploy/certs
 RUN cp -r certs/production /deploy/certs
@@ -49,7 +49,7 @@ ENV TZ="Asia/Shanghai"
 # Copy only necessary files from the builder stage
 COPY --from=builder /deploy /app
 
-WORKDIR /app/@tk-crawler/crawler-server
+WORKDIR /app/@tk-crawler/crawl-server
 
 EXPOSE ${PORT}
 

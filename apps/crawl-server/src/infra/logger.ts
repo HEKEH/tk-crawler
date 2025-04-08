@@ -10,9 +10,9 @@ class Logger {
 
   private constructor() {
     const { env } = process;
-    const logLevel = env.CRAWLER_SERVER_LOG_LEVEL;
+    const logLevel = env.CRAWL_SERVER_LOG_LEVEL;
     if (!logLevel) {
-      throw new Error('CRAWLER_SERVER_LOG_LEVEL is required');
+      throw new Error('CRAWL_SERVER_LOG_LEVEL is required');
     }
     // 获取适合的日志目录
     const logDir = this._getLogDirectory();
@@ -88,10 +88,10 @@ class Logger {
     if (process.env.NODE_ENV === 'production') {
       basePath =
         platform === 'darwin'
-          ? join(homedir(), 'Library/Logs/tk-crawler-server')
+          ? join(homedir(), 'Library/Logs/tk-crawler-crawl-server')
           : platform === 'linux'
-            ? '/var/log/tk-crawler-server'
-            : join(process.cwd(), 'logs/tk-crawler-server');
+            ? '/var/log/tk-crawler-crawl-server'
+            : join(process.cwd(), 'logs/tk-crawler-crawl-server');
     } else {
       // 开发环境使用项目目录
       basePath = path.join(process.cwd(), 'logs');

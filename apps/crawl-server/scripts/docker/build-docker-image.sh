@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ENV_FILE="./.env.production"
-IMAGE_NAME="tk-crawler-server"
+IMAGE_NAME="tk-crawler-crawl-server"
 
 # 处理参数
 while getopts "e:i:" opt; do
@@ -31,7 +31,7 @@ cd "${PROJECT_ROOT}" # assure current dir is the exact project root directory
 PORT=""
 
 # get version from package.json
-# VERSION=$(node -p "require('./apps/crawler-server/package.json').version")
+# VERSION=$(node -p "require('./apps/crawl-server/package.json').version")
 # IMAGE_TAG="${IMAGE_NAME}:${VERSION}"
 
 function log() {
@@ -43,7 +43,7 @@ function log_error() {
 }
 
 function load_port_from_env_file() {
-  local PORT_VAR_NAME="CRAWLER_SERVER_PORT"
+  local PORT_VAR_NAME="CRAWL_SERVER_PORT"
 
   if [ ! -f "$ENV_FILE" ]; then
     log_error "$ENV_FILE file not found"

@@ -4,14 +4,14 @@ import { logger } from './infra/logger';
 
 const { env } = process;
 
-const port = env.CRAWLER_SERVER_PORT;
+const port = env.CRAWL_SERVER_PORT;
 if (!port) {
-  logger.error('CRAWLER_SERVER_PORT is required');
+  logger.error('CRAWL_SERVER_PORT is required');
   process.exit(1);
 }
-const allowOrigin = env.CRAWLER_SERVER_ALLOW_ORIGIN;
+const allowOrigin = env.CRAWL_SERVER_ALLOW_ORIGIN;
 if (!allowOrigin) {
-  logger.error('CRAWLER_SERVER_ALLOW_ORIGIN is required');
+  logger.error('CRAWL_SERVER_ALLOW_ORIGIN is required');
   process.exit(1);
 }
 

@@ -17,6 +17,7 @@ pnpm prisma:seed
 
 ```bash
 pnpm dev:server
+pnpm dev:crawler-server
 ```
 
 ### 启动自动关注助手客户端

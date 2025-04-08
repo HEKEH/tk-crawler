@@ -166,6 +166,88 @@ importers:
         specifier: ^2.0.26
         version: 2.2.8(typescript@5.5.4)
 
+  apps/crawler-server:
+    dependencies:
+      '@tk-crawler/database':
+        specifier: workspace:*
+        version: link:../../packages/database
+      cross-env:
+        specifier: ^7.0.3
+        version: 7.0.3
+      dotenv:
+        specifier: ^16.4.7
+        version: 16.4.7
+      dotenv-cli:
+        specifier: ^7.4.2
+        version: 7.4.4
+      i18next-fs-backend:
+        specifier: ^2.3.2
+        version: 2.6.0
+      pm2:
+        specifier: ^5.4.3
+        version: 5.4.3
+      uuid:
+        specifier: ^11.0.3
+        version: 11.1.0
+    devDependencies:
+      '@tk-crawler/biz-shared':
+        specifier: workspace:*
+        version: link:../../packages/biz-shared
+      '@tk-crawler/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
+      '@types/bcryptjs':
+        specifier: ^2.4.6
+        version: 2.4.6
+      '@types/koa':
+        specifier: ^2.15.0
+        version: 2.15.0
+      '@types/koa-bodyparser':
+        specifier: ^4.3.12
+        version: 4.3.12
+      '@types/koa-router':
+        specifier: ^7.4.8
+        version: 7.4.8
+      '@types/lodash':
+        specifier: ^4.17.13
+        version: 4.17.16
+      '@types/uuid':
+        specifier: ^10.0.0
+        version: 10.0.0
+      axios:
+        specifier: ^1.7.9
+        version: 1.8.3
+      bcryptjs:
+        specifier: ^2.4.3
+        version: 2.4.3
+      dayjs:
+        specifier: ^1.11.13
+        version: 1.11.13
+      i18next:
+        specifier: ^23.16.0
+        version: 23.16.8
+      jwt-simple:
+        specifier: ^0.5.6
+        version: 0.5.6
+      koa:
+        specifier: ^2.15.4
+        version: 2.16.0
+      koa-bodyparser:
+        specifier: ^4.4.1
+        version: 4.4.1
+      koa-router:
+        specifier: ^13.0.1
+        version: 13.0.1
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
+      log4js:
+        specifier: ^6.9.1
+        version: 6.9.1
+      nodemon:
+        specifier: ^3.1.9
+        version: 3.1.9
+
   apps/follow-client:
     devDependencies:
       '@types/global-agent':
@@ -601,6 +683,8 @@ importers:
       '@types/qs':
         specifier: ^6.9.17
         version: 6.9.18
+
+  packages/styles: {}
 
   packages/tk-crack:
     dependencies:

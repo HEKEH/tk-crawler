@@ -16,6 +16,7 @@
   "exclude": [
     "scripts/**",
     "apps/server/**",
+    "apps/crawler-server/**",
     "apps/crawler-admin-client/electron/**",
     "apps/follow-client/electron/**",
     "apps/mobile-follow-client/electron/**",

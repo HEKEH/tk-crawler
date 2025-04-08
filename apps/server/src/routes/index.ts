@@ -4,11 +4,9 @@ import anchorPoolRouter from './anchor-pool';
 import authRouter from './auth';
 import clientRouter from './client';
 import followHelpRouter from './follow-help';
-import userRouter from './user';
 
 const router = new Router();
 
-router.use(userRouter.routes(), userRouter.allowedMethods());
 router.use(anchorPoolRouter.routes(), anchorPoolRouter.allowedMethods());
 router.use(
   adminOrgAndUserRouter.routes(),

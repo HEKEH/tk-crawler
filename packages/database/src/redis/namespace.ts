@@ -1,11 +1,11 @@
-import type { RedisClient } from './client';
+import type { IRedisClient } from './client';
 
 export class RedisNamespace {
   private _prefix: string;
 
-  private _redisClient: RedisClient;
+  private _redisClient: IRedisClient;
 
-  constructor(redisClient: RedisClient, namespace: string) {
+  constructor(redisClient: IRedisClient, namespace: string) {
     this._prefix = namespace;
     this._redisClient = redisClient;
   }

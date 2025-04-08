@@ -1,18 +1,18 @@
 import Redis from 'ioredis';
 import { getLogger } from '../infra';
 
-export class RedisClient {
+class RedisClient {
   private static instance: RedisClient;
   private _client: Redis | undefined;
 
-  get client() {
+  get redis() {
     if (!this._client) {
       throw new Error('Redis Client is not initialized');
     }
     return this._client;
   }
 
-  private constructor() {}
+  constructor() {}
 
   async connect(
     config: {
@@ -82,7 +82,7 @@ export class RedisClient {
   /** 基础的 get 方法 */
   async get(key: string): Promise<string | null> {
     try {
-      return await this.client.get(key);
+      return await this.redis.get(key);
     } catch (error) {
       getLogger().error('Redis GET Error:', error);
       throw error;
@@ -94,7 +94,7 @@ export class RedisClient {
       if (keys.length === 0) {
         return [];
       }
-      return await this.client.mget(keys);
+      return await this.redis.mget(keys);
     } catch (error) {
       getLogger().error('Redis MGET Error:', error);
       throw error;
@@ -106,7 +106,7 @@ export class RedisClient {
   ): Promise<void> {
     try {
       const data = Object.fromEntries(keyValuePairs);
-      await this.client.mset(data);
+      await this.redis.mset(data);
     } catch (error) {
       getLogger().error('Redis MSET Error:', error);
       throw error;
@@ -123,7 +123,7 @@ export class RedisClient {
       }
 
       // 创建管道
-      const pipeline = this.client.pipeline();
+      const pipeline = this.redis.pipeline();
 
       // 添加所有SET命令到管道
       for (const [key, value] of keyValuePairs) {
@@ -154,9 +154,9 @@ export class RedisClient {
   async set(key: string, value: string | number, ttl?: number): Promise<void> {
     try {
       if (ttl) {
-        await this.client.set(key, value, 'EX', ttl);
+        await this.redis.set(key, value, 'EX', ttl);
       } else {
-        await this.client.set(key, value);
+        await this.redis.set(key, value);
       }
     } catch (error) {
       getLogger().error('Redis SET Error:', error);
@@ -167,7 +167,7 @@ export class RedisClient {
   /** 删除键 */
   async del(...keys: string[]): Promise<void> {
     try {
-      await this.client.del(...keys);
+      await this.redis.del(...keys);
     } catch (error) {
       getLogger().error('Redis DEL Error:', error);
       throw error;
@@ -176,7 +176,7 @@ export class RedisClient {
 
   async keys(pattern: string): Promise<string[]> {
     try {
-      return await this.client.keys(pattern);
+      return await this.redis.keys(pattern);
     } catch (error) {
       getLogger().error('Redis KEYS Error:', error);
       throw error;
@@ -190,6 +190,8 @@ export class RedisClient {
     }
   }
 }
+
+export type IRedisClient = InstanceType<typeof RedisClient>;
 
 /** 导出单例实例 */
 export const redisClient = RedisClient.getInstance();

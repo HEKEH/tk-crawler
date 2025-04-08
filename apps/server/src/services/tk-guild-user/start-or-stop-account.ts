@@ -52,11 +52,18 @@ export async function startLiveAdminAccount(
   assert(user_id, '用户ID不能为空');
   assert(cookie, 'Cookie不能为空');
   assert(faction_id, '分区ID不能为空');
-  assert(area, '区域不能为空');
+  assert(area, '分区参数不能为空');
   const user = await mysqlClient.prismaClient.liveAdminUser.findUnique({
     where: {
       id: BigInt(user_id),
       org_id: BigInt(org_id),
+    },
+    include: {
+      organization: {
+        include: {
+          areas: true,
+        },
+      },
     },
   });
 
@@ -70,6 +77,10 @@ export async function startLiveAdminAccount(
     ].includes(user.status)
   ) {
     throw new BusinessError('用户已启动');
+  }
+
+  if (!user.organization.areas.some(item => item.area === area)) {
+    throw new BusinessError('当前机构不支持当前账号的分区');
   }
 
   await mysqlClient.prismaClient.$transaction(async tx => {

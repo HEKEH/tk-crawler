@@ -7,7 +7,11 @@ import type {
   TKGuildUser,
   UpdateTKGuildUserResponse,
 } from '@tk-crawler/biz-shared';
-import { CopyDocument, RefreshRight } from '@element-plus/icons-vue';
+import {
+  CopyDocument,
+  InfoFilled,
+  RefreshRight,
+} from '@element-plus/icons-vue';
 import { useQuery } from '@tanstack/vue-query';
 import { AREA_NAME_MAP, TKGuildUserStatus } from '@tk-crawler/biz-shared';
 import {
@@ -346,6 +350,15 @@ function getStartOrStopType(status: TKGuildUserStatus): 'stop' | 'start' {
 async function onStartOrStop(item: TKGuildUser) {
   const type = getStartOrStopType(item.status);
   if (type === 'stop') {
+    try {
+      await ElMessageBox.confirm('确定要停止查询吗？', {
+        type: 'warning',
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+      });
+    } catch {
+      return;
+    }
     const result = await stopTKGuildUserAccount(
       { user_id: item.id },
       globalStore.token,
@@ -439,7 +452,17 @@ onActivated(refetch);
       <div class="header-row">
         <div class="left-part">
           <ElButton type="primary" size="small" @click="onAddItem">
-            新增TK后台查询账号
+            添加TK后台查询账号
+            <ElTooltip
+              popper-style="max-width: 200px;"
+              content="添加账号越多，查询速度越快"
+              placement="top"
+              effect="light"
+            >
+              <ElIcon style="font-size: 14px; margin-left: 0.25rem">
+                <InfoFilled />
+              </ElIcon>
+            </ElTooltip>
           </ElButton>
         </div>
         <div class="right-part">
@@ -473,19 +496,6 @@ onActivated(refetch);
         @selection-change="handleSelectionChange"
       >
         <ElTableColumn type="selection" width="55" />
-        <ElTableColumn prop="username" label="后台查询账号" min-width="200" />
-        <ElTableColumn
-          prop="status"
-          label="状态"
-          min-width="100"
-          sortable="custom"
-        >
-          <template #default="scope">
-            <ElTag :type="getStatusTagType(scope.row.status)">
-              {{ getStatusText(scope.row.status) }}
-            </ElTag>
-          </template>
-        </ElTableColumn>
         <ElTableColumn label="启动/停止" min-width="120">
           <template #default="scope">
             <div class="operation-buttons">
@@ -503,9 +513,22 @@ onActivated(refetch);
             </div>
           </template>
         </ElTableColumn>
+        <ElTableColumn prop="username" label="后台查询账号" min-width="200" />
         <ElTableColumn prop="password" label="后台查询密码" min-width="160">
           <template #default="scope">
             <VisiblePassword :password="scope.row.password" />
+          </template>
+        </ElTableColumn>
+        <ElTableColumn
+          prop="status"
+          label="状态"
+          min-width="100"
+          sortable="custom"
+        >
+          <template #default="scope">
+            <ElTag :type="getStatusTagType(scope.row.status)">
+              {{ getStatusText(scope.row.status) }}
+            </ElTag>
           </template>
         </ElTableColumn>
         <ElTableColumn

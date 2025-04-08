@@ -23,7 +23,10 @@
   "[properties]": {
     "editor.formatOnSave": false
   },
-  "[conf]": {
+  "files.associations": {
+    "redis.template.conf": "redisconf"
+  },
+  "[redisconf]": {
     "editor.formatOnSave": false
   },
   "editor.codeActionsOnSave": {

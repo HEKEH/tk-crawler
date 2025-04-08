@@ -187,6 +187,7 @@ class RedisClient {
   async quit(): Promise<void> {
     if (this._client) {
       await this._client.quit();
+      getLogger().info('Redis Client Closed');
     }
   }
 }

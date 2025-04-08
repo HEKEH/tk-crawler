@@ -52,6 +52,7 @@ export class MysqlClient {
 
   async disconnect() {
     await this.prismaClient.$disconnect();
+    getLogger().info('Mysql Client Closed');
   }
 }
 

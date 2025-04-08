@@ -6,9 +6,9 @@ import type {
 import type { MessageCenter } from '@tk-crawler/shared';
 import type { TikTokQueryTokens } from '../requests/live';
 import {
-  CrawlerMessage,
   getRequestErrorType,
   ShouldUpdateAnchorResult,
+  TKRequestMessage,
 } from '@tk-crawler/biz-shared';
 import { FrequencyLimitTaskQueue } from '@tk-crawler/shared';
 import { getLogger } from '../infra/logger';
@@ -62,7 +62,7 @@ export class AnchorPool {
 
   private _onCookieOutdated() {
     this._stopped = true;
-    this._messageCenter.emit(CrawlerMessage.TIKTOK_COOKIE_OUTDATED);
+    this._messageCenter.emit(TKRequestMessage.TIKTOK_COOKIE_OUTDATED);
   }
 
   start() {
@@ -103,7 +103,7 @@ export class AnchorPool {
       `[SaveAnchor] Anchor info save success: ${anchor.display_id}`,
     );
     const data: AnchorCrawledMessage = { anchor };
-    this._messageCenter.emit(CrawlerMessage.ANCHOR_CRAWLED, data);
+    this._messageCenter.emit(TKRequestMessage.ANCHOR_CRAWLED, data);
   }
 
   async addAnchors(anchors: RawAnchorParam[]) {
@@ -129,7 +129,7 @@ export class AnchorPool {
     } catch (error) {
       getLogger().error('[addAnchors] error', error);
       this._messageCenter.emit(
-        CrawlerMessage.REQUEST_ERROR,
+        TKRequestMessage.REQUEST_ERROR,
         getRequestErrorType(error),
       );
     }
@@ -201,7 +201,7 @@ export class AnchorPool {
           error,
         });
         this._messageCenter.emit(
-          CrawlerMessage.REQUEST_ERROR,
+          TKRequestMessage.REQUEST_ERROR,
           getRequestErrorType(error),
         );
       }

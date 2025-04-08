@@ -1,5 +1,5 @@
 import type { MessageCenter } from '@tk-crawler/shared';
-import { CrawlerMessage, RequestErrorType } from '../types';
+import { RequestErrorType, TKRequestMessage } from '../types';
 
 export function isTiktokRequestEconnreset(error: any) {
   return error?.code === 'ECONNRESET';
@@ -25,7 +25,7 @@ export function tiktokRequestErrorHandler<T>(
 ) {
   return requestPromise.catch(error => {
     messageCenter.emit(
-      CrawlerMessage.REQUEST_ERROR,
+      TKRequestMessage.REQUEST_ERROR,
       getRequestErrorType(error),
     );
     throw error;

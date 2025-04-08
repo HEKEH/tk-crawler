@@ -1,5 +1,8 @@
 import type {
   Area,
+  BroadcastGuildUserCreateMessage,
+  BroadcastGuildUserDeleteMessage,
+  BroadcastGuildUserUpdateMessage,
   CreateTKGuildUserRequest,
   CreateTKGuildUserResponse,
   DeleteTKGuildUserRequest,
@@ -10,8 +13,11 @@ import type {
   UpdateTKGuildUserRequest,
 } from '@tk-crawler/biz-shared';
 import assert from 'node:assert';
-import { TKGuildUserStatus } from '@tk-crawler/biz-shared';
-import { mysqlClient } from '@tk-crawler/database';
+import {
+  ServerBroadcastMessageChannel,
+  TKGuildUserStatus,
+} from '@tk-crawler/biz-shared';
+import { mysqlClient, redisMessageBus } from '@tk-crawler/database';
 import { isEmpty, transObjectValuesToString, xss } from '@tk-crawler/shared';
 import { logger } from '../../infra/logger';
 import { transformTKGuildUserFilterValues } from './filter';
@@ -109,6 +115,24 @@ export async function createTKGuildUser(
         org_id: BigInt(org_id),
       },
     });
+    const message: BroadcastGuildUserCreateMessage = {
+      type: 'create',
+      data: {
+        id: user.id.toString(),
+        username: user.username,
+        org_id: user.org_id.toString(),
+        status: user.status,
+        max_query_per_hour: user.max_query_per_hour,
+        max_query_per_day: user.max_query_per_day,
+        cookie: user.cookie,
+        faction_id: user.faction_id,
+        area: user.area as Area | null,
+      },
+    };
+    redisMessageBus.publish(
+      ServerBroadcastMessageChannel.GuildUserMessage,
+      JSON.stringify(message),
+    );
     return { id: user.id.toString() };
   });
 }
@@ -162,6 +186,23 @@ export async function updateTKGuildUser(
       },
       data: updateData,
     });
+    const message: BroadcastGuildUserUpdateMessage = {
+      type: 'update',
+      data: {
+        id,
+        username: updateData.username,
+        org_id,
+        status: updateData.status,
+        max_query_per_hour: updateData.max_query_per_hour,
+        max_query_per_day: updateData.max_query_per_day,
+        faction_id: updateData.faction_id,
+        area: updateData.area,
+      },
+    };
+    redisMessageBus.publish(
+      ServerBroadcastMessageChannel.GuildUserMessage,
+      JSON.stringify(message),
+    );
   });
 }
 
@@ -173,7 +214,7 @@ export async function deleteTKGuildUser(
   assert(data.ids.length > 0, '用户ID不能为空');
   assert(data.org_id, '机构ID不能为空');
 
-  return await mysqlClient.prismaClient.$transaction(async prisma => {
+  const resp = await mysqlClient.prismaClient.$transaction(async prisma => {
     const resp = await prisma.liveAdminUser.deleteMany({
       where: {
         id: { in: data.ids.map(id => BigInt(id)) },
@@ -185,6 +226,17 @@ export async function deleteTKGuildUser(
       deleted_count: resp.count,
     };
   });
+  const message: BroadcastGuildUserDeleteMessage = {
+    type: 'delete',
+    data: {
+      ids: data.ids,
+    },
+  };
+  redisMessageBus.publish(
+    ServerBroadcastMessageChannel.GuildUserMessage,
+    JSON.stringify(message),
+  );
+  return resp;
 }
 
 export * from './start-or-stop-account';

@@ -1,6 +1,10 @@
-import type { CreateOrgRequest } from '@tk-crawler/biz-shared';
+import type {
+  BroadcastOrganizationCreateMessage,
+  CreateOrgRequest,
+} from '@tk-crawler/biz-shared';
 import assert from 'node:assert';
-import { mysqlClient } from '@tk-crawler/database';
+import { ServerBroadcastMessageChannel } from '@tk-crawler/biz-shared';
+import { mysqlClient, redisMessageBus } from '@tk-crawler/database';
 import { logger } from '../../../infra/logger';
 import { BusinessError } from '../../../utils';
 import { checkOrgNameExist } from './check-org-name-exist';
@@ -22,5 +26,20 @@ export async function createOrg(data: CreateOrgRequest): Promise<void> {
         area,
       })),
     });
+    const message: BroadcastOrganizationCreateMessage = {
+      type: 'create',
+      data: {
+        id: org.id.toString(),
+        name: org.name,
+        membership_start_at: org.membership_start_at,
+        membership_expire_at: org.membership_expire_at,
+        status: org.status,
+        areas,
+      },
+    };
+    redisMessageBus.publish(
+      ServerBroadcastMessageChannel.OrganizationMessage,
+      JSON.stringify(message),
+    );
   });
 }

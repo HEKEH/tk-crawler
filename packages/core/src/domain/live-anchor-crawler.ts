@@ -3,8 +3,8 @@ import type { Subscription } from 'rxjs';
 import type { DrawerSubTab, TikTokQueryTokens } from '../requests/live';
 import type { RawAnchorParam } from './anchor-pool';
 import {
-  CrawlerMessage,
   tiktokRequestErrorHandler,
+  TKRequestMessage,
 } from '@tk-crawler/biz-shared';
 import {
   getRandomArrayElementWithWeight,
@@ -68,7 +68,7 @@ export class LiveAnchorCrawler {
       messageCenter: this._messageCenter,
     });
     this._onCookieOutdatedSubscription = this._messageCenter.addListener(
-      CrawlerMessage.TIKTOK_COOKIE_OUTDATED,
+      TKRequestMessage.TIKTOK_COOKIE_OUTDATED,
       () => {
         this.stop();
       },

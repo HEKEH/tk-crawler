@@ -4,7 +4,7 @@ import type { BaseWindow } from 'electron';
 import type { Subscription } from 'rxjs';
 import type { IView } from './types';
 import path from 'node:path';
-import { CrawlerMessage } from '@tk-crawler/biz-shared';
+import { TKRequestMessage } from '@tk-crawler/biz-shared';
 import { bindViewToWindowBounds } from '@tk-crawler/electron-utils/main';
 import { globalShortcut, WebContentsView } from 'electron';
 import { CUSTOM_EVENTS } from '../../constants';
@@ -31,7 +31,7 @@ export class MainView implements IView {
     this._messageCenter = props.messageCenter;
     this._subscriptions.push(
       this._messageCenter.addListener(
-        CrawlerMessage.REQUEST_ERROR,
+        TKRequestMessage.REQUEST_ERROR,
         (errorType: RequestErrorType) => {
           this._onRequestError(errorType);
         },

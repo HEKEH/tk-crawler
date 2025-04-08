@@ -1,5 +1,9 @@
-import type { UpdateOrgMembershipRequest } from '@tk-crawler/biz-shared';
-import { mysqlClient } from '@tk-crawler/database';
+import {
+  type BroadcastOrganizationUpdateMessage,
+  ServerBroadcastMessageChannel,
+  type UpdateOrgMembershipRequest,
+} from '@tk-crawler/biz-shared';
+import { mysqlClient, redisMessageBus } from '@tk-crawler/database';
 import dayjs from 'dayjs';
 import { logger } from '../../../infra/logger';
 import { BusinessError } from '../../../utils';
@@ -18,38 +22,40 @@ export async function updateOrgMembership(
     throw new BusinessError('未找到该机构');
   }
   const membershipExpireAt = org.membership_expire_at;
+  let updateData: {
+    membership_start_at?: Date;
+    membership_expire_at?: Date;
+  };
   if (!membershipExpireAt) {
-    await mysqlClient.prismaClient.organization.update({
-      where: {
-        id: BigInt(id),
-      },
-      data: {
-        membership_start_at: new Date(),
-        membership_expire_at: dayjs().add(days, 'day').toDate(),
-      },
-    });
-    return;
-  }
-  if (dayjs(membershipExpireAt).isAfter(dayjs())) {
-    await mysqlClient.prismaClient.organization.update({
-      where: {
-        id: BigInt(data.id),
-      },
-      data: {
-        membership_expire_at: dayjs(membershipExpireAt)
-          .add(days, 'day')
-          .toDate(),
-      },
-    });
+    updateData = {
+      membership_start_at: new Date(),
+      membership_expire_at: dayjs().add(days, 'day').toDate(),
+    };
+  } else if (dayjs(membershipExpireAt).isAfter(dayjs())) {
+    updateData = {
+      membership_expire_at: dayjs(membershipExpireAt).add(days, 'day').toDate(),
+    };
   } else {
-    await mysqlClient.prismaClient.organization.update({
-      where: {
-        id: BigInt(data.id),
-      },
-      data: {
-        membership_start_at: new Date(),
-        membership_expire_at: dayjs().add(days, 'day').toDate(),
-      },
-    });
+    updateData = {
+      membership_start_at: new Date(),
+      membership_expire_at: dayjs().add(days, 'day').toDate(),
+    };
   }
+  await mysqlClient.prismaClient.organization.update({
+    where: {
+      id: BigInt(id),
+    },
+    data: updateData,
+  });
+  const message: BroadcastOrganizationUpdateMessage = {
+    type: 'update',
+    data: {
+      id,
+      ...updateData,
+    },
+  };
+  redisMessageBus.publish(
+    ServerBroadcastMessageChannel.OrganizationMessage,
+    JSON.stringify(message),
+  );
 }

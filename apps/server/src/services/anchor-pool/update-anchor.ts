@@ -1,5 +1,9 @@
-import type { UpdateAnchorRequest } from '@tk-crawler/biz-shared';
-import { mysqlClient, Prisma } from '@tk-crawler/database';
+import {
+  type BroadcastAnchorMessage,
+  ServerBroadcastMessageChannel,
+  type UpdateAnchorRequest,
+} from '@tk-crawler/biz-shared';
+import { mysqlClient, Prisma, redisMessageBus } from '@tk-crawler/database';
 import { logger } from '../../infra/logger';
 
 export async function updateAnchor(data: UpdateAnchorRequest) {
@@ -67,4 +71,16 @@ export async function updateAnchor(data: UpdateAnchorRequest) {
     updated_at = CURRENT_TIMESTAMP(3)
 `;
   await mysqlClient.prismaClient.$executeRaw(sql);
+  const message: BroadcastAnchorMessage = {
+    data: {
+      user_id,
+      display_id,
+      region,
+      has_commerce_goods,
+    },
+  };
+  redisMessageBus.publish(
+    ServerBroadcastMessageChannel.AnchorMessage,
+    JSON.stringify(message),
+  );
 }

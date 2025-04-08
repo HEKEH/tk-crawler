@@ -1,49 +1,51 @@
 import type {
+  BroadcastGuildUserUpdateMessage,
   StartTKLiveAdminAccountRequest,
   StopTKLiveAdminAccountRequest,
-  UpdateTKGuildUserCookieRequest,
 } from '@tk-crawler/biz-shared';
 import assert from 'node:assert';
-import { TKGuildUserStatus } from '@tk-crawler/biz-shared';
-import { mysqlClient } from '@tk-crawler/database';
-import { logger } from '../../infra/logger';
+import {
+  ServerBroadcastMessageChannel,
+  TKGuildUserStatus,
+} from '@tk-crawler/biz-shared';
+import { mysqlClient, redisMessageBus } from '@tk-crawler/database';
 import { BusinessError } from '../../utils';
 
 // Update TK Guild User Cookie
-export async function updateTKGuildUserCookie(
-  data: UpdateTKGuildUserCookieRequest & { org_id: string },
-): Promise<void> {
-  logger.info('[Update TK Guild User Cookie]', { data });
+// export async function updateTKGuildUserCookie(
+//   data: UpdateTKGuildUserCookieRequest & { org_id: string },
+// ): Promise<void> {
+//   logger.info('[Update TK Guild User Cookie]', { data });
 
-  const { id, cookie, org_id } = data;
-  assert(id, '用户ID不能为空');
-  assert(cookie, 'Cookie不能为空');
-  assert(org_id, '机构ID不能为空');
+//   const { id, cookie, org_id } = data;
+//   assert(id, '用户ID不能为空');
+//   assert(cookie, 'Cookie不能为空');
+//   assert(org_id, '机构ID不能为空');
 
-  await mysqlClient.prismaClient.$transaction(async tx => {
-    // Check if user exists
-    const existUser = await tx.liveAdminUser.findUnique({
-      where: {
-        id: BigInt(id),
-        org_id: BigInt(org_id),
-      },
-      select: { id: true },
-    });
+//   await mysqlClient.prismaClient.$transaction(async tx => {
+//     // Check if user exists
+//     const existUser = await tx.liveAdminUser.findUnique({
+//       where: {
+//         id: BigInt(id),
+//         org_id: BigInt(org_id),
+//       },
+//       select: { id: true },
+//     });
 
-    assert(existUser, '用户不存在');
+//     assert(existUser, '用户不存在');
 
-    await tx.liveAdminUser.update({
-      where: {
-        id: BigInt(id),
-        org_id: BigInt(org_id),
-      },
-      data: {
-        cookie,
-        status: TKGuildUserStatus.WAITING,
-      },
-    });
-  });
-}
+//     await tx.liveAdminUser.update({
+//       where: {
+//         id: BigInt(id),
+//         org_id: BigInt(org_id),
+//       },
+//       data: {
+//         cookie,
+//         status: TKGuildUserStatus.WAITING,
+//       },
+//     });
+//   });
+// }
 
 export async function startLiveAdminAccount(
   data: StartTKLiveAdminAccountRequest & { org_id: string },
@@ -83,15 +85,29 @@ export async function startLiveAdminAccount(
     throw new BusinessError('当前机构不支持当前账号的分区');
   }
 
-  await mysqlClient.prismaClient.$transaction(async tx => {
-    await tx.liveAdminUser.update({
-      where: {
-        id: BigInt(user_id),
-      },
-      data: { status: TKGuildUserStatus.WAITING, cookie, faction_id, area },
-    });
-    // TODO: 启动用户
+  const updateData = {
+    status: TKGuildUserStatus.WAITING,
+    cookie,
+    faction_id,
+    area,
+  };
+  await mysqlClient.prismaClient.liveAdminUser.update({
+    where: {
+      id: BigInt(user_id),
+    },
+    data: updateData,
   });
+  const message: BroadcastGuildUserUpdateMessage = {
+    type: 'update',
+    data: {
+      id: user_id,
+      ...updateData,
+    },
+  };
+  redisMessageBus.publish(
+    ServerBroadcastMessageChannel.GuildUserMessage,
+    JSON.stringify(message),
+  );
 }
 
 export async function stopLiveAdminAccount(
@@ -118,13 +134,23 @@ export async function stopLiveAdminAccount(
     throw new BusinessError('用户已停止');
   }
 
-  await mysqlClient.prismaClient.$transaction(async tx => {
-    await tx.liveAdminUser.update({
-      where: {
-        id: BigInt(user_id),
-      },
-      data: { status: TKGuildUserStatus.STOPPED },
-    });
-    // TODO: 停止用户
+  const updateData = { status: TKGuildUserStatus.STOPPED };
+
+  await mysqlClient.prismaClient.liveAdminUser.update({
+    where: {
+      id: BigInt(user_id),
+    },
+    data: updateData,
   });
+  const message: BroadcastGuildUserUpdateMessage = {
+    type: 'update',
+    data: {
+      id: user_id,
+      ...updateData,
+    },
+  };
+  redisMessageBus.publish(
+    ServerBroadcastMessageChannel.GuildUserMessage,
+    JSON.stringify(message),
+  );
 }

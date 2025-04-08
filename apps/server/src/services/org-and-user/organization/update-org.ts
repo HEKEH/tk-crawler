@@ -1,5 +1,9 @@
-import type { UpdateOrgRequest } from '@tk-crawler/biz-shared';
-import { mysqlClient } from '@tk-crawler/database';
+import {
+  type BroadcastOrganizationUpdateMessage,
+  ServerBroadcastMessageChannel,
+  type UpdateOrgRequest,
+} from '@tk-crawler/biz-shared';
+import { mysqlClient, redisMessageBus } from '@tk-crawler/database';
 import { omit } from 'lodash';
 import { logger } from '../../../infra/logger';
 import { BusinessError } from '../../../utils';
@@ -36,5 +40,18 @@ export async function updateOrg(data: UpdateOrgRequest): Promise<void> {
         })),
       });
     }
+    const message: BroadcastOrganizationUpdateMessage = {
+      type: 'update',
+      data: {
+        id: rest.id,
+        name: data.name,
+        status: data.status,
+        areas,
+      },
+    };
+    redisMessageBus.publish(
+      ServerBroadcastMessageChannel.OrganizationMessage,
+      JSON.stringify(message),
+    );
   });
 }

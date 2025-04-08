@@ -1,5 +1,9 @@
-import type { DeleteOrgRequest } from '@tk-crawler/biz-shared';
-import { mysqlClient } from '@tk-crawler/database';
+import {
+  type BroadcastOrganizationDeleteMessage,
+  type DeleteOrgRequest,
+  ServerBroadcastMessageChannel,
+} from '@tk-crawler/biz-shared';
+import { mysqlClient, redisMessageBus } from '@tk-crawler/database';
 import { logger } from '../../../infra/logger';
 
 export async function deleteOrg(data: DeleteOrgRequest): Promise<void> {
@@ -9,4 +13,14 @@ export async function deleteOrg(data: DeleteOrgRequest): Promise<void> {
       id: BigInt(data.id),
     },
   });
+  const message: BroadcastOrganizationDeleteMessage = {
+    type: 'delete',
+    data: {
+      id: data.id,
+    },
+  };
+  redisMessageBus.publish(
+    ServerBroadcastMessageChannel.OrganizationMessage,
+    JSON.stringify(message),
+  );
 }

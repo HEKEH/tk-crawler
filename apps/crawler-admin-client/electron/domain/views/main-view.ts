@@ -7,7 +7,7 @@ import type { BaseWindow } from 'electron';
 import type { Subscription } from 'rxjs';
 import type { IView } from './types';
 import path from 'node:path';
-import { CrawlerMessage } from '@tk-crawler/biz-shared';
+import { TKRequestMessage } from '@tk-crawler/biz-shared';
 import { bindViewToWindowBounds } from '@tk-crawler/electron-utils/main';
 import { globalShortcut, WebContentsView } from 'electron';
 import { CUSTOM_EVENTS } from '../../constants';
@@ -34,7 +34,7 @@ export class MainView implements IView {
     this._messageCenter = props.messageCenter;
     this._subscriptions.push(
       this._messageCenter.addListener(
-        CrawlerMessage.REQUEST_ERROR,
+        TKRequestMessage.REQUEST_ERROR,
         (errorType: RequestErrorType) => {
           this._view?.webContents.send(
             CUSTOM_EVENTS.CRAWL_REQUEST_ERROR,
@@ -43,13 +43,13 @@ export class MainView implements IView {
         },
       ),
       this._messageCenter.addListener(
-        CrawlerMessage.TIKTOK_COOKIE_OUTDATED,
+        TKRequestMessage.TIKTOK_COOKIE_OUTDATED,
         () => {
           this._view?.webContents.send(CUSTOM_EVENTS.TIKTOK_COOKIE_OUTDATED);
         },
       ),
       this._messageCenter.addListener(
-        CrawlerMessage.ANCHOR_CRAWLED,
+        TKRequestMessage.ANCHOR_CRAWLED,
         (data: AnchorCrawledMessage) => {
           this._view?.webContents.send(CUSTOM_EVENTS.ANCHOR_CRAWLED, data);
         },

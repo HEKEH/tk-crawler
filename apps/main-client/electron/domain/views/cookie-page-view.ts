@@ -325,6 +325,10 @@ export class CookiePageView implements IView {
             return { success: false, error: 'password input not found' };
           }
           inputEvent(passwordInput, '${password}');
+          const passwordIcon = passwordInput.nextElementSibling?.querySelector('.semi-icon');
+          if (passwordIcon) {
+            passwordIcon.click();
+          }
 
           await sleep(500);
 

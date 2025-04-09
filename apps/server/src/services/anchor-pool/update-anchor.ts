@@ -79,8 +79,5 @@ export async function updateAnchor(data: UpdateAnchorRequest) {
       has_commerce_goods,
     },
   };
-  redisMessageBus.publish(
-    ServerBroadcastMessageChannel.AnchorMessage,
-    JSON.stringify(message),
-  );
+  redisMessageBus.publish(ServerBroadcastMessageChannel.AnchorMessage, message);
 }

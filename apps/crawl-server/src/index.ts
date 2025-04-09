@@ -30,7 +30,14 @@ logger.info('[port]', config.port);
   const globalStore = new GlobalStore();
   await globalStore.init();
 
+  let shutdownInProgress = false;
+
   const gracefulShutdown = async (signal: string) => {
+    if (shutdownInProgress) {
+      return;
+    }
+    shutdownInProgress = true;
+
     logger.info(`Received ${signal} signal, starting graceful shutdown...`);
 
     // 1. Stop accepting new HTTP requests

@@ -56,6 +56,6 @@ export async function updateOrgMembership(
   };
   redisMessageBus.publish(
     ServerBroadcastMessageChannel.OrganizationMessage,
-    JSON.stringify(message),
+    message,
   );
 }

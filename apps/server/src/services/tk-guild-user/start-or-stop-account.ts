@@ -106,7 +106,7 @@ export async function startLiveAdminAccount(
   };
   redisMessageBus.publish(
     ServerBroadcastMessageChannel.GuildUserMessage,
-    JSON.stringify(message),
+    message,
   );
 }
 
@@ -151,6 +151,6 @@ export async function stopLiveAdminAccount(
   };
   redisMessageBus.publish(
     ServerBroadcastMessageChannel.GuildUserMessage,
-    JSON.stringify(message),
+    message,
   );
 }

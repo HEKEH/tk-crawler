@@ -131,7 +131,7 @@ export async function createTKGuildUser(
     };
     redisMessageBus.publish(
       ServerBroadcastMessageChannel.GuildUserMessage,
-      JSON.stringify(message),
+      message,
     );
     return { id: user.id.toString() };
   });
@@ -201,7 +201,7 @@ export async function updateTKGuildUser(
     };
     redisMessageBus.publish(
       ServerBroadcastMessageChannel.GuildUserMessage,
-      JSON.stringify(message),
+      message,
     );
   });
 }
@@ -234,7 +234,7 @@ export async function deleteTKGuildUser(
   };
   redisMessageBus.publish(
     ServerBroadcastMessageChannel.GuildUserMessage,
-    JSON.stringify(message),
+    message,
   );
   return resp;
 }

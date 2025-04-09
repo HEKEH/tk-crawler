@@ -1,10 +1,21 @@
+import { v4 as uuidv4 } from 'uuid';
 import { getLogger } from '../infra';
 import { type IRedisClient, redisClient } from './client';
 
+interface MessageEnvelope<T = any> {
+  id: string; // 唯一ID
+  timestamp: string; // ISO格式时间戳
+  payload: T; // 原始消息内容
+}
+
+type MessageCallback<T = any> = (
+  payLoad: T,
+  meta: { id: string; timestamp: string },
+) => void;
+
 class RedisMessageBus {
   private _client: IRedisClient;
-  private _subscriptions: Map<string, Set<(message: string) => void>> =
-    new Map();
+  private _subscriptions: Map<string, Set<MessageCallback>> = new Map();
 
   private _subscriptionInitialized = false;
 
@@ -22,9 +33,9 @@ class RedisMessageBus {
    * @param callback 接收消息的回调函数
    * @returns 取消订阅的函数
    */
-  async subscribe(
+  async subscribe<T>(
     channel: string,
-    callback: (message: string) => void,
+    callback: MessageCallback<T>,
   ): Promise<() => Promise<void>> {
     // 初始化消息处理器（只需执行一次）
     if (!this._subscriptionInitialized) {
@@ -59,21 +70,36 @@ class RedisMessageBus {
    */
   private _initializeSubscriptionHandler(): void {
     try {
-      this.redis.on('message', (channel: string, message: string) => {
+      this.redis.on('message', (channel: string, rawMessage: string) => {
         // 获取该频道的所有回调函数
         const callbacks = this._subscriptions.get(channel);
         if (callbacks && callbacks.size > 0) {
-          // 调用所有注册的回调函数
-          callbacks.forEach(callback => {
-            try {
-              callback(message);
-            } catch (error) {
-              console.error(
-                `Error in Redis subscription callback for channel ${channel}:`,
-                error,
-              );
-            }
-          });
+          try {
+            // 解析消息信封
+            const messageEnvelope = JSON.parse(rawMessage) as MessageEnvelope;
+            const { id, payload, timestamp } = messageEnvelope;
+
+            // 记录接收到的消息ID，便于追踪
+            getLogger().debug(`Received message ${id} from channel ${channel}`);
+
+            // 调用所有注册的回调函数，传递原始payload
+            callbacks.forEach(callback => {
+              try {
+                callback(payload, { id, timestamp });
+              } catch (error) {
+                getLogger().error(
+                  `Error in Redis subscription callback for channel ${channel}, message ${id}:`,
+                  error,
+                );
+              }
+            });
+          } catch (error) {
+            // 处理JSON解析错误或其他错误
+            getLogger().error(
+              `Error processing message from channel ${channel}: ${rawMessage}`,
+              error,
+            );
+          }
         }
       });
 
@@ -91,9 +117,9 @@ class RedisMessageBus {
    * @param channel 频道名称
    * @param callback 要移除的回调函数
    */
-  private async _unsubscribe(
+  private async _unsubscribe<T>(
     channel: string,
-    callback: (message: string) => void,
+    callback: MessageCallback<T>,
   ): Promise<void> {
     const callbacks = this._subscriptions.get(channel);
     if (!callbacks) {
@@ -114,13 +140,25 @@ class RedisMessageBus {
   /**
    * 发布消息到频道
    * @param channel 频道名称
-   * @param message 消息内容
+   * @param payload 消息内容
    * @returns 接收到消息的订阅者数量
    */
-  async publish(channel: string, message: string): Promise<number> {
+  async publish<T>(channel: string, payload: T): Promise<number> {
     try {
+      // 创建带有唯一ID的消息信封
+      const messageEnvelope: MessageEnvelope<T> = {
+        id: uuidv4(), // 生成唯一ID
+        timestamp: new Date().toISOString(),
+        payload, // 原始消息内容
+      };
+
+      // 序列化为JSON字符串
+      const message = JSON.stringify(messageEnvelope);
+
       const res = await this.redis.publish(channel, message);
-      getLogger().info(`Published message to channel: ${channel}`);
+      getLogger().info(
+        `Published message ${messageEnvelope.id} to channel: ${channel}`,
+      );
       return res;
     } catch (error) {
       getLogger().error('Redis PUBLISH Error:', error);
@@ -141,9 +179,6 @@ class RedisMessageBus {
       this._subscriptions.clear();
       getLogger().info('All Redis subscriptions have been canceled');
     }
-
-    // 关闭连接
-    await this._client.quit();
   }
 }
 

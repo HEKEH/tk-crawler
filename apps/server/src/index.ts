@@ -2,6 +2,7 @@ import process from 'node:process';
 import {
   mysqlClient,
   redisClient,
+  redisMessageBus,
   setLogger as setDatabaseLogger,
 } from '@tk-crawler/database';
 import initApp from './app';
@@ -26,7 +27,14 @@ logger.info('[port]', config.port);
     logger.info(`>>> server listen on http://localhost:${config.port}`);
   });
 
+  let shutdownInProgress = false;
+
   const gracefulShutdown = async (signal: string) => {
+    if (shutdownInProgress) {
+      return;
+    }
+    shutdownInProgress = true;
+
     logger.info(`Received ${signal} signal, starting graceful shutdown...`);
 
     // 1. Stop accepting new HTTP requests
@@ -35,6 +43,7 @@ logger.info('[port]', config.port);
     });
 
     try {
+      await redisMessageBus.quit();
       // 2. Close database connections
       logger.info('Closing database connections...');
       await Promise.all([redisClient.quit(), mysqlClient.disconnect()]);

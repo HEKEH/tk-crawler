@@ -21,6 +21,6 @@ export async function deleteOrg(data: DeleteOrgRequest): Promise<void> {
   };
   redisMessageBus.publish(
     ServerBroadcastMessageChannel.OrganizationMessage,
-    JSON.stringify(message),
+    message,
   );
 }

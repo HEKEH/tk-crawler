@@ -5,20 +5,20 @@ export class GlobalStore {
   async init() {
     redisMessageBus.subscribe(
       ServerBroadcastMessageChannel.OrganizationMessage,
-      message => {
-        console.log(message);
+      (...args) => {
+        console.log(...args);
       },
     );
     redisMessageBus.subscribe(
       ServerBroadcastMessageChannel.GuildUserMessage,
-      message => {
-        console.log(message);
+      (...args) => {
+        console.log(...args);
       },
     );
     redisMessageBus.subscribe(
       ServerBroadcastMessageChannel.AnchorMessage,
-      message => {
-        console.log(message);
+      (...args) => {
+        console.log(...args);
       },
     );
   }

@@ -39,7 +39,7 @@ export async function createOrg(data: CreateOrgRequest): Promise<void> {
     };
     redisMessageBus.publish(
       ServerBroadcastMessageChannel.OrganizationMessage,
-      JSON.stringify(message),
+      message,
     );
   });
 }

@@ -51,7 +51,7 @@ export async function updateOrg(data: UpdateOrgRequest): Promise<void> {
     };
     redisMessageBus.publish(
       ServerBroadcastMessageChannel.OrganizationMessage,
-      JSON.stringify(message),
+      message,
     );
   });
 }

@@ -3,7 +3,8 @@ import type { Subscription } from 'rxjs';
 import type { IView } from './types';
 import path from 'node:path';
 import process from 'node:process';
-import { BaseWindow } from 'electron';
+import { PRODUCT_NAME } from '@tk-crawler-admin-client/shared';
+import { app, BaseWindow } from 'electron';
 import { saveTiktokCookie } from '../services/cookie';
 import { MainView } from './main-view';
 import { TKLoginView } from './tk-login-view';
@@ -41,6 +42,7 @@ export class ViewsManager {
     this._baseWindow = new BaseWindow({
       width: 1200,
       height: 800,
+      title: `${PRODUCT_NAME} ${app.getVersion()}`,
       icon: path.join(process.env.VITE_PUBLIC, 'appicon.svg'),
       autoHideMenuBar: true,
     });

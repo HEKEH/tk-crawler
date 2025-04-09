@@ -4,7 +4,8 @@ import type { Subscription } from 'rxjs';
 import type { IView } from './types';
 import path from 'node:path';
 import process from 'node:process';
-import { BaseWindow } from 'electron';
+import { MAIN_APP_PRODUCT_NAME } from '@tk-crawler/main-client-shared';
+import { app, BaseWindow } from 'electron';
 import { CookiePageView } from './cookie-page-view';
 import { MainView } from './main-view';
 
@@ -42,6 +43,7 @@ export class ViewsManager {
       width: 1200,
       height: 800,
       icon: path.join(process.env.VITE_PUBLIC, 'appicon.svg'),
+      title: `${MAIN_APP_PRODUCT_NAME} ${app.getVersion()}`,
       autoHideMenuBar: true,
     });
     this._mainView = new MainView({

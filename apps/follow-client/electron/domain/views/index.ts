@@ -4,7 +4,8 @@ import type { TkLoginViewContext } from './tk-login-view';
 import type { IView } from './types';
 import path from 'node:path';
 import process from 'node:process';
-import { BaseWindow } from 'electron';
+import { PRODUCT_NAME } from '@tk-follow-client/shared';
+import { app, BaseWindow } from 'electron';
 import { MainView } from './main-view';
 import { TKAutoFollowView } from './tk-auto-follow-view';
 import { TKLoginView } from './tk-login-view';
@@ -46,6 +47,7 @@ export class ViewsManager implements TkLoginViewContext {
       width: 1200,
       height: 800,
       icon: path.join(process.env.VITE_PUBLIC, 'appicon.svg'),
+      title: `${PRODUCT_NAME} ${app.getVersion()}`,
       autoHideMenuBar: true,
     });
     this._mainView = new MainView({

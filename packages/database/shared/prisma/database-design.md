@@ -45,9 +45,9 @@ tiktok爬虫爬取的基础信息
 | username           | VARCHAR(24)      | 是   | 用户名，唯一                                               |
 | password           | VARCHAR(128)     | 是   | 密码。前端加密传输，后端进一步加密后入库，后端可解密为原文 |
 | org_id             | BIGINT UNSIGNED  | 是   | 所属机构ID，关联organization表的id                         |
-| status             | TINYINT UNSIGNED | 是   | 状态：1-正常，0-禁用                                       |
-| max_query_per_hour | INT UNSIGNED     | 否   | 每小时最大查询次数, 默认50次。当前查询次数通过redis记录    |
-| max_query_per_day  | INT UNSIGNED     | 否   | 每天最大查询次数，默认280次。当前查询次数通过redis记录     |
+| status             | TINYINT UNSIGNED | 是   | 状态                                                       |
+| max_query_per_hour | INT UNSIGNED     | 是   | 每小时最大查询次数, 默认50次。当前查询次数通过redis记录    |
+| max_query_per_day  | INT UNSIGNED     | 是   | 每天最大查询次数，默认280次。当前查询次数通过redis记录     |
 | cookie             | TEXT             | 否   | 爬虫的cookie，用于接口查询                                 |
 | is_cookie_valid    | BOOLEAN          | 否   | 是否有效，用于判断cookie是否有效                           |
 | created_at         | DATETIME         | 是   | 创建时间                                                   |

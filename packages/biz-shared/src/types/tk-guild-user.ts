@@ -7,8 +7,8 @@ export interface TKGuildUser {
   password: string;
   org_id: string;
   status: TKGuildUserStatus;
-  max_query_per_hour: number | null;
-  max_query_per_day: number | null;
+  max_query_per_hour: number;
+  max_query_per_day: number;
   cookie: string | null;
   // is_cookie_valid: boolean | null;
   created_at: Date;

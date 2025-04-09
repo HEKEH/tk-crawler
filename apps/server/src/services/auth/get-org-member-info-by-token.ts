@@ -37,7 +37,11 @@ export async function getOrgMemberInfoByToken(
     include: {
       organization: {
         include: {
-          areas: true,
+          areas: {
+            select: {
+              area: true,
+            },
+          },
         },
       },
     },

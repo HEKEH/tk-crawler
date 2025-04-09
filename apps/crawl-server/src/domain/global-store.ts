@@ -1,29 +1,31 @@
-import { ServerBroadcastMessageChannel } from '@tk-crawler/biz-shared';
 import { redisMessageBus } from '@tk-crawler/database';
+import { OrganizationCollection } from './organization/organization-collection';
+
+const UPDATE_INTERVAL = 1000 * 60 * 10; // 10 minutes自动更新一次
 
 export class GlobalStore {
+  private readonly _organizationCollection: OrganizationCollection =
+    new OrganizationCollection();
+
+  private _updateInterval: NodeJS.Timeout | undefined;
+
   async init() {
-    redisMessageBus.subscribe(
-      ServerBroadcastMessageChannel.OrganizationMessage,
-      (...args) => {
-        console.log(...args);
-      },
-    );
-    redisMessageBus.subscribe(
-      ServerBroadcastMessageChannel.GuildUserMessage,
-      (...args) => {
-        console.log(...args);
-      },
-    );
-    redisMessageBus.subscribe(
-      ServerBroadcastMessageChannel.AnchorMessage,
-      (...args) => {
-        console.log(...args);
-      },
-    );
+    await this._organizationCollection.init();
+    this._updateInterval = setInterval(() => {
+      this.update();
+    }, UPDATE_INTERVAL);
+  }
+
+  async update() {
+    await this._organizationCollection.update();
   }
 
   async destroy() {
+    if (this._updateInterval) {
+      clearInterval(this._updateInterval);
+      this._updateInterval = undefined;
+    }
+    await this._organizationCollection.destroy();
     await redisMessageBus.quit();
   }
 }

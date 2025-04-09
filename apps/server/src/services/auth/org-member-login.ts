@@ -25,7 +25,11 @@ export async function orgMemberLogin(
     include: {
       organization: {
         include: {
-          areas: true,
+          areas: {
+            select: {
+              area: true,
+            },
+          },
         },
       },
     },

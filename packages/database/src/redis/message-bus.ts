@@ -8,14 +8,14 @@ interface MessageEnvelope<T = any> {
   payload: T; // 原始消息内容
 }
 
-type MessageCallback<T = any> = (
+export type RedisMessageBusCallback<T = any> = (
   payLoad: T,
   meta: { id: string; timestamp: string },
 ) => void;
 
 class RedisMessageBus {
   private _client: IRedisClient;
-  private _subscriptions: Map<string, Set<MessageCallback>> = new Map();
+  private _subscriptions: Map<string, Set<RedisMessageBusCallback>> = new Map();
 
   private _subscriptionInitialized = false;
 
@@ -35,8 +35,8 @@ class RedisMessageBus {
    */
   async subscribe<T>(
     channel: string,
-    callback: MessageCallback<T>,
-  ): Promise<() => Promise<void>> {
+    callback: RedisMessageBusCallback<T>,
+  ): Promise<{ unsubscribe: () => Promise<void> }> {
     // 初始化消息处理器（只需执行一次）
     if (!this._subscriptionInitialized) {
       this._initializeSubscriptionHandler();
@@ -60,8 +60,10 @@ class RedisMessageBus {
     }
 
     // 返回取消订阅的函数
-    return async () => {
-      await this._unsubscribe(channel, callback);
+    return {
+      unsubscribe: async () => {
+        await this._unsubscribe(channel, callback);
+      },
     };
   }
 
@@ -119,7 +121,7 @@ class RedisMessageBus {
    */
   private async _unsubscribe<T>(
     channel: string,
-    callback: MessageCallback<T>,
+    callback: RedisMessageBusCallback<T>,
   ): Promise<void> {
     const callbacks = this._subscriptions.get(channel);
     if (!callbacks) {

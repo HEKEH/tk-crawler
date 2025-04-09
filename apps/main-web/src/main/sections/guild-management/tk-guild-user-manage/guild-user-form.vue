@@ -118,7 +118,7 @@ function handleCancel() {
         :min="1"
         :max="MAX_QUERY_PER_HOUR"
         placeholder="请输入每小时查询次数"
-        @update:model-value="form.max_query_per_hour = $event ?? null"
+        @update:model-value="form.max_query_per_hour = $event"
       />
     </ElFormItem>
     <ElFormItem label="每天查询次数" prop="max_query_per_day">
@@ -127,7 +127,7 @@ function handleCancel() {
         :min="1"
         :max="MAX_QUERY_PER_DAY"
         placeholder="请输入每天查询次数"
-        @update:model-value="form.max_query_per_day = $event ?? null"
+        @update:model-value="form.max_query_per_day = $event"
       />
     </ElFormItem>
     <ElFormItem>

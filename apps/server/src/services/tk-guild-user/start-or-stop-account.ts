@@ -63,7 +63,11 @@ export async function startLiveAdminAccount(
     include: {
       organization: {
         include: {
-          areas: true,
+          areas: {
+            select: {
+              area: true,
+            },
+          },
         },
       },
     },

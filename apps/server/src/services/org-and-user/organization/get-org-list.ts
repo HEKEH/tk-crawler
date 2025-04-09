@@ -30,7 +30,11 @@ export async function getOrgList(
       take: data.page_size,
       orderBy,
       include: {
-        areas: true,
+        areas: {
+          select: {
+            area: true,
+          },
+        },
         _count: {
           select: {
             orgUsers: true,

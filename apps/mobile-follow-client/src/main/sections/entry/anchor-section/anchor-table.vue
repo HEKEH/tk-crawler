@@ -80,6 +80,15 @@ function handleFilterReset() {
   pageNum.value = 1; // 重置页码
 }
 
+const orderBy = computed(() =>
+  sortState.value?.key && sortState.value.order
+    ? { [sortState.value.key]: sortState.value.order! }
+    : undefined,
+);
+const filter = computed(() =>
+  transformFilterViewValuesToFilterValues(filters.value),
+);
+
 const { data, isLoading, isError, error, refetch } = useQuery<
   GetAnchorFrom87ListResponseData | undefined
 >({
@@ -88,21 +97,17 @@ const { data, isLoading, isError, error, refetch } = useQuery<
     globalStore.orgId,
     pageNum,
     pageSize,
-    sortState,
-    filters,
+    orderBy,
+    filter,
   ],
   retry: false,
   queryFn: async () => {
-    const orderBy =
-      sortState.value?.key && sortState.value.order
-        ? { [sortState.value.key]: sortState.value.order! }
-        : undefined;
     const response = await getAnchorFrom87List({
       page_num: pageNum.value,
       page_size: pageSize.value,
-      order_by: orderBy,
+      order_by: orderBy.value,
       org_id: globalStore.orgId,
-      filter: transformFilterViewValuesToFilterValues(filters.value),
+      filter: filter.value,
     });
     if (response.status_code !== RESPONSE_CODE.SUCCESS) {
       throw new Error(response.message);
@@ -382,14 +387,26 @@ const columns = computed<Column<AnchorFrom87>[]>(() => [
     dataKey: 'has_grouped',
     title: '是否已分组',
     width: 100,
-    cellRenderer: ({ rowData }) =>
-      h(
-        ElTag,
-        {
-          type: rowData.has_grouped ? 'success' : 'info',
-        },
-        () => (rowData.has_grouped ? '已分组' : '未分组'),
-      ),
+    cellRenderer: ({ rowData }: { rowData: AnchorFrom87 }) => (
+      <ElTag type={rowData.has_grouped ? 'success' : 'info'}>
+        {rowData.has_grouped ? '已分组' : '未分组'}
+      </ElTag>
+    ),
+  },
+  {
+    key: 'groups',
+    dataKey: 'groups',
+    title: '所属分组',
+    width: 160,
+    cellRenderer: ({ rowData }: { rowData: AnchorFrom87 }) => (
+      <div class="group-container">
+        {rowData.groups?.length
+          ? rowData.groups?.map(group => (
+              <div class="ellipsis-text">{group.name}</div>
+            ))
+          : '-'}
+      </div>
+    ),
   },
   {
     key: 'updated_at',
@@ -397,12 +414,9 @@ const columns = computed<Column<AnchorFrom87>[]>(() => [
     title: '采集时间',
     width: 180,
     sortable: true,
-    cellRenderer: ({ rowData }) =>
-      h(
-        'span',
-        null,
-        (rowData?.updated_at && formatDateTime(rowData.updated_at)) || '-',
-      ),
+    cellRenderer: ({ rowData }) => (
+      <span>{rowData?.updated_at && formatDateTime(rowData.updated_at)}</span>
+    ),
   },
   {
     key: 'canuse_invitation_type',
@@ -411,12 +425,12 @@ const columns = computed<Column<AnchorFrom87>[]>(() => [
     width: 120,
     cellRenderer: ({ rowData }) => {
       if (rowData.canuse_invitation_type === 3) {
-        return h(ElTag, { type: 'info' }, () => '常规邀约');
+        return <ElTag type="info">常规邀约</ElTag>;
       }
       if (rowData.canuse_invitation_type === 4) {
-        return h(ElTag, { type: 'warning' }, () => '金票邀约');
+        return <ElTag type="warning">金票邀约</ElTag>;
       }
-      return h('span');
+      return <span />;
     },
   },
   {
@@ -459,50 +473,47 @@ const columns = computed<Column<AnchorFrom87>[]>(() => [
     dataKey: 'country',
     title: '地区名称',
     width: 80,
-    cellRenderer: ({ rowData }) => h('span', null, rowData.country || '-'),
+    cellRenderer: ({ rowData }) => <span>{rowData.country || '-'}</span>,
   },
   {
     key: 'country_code',
     dataKey: 'country_code',
     title: '地区编码',
     width: 80,
-    cellRenderer: ({ rowData }) => h('span', null, rowData.country_code || '-'),
+    cellRenderer: ({ rowData }) => <span>{rowData.country_code || '-'}</span>,
   },
   {
     key: 'available',
     dataKey: 'available',
     title: '可用状态',
     width: 100,
-    cellRenderer: ({ rowData }) =>
-      h(
-        ElTag,
-        {
-          type: rowData.available === 0 ? 'success' : 'danger',
-        },
-        () => (rowData.available === 0 ? '可用' : '不可用'),
-      ),
+    cellRenderer: ({ rowData }) => {
+      if (rowData.available === 0) {
+        return <ElTag type="success">可用</ElTag>;
+      }
+      return <ElTag type="danger">不可用</ElTag>;
+    },
   },
   {
     key: 'operations',
     title: '操作',
     width: 120,
     fixed: 'right' as any,
-    cellRenderer: ({ rowData }) =>
-      h('div', [
-        h(
-          ElButton,
-          {
-            link: true,
-            type: 'danger',
-            size: 'small',
-            onClick: (e: Event) => {
-              e.preventDefault();
-              deleteItem(rowData);
-            },
-          },
-          () => '删除',
-        ),
-      ]),
+    cellRenderer: ({ rowData }) => (
+      <div>
+        <ElButton
+          link
+          type="danger"
+          size="small"
+          onClick={(e: Event) => {
+            e.preventDefault();
+            deleteItem(rowData);
+          }}
+        >
+          删除
+        </ElButton>
+      </div>
+    ),
   },
 ]);
 </script>
@@ -673,5 +684,15 @@ const columns = computed<Column<AnchorFrom87>[]>(() => [
   justify-content: flex-end;
   margin-top: 1rem;
   padding-right: 1rem;
+}
+:deep(.group-container) {
+  max-width: 100%;
+  overflow: hidden;
+}
+:deep(.ellipsis-text) {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 </style>

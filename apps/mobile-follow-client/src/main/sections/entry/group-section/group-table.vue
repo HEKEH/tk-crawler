@@ -1,12 +1,10 @@
 <script setup lang="tsx">
+import { RefreshRight } from '@element-plus/icons-vue';
 import type {
   AnchorFollowGroupItem,
   CreateAnchorFollowGroupRequest,
-  GetAnchorFollowGroupListResponseData,
   UpdateAnchorFollowGroupResponse,
 } from '@tk-crawler/biz-shared';
-import { RefreshRight } from '@element-plus/icons-vue';
-import { useQuery } from '@tanstack/vue-query';
 import { formatDateTime, RESPONSE_CODE } from '@tk-crawler/shared';
 import {
   ElButton,
@@ -17,15 +15,16 @@ import {
   ElTable,
   ElTableColumn,
 } from 'element-plus';
-import { computed, onActivated, reactive, ref } from 'vue';
+import { computed, onActivated, ref } from 'vue';
+import { useGetFollowGroupList } from '../../../hooks';
 import {
   clearAnchorFollowGroup,
   createAnchorFollowGroup,
   deleteAnchorFollowGroup,
-  getAnchorFollowGroupList,
   updateAnchorFollowGroup,
 } from '../../../requests';
 import { useGlobalStore } from '../../../utils/vue';
+import CreateGroupDialog from '../anchor-section/create-group-dialog.vue';
 import ClearGroupMessage from './clear-group-message.vue';
 import {
   DefaultFilterViewValues,
@@ -34,7 +33,6 @@ import {
 } from './filter';
 import GroupFilter from './group-filter.vue';
 import GroupFormDialog from './group-form-dialog.vue';
-import CreateGroupDialog from '../anchor-section/create-group-dialog.vue';
 
 defineOptions({
   name: 'GroupTable',
@@ -62,36 +60,18 @@ function handleFilterReset() {
   pageNum.value = 1; // 重置页码
 }
 
-const { data, isLoading, isError, error, refetch } = useQuery<
-  GetAnchorFollowGroupListResponseData | undefined
->({
-  queryKey: [
-    'anchor-follow-groups',
-    globalStore.orgId,
-    pageNum,
-    pageSize,
-    sortField,
-    sortOrder,
-    filters,
-  ],
-  retry: false,
-  queryFn: async () => {
-    const orderBy = sortField.value
+const { data, isLoading, isError, error, refetch } = useGetFollowGroupList({
+  orgId: globalStore.orgId,
+  pageNum,
+  pageSize,
+  orderBy: computed(() =>
+    sortField.value
       ? { [sortField.value]: sortOrder.value === 'ascending' ? 'asc' : 'desc' }
-      : undefined;
-    const response = await getAnchorFollowGroupList({
-      org_id: globalStore.orgId,
-      page_num: pageNum.value,
-      page_size: pageSize.value,
-      order_by: orderBy,
-      filter: transformFilterViewValuesToFilterValues(filters.value),
-    });
-    if (response.status_code !== RESPONSE_CODE.SUCCESS) {
-      throw new Error(response.message);
-    }
-    return response.data;
-  },
-  placeholderData: previousData => previousData,
+      : undefined,
+  ),
+  filter: computed(() =>
+    transformFilterViewValuesToFilterValues(filters.value),
+  ),
 });
 
 // 处理排序变化
@@ -124,7 +104,7 @@ async function refresh() {
 // 删除分组
 async function deleteItem(item: AnchorFollowGroupItem) {
   try {
-    await ElMessageBox.confirm(`确定要删除分组 ${item.name} 吗？`, {
+    await ElMessageBox.confirm(`确定要删除分组“${item.name}”吗？`, {
       type: 'warning',
       confirmButtonText: '确定',
       cancelButtonText: '取消',
@@ -134,6 +114,26 @@ async function deleteItem(item: AnchorFollowGroupItem) {
   }
   await deleteAnchorFollowGroup({ id: [item.id], org_id: globalStore.orgId });
   ElMessage.success({ message: '删除成功', type: 'success', duration: 2000 });
+  await refetch();
+}
+
+// 清除主播
+async function handleClearAnchors(item: AnchorFollowGroupItem) {
+  try {
+    await ElMessageBox.confirm(`确定要清除分组“${item.name}”中的所有主播吗？`, {
+      type: 'warning',
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+    });
+  } catch {
+    return;
+  }
+  await deleteAnchorFollowGroup({
+    id: [item.id],
+    org_id: globalStore.orgId,
+    only_anchor: true,
+  });
+  ElMessage.success({ message: '清除成功', type: 'success', duration: 2000 });
   await refetch();
 }
 
@@ -410,7 +410,7 @@ async function handleGroupCreateSubmit(
           </template>
         </ElTableColumn>
 
-        <ElTableColumn fixed="right" label="操作" min-width="120">
+        <ElTableColumn fixed="right" label="操作" min-width="160">
           <template #default="scope">
             <div>
               <ElButton
@@ -420,6 +420,15 @@ async function handleGroupCreateSubmit(
                 @click.prevent="onEditItem(scope.row)"
               >
                 编辑
+              </ElButton>
+              <ElButton
+                link
+                type="danger"
+                size="small"
+                :disabled="scope.row.anchors_count === 0"
+                @click.prevent="handleClearAnchors(scope.row)"
+              >
+                清除主播
               </ElButton>
               <ElButton
                 link

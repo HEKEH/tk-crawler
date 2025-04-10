@@ -38,8 +38,13 @@ export async function getAnchorFrom87List(
         AnchorFollowGroupRelation: {
           select: {
             id: true,
+            group: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
           },
-          take: 1, // 只需要查询一条记录
         },
       },
     }),
@@ -57,6 +62,10 @@ export async function getAnchorFrom87List(
       ]);
       return Object.assign(res, {
         has_grouped: AnchorFollowGroupRelation.length > 0,
+        groups: AnchorFollowGroupRelation.map(({ group }) => ({
+          id: group.id.toString(),
+          name: group.name,
+        })),
       });
     }),
     total,

@@ -1,3 +1,5 @@
+import type { AnchorFollowGroup } from './anchor-follow-group';
+
 export interface AnchorFrom87 {
   id: string;
   org_id: string;
@@ -30,6 +32,7 @@ export interface AnchorFrom87 {
 
   // 是否已分组
   has_grouped: boolean;
+  groups?: Pick<AnchorFollowGroup, 'id' | 'name'>[];
 }
 
 export type AnchorFrom87RawData = Omit<

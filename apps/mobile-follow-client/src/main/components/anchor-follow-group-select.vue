@@ -1,14 +1,9 @@
 <script setup lang="ts">
-import type {
-  Area,
-  GetAnchorFollowGroupListResponseData,
-} from '@tk-crawler/biz-shared';
-import { useQuery } from '@tanstack/vue-query';
-import { RESPONSE_CODE } from '@tk-crawler/shared';
+import type { Area } from '@tk-crawler/biz-shared';
 import { ElOption, ElSelect } from 'element-plus';
 import { debounce } from 'lodash';
 import { computed, onActivated, ref } from 'vue';
-import { getAnchorFollowGroupList } from '../requests';
+import { useGetFollowGroupList } from '../hooks';
 
 defineOptions({
   name: 'AnchorFollowGroupSelect',
@@ -30,10 +25,10 @@ const emit = defineEmits<{
   change: [value: string | undefined];
 }>();
 
-const filterText = ref<string>();
-const debouncedFilterText = ref<string>();
+const filterText = ref<string>('');
+const debouncedFilterText = ref<string>('');
 const debounceHandleFilterText = debounce(() => {
-  debouncedFilterText.value = filterText.value?.trim();
+  debouncedFilterText.value = filterText.value.trim();
 }, 300);
 function handleFilter(query: string) {
   filterText.value = query;
@@ -56,30 +51,15 @@ const value = computed<string | undefined>({
 const pageNum = 1;
 const pageSize = 100;
 
-const { data, isLoading, refetch } = useQuery<
-  GetAnchorFollowGroupListResponseData | undefined
->({
-  queryKey: [
-    'all-anchor-follow-groups',
-    props.orgId,
-    pageNum,
-    pageSize,
-    filterText,
-  ],
-  retry: false,
-  queryFn: async () => {
-    const response = await getAnchorFollowGroupList({
-      org_id: props.orgId,
-      page_num: pageNum,
-      page_size: pageSize,
-    });
-    if (response.status_code !== RESPONSE_CODE.SUCCESS) {
-      throw new Error(response.message);
-    }
-    return response.data;
-  },
-  placeholderData: previousData => previousData,
+const { data, isLoading, refetch } = useGetFollowGroupList({
+  orgId: props.orgId,
+  pageNum,
+  pageSize,
+  filter: computed(() => ({
+    search: debouncedFilterText.value,
+  })),
 });
+
 const options = computed(() => {
   return data.value?.list ?? [];
 });

@@ -9,11 +9,26 @@ import type {
 export interface CreateAnchorFollowGroupRequest {
   org_id: string;
   name: string;
-  anchor_table_ids: string[];
+  anchor_table_ids?: string[];
 }
 
 export interface CreateAnchorFollowGroupResponse {
   status_code: RESPONSE_CODE;
+  data?: {
+    id: string;
+  };
+  message?: string;
+}
+
+export interface BatchAddToAnchorFollowGroupRequest {
+  org_id: string;
+  anchor_table_ids: string[];
+  group_id: string;
+}
+
+export interface BatchAddToAnchorFollowGroupResponse {
+  status_code: RESPONSE_CODE;
+  data?: string;
   message?: string;
 }
 
@@ -73,12 +88,14 @@ export interface GetAnchorFollowGroupWithAnchorIdsResponse {
 export interface DeleteAnchorFollowGroupRequest {
   org_id: string;
   id: string[];
+  only_anchor?: boolean;
 }
 
 export interface DeleteAnchorFollowGroupResponse {
   status_code: RESPONSE_CODE;
   data?: {
-    deleted_count: number;
+    groups_count: number;
+    deleted_anchor_count: number;
   };
   message?: string;
 }
@@ -98,13 +115,15 @@ export interface UpdateAnchorFollowGroupResponse {
 
 export interface ClearAnchorFollowGroupRequest {
   org_id: string;
+  only_anchor?: boolean;
   filter?: AnchorFollowGroupListFilter;
 }
 
 export interface ClearAnchorFollowGroupResponse {
   status_code: RESPONSE_CODE;
   data?: {
-    deleted_count: number;
+    groups_count: number;
+    deleted_anchor_count: number;
   };
   message?: string;
 }

@@ -15,26 +15,26 @@ enum MenuType {
   ANCHOR_COMMENT_TEMPLATE = 'anchor-comment-template',
 }
 
-const currentMenu = ref<MenuType>(MenuType.ANCHOR);
-
-function handleSelectMenu(key: string) {
-  currentMenu.value = key as MenuType;
-}
-
 const MenuList = [
-  {
-    type: MenuType.ANCHOR,
-    label: '主播列表',
-  },
   {
     type: MenuType.GROUP,
     label: '分组管理',
+  },
+  {
+    type: MenuType.ANCHOR,
+    label: '主播列表',
   },
   {
     type: MenuType.ANCHOR_COMMENT_TEMPLATE,
     label: '主播评论模板',
   },
 ];
+
+const currentMenu = ref<MenuType>(MenuList[0].type);
+
+function handleSelectMenu(key: string) {
+  currentMenu.value = key as MenuType;
+}
 </script>
 
 <template>

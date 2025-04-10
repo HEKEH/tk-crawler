@@ -1,4 +1,6 @@
 import type {
+  BatchAddToAnchorFollowGroupRequest,
+  BatchAddToAnchorFollowGroupResponse,
   ClearAnchorFollowGroupRequest,
   ClearAnchorFollowGroupResponse,
   ClearAnchorFrom87Request,
@@ -116,6 +118,17 @@ export function createAnchorFollowGroup(
   });
 }
 
+export function batchAddToAnchorFollowGroup(
+  params: BatchAddToAnchorFollowGroupRequest,
+): Promise<BatchAddToAnchorFollowGroupResponse> {
+  return commonRequest<BatchAddToAnchorFollowGroupResponse>({
+    baseURL: config.ownServerUrl,
+    method: 'post',
+    path: '/follow-help/batch-add-to-group',
+    params,
+  });
+}
+
 export function updateAnchorFollowGroup(
   params: UpdateAnchorFollowGroupRequest,
 ): Promise<UpdateAnchorFollowGroupResponse> {
@@ -127,6 +140,7 @@ export function updateAnchorFollowGroup(
   });
 }
 
+/** only_anchor 为 true 时，仅删除分组中的所有主播 */
 export function deleteAnchorFollowGroup(
   params: DeleteAnchorFollowGroupRequest,
 ): Promise<DeleteAnchorFollowGroupResponse> {

@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import type {
   AnchorFrom87,
-  CreateAnchorFollowGroupRequest,
+  BatchAddToAnchorFollowGroupRequest,
 } from '@tk-crawler/biz-shared';
-import type { GroupFormValues } from './group-form.vue';
+import type { BatchAddToGroupFormValues } from './batch-add-to-group-form.vue';
 import { ElDialog, ElScrollbar } from 'element-plus';
-import CreateGroupForm from './group-form.vue';
+import CreateGroupForm from './batch-add-to-group-form.vue';
 
 const props = defineProps<{
   visible: boolean;
-  anchors?: AnchorFrom87[];
+  anchors: AnchorFrom87[];
   submit: (
-    data: Omit<CreateAnchorFollowGroupRequest, 'org_id'>,
+    data: Omit<BatchAddToAnchorFollowGroupRequest, 'org_id'>,
   ) => Promise<void>;
 }>();
 
@@ -23,10 +23,11 @@ function handleClose() {
   emit('close');
 }
 
-function handleSubmit(data: GroupFormValues) {
+function handleSubmit(data: BatchAddToGroupFormValues) {
   return props.submit({
     ...data,
-    anchor_table_ids: props.anchors?.map(item => item.id),
+    anchor_table_ids: props.anchors.map(item => item.id),
+    group_id: data.group_id,
   });
 }
 </script>
@@ -34,15 +35,13 @@ function handleSubmit(data: GroupFormValues) {
 <template>
   <ElDialog
     :model-value="visible"
-    title="新增分组"
+    title="批量加入分组"
     width="500px"
     destroy-on-close
     @close="handleClose"
   >
     <ElScrollbar>
-      <div class="description" v-if="props.anchors">
-        共选中 {{ props.anchors.length }} 个主播
-      </div>
+      <div class="description">共选中 {{ props.anchors.length }} 个主播</div>
       <CreateGroupForm :submit="handleSubmit" @cancel="handleClose" />
     </ElScrollbar>
   </ElDialog>

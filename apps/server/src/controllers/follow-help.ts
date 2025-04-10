@@ -1,4 +1,5 @@
 import type {
+  BatchAddToAnchorFollowGroupRequest,
   ClearAnchorCommentTemplateGroupRequest,
   ClearAnchorCommentTemplateRequest,
   ClearAnchorFollowGroupRequest,
@@ -24,6 +25,7 @@ import type {
 } from '@tk-crawler/biz-shared';
 import type { Context, Next } from 'koa';
 import {
+  batchAddToAnchorFollowGroup,
   clearAnchorCommentTemplate,
   clearAnchorCommentTemplateGroup,
   clearAnchorFollowGroup,
@@ -96,6 +98,13 @@ export default class FollowHelpController {
   static async createAnchorFollowGroup(ctx: Context, next: Next) {
     const data = ctx.getRequestData<CreateAnchorFollowGroupRequest>();
     ctx.body = await createAnchorFollowGroup(data);
+    await next();
+  }
+
+  static async batchAddToAnchorFollowGroup(ctx: Context, next: Next) {
+    const data = ctx.getRequestData<BatchAddToAnchorFollowGroupRequest>();
+    await batchAddToAnchorFollowGroup(data);
+    ctx.body = ctx.t('Success');
     await next();
   }
 

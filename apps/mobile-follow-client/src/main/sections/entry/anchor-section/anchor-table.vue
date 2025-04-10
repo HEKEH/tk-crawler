@@ -1,6 +1,7 @@
 <script setup lang="tsx">
 import type {
   AnchorFrom87,
+  BatchAddToAnchorFollowGroupRequest,
   CreateAnchorFollowGroupRequest,
   GetAnchorFrom87ListResponseData,
 } from '@tk-crawler/biz-shared';
@@ -32,6 +33,7 @@ import {
   shallowRef,
 } from 'vue';
 import {
+  batchAddToAnchorFollowGroup,
   clearAnchorFrom87,
   createAnchorFollowGroup,
   deleteAnchorFrom87,
@@ -39,6 +41,7 @@ import {
 } from '../../../requests';
 import { useGlobalStore } from '../../../utils/vue';
 import AnchorFilter from './anchor-filter.vue';
+import BatchAddToGroupDialog from './batch-add-to-group-dialog/index.vue';
 import CreateGroupDialog from './create-group-dialog.vue';
 import {
   DefaultFilterViewValues,
@@ -209,6 +212,33 @@ async function handleGroupCreateSubmit(
     duration: 2000,
   });
   closeCreateGroupDialog();
+  await refetch();
+}
+
+const batchAddToGroupDialogVisible = ref(false);
+function openBatchAddToGroupDialog() {
+  batchAddToGroupDialogVisible.value = true;
+}
+function closeBatchAddToGroupDialog() {
+  batchAddToGroupDialogVisible.value = false;
+}
+async function handleBatchAddToGroupSubmit(
+  data: Omit<BatchAddToAnchorFollowGroupRequest, 'org_id'>,
+) {
+  const res = await batchAddToAnchorFollowGroup({
+    group_id: data.group_id,
+    anchor_table_ids: data.anchor_table_ids,
+    org_id: globalStore.orgId,
+  });
+  if (res.status_code !== RESPONSE_CODE.SUCCESS) {
+    return;
+  }
+  ElMessage.success({
+    message: '批量加入分组成功',
+    type: 'success',
+    duration: 2000,
+  });
+  closeBatchAddToGroupDialog();
   await refetch();
 }
 
@@ -496,9 +526,17 @@ const columns = computed<Column<AnchorFrom87>[]>(() => [
             :disabled="!hasSelectedRows"
             type="primary"
             size="small"
-            @click="openCreateGroupDialog"
+            @click="openBatchAddToGroupDialog"
           >
             批量加入分组
+          </ElButton>
+          <ElButton
+            :disabled="!hasSelectedRows"
+            type="primary"
+            size="small"
+            @click="openCreateGroupDialog"
+          >
+            创建新分组
           </ElButton>
         </div>
         <div class="right-part">
@@ -556,6 +594,12 @@ const columns = computed<Column<AnchorFrom87>[]>(() => [
         :anchors="selectedRows"
         :submit="handleGroupCreateSubmit"
         @close="closeCreateGroupDialog"
+      />
+      <BatchAddToGroupDialog
+        :visible="batchAddToGroupDialogVisible"
+        :anchors="selectedRows"
+        :submit="handleBatchAddToGroupSubmit"
+        @close="closeBatchAddToGroupDialog"
       />
     </div>
   </div>

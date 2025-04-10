@@ -18,6 +18,6 @@ export function transformFilterViewValuesToFilterValues(
 }
 
 export const DefaultFilterViewValues: FilterViewValues = {
-  has_grouped: false,
+  has_grouped: 'all',
   search: '',
 };

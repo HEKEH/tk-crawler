@@ -200,7 +200,7 @@ const hasSelectedRows = computed(() => selectedRows.value.length > 0);
 async function handleBatchDelete() {
   try {
     await ElMessageBox.confirm(
-      `确定要删除 ${selectedRows.value.length} 个用户吗？`,
+      `确定要删除 ${selectedRows.value.length} 个主播吗？`,
       {
         type: 'warning',
         confirmButtonText: '确定',

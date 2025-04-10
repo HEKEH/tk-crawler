@@ -40,6 +40,11 @@ followHelpRouter.post(
 );
 
 followHelpRouter.post(
+  '/batch-add-to-group',
+  FollowHelpController.batchAddToAnchorFollowGroup,
+);
+
+followHelpRouter.post(
   '/update-group',
   FollowHelpController.updateAnchorFollowGroup,
 );

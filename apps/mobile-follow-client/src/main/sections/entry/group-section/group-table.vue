@@ -1,13 +1,13 @@
-<script setup lang="ts">
+<script setup lang="tsx">
 import type {
   AnchorFollowGroupItem,
+  CreateAnchorFollowGroupRequest,
   GetAnchorFollowGroupListResponseData,
   UpdateAnchorFollowGroupResponse,
 } from '@tk-crawler/biz-shared';
 import { RefreshRight } from '@element-plus/icons-vue';
 import { useQuery } from '@tanstack/vue-query';
 import { formatDateTime, RESPONSE_CODE } from '@tk-crawler/shared';
-import { ClearMessage } from '@tk-crawler/view-shared';
 import {
   ElButton,
   ElIcon,
@@ -17,14 +17,16 @@ import {
   ElTable,
   ElTableColumn,
 } from 'element-plus';
-import { computed, h, onActivated, reactive, ref } from 'vue';
+import { computed, onActivated, reactive, ref } from 'vue';
 import {
   clearAnchorFollowGroup,
+  createAnchorFollowGroup,
   deleteAnchorFollowGroup,
   getAnchorFollowGroupList,
   updateAnchorFollowGroup,
 } from '../../../requests';
 import { useGlobalStore } from '../../../utils/vue';
+import ClearGroupMessage from './clear-group-message.vue';
 import {
   DefaultFilterViewValues,
   type FilterViewValues,
@@ -32,6 +34,7 @@ import {
 } from './filter';
 import GroupFilter from './group-filter.vue';
 import GroupFormDialog from './group-form-dialog.vue';
+import CreateGroupDialog from '../anchor-section/create-group-dialog.vue';
 
 defineOptions({
   name: 'GroupTable',
@@ -150,10 +153,10 @@ function handleSelectionChange(rows: AnchorFollowGroupItem[]) {
 }
 const hasSelectedRows = computed(() => selectedRows.value.length > 0);
 
-async function handleBatchDelete() {
+async function handleBatchDeleteGroups() {
   try {
     await ElMessageBox.confirm(
-      `确定要删除 ${selectedRows.value.length} 个分组吗？`,
+      `确定要删除选中的 ${selectedRows.value.length} 个分组吗？`,
       {
         type: 'warning',
         confirmButtonText: '确定',
@@ -172,28 +175,61 @@ async function handleBatchDelete() {
   }
 
   ElMessage.success({
-    message: `共删除 ${data!.deleted_count} 个分组`,
+    message: `共删除 ${data!.groups_count} 个分组，以及分组中的${data!.deleted_anchor_count} 个主播`,
     type: 'success',
     duration: 2000,
   });
   await refetch();
 }
 
-async function handleClearData() {
-  const state = reactive({
-    clearType: 'all' as 'all' | 'filtered',
+async function handleBatchDeleteAnchorsInGroups() {
+  try {
+    await ElMessageBox.confirm(
+      `确定要清除选中的 ${selectedRows.value.length} 个分组中的所有主播吗？（仅清除主播，分组保留）`,
+      {
+        type: 'warning',
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+      },
+    );
+  } catch {
+    return;
+  }
+  const { data, status_code } = await deleteAnchorFollowGroup({
+    org_id: globalStore.orgId,
+    id: selectedRows.value.map(item => item.id),
+    only_anchor: true,
+  });
+  if (status_code !== RESPONSE_CODE.SUCCESS) {
+    return;
+  }
+
+  ElMessage.success({
+    message: `共删除 ${data!.groups_count} 个分组中的${data!.deleted_anchor_count} 个主播`,
+    type: 'success',
+    duration: 2000,
+  });
+  await refetch();
+}
+
+async function handleClearGroup() {
+  const state = ref({
+    clearScope: 'all' as 'all' | 'filtered',
+    clearOption: 'only-anchor' as 'all' | 'only-anchor',
   });
 
   try {
     await ElMessageBox({
       title: '清空数据',
-      message: h(ClearMessage, {
-        value: state.clearType,
-        filteredRowsTotal: data.value?.total || 0,
-        onUpdate: val => {
-          state.clearType = val as 'all' | 'filtered';
-        },
-      }),
+      message: (
+        <ClearGroupMessage
+          value={state.value}
+          filteredRowsTotal={data.value?.total || 0}
+          onUpdate={val => {
+            state.value = val;
+          }}
+        />
+      ),
       showCancelButton: true,
       confirmButtonText: '确定',
       cancelButtonText: '取消',
@@ -201,8 +237,9 @@ async function handleClearData() {
 
     const resp = await clearAnchorFollowGroup({
       org_id: globalStore.orgId,
+      only_anchor: state.value.clearOption === 'only-anchor',
       filter:
-        state.clearType === 'all'
+        state.value.clearOption === 'all'
           ? undefined
           : transformFilterViewValuesToFilterValues(filters.value),
     });
@@ -212,7 +249,10 @@ async function handleClearData() {
     }
 
     ElMessage.success({
-      message: `共清空 ${resp.data!.deleted_count} 个分组`,
+      message:
+        state.value.clearOption === 'only-anchor'
+          ? `共清空 ${resp.data!.groups_count} 个分组中的 ${resp.data!.deleted_anchor_count} 个主播`
+          : `共清空 ${resp.data!.groups_count} 个分组，${resp.data!.deleted_anchor_count} 个主播`,
       type: 'success',
       duration: 2000,
     });
@@ -249,6 +289,33 @@ async function handleEdit(data: Partial<AnchorFollowGroupItem>) {
   onCloseFormDialog();
   ElMessage.success('保存成功');
 }
+
+const createGroupDialogVisible = ref(false);
+function openCreateGroupDialog() {
+  createGroupDialogVisible.value = true;
+}
+function closeCreateGroupDialog() {
+  createGroupDialogVisible.value = false;
+}
+async function handleGroupCreateSubmit(
+  data: Omit<CreateAnchorFollowGroupRequest, 'org_id'>,
+) {
+  const res = await createAnchorFollowGroup({
+    name: data.name,
+    anchor_table_ids: data.anchor_table_ids,
+    org_id: globalStore.orgId,
+  });
+  if (res.status_code !== RESPONSE_CODE.SUCCESS) {
+    return;
+  }
+  ElMessage.success({
+    message: '新建分组成功',
+    type: 'success',
+    duration: 2000,
+  });
+  closeCreateGroupDialog();
+  await refetch();
+}
 </script>
 
 <template>
@@ -265,17 +332,29 @@ async function handleEdit(data: Partial<AnchorFollowGroupItem>) {
         />
       </div>
       <div class="header-row">
-        <div class="left-part"></div>
+        <div class="left-part">
+          <ElButton type="primary" size="small" @click="openCreateGroupDialog">
+            新建分组
+          </ElButton>
+        </div>
         <div class="right-part">
           <ElButton
             :disabled="!hasSelectedRows"
             type="danger"
             size="small"
-            @click="handleBatchDelete"
+            @click="handleBatchDeleteAnchorsInGroups"
           >
-            批量删除
+            批量清除主播
           </ElButton>
-          <ElButton type="danger" size="small" @click="handleClearData">
+          <ElButton
+            :disabled="!hasSelectedRows"
+            type="danger"
+            size="small"
+            @click="handleBatchDeleteGroups"
+          >
+            批量删除分组
+          </ElButton>
+          <ElButton type="danger" size="small" @click="handleClearGroup">
             清空数据
           </ElButton>
           <ElButton type="default" size="small" @click="resetSort">
@@ -374,6 +453,11 @@ async function handleEdit(data: Partial<AnchorFollowGroupItem>) {
     :initial-data="formData"
     :submit="handleEdit"
     @close="onCloseFormDialog"
+  />
+  <CreateGroupDialog
+    :visible="createGroupDialogVisible"
+    :submit="handleGroupCreateSubmit"
+    @close="closeCreateGroupDialog"
   />
 </template>
 

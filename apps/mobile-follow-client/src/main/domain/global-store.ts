@@ -1,4 +1,8 @@
-import { RequestErrorType } from '@tk-crawler/biz-shared';
+import type {
+  AnchorFollowGroupItem } from '@tk-crawler/biz-shared';
+import {
+  RequestErrorType,
+} from '@tk-crawler/biz-shared';
 import { ElectronRenderListeners } from '@tk-crawler/electron-utils/render';
 import { MessageCenter } from '@tk-crawler/shared';
 import { MessageQueue } from '@tk-crawler/view-shared';
@@ -6,7 +10,7 @@ import {
   CheckNetworkResultType,
   MOCK_ORG_ID,
 } from '@tk-mobile-follow-client/shared';
-import { markRaw } from 'vue';
+import { markRaw, toRaw } from 'vue';
 import { CUSTOM_EVENTS } from '../constants';
 import { checkNetwork } from '../requests';
 import { Menu } from '../types';
@@ -107,6 +111,13 @@ export default class GlobalStore {
 
   async goToCollectPage() {
     await window.ipcRenderer.invoke(CUSTOM_EVENTS.GO_TO_COLLECT_PAGE);
+  }
+
+  async goToCollectPageWithGroup(group: AnchorFollowGroupItem) {
+    await window.ipcRenderer.invoke(
+      CUSTOM_EVENTS.GO_TO_COLLECT_PAGE_WITH_GROUP,
+      toRaw(group),
+    );
   }
 
   clear() {

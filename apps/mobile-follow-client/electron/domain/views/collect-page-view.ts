@@ -1,4 +1,7 @@
-import type { AnchorFrom87RawData } from '@tk-crawler/biz-shared';
+import type {
+  AnchorFollowGroupItem,
+  AnchorFrom87RawData,
+} from '@tk-crawler/biz-shared';
 import type { BaseWindow } from 'electron';
 import type { IView } from './types';
 import path from 'node:path';
@@ -36,6 +39,8 @@ export class CollectPageView implements IView {
   private _removeResizeListener: (() => void) | null = null;
 
   private _backToMainView: () => void;
+
+  private _group: AnchorFollowGroupItem | null = null;
 
   constructor(props: { parentWindow: BaseWindow; backToMainView: () => void }) {
     this._parentWindow = props.parentWindow;
@@ -197,6 +202,9 @@ export class CollectPageView implements IView {
     this._addEventHandler(COLLECT_PAGE_HELP_EVENTS.GET_STATUS, () => {
       return this._status;
     });
+    this._addEventHandler(COLLECT_PAGE_HELP_EVENTS.GET_GROUP, () => {
+      return this._group;
+    });
     this._addEventHandler(
       COLLECT_PAGE_HELP_EVENTS.REFRESH_RUNNING_STATUS,
       async () => {
@@ -275,6 +283,11 @@ export class CollectPageView implements IView {
                     const resp = await createOrUpdateAnchorFrom87({
                       list: anchorList,
                       org_id: MOCK_ORG_ID,
+                      add_new_anchors_to_group: this._group
+                        ? {
+                            group_id: this._group.id,
+                          }
+                        : undefined,
                     });
                     if (resp.status_code === RESPONSE_CODE.SUCCESS) {
                       this._helpView?.webContents.send(
@@ -296,6 +309,10 @@ export class CollectPageView implements IView {
     }
   }
 
+  setGroup(group: AnchorFollowGroupItem | null) {
+    this._group = group;
+  }
+
   async show() {
     try {
       this._addEventHandlers();
@@ -315,6 +332,7 @@ export class CollectPageView implements IView {
   }
 
   close() {
+    this._group = null;
     this._removeResizeListener?.();
     this._removeEventHandlers();
     this._closeThirdPartyPageView();

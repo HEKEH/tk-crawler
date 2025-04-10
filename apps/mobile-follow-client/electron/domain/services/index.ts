@@ -1,3 +1,4 @@
+import type { AnchorFollowGroupItem } from '@tk-crawler/biz-shared';
 import type { MessageCenter } from '@tk-crawler/shared';
 import type { ViewsManager } from '../views';
 import { CheckNetworkResultType } from '@tk-mobile-follow-client/shared';
@@ -57,6 +58,13 @@ export class Services {
       logger.info('[Go To Collect Page]');
       return this._viewManager.openCollectPage();
     });
+    this._addEventHandler(
+      CUSTOM_EVENTS.GO_TO_COLLECT_PAGE_WITH_GROUP,
+      async (_, group: AnchorFollowGroupItem) => {
+        logger.info('[Go To Collect Page With Group]', group);
+        return this._viewManager.openCollectPageWithGroup(group);
+      },
+    );
     this._addEventHandler(CUSTOM_EVENTS.CHECK_NETWORK, async () => {
       // 当前场景不需要检查tiktok网络
       return CheckNetworkResultType.SUCCESS;

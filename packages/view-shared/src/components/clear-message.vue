@@ -35,10 +35,7 @@ function handleUpdate(val: 'all' | 'filtered') {
       </ElRadio>
     </ElRadioGroup>
 
-    <p class="warning-text">
-      <i class="el-icon-warning-outline mr-1" />
-      此操作不可恢复，请谨慎选择！
-    </p>
+    <p class="warning-text">此操作不可恢复，请谨慎选择！</p>
   </div>
 </template>
 

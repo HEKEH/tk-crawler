@@ -5,6 +5,7 @@ export const COLLECT_PAGE_HELP_EVENTS = {
   RETRY_OPEN_PAGE: 'collect:retry-open-page',
   BACK_TO_MAIN_VIEW: 'collect:back-to-main-view',
   ANCHOR_LIST_FETCHED: 'collect:anchor-list-fetched',
+  GET_GROUP: 'collect:get-group',
 };
 
 export enum COLLECT_PAGE_HELP_STATUS {

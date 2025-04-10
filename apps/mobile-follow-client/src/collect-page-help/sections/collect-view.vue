@@ -1,18 +1,36 @@
 <script setup lang="ts">
-import type { AnchorFrom87RawData } from '@tk-crawler/biz-shared';
+import type {
+  AnchorFollowGroupItem,
+  AnchorFrom87RawData,
+} from '@tk-crawler/biz-shared';
 import type { IpcRendererEvent } from 'electron';
 import { ElectronRenderListeners } from '@tk-crawler/electron-utils/render';
 import { MessageQueue } from '@tk-crawler/view-shared';
 import { COLLECT_PAGE_HELP_EVENTS } from '@tk-mobile-follow-client/shared';
-import { markRaw, onBeforeUnmount } from 'vue';
+import { markRaw, onBeforeUnmount, ref } from 'vue';
+import { setIntervalImmediate } from '@tk-crawler/shared';
+import { ElIcon } from 'element-plus';
+import { DataAnalysis, ArrowRight } from '@element-plus/icons-vue';
 
 defineOptions({
   name: 'CollectView',
 });
 
+const groupName = ref<string>();
+async function updateGroup() {
+  const group: AnchorFollowGroupItem | null = await window.ipcRenderer.invoke(
+    COLLECT_PAGE_HELP_EVENTS.GET_GROUP,
+  );
+  groupName.value = group?.name;
+}
+const intervalId = setIntervalImmediate(updateGroup, 100);
+onBeforeUnmount(() => {
+  clearInterval(intervalId);
+});
+
 const messageQueue = markRaw(
   new MessageQueue({
-    messageOffset: 200,
+    messageOffset: 300,
   }),
 );
 
@@ -43,16 +61,24 @@ onBeforeUnmount(() => {
 <template>
   <div class="block">
     <div class="description">
-      右侧页面表格中的主播信息会被自动采集。
-      <br />
-      为了加快采集速度，建议每页条数改为200。
+      <div>
+        <b>自动采集说明：</b>系统将自动采集右侧表格中显示的所有主播信息。
+      </div>
+      <div>
+        <b>提高效率建议：</b
+        >将右侧表格"每页显示条数"设置为200，可大幅提升数据采集速度。
+      </div>
     </div>
-    <!-- <div
-      v-loading="true"
-      class="loading"
-      element-loading-text="自动采集中，请在右侧页面进行数据搜索"
-    ></div> -->
-    <div class="tip">正在自动采集中...<br />请在右侧页面获取您想要的数据 →</div>
+    <div class="tip" v-if="groupName">
+      <ElIcon><DataAnalysis /></ElIcon>
+      正在为分组
+      <span class="group-name">「{{ groupName }}」</span>
+      采集主播数据
+    </div>
+    <div class="tip" style="color: var(--el-color-primary)">
+      <ElIcon><ArrowRight /></ElIcon>
+      请在右侧页面浏览您需要采集的主播数据
+    </div>
   </div>
 </template>
 
@@ -70,13 +96,12 @@ onBeforeUnmount(() => {
   font-size: 16px;
   font-weight: bold;
   text-align: center;
+  :global(.el-icon) {
+    vertical-align: middle;
+  }
+}
+.group-name {
+  font-weight: bold;
   color: var(--el-color-primary);
 }
-/* .loading {
-  width: 100%;
-  height: 20px;
-  :global(.path) {
-    r: 14px !important;
-  }
-} */
 </style>

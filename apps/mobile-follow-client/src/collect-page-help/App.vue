@@ -7,6 +7,7 @@ import {
 } from '../main/constants';
 import MainView from './sections/main-view.vue';
 import 'element-plus/dist/index.css';
+import { setIntervalImmediate } from '@tk-crawler/shared';
 
 const status = ref(COLLECT_PAGE_HELP_STATUS.stateless);
 async function updateStatus() {
@@ -14,8 +15,7 @@ async function updateStatus() {
     COLLECT_PAGE_HELP_EVENTS.GET_STATUS,
   );
 }
-updateStatus();
-const intervalId = setInterval(updateStatus, 100);
+const intervalId = setIntervalImmediate(updateStatus, 100);
 onBeforeUnmount(() => {
   clearInterval(intervalId);
 });

@@ -1,3 +1,4 @@
+import type { AnchorFollowGroupItem } from '@tk-crawler/biz-shared';
 import type { MessageCenter } from '@tk-crawler/shared';
 import type { Subscription } from 'rxjs';
 import type { IView } from './types';
@@ -87,6 +88,12 @@ export class ViewsManager {
 
   /** 回到登录页 */
   async openCollectPage() {
+    this._collectPageView!.setGroup(null);
+    await this._changeView(this._collectPageView!);
+  }
+
+  async openCollectPageWithGroup(group: AnchorFollowGroupItem) {
+    this._collectPageView!.setGroup(group);
     await this._changeView(this._collectPageView!);
   }
 

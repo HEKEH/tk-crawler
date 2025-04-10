@@ -316,6 +316,9 @@ async function handleGroupCreateSubmit(
   closeCreateGroupDialog();
   await refetch();
 }
+function handleCollectAnchorsToGroup(item: AnchorFollowGroupItem) {
+  globalStore.goToCollectPageWithGroup(item);
+}
 </script>
 
 <template>
@@ -410,9 +413,17 @@ async function handleGroupCreateSubmit(
           </template>
         </ElTableColumn>
 
-        <ElTableColumn fixed="right" label="操作" min-width="160">
+        <ElTableColumn fixed="right" label="操作" min-width="140">
           <template #default="scope">
             <div>
+              <ElButton
+                link
+                type="primary"
+                size="small"
+                @click.prevent="handleCollectAnchorsToGroup(scope.row)"
+              >
+                添加主播
+              </ElButton>
               <ElButton
                 link
                 type="primary"
@@ -421,6 +432,8 @@ async function handleGroupCreateSubmit(
               >
                 编辑
               </ElButton>
+            </div>
+            <div>
               <ElButton
                 link
                 type="danger"

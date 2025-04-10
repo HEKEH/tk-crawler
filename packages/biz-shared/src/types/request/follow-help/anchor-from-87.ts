@@ -6,6 +6,9 @@ import type { AnchorFrom87, AnchorFrom87RawData } from '../../follow-help';
 export interface CreateOrUpdateAnchorFrom87Request {
   list: AnchorFrom87RawData[];
   org_id: string;
+  add_new_anchors_to_group?: {
+    group_id: string;
+  };
 }
 
 export interface CreateOrUpdateAnchorFrom87Response {

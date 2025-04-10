@@ -79,6 +79,8 @@ export async function createOrUpdateAnchorFrom87(
   const _data = request.list;
   logger.info('[Create Or Update Anchor From 87]', {
     dataLength: _data.length,
+    orgId: request.org_id,
+    addNewAnchorsToGroup: request.add_new_anchors_to_group,
   });
 
   assert(request.org_id, '机构id不能为空');
@@ -142,36 +144,58 @@ export async function createOrUpdateAnchorFrom87(
       existingAccountIds.has(anchor.account_id),
     );
 
-    // 批量创建
-    const created_count =
-      toCreate.length > 0
-        ? (
-            await tx.anchorFrom87.createMany({
-              data: toCreate,
-              skipDuplicates: true,
-            })
-          ).count
-        : 0;
-
-    // 批量更新
-    if (toUpdate.length > 0) {
-      await Promise.all(
-        toUpdate.map(anchor =>
-          tx.anchorFrom87.update({
+    const batchCreate = async () => {
+      if (toCreate.length > 0) {
+        const result = await tx.anchorFrom87.createMany({
+          data: toCreate,
+          skipDuplicates: true,
+        });
+        if (request.add_new_anchors_to_group?.group_id && result.count) {
+          const createdAccountIds = toCreate.map(anchor => anchor.account_id);
+          const createdAnchors = await tx.anchorFrom87.findMany({
             where: {
-              org_id_account_id: {
-                org_id: BigInt(orgId),
-                account_id: anchor.account_id,
+              account_id: {
+                in: createdAccountIds,
               },
             },
-            data: anchor,
-          }),
-        ),
-      );
-    }
+            select: {
+              id: true,
+            },
+          });
+          await tx.anchorFollowGroupRelation.createMany({
+            data: createdAnchors.map(anchor => ({
+              group_id: BigInt(request.add_new_anchors_to_group!.group_id),
+              anchor_table_id: anchor.id,
+            })),
+          });
+        }
+        return result;
+      }
+    };
+
+    const batchUpdate = async () => {
+      // 批量更新
+      if (toUpdate.length > 0) {
+        await Promise.all(
+          toUpdate.map(anchor =>
+            tx.anchorFrom87.update({
+              where: {
+                org_id_account_id: {
+                  org_id: BigInt(orgId),
+                  account_id: anchor.account_id,
+                },
+              },
+              data: anchor,
+            }),
+          ),
+        );
+      }
+    };
+
+    const [createResult] = await Promise.all([batchCreate(), batchUpdate()]);
 
     return {
-      created_count,
+      created_count: createResult?.count || 0,
       updated_count: toUpdate.length,
     };
   });

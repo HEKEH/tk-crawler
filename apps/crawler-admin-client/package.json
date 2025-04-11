@@ -1,6 +1,6 @@
 {
   "name": "tk-live-crawler-admin-client",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "TK Live Crawler Admin Client",
   "author": "Will Ho",
   "main": "dist-electron/main.js",
@@ -16,28 +16,28 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@tk-crawler/core": "workspace:*",
-    "@tk-crawler/tk-requests": "workspace:*"
-  },
-  "devDependencies": {
     "@tanstack/vue-query": "^5.66.11",
-    "@types/global-agent": "^2.1.3",
-    "@types/lodash": "^4.17.13",
-    "@vitejs/plugin-vue": "^5.2.1",
-    "@vitejs/plugin-vue-jsx": "^4.1.1",
+    "@tk-crawler/core": "workspace:*",
+    "@tk-crawler/tk-requests": "workspace:*",
     "dayjs": "^1.11.13",
-    "electron": "^35.1.5",
-    "electron-builder": "^26.0.12",
     "element-plus": "^2.9.6",
     "get-system-proxy": "^1.0.0",
     "global-agent": "^3.0.0",
     "lodash": "^4.17.21",
     "log4js": "^6.9.1",
     "rxjs": "^7.8.1",
+    "vue": "^3.5.12"
+  },
+  "devDependencies": {
+    "@types/global-agent": "^2.1.3",
+    "@types/lodash": "^4.17.13",
+    "@vitejs/plugin-vue": "^5.2.1",
+    "@vitejs/plugin-vue-jsx": "^4.1.1",
+    "electron": "^35.1.5",
+    "electron-builder": "^26.0.12",
     "vite-plugin-electron": "^0.29.0",
     "vite-plugin-electron-renderer": "^0.14.6",
     "vite-plugin-html": "^3.2.2",
-    "vue": "^3.5.12",
     "vue-tsc": "^2.0.26"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "tk-mobile-follow-client",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "TK Follow Client",
   "author": "Will Ho",
   "main": "dist-electron/main.js",

@@ -1,7 +1,7 @@
 import type { WithRegion } from '../../types';
 import type { TikTokQueryTokens } from './types';
-import { getXBogus } from '@tk-crawler/biz-shared';
 import { getUrl } from '@tk-crawler/shared';
+import { getXBogus } from '@tk-crawler/x-bogus';
 import { commonGetRequest } from '../utils/common-request';
 import {
   COMMON_TIKTOK_HEADERS,

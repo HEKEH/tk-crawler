@@ -548,10 +548,6 @@ importers:
         version: 3.1.9
 
   packages/biz-shared:
-    dependencies:
-      tk-crack:
-        specifier: workspace:*
-        version: link:../tk-crack
     devDependencies:
       '@tk-crawler/shared':
         specifier: workspace:*
@@ -596,6 +592,9 @@ importers:
       prisma:
         specifier: ^6.4.1
         version: 6.5.0(typescript@5.5.4)
+      uuid:
+        specifier: ^11.0.3
+        version: 11.1.0
     devDependencies:
       '@tk-crawler/shared':
         specifier: workspace:*
@@ -603,6 +602,9 @@ importers:
       '@types/ioredis':
         specifier: ^5.0.0
         version: 5.0.0
+      '@types/uuid':
+        specifier: ^10.0.0
+        version: 10.0.0
 
   packages/electron-utils:
     dependencies:
@@ -707,6 +709,22 @@ importers:
       '@tk-crawler/biz-shared':
         specifier: workspace:*
         version: link:../biz-shared
+
+  packages/x-bogus:
+    dependencies:
+      canvas:
+        specifier: ^3.0.1
+        version: 3.1.0
+      jsdom:
+        specifier: ^26.0.0
+        version: 26.0.0(canvas@3.1.0)
+      tk-crack:
+        specifier: workspace:*
+        version: link:../tk-crack
+    devDependencies:
+      '@tk-crawler/shared':
+        specifier: workspace:*
+        version: link:../shared
 
 packages:
 

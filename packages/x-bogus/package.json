@@ -1,12 +1,16 @@
 {
-  "name": "@tk-crawler/biz-shared",
+  "name": "@tk-crawler/x-bogus",
   "version": "0.0.0",
   "private": true,
   "files": [],
   "scripts": {
     "preinstall": "npx only-allow pnpm"
   },
-  "dependencies": {},
+  "dependencies": {
+    "canvas": "^3.0.1",
+    "jsdom": "^26.0.0",
+    "tk-crack": "workspace:*"
+  },
   "devDependencies": {
     "@tk-crawler/shared": "workspace:*"
   }

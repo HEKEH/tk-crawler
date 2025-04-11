@@ -22,6 +22,7 @@ export default defineConfig(({ mode }) => {
       __dirname,
       '../../packages/biz-shared/src',
     ),
+    '@tk-crawler/x-bogus': resolve(__dirname, '../../packages/x-bogus/src'),
     '@tk-crawler/electron-utils': resolve(
       __dirname,
       '../../packages/electron-utils/src',

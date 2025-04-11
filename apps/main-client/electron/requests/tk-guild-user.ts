@@ -2,12 +2,11 @@ import type {
   StartTKLiveAdminAccountRequest,
   StartTKLiveAdminAccountResponse,
 } from '@tk-crawler/biz-shared';
-import {
-  CLIENT_TOKEN_HEADER_KEY,
-  getFactionIdAndArea,
-} from '@tk-crawler/biz-shared';
+import { CLIENT_TOKEN_HEADER_KEY } from '@tk-crawler/biz-shared';
 
 import { RESPONSE_CODE } from '@tk-crawler/shared';
+
+import { getFactionIdAndArea } from '@tk-crawler/x-bogus';
 import config from '../config';
 import { logger } from '../infra/logger';
 import { commonRequest } from './common-request';

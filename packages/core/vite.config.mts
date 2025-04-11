@@ -12,6 +12,7 @@ export default defineConfig(() => {
   const alias: AliasOptions = {
     '@tk-crawler/shared': resolve(__dirname, '../shared/src'),
     '@tk-crawler/biz-shared': resolve(__dirname, '../biz-shared/src'),
+    '@tk-crawler/x-bogus': resolve(__dirname, '../x-bogus/src'),
   };
 
   const config: UserConfig = {

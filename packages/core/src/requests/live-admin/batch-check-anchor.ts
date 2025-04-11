@@ -2,10 +2,10 @@ import type { BatchCheckAnchorResponse } from './types';
 import {
   COMMON_TIKTOK_LIVE_ADMIN_HEADERS,
   getInformalMessageToken,
-  getXBogus,
   TIKTOK_LIVE_ADMIN_URL,
 } from '@tk-crawler/biz-shared';
 import { getUrl } from '@tk-crawler/shared';
+import { getXBogus } from '@tk-crawler/x-bogus';
 import { commonPostRequest } from '../utils/common-request';
 
 export interface BatchCheckAnchorParams {

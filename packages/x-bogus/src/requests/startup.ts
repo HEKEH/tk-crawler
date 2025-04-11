@@ -3,11 +3,11 @@ import type { StartupResponse } from './types';
 import {
   COMMON_TIKTOK_LIVE_ADMIN_HEADERS,
   getInformalMessageToken,
-  getXBogus,
   TIKTOK_LIVE_ADMIN_URL,
 } from '@tk-crawler/biz-shared';
 import { getUrl, type Logger } from '@tk-crawler/shared';
 import axios from 'axios';
+import { getXBogus } from '../get-x-bogus';
 
 export async function startup(cookie: string, logger: Logger) {
   const headers = {

@@ -24,6 +24,7 @@
     "packages/shared/**/*",
     "packages/electron-utils/src/main/**/*",
     "packages/biz-shared/**/*",
+    "packages/x-bogus/**/*",
     "packages/play/**/*",
     "packages/script-tools/**/*",
     "packages/database/**/*",

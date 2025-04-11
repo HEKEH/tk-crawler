@@ -162,7 +162,7 @@ async function refresh() {
 // 删除主播
 async function deleteItem(item: AnchorFrom87) {
   try {
-    await ElMessageBox.confirm(`确定要删除主播 ${item.account} 吗？`, {
+    await ElMessageBox.confirm(`确定要删除主播「${item.account}」吗？`, {
       type: 'warning',
       confirmButtonText: '确定',
       cancelButtonText: '取消',

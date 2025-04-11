@@ -8,7 +8,6 @@ import { ElectronRenderListeners } from '@tk-crawler/electron-utils/render';
 import { MessageQueue } from '@tk-crawler/view-shared';
 import { COLLECT_PAGE_HELP_EVENTS } from '@tk-mobile-follow-client/shared';
 import { markRaw, onBeforeUnmount, ref } from 'vue';
-import { setIntervalImmediate } from '@tk-crawler/shared';
 import { ElIcon } from 'element-plus';
 import { DataAnalysis, ArrowRight } from '@element-plus/icons-vue';
 
@@ -23,10 +22,7 @@ async function updateGroup() {
   );
   groupName.value = group?.name;
 }
-const intervalId = setIntervalImmediate(updateGroup, 100);
-onBeforeUnmount(() => {
-  clearInterval(intervalId);
-});
+updateGroup();
 
 const messageQueue = markRaw(
   new MessageQueue({
@@ -39,7 +35,11 @@ function onAnchorListFetched(
   data: { anchorList: AnchorFrom87RawData[]; createCount: number },
 ) {
   messageQueue.showMessage({
-    message: `采集到 ${data.anchorList[0]?.account} 等 ${data.anchorList?.length} 条数据，其中 ${data.createCount} 条为新数据`,
+    message: `采集到 ${data.anchorList[0]?.account} 等 ${data.anchorList?.length} 条数据，${
+      groupName.value
+        ? `其中 ${data.createCount} 条新数据已加入分组「${groupName.value}」`
+        : `其中 ${data.createCount} 条为新数据`
+    }`,
     type: 'success',
   });
 }

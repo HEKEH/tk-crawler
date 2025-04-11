@@ -104,7 +104,7 @@ async function refresh() {
 // 删除分组
 async function deleteItem(item: AnchorFollowGroupItem) {
   try {
-    await ElMessageBox.confirm(`确定要删除分组“${item.name}”吗？`, {
+    await ElMessageBox.confirm(`确定要删除分组「${item.name}」吗？`, {
       type: 'warning',
       confirmButtonText: '确定',
       cancelButtonText: '取消',
@@ -120,11 +120,14 @@ async function deleteItem(item: AnchorFollowGroupItem) {
 // 清除主播
 async function handleClearAnchors(item: AnchorFollowGroupItem) {
   try {
-    await ElMessageBox.confirm(`确定要清除分组“${item.name}”中的所有主播吗？`, {
-      type: 'warning',
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-    });
+    await ElMessageBox.confirm(
+      `确定要清除分组「${item.name}」中的所有主播吗？`,
+      {
+        type: 'warning',
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+      },
+    );
   } catch {
     return;
   }

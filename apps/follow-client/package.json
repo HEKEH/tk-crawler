@@ -4,6 +4,11 @@
   "description": "TK Follow Client",
   "author": "Will Ho",
   "main": "dist-electron/main.js",
+  "files": [
+    "dist",
+    "dist-electron",
+    "package.json"
+  ],
   "scripts": {
     "dev": "vite",
     "check-production-env": "node -e \"if(!require('fs').existsSync('../../.env.production')){console.error('.env.production file not found');process.exit(1)}\"",
@@ -15,8 +20,8 @@
     "@types/lodash": "^4.17.13",
     "@vitejs/plugin-vue": "^5.2.1",
     "@vitejs/plugin-vue-jsx": "^4.1.1",
-    "electron": "^34.3.2",
-    "electron-builder": "^25.1.8",
+    "electron": "^35.1.5",
+    "electron-builder": "^26.0.12",
     "element-plus": "^2.9.6",
     "get-system-proxy": "^1.0.0",
     "global-agent": "^3.0.0",

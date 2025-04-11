@@ -7,10 +7,10 @@
     "preinstall": "npx only-allow pnpm"
   },
   "peerDependencies": {
-    "electron": "^34.3.2"
+    "electron": "^35.1.5"
   },
   "devDependencies": {
-    "electron-builder": "^25.1.8",
+    "electron-builder": "^26.0.12",
     "electron-updater": "^6.3.9"
   }
 }

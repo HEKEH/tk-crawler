@@ -34,7 +34,6 @@
   },
   "dependencies": {
     "@prisma/client": "^6.4.1",
-    "@tk-crawler/shared": "workspace:*",
     "ioredis": "^5.5.0",
     "prisma": "^6.4.1",
     "uuid": "^11.0.3"

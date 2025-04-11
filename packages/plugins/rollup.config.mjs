@@ -5,21 +5,21 @@ import { nodeResolve } from '@rollup/plugin-node-resolve';
 import typescript from '@rollup/plugin-typescript';
 import dts from 'rollup-plugin-dts';
 
-const pkg = JSON.parse(
+const packageJSON = JSON.parse(
   fs.readFileSync(new URL('./package.json', import.meta.url), 'utf8'),
 );
 
 const externalPkgs = [
-  ...Object.keys(pkg.dependencies || {}),
-  ...Object.keys(pkg.peerDependencies || {}),
+  ...Object.keys(packageJSON.dependencies || {}),
+  ...Object.keys(packageJSON.peerDependencies || {}),
 ];
 
 // 使用函数形式的 external 配置，更精确地控制
 function externalFn(id) {
   // 检查是否在依赖列表中
-  const isExternal = externalPkgs.some(
-    pkg => id === pkg || id.startsWith(`${pkg}/`),
-  );
+  const isExternal =
+    externalPkgs.some(pkg => id === pkg || id.startsWith(`${pkg}/`)) ||
+    id.startsWith('@tk-crawler/'); // 所有的 @tk-crawler 在packages 这个层面都不打包，在 apps 层面打包
 
   if (isExternal) {
     console.log(`Marking as external: ${id}`);

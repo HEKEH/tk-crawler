@@ -1,5 +1,5 @@
 import { getInformalMessageToken } from '@tk-crawler/biz-shared';
-import { getLogger } from '@tk-crawler/core/infra/logger';
+import { getLogger } from '../../infra/logger';
 import { getMsTokenFromCookie } from './cookie';
 
 let msTokenFromResponse = '';

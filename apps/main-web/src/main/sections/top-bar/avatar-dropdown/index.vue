@@ -8,7 +8,7 @@ import {
 } from '@element-plus/icons-vue';
 import { useQueryClient } from '@tanstack/vue-query';
 import { OrgMemberRole } from '@tk-crawler/biz-shared';
-import { RESPONSE_CODE } from '@tk-crawler/shared/types';
+import { RESPONSE_CODE } from '@tk-crawler/shared';
 import {
   ElDivider,
   ElDropdown,

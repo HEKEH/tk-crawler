@@ -6,7 +6,6 @@
     "paths": {
       "@tk-crawler/core/*": ["packages/core/src/*"],
       "@tk-crawler/core": ["packages/core/src/index.ts"],
-      "@tk-crawler/shared/*": ["packages/shared/src/*"],
       "@tk-crawler/shared": ["packages/shared/src/index.ts"],
       "@tk-crawler/biz-shared": ["packages/biz-shared/src/index.ts"],
       "@tk-crawler/view-shared": ["packages/view-shared/src/index.ts"],

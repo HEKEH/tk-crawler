@@ -6,7 +6,7 @@ import type {
 import assert from 'node:assert';
 import { OrganizationStatus, OrgMemberStatus } from '@tk-crawler/biz-shared';
 import { mysqlClient } from '@tk-crawler/database';
-import { simpleDecrypt } from '@tk-crawler/shared/utils';
+import { simpleDecrypt } from '@tk-crawler/shared';
 import dayjs from 'dayjs';
 import config from '../../config';
 import { logger } from '../../infra/logger';

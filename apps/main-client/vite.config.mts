@@ -22,10 +22,6 @@ export default defineConfig(({ mode }) => {
       __dirname,
       '../../packages/biz-shared/src',
     ),
-    '@tk-crawler/tk-requests': resolve(
-      __dirname,
-      '../../packages/tk-requests/src',
-    ),
     '@tk-crawler/electron-utils': resolve(
       __dirname,
       '../../packages/electron-utils/src',

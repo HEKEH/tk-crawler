@@ -39,8 +39,6 @@
     "uuid": "^11.0.3"
   },
   "devDependencies": {
-    "@tk-crawler/biz-shared": "workspace:*",
-    "@tk-crawler/shared": "workspace:*",
     "@types/bcryptjs": "^2.4.6",
     "@types/koa": "^2.15.0",
     "@types/koa-bodyparser": "^4.3.12",

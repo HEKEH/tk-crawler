@@ -1,6 +1,6 @@
 import type { TikTokQueryTokens } from './types';
 import { getUrl } from '@tk-crawler/shared';
-import { getXBogus } from '@tk-crawler/x-bogus';
+import { getXBogus } from '@tk-crawler/tk-requests';
 import { commonGetRequest } from '../utils/common-request';
 import { getTiktokCookie } from '../utils/cookie';
 import {

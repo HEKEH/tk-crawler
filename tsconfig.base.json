@@ -32,7 +32,7 @@
         "apps/mobile-follow-client/shared/index.ts"
       ],
       "@tk-crawler/script-tools": ["packages/script-tools/src/index.ts"],
-      "@tk-crawler/x-bogus": ["packages/x-bogus/src/index.ts"]
+      "@tk-crawler/tk-requests": ["packages/tk-requests/src/index.ts"]
     },
     "resolveJsonModule": true,
     "types": [],

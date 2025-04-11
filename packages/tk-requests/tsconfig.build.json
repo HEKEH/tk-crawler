@@ -7,7 +7,8 @@
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "paths": {
-      "@tk-crawler/shared": ["../../packages/shared/src/index.ts"]
+      "@tk-crawler/shared": ["../../packages/shared/src/index.ts"],
+      "@tk-crawler/biz-shared": ["../../packages/biz-shared/src/index.ts"]
     },
     "outDir": "./dist"
   },

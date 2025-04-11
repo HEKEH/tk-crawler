@@ -10,7 +10,7 @@ const pkg = JSON.parse(
   fs.readFileSync(new URL('./package.json', import.meta.url), 'utf8'),
 );
 
-// 外部依赖，不会被打包
+// 改进的外部依赖配置
 const externalPkgs = [
   ...Object.keys(pkg.dependencies || {}),
   ...Object.keys(pkg.peerDependencies || {}),
@@ -42,6 +42,19 @@ function removeFile(filePath) {
   };
 }
 
+// // 添加调试插件
+// function debugPlugin() {
+//   return {
+//     name: 'debug-plugin',
+//     resolveId(source, importer) {
+//       if (source.includes('tk-crack')) {
+//         console.log(`Resolving: ${source} from ${importer}`);
+//       }
+//       return null;
+//     },
+//   };
+// }
+
 export default [
   // JavaScript 打包配置 (CJS 和 ESM)
   {
@@ -62,9 +75,11 @@ export default [
     ],
     external: externalFn,
     plugins: [
+      // debugPlugin(),
       json(),
       commonjs(),
       nodeResolve({
+        // 配置 nodeResolve 以尊重 external
         resolveOnly: moduleId => {
           const shouldResolve = !externalFn(moduleId);
           return shouldResolve;
@@ -80,7 +95,7 @@ export default [
 
   // DTS 打包配置
   {
-    input: './dist/types/packages/database/src/index.d.ts',
+    input: './dist/types/packages/tk-requests/src/index.d.ts',
     output: {
       file: 'dist/index.d.ts',
       format: 'es',

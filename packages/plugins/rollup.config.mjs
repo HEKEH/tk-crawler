@@ -9,21 +9,36 @@ const pkg = JSON.parse(
   fs.readFileSync(new URL('./package.json', import.meta.url), 'utf8'),
 );
 
-// 外部依赖，不会被打包
-const external = [
+const externalPkgs = [
   ...Object.keys(pkg.dependencies || {}),
   ...Object.keys(pkg.peerDependencies || {}),
 ];
 
-const removeFile = filePath => ({
-  name: 'remove-file',
-  closeBundle() {
-    const file = path.resolve(filePath);
-    if (fs.existsSync(file)) {
-      fs.rmSync(file, { recursive: true, force: true });
-    }
-  },
-});
+// 使用函数形式的 external 配置，更精确地控制
+function externalFn(id) {
+  // 检查是否在依赖列表中
+  const isExternal = externalPkgs.some(
+    pkg => id === pkg || id.startsWith(`${pkg}/`),
+  );
+
+  if (isExternal) {
+    console.log(`Marking as external: ${id}`);
+  }
+
+  return isExternal;
+}
+
+function removeFile(filePath) {
+  return {
+    name: 'remove-file',
+    closeBundle() {
+      const file = path.resolve(filePath);
+      if (fs.existsSync(file)) {
+        fs.rmSync(file, { recursive: true, force: true });
+      }
+    },
+  };
+}
 
 export default [
   // JavaScript 打包配置 (CJS 和 ESM)
@@ -39,10 +54,15 @@ export default [
         format: 'es',
       },
     ],
-    external,
+    external: externalFn,
     plugins: [
-      nodeResolve(),
       commonjs(),
+      nodeResolve({
+        resolveOnly: moduleId => {
+          const shouldResolve = !externalFn(moduleId);
+          return shouldResolve;
+        },
+      }),
       typescript({
         tsconfig: './tsconfig.build.json',
         declaration: true,
@@ -58,7 +78,7 @@ export default [
       file: 'dist/index.d.ts',
       format: 'es',
     },
-    external,
+    externalFn,
     plugins: [dts(), removeFile('./dist/types')],
   },
 ];

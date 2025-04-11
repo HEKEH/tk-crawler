@@ -2,7 +2,7 @@ import type { FeedResponse, WithRegion } from '../../types';
 import type { ChannelParams } from '../utils/params';
 import type { TikTokQueryTokens } from './types';
 import { getUrl } from '@tk-crawler/shared';
-import { getXBogus } from '@tk-crawler/x-bogus';
+import { getXBogus } from '@tk-crawler/tk-requests';
 import { commonGetRequest } from '../utils/common-request';
 import {
   COMMON_TIKTOK_HEADERS,

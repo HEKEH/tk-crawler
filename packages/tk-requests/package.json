@@ -1,0 +1,17 @@
+{
+  "name": "@tk-crawler/tk-requests",
+  "version": "0.0.0",
+  "private": true,
+  "files": [],
+  "scripts": {
+    "preinstall": "npx only-allow pnpm",
+    "build": "rm -rf dist && rollup --config rollup.config.mjs"
+  },
+  "dependencies": {
+    "@tk-crawler/biz-shared": "workspace:*",
+    "@tk-crawler/shared": "workspace:*",
+    "axios": "^1.7.9",
+    "tk-crack": "workspace:*"
+  },
+  "devDependencies": {}
+}

@@ -1,5 +1,5 @@
 import { batchCheckAnchor } from '@tk-crawler/core/requests/live-admin';
-import { getFactionIdAndArea } from '@tk-crawler/x-bogus';
+import { getFactionIdAndArea } from '@tk-crawler/tk-requests';
 import logger from '../logger';
 
 const ESData = {

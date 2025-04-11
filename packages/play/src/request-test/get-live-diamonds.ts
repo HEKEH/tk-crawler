@@ -1,4 +1,4 @@
-import { getLiveDiamonds } from '@tk-crawler/core/requests/live';
+import { getLiveDiamonds } from '@tk-crawler/tk-requests';
 import logger from '../logger';
 import { getTokens } from '../mock/tokens';
 

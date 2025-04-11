@@ -186,6 +186,9 @@ importers:
       '@tk-crawler/core':
         specifier: workspace:*
         version: link:../../packages/core
+      '@tk-crawler/tk-requests':
+        specifier: workspace:*
+        version: link:../../packages/tk-requests
     devDependencies:
       '@tanstack/vue-query':
         specifier: ^5.66.11
@@ -612,12 +615,12 @@ importers:
       '@tk-crawler/biz-shared':
         specifier: workspace:*
         version: link:../biz-shared
-      '@tk-crawler/core':
-        specifier: workspace:*
-        version: link:../core
       '@tk-crawler/shared':
         specifier: workspace:*
         version: link:../shared
+      '@tk-crawler/tk-requests':
+        specifier: workspace:*
+        version: link:../tk-requests
       log4js:
         specifier: ^6.9.1
         version: 6.9.1

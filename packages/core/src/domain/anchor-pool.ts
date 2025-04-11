@@ -4,15 +4,18 @@ import type {
   Region,
 } from '@tk-crawler/biz-shared';
 import type { MessageCenter } from '@tk-crawler/shared';
-import type { TikTokQueryTokens } from '../requests/live';
+import type { TikTokQueryTokens } from '@tk-crawler/tk-requests';
 import {
   getRequestErrorType,
   ShouldUpdateAnchorResult,
   TKRequestMessage,
 } from '@tk-crawler/biz-shared';
 import { FrequencyLimitTaskQueue } from '@tk-crawler/shared';
+import {
+  getAnchorInfoFromGiftList,
+  getLiveDiamonds,
+} from '@tk-crawler/tk-requests';
 import { getLogger } from '../infra/logger';
-import { getAnchorInfoFromGiftList, getLiveDiamonds } from '../requests/live';
 import {
   deleteAnchorCrawlRecord,
   recordAnchorCrawl,

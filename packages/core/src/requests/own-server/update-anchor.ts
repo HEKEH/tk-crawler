@@ -2,20 +2,17 @@ import type {
   UpdateAnchorRequest,
   UpdateAnchorResponse,
 } from '@tk-crawler/biz-shared';
-import { getUrl } from '@tk-crawler/shared';
 import { getConfig } from '../../config';
-import { commonPostRequest } from '../utils/common-request';
+import { commonRequest } from '../utils/common-request';
 
 export async function updateAnchor(
   data: UpdateAnchorRequest,
 ): Promise<UpdateAnchorResponse> {
-  const url = getUrl({
-    baseUrl: getConfig().ownServerUrl,
+  const response = await commonRequest<UpdateAnchorResponse>({
+    baseURL: getConfig().ownServerUrl,
+    method: 'post',
     path: '/anchor-pool/update-anchor',
-  });
-  const response = await commonPostRequest<UpdateAnchorResponse>({
-    url,
-    body: data,
+    params: data,
   });
   return response;
 }

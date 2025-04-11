@@ -1,102 +1,30 @@
-import type { AxiosRequestConfig } from 'axios';
-import axios from 'axios';
+import type { CommonRequestParams as SharedCommonRequestParams } from '@tk-crawler/shared';
+import {
+  RESPONSE_CODE,
+  commonRequest as sharedCommonRequest,
+} from '@tk-crawler/shared';
 import { getLogger } from '../../infra/logger';
-import { saveResponseMessageToken } from './ms-token';
 
-interface CommonGetRequestParams {
-  url: string;
-  headers?: Record<string, string | undefined>;
-  shouldCheckResponse?: boolean;
-  shouldUpdateMsToken?: boolean;
+interface CommonRequestParams<RequestParams>
+  extends Omit<SharedCommonRequestParams<RequestParams>, 'onBusinessError'> {
+  onTokenInvalid?: () => void;
 }
 
-export async function commonGetRequest<
-  ResponseData extends { status_code?: number; data?: any; message?: string },
+export async function commonRequest<
+  ResponseData extends { status_code: number; message?: string },
+  RequestParams extends Record<string, any> = Record<string, any>,
 >({
-  url,
-  headers,
-  shouldCheckResponse = true,
-  shouldUpdateMsToken = false,
-}: CommonGetRequestParams): Promise<ResponseData> {
-  const logger = getLogger();
-  try {
-    const config: AxiosRequestConfig = {
-      method: 'get',
-      maxBodyLength: Infinity,
-      url,
-      headers,
-    };
-    logger.debug('[request] config:', config);
-    const res = await axios<ResponseData>(config);
-    const { data, headers: responseHeader } = res;
-    if (shouldCheckResponse) {
-      if (data && 'status_code' in data && data.status_code === 0) {
-        if (shouldUpdateMsToken) {
-          const msToken = responseHeader['x-ms-token'];
-          saveResponseMessageToken(msToken);
-        }
-        // logger.debug('[response] success:', data);
-      } else {
-        logger.error('[response] business error:', data);
-      }
+  onTokenInvalid,
+  ...requestParams
+}: CommonRequestParams<RequestParams>): Promise<ResponseData> {
+  const data = await sharedCommonRequest<ResponseData>(requestParams);
+  if (data.status_code !== RESPONSE_CODE.SUCCESS) {
+    getLogger().error({
+      message: data.message,
+    });
+    if (data.status_code === RESPONSE_CODE.TOKEN_INVALID) {
+      onTokenInvalid?.();
     }
-    return data;
-  } catch (error) {
-    logger.error('[response] system error:', error);
-    throw error;
   }
-}
-
-interface CommonPostRequestParams {
-  url: string;
-  headers?: Record<string, string | undefined>;
-  body: any;
-  transformBodyToString?: boolean;
-  shouldCheckResponse?: boolean;
-  shouldUpdateMsToken?: boolean;
-}
-
-export async function commonPostRequest<
-  ResponseData extends { status_code: number; data?: any; message?: string },
->({
-  url,
-  headers,
-  body,
-  transformBodyToString = false,
-  shouldCheckResponse = true,
-  shouldUpdateMsToken = false,
-}: CommonPostRequestParams): Promise<ResponseData> {
-  const logger = getLogger();
-  try {
-    let queryData = body;
-    if (transformBodyToString) {
-      queryData = typeof body !== 'string' ? JSON.stringify(body) : body;
-    }
-    const config: AxiosRequestConfig = {
-      method: 'post',
-      maxBodyLength: Infinity,
-      url,
-      headers,
-      data: queryData,
-    };
-    logger.debug('[request] config:', config);
-    const res = await axios<ResponseData>(config);
-    const { data, headers: responseHeader } = res;
-
-    if (shouldCheckResponse) {
-      if (data && 'status_code' in data && data.status_code === 0) {
-        if (shouldUpdateMsToken) {
-          const msToken = responseHeader['x-ms-token'];
-          saveResponseMessageToken(msToken);
-        }
-        // logger.debug('[response] success:', data);
-      } else {
-        logger.error('[response] business error:', data);
-      }
-    }
-    return data;
-  } catch (error) {
-    logger.error('[response] system error:', error);
-    throw error;
-  }
+  return data;
 }

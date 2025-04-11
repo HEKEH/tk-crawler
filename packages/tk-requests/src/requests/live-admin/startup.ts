@@ -7,7 +7,7 @@ import {
 } from '@tk-crawler/biz-shared';
 import { getUrl, type Logger } from '@tk-crawler/shared';
 import axios from 'axios';
-import { getXBogus } from '../get-x-bogus';
+import { getXBogus } from '../../get-x-bogus';
 
 export async function startup(cookie: string, logger: Logger) {
   const headers = {

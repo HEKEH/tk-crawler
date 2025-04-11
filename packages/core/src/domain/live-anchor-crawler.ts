@@ -1,6 +1,10 @@
 import type { MessageCenter } from '@tk-crawler/shared';
+import type {
+  ChannelSubTagMap,
+  DrawerSubTab,
+  TikTokQueryTokens,
+} from '@tk-crawler/tk-requests';
 import type { Subscription } from 'rxjs';
-import type { DrawerSubTab, TikTokQueryTokens } from '../requests/live';
 import type { RawAnchorParam } from './anchor-pool';
 import {
   tiktokRequestErrorHandler,
@@ -11,16 +15,16 @@ import {
   IntervalRunner,
   setIntervalImmediate,
 } from '@tk-crawler/shared';
-import { getLogger } from '../infra/logger';
-import { DRAWER_TABS_SCENE, getDrawerTabs, getFeed } from '../requests/live';
-import { ChannelId } from '../requests/live/constants';
-
 import {
-  type ChannelSubTagMap,
+  ChannelId,
+  DRAWER_TABS_SCENE,
   getChannelParamsByChannelId,
+  getDrawerTabs,
+  getFeed,
+  getQueryTokens,
   getRandomChannelId,
-} from '../requests/utils/params';
-import { getQueryTokens } from '../requests/utils/query-tokens';
+} from '@tk-crawler/tk-requests';
+import { getLogger } from '../infra/logger';
 import { AnchorPool } from './anchor-pool';
 
 const TOKEN_UPDATE_INTERVAL = 5000; // 5s更新一次

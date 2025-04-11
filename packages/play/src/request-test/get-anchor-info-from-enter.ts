@@ -1,6 +1,8 @@
 import { getVerifyFp } from '@tk-crawler/biz-shared';
-import { getAnchorInfoFromEnter } from '@tk-crawler/core/requests/live';
-import { getFormalMessageToken } from '@tk-crawler/core/requests/utils/params';
+import {
+  getAnchorInfoFromEnter,
+  getFormalMessageToken,
+} from '@tk-crawler/tk-requests';
 import logger from '../logger';
 
 export default async function getAnchorInfoFromEnterTest() {

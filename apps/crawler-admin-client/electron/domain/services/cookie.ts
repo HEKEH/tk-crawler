@@ -1,6 +1,6 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
-import { setTiktokCookie } from '@tk-crawler/core';
+import { setTiktokCookie } from '@tk-crawler/tk-requests';
 import { getTiktokCookiePath } from '../../constants';
 import { logger } from '../../infra/logger';
 

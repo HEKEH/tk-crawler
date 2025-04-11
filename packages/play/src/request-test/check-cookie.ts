@@ -1,4 +1,4 @@
-import { checkTiktokCookieValid } from '@tk-crawler/core/requests/live';
+import { checkTiktokCookieValid } from '@tk-crawler/tk-requests';
 import { getTokens } from '../mock/tokens';
 
 export default async function checkCookieTest() {

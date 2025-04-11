@@ -1,4 +1,4 @@
-import { setLogger, setTiktokCookie } from '@tk-crawler/core';
+import { setLogger, setTiktokCookie } from '@tk-crawler/tk-requests';
 import logger from './logger';
 import { mockCookie } from './mock/cookie';
 import batchCheckAnchorTest from './request-test/batch-check-anchor';

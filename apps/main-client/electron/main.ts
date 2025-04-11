@@ -1,6 +1,7 @@
 /* eslint-disable perfectionist/sort-imports */
 // env需要最先运行
 import { initProxy } from './env';
+import { setLogger as setTkRequestsLogger } from '@tk-crawler/tk-requests';
 
 import process from 'node:process';
 // import { createRequire } from 'node:module'
@@ -21,6 +22,7 @@ import { logger } from './infra/logger';
 // const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 async function main() {
+  setTkRequestsLogger(logger);
   setElectronLang('en-US');
   const autoUpdater = new AutoUpdater(
     logger,

@@ -1,8 +1,8 @@
 import type { NumberString } from '@tk-crawler/shared';
-import type { WithRegion } from '../../../types';
+import type { WithRegion } from '../../types';
 import type { TikTokQueryTokens } from '../types';
 import { getUrl } from '@tk-crawler/shared';
-import { getXBogus } from '@tk-crawler/tk-requests';
+import { getXBogus } from '../../../get-x-bogus';
 import { commonGetRequest } from '../../utils/common-request';
 import { getTiktokCookie } from '../../utils/cookie';
 import {

@@ -2,7 +2,8 @@
 // env需要最先运行
 import { initProxy } from './env';
 
-import { setLogger } from '@tk-crawler/core';
+import { setLogger as setCoreLogger } from '@tk-crawler/core';
+import { setLogger as setTkRequestsLogger } from '@tk-crawler/tk-requests';
 import process from 'node:process';
 // import { createRequire } from 'node:module'
 import { PRODUCT_NAME, PUBLISH_URL } from '@tk-crawler-admin-client/shared';
@@ -19,7 +20,8 @@ import { logger } from './infra/logger';
 // const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 async function main() {
-  setLogger(logger);
+  setCoreLogger(logger);
+  setTkRequestsLogger(logger);
   setElectronLang('en-US');
   const autoUpdater = new AutoUpdater(
     logger,

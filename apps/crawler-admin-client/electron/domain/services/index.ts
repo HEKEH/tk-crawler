@@ -3,7 +3,10 @@ import type { Crawler } from '../crawler';
 import type { ViewsManager } from '../views';
 import { IsCookieValidResultStatus } from '@tk-crawler-admin-client/shared';
 import { getVerifyFp } from '@tk-crawler/biz-shared';
-import { checkTiktokCookieValid, getMsTokenFromCookie } from '@tk-crawler/core';
+import {
+  checkTiktokCookieValid,
+  getMsTokenFromCookie,
+} from '@tk-crawler/tk-requests';
 import { ipcMain } from 'electron';
 import { CUSTOM_EVENTS } from '../../constants';
 import { logger } from '../../infra/logger';

@@ -16,7 +16,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@tk-crawler/core": "workspace:*"
+    "@tk-crawler/core": "workspace:*",
+    "@tk-crawler/tk-requests": "workspace:*"
   },
   "devDependencies": {
     "@tanstack/vue-query": "^5.66.11",

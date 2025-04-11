@@ -1,4 +1,4 @@
-import { getAnchorInfoFromGiftList } from '@tk-crawler/core/requests/live';
+import { getAnchorInfoFromGiftList } from '@tk-crawler/tk-requests';
 import logger from '../logger';
 import { getTokens } from '../mock/tokens';
 

@@ -26,6 +26,7 @@
     "packages/script-tools/**",
     "packages/database/**",
     "packages/plugins/src/**",
+    "packages/tk-requests/**/*",
     "**/node_modules/**",
     "**/dist/**",
     "**/vite.config.*",

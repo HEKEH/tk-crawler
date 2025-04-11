@@ -6,7 +6,7 @@
   "scripts": {
     "preinstall": "npx only-allow pnpm"
   },
-  "dependencies": {
+  "peerDependencies": {
     "axios": "^1.7.9",
     "crypto-js": "^4.2.0",
     "dayjs": "^1.11.13",

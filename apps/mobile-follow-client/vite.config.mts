@@ -1,4 +1,9 @@
-import type { AliasOptions, InlineConfig, PluginOption } from 'vite';
+import type {
+  AliasOptions,
+  InlineConfig,
+  PluginOption,
+  UserConfig,
+} from 'vite';
 import type { ElectronSimpleOptions } from 'vite-plugin-electron/simple';
 import { readFileSync } from 'node:fs';
 import path, { resolve } from 'node:path';
@@ -13,9 +18,13 @@ import { createHtmlPlugin } from 'vite-plugin-html';
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   const isProduction = mode === 'production';
-  const pkg = JSON.parse(
+  const packageJSON = JSON.parse(
     readFileSync(new URL('./package.json', import.meta.url), 'utf8'),
   );
+  const external = [
+    ...Object.keys(packageJSON.dependencies || {}),
+    ...Object.keys(packageJSON.peerDependencies || {}),
+  ];
   const alias: AliasOptions = {
     '@tk-mobile-follow-client/shared': resolve(__dirname, 'shared'),
     '@tk-crawler/shared': resolve(__dirname, '../../packages/shared/src'),
@@ -51,7 +60,7 @@ export default defineConfig(({ mode }) => {
         build: {
           minify: isProduction,
           rollupOptions: {
-            // external: ['@tk-crawler/core'],
+            external,
           },
         },
         ...envConfig,
@@ -71,7 +80,7 @@ export default defineConfig(({ mode }) => {
           undefined
         : {},
   };
-  return {
+  const result: UserConfig = {
     plugins: [
       vue(),
       vueJsx() as PluginOption,
@@ -86,7 +95,7 @@ export default defineConfig(({ mode }) => {
             template: 'index.html',
             injectOptions: {
               data: {
-                title: pkg.description,
+                title: packageJSON.description,
               },
             },
           },
@@ -102,6 +111,7 @@ export default defineConfig(({ mode }) => {
       minify: isProduction,
       outDir: 'dist',
       rollupOptions: {
+        external,
         input: {
           main: path.resolve(__dirname, 'index.html'),
           'collect-page-help': path.resolve(
@@ -116,4 +126,5 @@ export default defineConfig(({ mode }) => {
     },
     ...envConfig,
   };
+  return result;
 });

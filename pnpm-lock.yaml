@@ -183,18 +183,37 @@ importers:
 
   apps/crawler-admin-client:
     dependencies:
+      tk-crack:
+        specifier: workspace:*
+        version: link:../../packages/tk-crack
+    devDependencies:
       '@tanstack/vue-query':
         specifier: ^5.66.11
         version: 5.68.0(vue@3.5.13)
-      '@tk-crawler/core':
-        specifier: workspace:*
-        version: link:../../packages/core
-      '@tk-crawler/tk-requests':
-        specifier: workspace:*
-        version: link:../../packages/tk-requests
+      '@types/global-agent':
+        specifier: ^2.1.3
+        version: 2.1.3
+      '@types/lodash':
+        specifier: ^4.17.13
+        version: 4.17.16
+      '@vitejs/plugin-vue':
+        specifier: ^5.2.1
+        version: 5.2.2(vite@5.4.14)(vue@3.5.13)
+      '@vitejs/plugin-vue-jsx':
+        specifier: ^4.1.1
+        version: 4.1.2(vite@5.4.14)(vue@3.5.13)
+      axios:
+        specifier: ^1.7.9
+        version: 1.8.3
       dayjs:
         specifier: ^1.11.13
         version: 1.11.13
+      electron:
+        specifier: ^35.1.5
+        version: 35.1.5
+      electron-builder:
+        specifier: ^26.0.12
+        version: 26.0.12(electron-builder-squirrel-windows@26.0.12)
       element-plus:
         specifier: ^2.9.6
         version: 2.9.6(vue@3.5.13)
@@ -213,28 +232,6 @@ importers:
       rxjs:
         specifier: ^7.8.1
         version: 7.8.2
-      vue:
-        specifier: ^3.5.12
-        version: 3.5.13(typescript@5.5.4)
-    devDependencies:
-      '@types/global-agent':
-        specifier: ^2.1.3
-        version: 2.1.3
-      '@types/lodash':
-        specifier: ^4.17.13
-        version: 4.17.16
-      '@vitejs/plugin-vue':
-        specifier: ^5.2.1
-        version: 5.2.2(vite@5.4.14)(vue@3.5.13)
-      '@vitejs/plugin-vue-jsx':
-        specifier: ^4.1.1
-        version: 4.1.2(vite@5.4.14)(vue@3.5.13)
-      electron:
-        specifier: ^35.1.5
-        version: 35.1.5
-      electron-builder:
-        specifier: ^26.0.12
-        version: 26.0.12(electron-builder-squirrel-windows@26.0.12)
       vite-plugin-electron:
         specifier: ^0.29.0
         version: 0.29.0(vite-plugin-electron-renderer@0.14.6)
@@ -244,6 +241,9 @@ importers:
       vite-plugin-html:
         specifier: ^3.2.2
         version: 3.2.2(vite@5.4.14)
+      vue:
+        specifier: ^3.5.12
+        version: 3.5.13(typescript@5.5.4)
       vue-tsc:
         specifier: ^2.0.26
         version: 2.2.8(typescript@5.5.4)
@@ -262,6 +262,9 @@ importers:
       '@vitejs/plugin-vue-jsx':
         specifier: ^4.1.1
         version: 4.1.2(vite@5.4.14)(vue@3.5.13)
+      axios:
+        specifier: ^1.7.9
+        version: 1.8.3
       electron:
         specifier: ^35.1.5
         version: 35.1.5
@@ -304,9 +307,9 @@ importers:
 
   apps/main-client:
     dependencies:
-      '@tk-crawler/tk-requests':
+      tk-crack:
         specifier: workspace:*
-        version: link:../../packages/tk-requests
+        version: link:../../packages/tk-crack
     devDependencies:
       '@tanstack/vue-query':
         specifier: ^5.66.11
@@ -323,6 +326,9 @@ importers:
       '@vitejs/plugin-vue-jsx':
         specifier: ^4.1.1
         version: 4.1.2(vite@5.4.14)(vue@3.5.13)
+      axios:
+        specifier: ^1.7.9
+        version: 1.8.3
       electron:
         specifier: ^35.1.5
         version: 35.1.5
@@ -380,6 +386,9 @@ importers:
       '@vitejs/plugin-vue-jsx':
         specifier: ^4.1.1
         version: 4.1.2(vite@5.4.14)(vue@3.5.13)
+      axios:
+        specifier: ^1.7.9
+        version: 1.8.3
       element-plus:
         specifier: ^2.9.6
         version: 2.9.6(vue@3.5.13)
@@ -422,6 +431,9 @@ importers:
       '@vitejs/plugin-vue-jsx':
         specifier: ^4.1.1
         version: 4.1.2(vite@5.4.14)(vue@3.5.13)
+      axios:
+        specifier: ^1.7.9
+        version: 1.8.3
       electron:
         specifier: ^35.1.5
         version: 35.1.5
@@ -546,9 +558,6 @@ importers:
 
   packages/core:
     dependencies:
-      '@tk-crawler/tk-requests':
-        specifier: workspace:*
-        version: link:../tk-requests
       axios:
         specifier: ^1.7.9
         version: 1.8.3
@@ -2915,9 +2924,11 @@ packages:
     engines: {node: '>=12'}
     dependencies:
       remove-accents: 0.5.0
+    dev: true
 
   /@tanstack/query-core@5.68.0:
     resolution: {integrity: sha512-r8rFYYo8/sY/LNaOqX84h12w7EQev4abFXDWy4UoDVUJzJ5d9Fbmb8ayTi7ScG+V0ap44SF3vNs/45mkzDGyGw==}
+    dev: true
 
   /@tanstack/vue-query@5.68.0(vue@3.5.13):
     resolution: {integrity: sha512-tc5ZyJVikaPWja/ToWMxCSBU/LjoK7QYJ4GuxouJRUnwFxxGUVFg9OOOw5NP467QRQKX87J9gfE/65JJOAUDiA==}
@@ -2933,6 +2944,7 @@ packages:
       '@vue/devtools-api': 6.6.4
       vue: 3.5.13(typescript@5.5.4)
       vue-demi: 0.14.10(vue@3.5.13)
+    dev: true
 
   /@tootallnate/once@2.0.0:
     resolution: {integrity: sha512-XCuKFP5PS55gnMVu3dty8KPatLqUoy/ZYzDzAGCQ8JNFCkLXzmI7vNHCR+XpbZaMWQK/vQubr7PkYq8g470J/A==}
@@ -3965,6 +3977,7 @@ packages:
 
   /@vue/devtools-api@6.6.4:
     resolution: {integrity: sha512-sGhTPMuXqZ1rVOk32RylztWkfXTRhuS7vgAKv0zjqk8gbsHkJ7xfFf+jbySxt7tWObEJwyKaHMikV/WGDiQm8g==}
+    dev: true
 
   /@vue/language-core@2.1.10(typescript@5.5.4):
     resolution: {integrity: sha512-DAI289d0K3AB5TUG3xDp9OuQ71CnrujQwJrQnfuZDwo6eGNf0UoRlPuaVNO+Zrn65PC3j0oB2i7mNmVPggeGeQ==}
@@ -6680,6 +6693,7 @@ packages:
 
   /get-system-proxy@1.0.0:
     resolution: {integrity: sha512-n6fXasEoNc+ecl59IZrQK4QqrF+DSHnXTOMVcyJVPTloTT8rNrdanyLa7tzc3y0vXJXKtk1zWb8jOczlZXJtPw==}
+    dev: true
 
   /get-tsconfig@4.10.0:
     resolution: {integrity: sha512-kGzZ3LWWQcGIAmg6iWvXn0ei6WDtV26wzHRMwDSzmAbcXrTEXxHy6IehI6/4eT6VRKyMP1eF1VqwrVUmE/LR7A==}
@@ -9445,6 +9459,7 @@ packages:
 
   /remove-accents@0.5.0:
     resolution: {integrity: sha512-8g3/Otx1eJaVD12e31UbJj1YzdtVvzH85HV7t+9MJYk/u3XmkOUJ5Ys9wQrf9PCPK8+xn4ymzqYCiZl6QWKn+A==}
+    dev: true
 
   /require-directory@2.1.1:
     resolution: {integrity: sha512-fGxEI7+wsG9xrvdjsrlmL22OMTTiHRwAMroiEeMgq8gzoLC/PQr7RsRDSTLUg/bZAZtF+TVIkHc6/4RIKrui+Q==}

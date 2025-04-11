@@ -1,4 +1,9 @@
-import type { AliasOptions, InlineConfig, PluginOption } from 'vite';
+import type {
+  AliasOptions,
+  InlineConfig,
+  PluginOption,
+  UserConfig,
+} from 'vite';
 import type { ElectronSimpleOptions } from 'vite-plugin-electron/simple';
 import { readFileSync } from 'node:fs';
 import path, { resolve } from 'node:path';
@@ -13,9 +18,13 @@ import { createHtmlPlugin } from 'vite-plugin-html';
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   const isProduction = mode === 'production';
-  const pkg = JSON.parse(
+  const packageJson = JSON.parse(
     readFileSync(new URL('./package.json', import.meta.url), 'utf8'),
   );
+  const external = [
+    ...Object.keys(packageJson.dependencies || {}),
+    ...Object.keys(packageJson.peerDependencies || {}),
+  ];
   const alias: AliasOptions = {
     '@tk-crawler-admin-client/shared': resolve(__dirname, 'shared'),
     '@tk-crawler/shared': resolve(__dirname, '../../packages/shared/src'),
@@ -31,6 +40,11 @@ export default defineConfig(({ mode }) => {
       __dirname,
       '../../packages/electron-utils/src',
     ),
+    '@tk-crawler/tk-requests': resolve(
+      __dirname,
+      '../../packages/tk-requests/src',
+    ),
+    '@tk-crawler/core': resolve(__dirname, '../../packages/core/src'),
     '@tk-crawler/styles': resolve(__dirname, '../../packages/styles'),
   };
 
@@ -51,7 +65,7 @@ export default defineConfig(({ mode }) => {
         build: {
           minify: isProduction,
           rollupOptions: {
-            // external: ['@tk-crawler/core'],
+            external,
           },
         },
         ...envConfig,
@@ -71,7 +85,7 @@ export default defineConfig(({ mode }) => {
           undefined
         : {},
   };
-  return {
+  const result: UserConfig = {
     plugins: [
       vue(),
       vueJsx() as PluginOption,
@@ -86,7 +100,7 @@ export default defineConfig(({ mode }) => {
             template: 'index.html',
             injectOptions: {
               data: {
-                title: pkg.description,
+                title: packageJson.description,
               },
             },
           },
@@ -102,6 +116,7 @@ export default defineConfig(({ mode }) => {
       minify: isProduction,
       outDir: 'dist',
       rollupOptions: {
+        external,
         input: {
           main: path.resolve(__dirname, 'index.html'),
           'login-tiktok-help': path.resolve(
@@ -116,4 +131,5 @@ export default defineConfig(({ mode }) => {
     },
     ...envConfig,
   };
+  return result;
 });

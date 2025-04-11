@@ -14,11 +14,9 @@
     "package.json"
   ],
   "scripts": {
-    "preinstall": "npx only-allow pnpm",
-    "build": "rm -rf dist && rollup --config rollup.config.mjs"
+    "preinstall": "npx only-allow pnpm"
   },
-  "dependencies": {
-    "@tk-crawler/tk-requests": "workspace:*",
+  "peerDependencies": {
     "axios": "^1.7.9",
     "lodash": "^4.17.21",
     "qs": "^6.13.1",

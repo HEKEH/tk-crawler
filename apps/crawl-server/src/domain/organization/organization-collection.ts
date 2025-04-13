@@ -1,20 +1,48 @@
 import type {
+  Area,
   BroadcastAnchorMessage,
   BroadcastGuildUserMessage,
+  BroadcastGuildUserMessageData,
   BroadcastOrganizationMessage,
+  BroadcastOrganizationMessageData,
+  BroadcastOrganizationUpdateMessage,
 } from '@tk-crawler/biz-shared';
 import type { RedisMessageBusCallback } from '@tk-crawler/database';
-import { ServerBroadcastMessageChannel } from '@tk-crawler/biz-shared';
+import {
+  getAreaByRegion,
+  ServerBroadcastMessageChannel,
+} from '@tk-crawler/biz-shared';
 import { redisMessageBus } from '@tk-crawler/database';
-import { beautifyJsonStringify } from '@tk-crawler/shared';
+import { beautifyJsonStringify, isArrayEqual } from '@tk-crawler/shared';
 import { logger } from '../../infra/logger';
-import { getAvailableOrganizationList } from '../../services';
+import {
+  getAvailableOrganization,
+  getAvailableOrganizationList,
+} from '../../services';
 import { OrganizationModel } from './organization-model';
 
 export class OrganizationCollection {
   private _organizations: OrganizationModel[] = [];
   private _messageBusUnsubscribes: (() => Promise<void>)[] = [];
+  private _areaOrganizationsMap: Partial<Record<Area, OrganizationModel[]>> =
+    {};
+
   constructor() {}
+
+  private _updateAreaOrganizationsMap() {
+    this._areaOrganizationsMap = this._organizations.reduce(
+      (acc, org) => {
+        org.areas.forEach(area => {
+          if (!acc[area]) {
+            acc[area] = [];
+          }
+          acc[area].push(org);
+        });
+        return acc;
+      },
+      {} as Partial<Record<Area, OrganizationModel[]>>,
+    );
+  }
 
   async init() {
     const { list: rawOrganizations } = await getAvailableOrganizationList();
@@ -66,7 +94,30 @@ export class OrganizationCollection {
     logger.info(`update organization list:`, {
       data: beautifyJsonStringify(rawOrganizations),
     });
-    // TODO: 更新组织列表
+    const oldOrgMap = this._organizations.reduce(
+      (acc, org) => {
+        acc[org.id] = org;
+        return acc;
+      },
+      {} as Record<string, OrganizationModel>,
+    );
+    const newOrgList = await Promise.all(
+      rawOrganizations.map(async item => {
+        const org = oldOrgMap[item.id];
+        if (org) {
+          await org.handleOrganizationUpdate(item);
+          delete oldOrgMap[item.id];
+          return org;
+        }
+        return new OrganizationModel(item);
+      }),
+    );
+    this._organizations = newOrgList;
+    logger.info(`New organization list:`, {
+      data: this._organizations.map(org => org.id),
+    });
+    this._updateAreaOrganizationsMap();
+    await Promise.all(Object.values(oldOrgMap).map(org => org.destroy()));
   }
 
   private async _handleOrganizationMessage(
@@ -76,14 +127,78 @@ export class OrganizationCollection {
     logger.info(`handle organization message: ${type}`, {
       data: beautifyJsonStringify(data),
     });
-    // TODO
     switch (type) {
       case 'update':
+        await this._updateOrganization(data);
         break;
       case 'create':
+        this._createOrganization(data);
         break;
       case 'delete':
+        await this._deleteOrganization(data);
         break;
+      default:
+        throw new Error(`unknown organization message type: ${type}`);
+    }
+  }
+
+  private async _updateOrganization(
+    data: BroadcastOrganizationUpdateMessage['data'],
+  ) {
+    const orgModel = this._organizations.find(org => org.id === data.id);
+    if (orgModel) {
+      const originalAreas = orgModel.areas;
+      orgModel.handleOrganizationUpdate(data);
+      if (!orgModel.isValid) {
+        await this._deleteOrganization({ id: orgModel.id });
+        return;
+      }
+      const newAreas = orgModel.areas;
+      if (!isArrayEqual(originalAreas, newAreas)) {
+        this._updateAreaOrganizationsMap();
+      }
+    } else {
+      const org = await getAvailableOrganization(data.id);
+      if (org.data) {
+        this._createOrganization(org.data);
+      }
+    }
+  }
+
+  private _createOrganization(
+    data: BroadcastOrganizationMessageData & {
+      guild_users?: BroadcastGuildUserMessageData[];
+    },
+  ) {
+    const orgModel = new OrganizationModel({
+      ...data,
+      guild_users: data.guild_users || [],
+    });
+    this._organizations.push(orgModel);
+    const areas = data.areas;
+    areas.forEach(area => {
+      if (!this._areaOrganizationsMap[area]) {
+        this._areaOrganizationsMap[area] = [];
+      }
+      this._areaOrganizationsMap[area].push(orgModel);
+    });
+  }
+
+  private async _deleteOrganization(data: { id: string }) {
+    const orgModel = this._organizations.find(org => org.id === data.id);
+    if (orgModel) {
+      await orgModel.destroy();
+      this._organizations = this._organizations.filter(
+        org => org.id !== data.id,
+      );
+      const areas = orgModel.areas;
+      areas.forEach(area => {
+        if (this._areaOrganizationsMap[area]) {
+          this._areaOrganizationsMap[area] = this._areaOrganizationsMap[
+            area
+          ].filter(org => org.id !== data.id);
+        }
+      });
     }
   }
 
@@ -92,19 +207,34 @@ export class OrganizationCollection {
     logger.info(`handle guild user message:`, {
       data: beautifyJsonStringify(data),
     });
-    // TODO
+    if (data) {
+      const org = this._organizations.find(org => org.id === data.org_id);
+      if (org) {
+        await org.handleGuildUserMessage(message);
+      }
+    }
   }
 
   private async _handleAnchorMessage(message: BroadcastAnchorMessage) {
     const { data } = message;
-    logger.info(`handle anchor message:`, {
+    logger.trace(`handle anchor message:`, {
       data: beautifyJsonStringify(data),
     });
-    // TODO
+    const { region } = data;
+    const area = getAreaByRegion(region);
+    if (area && this._areaOrganizationsMap[area]?.length) {
+      await Promise.all(
+        this._areaOrganizationsMap[area].map(org =>
+          org.handleAnchorMessage(message),
+        ),
+      );
+    }
   }
 
   async destroy() {
-    this._organizations = [];
     await this._unsubscribeMessageBus();
+    await Promise.all(this._organizations.map(org => org.destroy()));
+    this._organizations = [];
+    this._areaOrganizationsMap = {};
   }
 }

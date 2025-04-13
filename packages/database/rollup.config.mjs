@@ -22,7 +22,6 @@ function externalFn(id) {
   const isExternal = externalPkgs.some(
     pkg => id === pkg || id.startsWith(`${pkg}/`),
   );
-  // id.startsWith('@tk-crawler/'); // 正常 @tk-crawler 在packages 这个层面都不打包，在 apps 层面打包; (但database这里不行，因为它不会打包进最终产物，因此它引用的本项目的包，也需要打包)
 
   if (isExternal) {
     console.log(`Marking as external: ${id}`);

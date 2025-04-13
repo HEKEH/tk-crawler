@@ -159,6 +159,10 @@ export const REGION_AREA_MAP: { [key in Region]?: Area } = (() => {
   return map;
 })();
 
+export function getAreaByRegion(region: Region): Area | undefined {
+  return REGION_AREA_MAP[region];
+}
+
 export interface AreaOption {
   label: string;
   value: Area;

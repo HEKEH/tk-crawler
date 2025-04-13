@@ -1,8 +1,14 @@
 import type {
   Area,
   BroadcastGuildUserMessageData,
-  TKGuildUserStatus,
+  TKGuildUserStatus } from '@tk-crawler/biz-shared';
+import {
+  VALID_GUILD_USER_STATUS_LIST,
 } from '@tk-crawler/biz-shared';
+
+export function isGuildUserValid(status: TKGuildUserStatus): boolean {
+  return VALID_GUILD_USER_STATUS_LIST.includes(status);
+}
 
 export class GuildUserModel {
   readonly id: string;
@@ -25,4 +31,23 @@ export class GuildUserModel {
     this._cookie = data.cookie;
     this._factionId = data.faction_id;
   }
+
+  get isValid() {
+    return isGuildUserValid(this._status);
+  }
+
+  handleUpdate(data: Partial<BroadcastGuildUserMessageData>) {
+    data.username !== undefined && (this._username = data.username);
+    data.org_id !== undefined && (this._orgId = data.org_id);
+    data.status !== undefined && (this._status = data.status);
+    data.area !== undefined && (this._area = data.area);
+    data.max_query_per_hour !== undefined &&
+      (this._maxQueryPerHour = data.max_query_per_hour);
+    data.max_query_per_day !== undefined &&
+      (this._maxQueryPerDay = data.max_query_per_day);
+    data.cookie !== undefined && (this._cookie = data.cookie);
+    data.faction_id !== undefined && (this._factionId = data.faction_id);
+  }
+
+  async destroy() {}
 }

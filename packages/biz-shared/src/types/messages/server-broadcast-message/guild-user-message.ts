@@ -20,14 +20,16 @@ export interface BroadcastGuildUserCreateMessage {
 
 export interface BroadcastGuildUserUpdateMessage {
   type: 'update';
-  data: Partial<Omit<BroadcastGuildUserMessageData, 'id'>> & {
+  data: Partial<Omit<BroadcastGuildUserMessageData, 'id' | 'org_id'>> & {
     id: string;
+    org_id: string;
   };
 }
 
 export interface BroadcastGuildUserDeleteMessage {
   type: 'delete';
   data: {
+    org_id: string;
     ids: string[];
   };
 }

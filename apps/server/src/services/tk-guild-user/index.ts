@@ -190,8 +190,8 @@ export async function updateTKGuildUser(
       type: 'update',
       data: {
         id,
-        username: updateData.username,
         org_id,
+        username: updateData.username,
         status: updateData.status,
         max_query_per_hour: updateData.max_query_per_hour,
         max_query_per_day: updateData.max_query_per_day,
@@ -229,6 +229,7 @@ export async function deleteTKGuildUser(
   const message: BroadcastGuildUserDeleteMessage = {
     type: 'delete',
     data: {
+      org_id: data.org_id,
       ids: data.ids,
     },
   };

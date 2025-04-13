@@ -7,6 +7,7 @@ import assert from 'node:assert';
 import {
   ServerBroadcastMessageChannel,
   TKGuildUserStatus,
+  VALID_GUILD_USER_STATUS_LIST,
 } from '@tk-crawler/biz-shared';
 import { mysqlClient, redisMessageBus } from '@tk-crawler/database';
 import { BusinessError } from '../../utils';
@@ -75,13 +76,7 @@ export async function startLiveAdminAccount(
 
   assert(user, '用户不存在');
 
-  if (
-    [
-      TKGuildUserStatus.RUNNING,
-      TKGuildUserStatus.WAITING,
-      TKGuildUserStatus.WARNING,
-    ].includes(user.status)
-  ) {
+  if (VALID_GUILD_USER_STATUS_LIST.includes(user.status)) {
     throw new BusinessError('用户已启动');
   }
 
@@ -105,6 +100,7 @@ export async function startLiveAdminAccount(
     type: 'update',
     data: {
       id: user_id,
+      org_id,
       ...updateData,
     },
   };
@@ -150,6 +146,7 @@ export async function stopLiveAdminAccount(
     type: 'update',
     data: {
       id: user_id,
+      org_id,
       ...updateData,
     },
   };

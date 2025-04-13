@@ -1,3 +1,4 @@
+import { TKGuildUserStatus } from '../types';
 import { TIKTOK_LIVE_ADMIN_URL } from './url';
 import { USER_AGENT } from './user-agent';
 
@@ -22,3 +23,9 @@ export const COMMON_TIKTOK_LIVE_ADMIN_HEADERS = {
   'x-csrf-token': 'undefined',
   'x-language': 'zh-CN',
 };
+
+export const VALID_GUILD_USER_STATUS_LIST = [
+  TKGuildUserStatus.RUNNING,
+  TKGuildUserStatus.WAITING,
+  TKGuildUserStatus.WARNING,
+];

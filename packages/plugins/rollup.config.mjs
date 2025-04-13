@@ -17,9 +17,9 @@ const externalPkgs = [
 // 使用函数形式的 external 配置，更精确地控制
 function externalFn(id) {
   // 检查是否在依赖列表中
-  const isExternal =
-    externalPkgs.some(pkg => id === pkg || id.startsWith(`${pkg}/`)) ||
-    id.startsWith('@tk-crawler/'); // 所有的 @tk-crawler 在packages 这个层面都不打包，在 apps 层面打包
+  const isExternal = externalPkgs.some(
+    pkg => id === pkg || id.startsWith(`${pkg}/`),
+  );
 
   if (isExternal) {
     console.log(`Marking as external: ${id}`);

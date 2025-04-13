@@ -2,8 +2,12 @@ import type {
   Area,
   BroadcastGuildUserMessageData,
   BroadcastOrganizationMessageData,
+
+  TKGuildUserStatus } from '@tk-crawler/biz-shared';
+import {
+  OrganizationStatus,
+  VALID_GUILD_USER_STATUS_LIST,
 } from '@tk-crawler/biz-shared';
-import { OrganizationStatus, TKGuildUserStatus } from '@tk-crawler/biz-shared';
 import { mysqlClient } from '@tk-crawler/database';
 
 export async function getAvailableOrganizationList(): Promise<{
@@ -42,11 +46,7 @@ export async function getAvailableOrganizationList(): Promise<{
         },
         where: {
           status: {
-            in: [
-              TKGuildUserStatus.WAITING,
-              TKGuildUserStatus.RUNNING,
-              TKGuildUserStatus.WARNING,
-            ],
+            in: VALID_GUILD_USER_STATUS_LIST,
           },
         },
       },

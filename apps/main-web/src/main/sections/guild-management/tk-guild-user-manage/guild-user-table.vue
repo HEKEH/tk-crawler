@@ -13,7 +13,11 @@ import {
   RefreshRight,
 } from '@element-plus/icons-vue';
 import { useQuery } from '@tanstack/vue-query';
-import { AREA_NAME_MAP, TKGuildUserStatus } from '@tk-crawler/biz-shared';
+import {
+  AREA_NAME_MAP,
+  TKGuildUserStatus,
+  VALID_GUILD_USER_STATUS_LIST,
+} from '@tk-crawler/biz-shared';
 import {
   CUSTOM_EVENTS,
   MAIN_APP_PRODUCT_NAME,
@@ -319,13 +323,7 @@ function getStatusText(status: TKGuildUserStatus) {
 }
 
 function getStartOrStopButtonText(status: TKGuildUserStatus) {
-  if (
-    [
-      TKGuildUserStatus.RUNNING,
-      TKGuildUserStatus.WARNING,
-      TKGuildUserStatus.WAITING,
-    ].includes(status)
-  ) {
+  if (VALID_GUILD_USER_STATUS_LIST.includes(status)) {
     return '停止查询';
   }
   if (status === TKGuildUserStatus.ERROR) {
@@ -335,13 +333,7 @@ function getStartOrStopButtonText(status: TKGuildUserStatus) {
 }
 
 function getStartOrStopType(status: TKGuildUserStatus): 'stop' | 'start' {
-  if (
-    [
-      TKGuildUserStatus.RUNNING,
-      TKGuildUserStatus.WARNING,
-      TKGuildUserStatus.WAITING,
-    ].includes(status)
-  ) {
+  if (VALID_GUILD_USER_STATUS_LIST.includes(status)) {
     return 'stop';
   }
   return 'start';

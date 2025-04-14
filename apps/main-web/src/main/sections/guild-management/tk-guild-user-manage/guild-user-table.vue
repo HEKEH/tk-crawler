@@ -314,7 +314,7 @@ function getStatusText(status: TKGuildUserStatus) {
     case TKGuildUserStatus.ERROR:
       return '出错';
     case TKGuildUserStatus.COOKIE_EXPIRED:
-      return 'Cookie已过期';
+      return 'Cookie过期';
     case TKGuildUserStatus.WAITING:
       return '等待中';
     case TKGuildUserStatus.INACTIVE:
@@ -521,11 +521,14 @@ onActivated(refetch);
         <ElTableColumn
           prop="status"
           label="状态"
-          min-width="100"
+          min-width="120"
           sortable="custom"
         >
           <template #default="scope">
-            <ElTag :type="getStatusTagType(scope.row.status)">
+            <ElTag
+              :type="getStatusTagType(scope.row.status)"
+              class="status-tag"
+            >
               {{ getStatusText(scope.row.status) }}
             </ElTag>
           </template>

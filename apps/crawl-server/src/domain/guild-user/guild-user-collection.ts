@@ -6,7 +6,7 @@ import {
   type BroadcastGuildUserUpdateMessage,
   getAreaByRegion,
 } from '@tk-crawler/biz-shared';
-import { getAnchorCheckRedisRecord } from '@tk-crawler/server-shared';
+import { getAnchorCheckCount } from '@tk-crawler/server-shared';
 import { getMinArrayValueIndex } from '@tk-crawler/shared';
 import { logger } from '../../infra/logger';
 import { batchIsAnchorRecentlyCheckedByOrg } from '../../services';
@@ -31,7 +31,7 @@ export class GuildUserCollection {
   private _queuedAnchorIdsSet: Set<string> = new Set();
 
   private async _updateGuildUsersQueryRecord(guildUsers: GuildUserModel[]) {
-    const resp = await getAnchorCheckRedisRecord(
+    const resp = await getAnchorCheckCount(
       guildUsers.map(item => ({
         org_id: this._context.orgId,
         guild_user_id: item.id,

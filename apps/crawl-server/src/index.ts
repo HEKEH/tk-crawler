@@ -5,6 +5,7 @@ import {
   setLogger as setDatabaseLogger,
   subscribeRedisClient,
 } from '@tk-crawler/database';
+import { setLogger as setTKRequestsLogger } from '@tk-crawler/tk-requests';
 import initApp from './app';
 import config from './config';
 import { GlobalStore } from './domain/global-store';
@@ -15,6 +16,7 @@ logger.info('[env]', env.NODE_ENV);
 logger.info('[port]', config.port);
 
 (async () => {
+  setTKRequestsLogger(logger);
   logger.info('crawler server start');
   try {
     setDatabaseLogger(logger);

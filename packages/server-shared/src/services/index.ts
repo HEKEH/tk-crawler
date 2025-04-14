@@ -1,1 +1,1 @@
-export * from './anchor-check-redis-record';
+export * from './anchor-check-count';

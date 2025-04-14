@@ -31,10 +31,14 @@ function getQueryKeys({
   };
 }
 
-export async function recordAnchorCheck({
-  org_id,
-  guild_user_id,
-}: RecordAnchorCheckRedisParams): Promise<void> {
+export async function recordAnchorCheckCount(
+  { org_id, guild_user_id }: RecordAnchorCheckRedisParams,
+  logger: Logger,
+): Promise<void> {
+  logger.info('[recordAnchorCheckCount params]', {
+    org_id,
+    guild_user_id,
+  });
   const { hour_key, day_key } = getQueryKeys({ org_id, guild_user_id });
 
   const pipeline = checkAnchorRecordRedisNamespace.pipeline();
@@ -50,13 +54,13 @@ export interface RecordAnchorCheckRedisResponseData {
   query_per_day: number;
 }
 
-export async function getAnchorCheckRedisRecord(
+export async function getAnchorCheckCount(
   params: RecordAnchorCheckRedisParams[],
-  logger?: Logger,
+  logger: Logger,
 ): Promise<RecordAnchorCheckRedisResponseData[]> {
   // 获取所有参数的keys
   const keys = params.map(param => getQueryKeys(param));
-  logger?.info('[getAnchorCheckRedisRecord params]', {
+  logger.info('[getAnchorCheckRedisRecord params]', {
     params,
   });
 
@@ -65,8 +69,8 @@ export async function getAnchorCheckRedisRecord(
 
   // 添加所有查询命令
   keys.forEach(({ hour_key, day_key }) => {
-    pipeline.hget(hour_key, 'count');
-    pipeline.hget(day_key, 'count');
+    pipeline.get(hour_key);
+    pipeline.get(day_key);
   });
 
   // 执行pipeline
@@ -83,7 +87,7 @@ export async function getAnchorCheckRedisRecord(
       query_per_day: Number.parseInt(dayResult || '0', 10),
     });
   }
-  logger?.info('[getAnchorCheckRedisRecord response]', {
+  logger.info('[getAnchorCheckRedisRecord response]', {
     response,
   });
 

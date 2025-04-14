@@ -73,7 +73,7 @@ model AnchorInviteCheck {
   checked_at     DateTime      @db.DateTime(3)
   checked_by     BigInt        @db.UnsignedBigInt
   checked_result Int           @db.UnsignedTinyInt
-  invite_type    Int
+  invite_type    Int?          @db.UnsignedTinyInt
   created_at     DateTime      @default(now()) @db.DateTime(3)
   updated_at     DateTime      @updatedAt @db.DateTime(3)
   area           String        @db.VarChar(6)

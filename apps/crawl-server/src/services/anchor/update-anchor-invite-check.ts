@@ -53,7 +53,9 @@ export async function batchUpdateAnchorInviteCheck(
   });
 
   // 构建 SQL 参数占位符
-  const placeholders = values.map(() => '(?, ?, ?, ?, ?, ?, ?)').join(', ');
+  const placeholders = values
+    .map(() => '(?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP(3))')
+    .join(', ');
 
   // 展平数组用于 SQL 参数
   const flatParams = values.flat();
@@ -61,14 +63,15 @@ export async function batchUpdateAnchorInviteCheck(
   // 执行 MySQL 的 INSERT ... ON DUPLICATE KEY UPDATE 语句
   const sql = `
     INSERT INTO AnchorInviteCheck
-    (anchor_id, org_id, checked_by, checked_result, invite_type, checked_at, area)
+    (anchor_id, org_id, checked_by, checked_result, invite_type, checked_at, area, updated_at)
     VALUES ${placeholders}
     ON DUPLICATE KEY UPDATE
     checked_by = VALUES(checked_by),
     checked_result = VALUES(checked_result),
     invite_type = VALUES(invite_type),
     checked_at = VALUES(checked_at),
-    area = VALUES(area)
+    area = VALUES(area),
+    updated_at = CURRENT_TIMESTAMP(3)
   `;
 
   return await mysqlClient.prismaClient.$executeRawUnsafe(sql, ...flatParams);

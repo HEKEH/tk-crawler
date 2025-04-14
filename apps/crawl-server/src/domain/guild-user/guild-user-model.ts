@@ -11,7 +11,7 @@ import {
   TKGuildUserStatus,
   VALID_GUILD_USER_STATUS_LIST,
 } from '@tk-crawler/biz-shared';
-import { recordAnchorCheck } from '@tk-crawler/server-shared';
+import { recordAnchorCheckCount } from '@tk-crawler/server-shared';
 import { beautifyJsonStringify } from '@tk-crawler/shared';
 import {
   batchCheckAnchors,
@@ -154,12 +154,14 @@ export class GuildUserModel {
     );
   }
 
-  // TODO: 记录查询次数到redis
-  private async _recordQuery() {
-    await recordAnchorCheck({
-      org_id: this._orgId,
-      guild_user_id: this.id,
-    });
+  private async _recordQueryByGuildUserCount() {
+    await recordAnchorCheckCount(
+      {
+        org_id: this._orgId,
+        guild_user_id: this.id,
+      },
+      logger,
+    );
   }
 
   async checkAnchors(anchors: BroadcastAnchorMessageData[]): Promise<{
@@ -178,6 +180,7 @@ export class GuildUserModel {
     let result: BatchCheckAnchorResponse;
     try {
       result = await batchCheckAnchors(queryParams);
+      await this._recordQueryByGuildUserCount();
       logger.info(
         `[guild-user] batchCheckAnchors result: ${beautifyJsonStringify(result)}`,
       );
@@ -213,13 +216,10 @@ export class GuildUserModel {
     }
     try {
       await this._batchUpdateAnchorInviteCheck(anchorInviteCheckData);
-      await Promise.all([
-        recordAnchorCheckByOrg({
-          anchorIds: anchors.map(item => item.user_id),
-          orgId: this._orgId,
-        }),
-        this._recordQuery(),
-      ]);
+      await recordAnchorCheckByOrg({
+        anchorIds: anchors.map(item => item.user_id),
+        orgId: this._orgId,
+      });
     } catch (e) {
       logger.error(
         `[guild-user] batch update anchor invite check error: ${this.id}`,

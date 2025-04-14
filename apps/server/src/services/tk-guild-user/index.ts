@@ -18,7 +18,7 @@ import {
   TKGuildUserStatus,
 } from '@tk-crawler/biz-shared';
 import { mysqlClient, redisMessageBus } from '@tk-crawler/database';
-import { getAnchorCheckRedisRecord } from '@tk-crawler/server-shared';
+import { getAnchorCheckCount } from '@tk-crawler/server-shared';
 import { isEmpty, transObjectValuesToString, xss } from '@tk-crawler/shared';
 import { logger } from '../../infra/logger';
 import { transformTKGuildUserFilterValues } from './filter';
@@ -51,7 +51,7 @@ export async function getTKGuildUserList(
     }),
   ]);
 
-  const queryCountList = await getAnchorCheckRedisRecord(
+  const queryCountList = await getAnchorCheckCount(
     users.map(user => ({
       org_id: data.org_id,
       guild_user_id: user.id.toString(),

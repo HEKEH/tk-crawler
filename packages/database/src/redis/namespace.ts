@@ -10,12 +10,20 @@ export class RedisNamespace {
     this._redisClient = redisClient;
   }
 
-  private getKey(key: string): string {
+  pipeline() {
+    return this._redisClient.pipeline();
+  }
+
+  getKey(key: string): string {
     return `${this._prefix}:${key}`;
   }
 
   async get(key: string): Promise<string | null> {
     return await this._redisClient.get(this.getKey(key));
+  }
+
+  async hget(key: string, field: string): Promise<string | null> {
+    return await this._redisClient.hget(this.getKey(key), field);
   }
 
   async mget(keys: string[]): Promise<(string | null)[]> {

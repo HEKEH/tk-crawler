@@ -7,7 +7,5 @@
     "preinstall": "npx only-allow pnpm"
   },
   "peerDependencies": {},
-  "devDependencies": {
-    "@tk-crawler/shared": "workspace:*"
-  }
+  "devDependencies": {}
 }

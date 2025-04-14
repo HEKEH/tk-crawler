@@ -1,11 +1,13 @@
 {
-  "name": "@tk-crawler/main-client-shared",
+  "name": "@tk-crawler/server-shared",
   "version": "0.0.0",
   "private": true,
   "files": [],
   "scripts": {
     "preinstall": "npx only-allow pnpm"
   },
-  "peerDependencies": {},
+  "peerDependencies": {
+    "dayjs": "^1.11.13"
+  },
   "devDependencies": {}
 }

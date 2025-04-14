@@ -556,6 +556,16 @@ onActivated(refetch);
           sortable="custom"
         />
         <ElTableColumn
+          prop="current_query_per_day"
+          label="当天查询次数"
+          min-width="160"
+        />
+        <ElTableColumn
+          prop="current_query_per_hour"
+          label="当前小时查询次数"
+          min-width="180"
+        />
+        <ElTableColumn
           prop="created_at"
           label="创建时间"
           min-width="205"

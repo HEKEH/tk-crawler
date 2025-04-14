@@ -8,7 +8,7 @@ export const checkAnchorRecordRedisNamespace = new RedisNamespace(
   'c-a-b-o', // check anchor by org
 );
 
-function getKey(orgId: string, anchorId: string) {
+function getKey({ orgId, anchorId }: { orgId: string; anchorId: string }) {
   return `${orgId}-${anchorId}`;
 }
 
@@ -17,11 +17,7 @@ export async function isAnchorRecentlyCheckedByOrg(data: {
   anchorId: string;
   orgId: string;
 }) {
-  return Boolean(
-    await checkAnchorRecordRedisNamespace.get(
-      getKey(data.orgId, data.anchorId),
-    ),
-  );
+  return Boolean(await checkAnchorRecordRedisNamespace.get(getKey(data)));
 }
 
 /** 批量检测是否最近被机构检测过，返回false的anchor_id最近没有被检测过，可以检测 */
@@ -39,7 +35,7 @@ export async function batchIsAnchorRecentlyCheckedByOrg({
     })}`,
   );
   const records = await checkAnchorRecordRedisNamespace.mget(
-    anchorIds.map(anchorId => getKey(orgId, anchorId)),
+    anchorIds.map(anchorId => getKey({ orgId, anchorId })),
   );
   const res: Record<string, boolean> = {};
   anchorIds.forEach((anchor_id, index) => {
@@ -57,7 +53,10 @@ export async function recordAnchorCheckByOrg(data: {
     `[anchor] record anchor check by org: ${beautifyJsonStringify(data)}`,
   );
   await checkAnchorRecordRedisNamespace.mset(
-    data.anchorIds.map(anchorId => [getKey(data.orgId, anchorId), 1]),
+    data.anchorIds.map(anchorId => [
+      getKey({ orgId: data.orgId, anchorId }),
+      1,
+    ]),
     ANCHOR_CHECK_OUTDATE_TIME,
   );
 }

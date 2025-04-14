@@ -25,6 +25,7 @@
     "packages/electron-utils/src/main/**/*",
     "packages/biz-shared/**/*",
     "packages/tk-requests/**/*",
+    "packages/server-shared/**/*",
     "packages/play/**/*",
     "packages/script-tools/**/*",
     "packages/database/**/*",

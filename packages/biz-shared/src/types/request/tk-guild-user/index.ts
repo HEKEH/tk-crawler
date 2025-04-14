@@ -56,7 +56,13 @@ export interface GetTKGuildUserListRequest {
 }
 
 export interface GetTKGuildUserListResponseData {
-  list: Omit<TKGuildUser, 'cookie'>[];
+  list: (Omit<
+    TKGuildUser,
+    'cookie' | 'current_query_per_hour' | 'current_query_per_day'
+  > & {
+    current_query_per_hour: number;
+    current_query_per_day: number;
+  })[];
   total: number;
 }
 

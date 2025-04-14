@@ -9,6 +9,8 @@ export interface TKGuildUser {
   status: TKGuildUserStatus;
   max_query_per_hour: number;
   max_query_per_day: number;
+  current_query_per_hour?: number;
+  current_query_per_day?: number;
   cookie: string | null;
   // is_cookie_valid: boolean | null;
   created_at: Date;

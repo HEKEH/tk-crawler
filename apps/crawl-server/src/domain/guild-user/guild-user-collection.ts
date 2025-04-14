@@ -6,6 +6,8 @@ import {
   type BroadcastGuildUserUpdateMessage,
   getAreaByRegion,
 } from '@tk-crawler/biz-shared';
+import { getAnchorCheckRedisRecord } from '@tk-crawler/server-shared';
+import { getMinArrayValueIndex } from '@tk-crawler/shared';
 import { logger } from '../../infra/logger';
 import { batchIsAnchorRecentlyCheckedByOrg } from '../../services';
 import { getAvailableGuildUser } from '../../services/guild-user';
@@ -28,18 +30,46 @@ export class GuildUserCollection {
 
   private _queuedAnchorIdsSet: Set<string> = new Set();
 
+  private async _updateGuildUsersQueryRecord(guildUsers: GuildUserModel[]) {
+    const resp = await getAnchorCheckRedisRecord(
+      guildUsers.map(item => ({
+        org_id: this._context.orgId,
+        guild_user_id: item.id,
+      })),
+      logger,
+    );
+    resp.forEach((item, index) => {
+      const guildUser = guildUsers[index];
+      guildUser.setCurrentQueryPerHour(item.query_per_hour);
+      guildUser.setCurrentQueryPerDay(item.query_per_day);
+    });
+  }
+
   /** 选择最合适的账号去检测当前area */
   private async _chooseBestGuildUser(
     area: Area,
   ): Promise<GuildUserModel | null> {
-    const guildUsers = this._guildUsers.filter(
-      item => item.isValid && item.area === area,
+    let guildUsers = this._guildUsers.filter(
+      item => item.area === area && item.isValid,
     );
     if (guildUsers.length === 0) {
       return null;
     }
-    // TODO: 选择合适的账号去检测
-    return null;
+    await this._updateGuildUsersQueryRecord(guildUsers);
+    guildUsers = guildUsers.filter(item => item.isQueryCountValid);
+    if (guildUsers.length === 0) {
+      return null;
+    }
+    // 选择当前查询次数最少的账号
+    const minIndex = getMinArrayValueIndex(
+      guildUsers,
+      item => item.currentQueryPerDay,
+    );
+    const result = guildUsers[minIndex] || null;
+    if (result) {
+      logger.trace('choose best guild user', result.username);
+    }
+    return result;
   }
 
   constructor(

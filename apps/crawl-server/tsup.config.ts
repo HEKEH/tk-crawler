@@ -14,6 +14,14 @@ export default defineConfig({
         __dirname,
         '../../packages/biz-shared/src',
       ),
+      '@tk-crawler/tk-requests': resolve(
+        __dirname,
+        '../../packages/tk-requests/src',
+      ),
+      '@tk-crawler/server-shared': resolve(
+        __dirname,
+        '../../packages/server-shared/src',
+      ),
     };
   },
 });

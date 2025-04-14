@@ -11,6 +11,8 @@ import {
   TKGuildUserStatus,
   VALID_GUILD_USER_STATUS_LIST,
 } from '@tk-crawler/biz-shared';
+import { recordAnchorCheck } from '@tk-crawler/server-shared';
+import { beautifyJsonStringify } from '@tk-crawler/shared';
 import {
   batchCheckAnchors,
   CanUseInvitationType,
@@ -39,6 +41,10 @@ export class GuildUserModel {
   private _hasSystemError: boolean = false;
   private _systemErrorTimer: NodeJS.Timeout | null = null;
 
+  get username() {
+    return this._username;
+  }
+
   get area() {
     return this._area;
   }
@@ -61,10 +67,31 @@ export class GuildUserModel {
         this._area &&
         VALID_GUILD_USER_STATUS_LIST.includes(this._status) &&
         this._cookie &&
-        this._factionId &&
-        this._currentQueryPerHour < this._maxQueryPerHour &&
-        this._currentQueryPerDay < this._maxQueryPerDay,
+        this._factionId,
     );
+  }
+
+  get isQueryCountValid() {
+    return (
+      this._currentQueryPerHour < this._maxQueryPerHour &&
+      this._currentQueryPerDay < this._maxQueryPerDay
+    );
+  }
+
+  get currentQueryPerHour() {
+    return this._currentQueryPerHour;
+  }
+
+  setCurrentQueryPerHour(value: number) {
+    this._currentQueryPerHour = value;
+  }
+
+  get currentQueryPerDay() {
+    return this._currentQueryPerDay;
+  }
+
+  setCurrentQueryPerDay(value: number) {
+    this._currentQueryPerDay = value;
   }
 
   handleUpdate(data: Partial<BroadcastGuildUserMessageData>) {
@@ -128,7 +155,12 @@ export class GuildUserModel {
   }
 
   // TODO: 记录查询次数到redis
-  private async _recordQuery() {}
+  private async _recordQuery() {
+    await recordAnchorCheck({
+      org_id: this._orgId,
+      guild_user_id: this.id,
+    });
+  }
 
   async checkAnchors(anchors: BroadcastAnchorMessageData[]): Promise<{
     success: boolean;
@@ -146,6 +178,9 @@ export class GuildUserModel {
     let result: BatchCheckAnchorResponse;
     try {
       result = await batchCheckAnchors(queryParams);
+      logger.info(
+        `[guild-user] batchCheckAnchors result: ${beautifyJsonStringify(result)}`,
+      );
     } catch (e) {
       logger.error(`[guild-user] check anchors error: ${this.id}`, e);
       // 系统错误直接退出

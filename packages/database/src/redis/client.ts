@@ -81,6 +81,10 @@ class RedisClient {
     }
   }
 
+  hget(key: string, field: string): Promise<string | null> {
+    return this.redis.hget(key, field);
+  }
+
   async mget(keys: string[]): Promise<(string | null)[]> {
     try {
       if (keys.length === 0) {
@@ -91,6 +95,10 @@ class RedisClient {
       getLogger().error('Redis MGET Error:', error);
       throw error;
     }
+  }
+
+  pipeline() {
+    return this.redis.pipeline();
   }
 
   private async _mset(

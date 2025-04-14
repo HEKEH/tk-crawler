@@ -1,10 +1,12 @@
 import type {
   Area,
   BroadcastAnchorMessageData,
-  BroadcastGuildUserMessageData } from '@tk-crawler/biz-shared';
+  BroadcastGuildUserMessageData,
+} from '@tk-crawler/biz-shared';
 import type {
   AnchorCheckInfo,
-  BatchCheckAnchorResponse } from '@tk-crawler/tk-requests';
+  BatchCheckAnchorResponse,
+} from '@tk-crawler/tk-requests';
 import {
   TKGuildUserStatus,
   VALID_GUILD_USER_STATUS_LIST,
@@ -144,9 +146,6 @@ export class GuildUserModel {
     let result: BatchCheckAnchorResponse;
     try {
       result = await batchCheckAnchors(queryParams);
-      // if (result.status_code !== 0 && result.BaseResp?.StatusCode !== 4030004) {
-      //   result = await batchCheckAnchors(queryParams); // retry 1 次
-      // }
     } catch (e) {
       logger.error(`[guild-user] check anchors error: ${this.id}`, e);
       // 系统错误直接退出

@@ -2,6 +2,8 @@ import type { Area } from '@tk-crawler/biz-shared';
 import type { CanUseInvitationType } from '@tk-crawler/tk-requests';
 import assert from 'node:assert';
 import { mysqlClient } from '@tk-crawler/database/mysql';
+import { beautifyJsonStringify } from '@tk-crawler/shared';
+import { logger } from '../../infra/logger';
 
 interface UpdateAnchorInviteCheckData {
   anchor_id: string;
@@ -18,7 +20,9 @@ export async function batchUpdateAnchorInviteCheck(
   dataArray: UpdateAnchorInviteCheckData[],
 ) {
   assert(dataArray.length > 0, 'dataArray must not be empty');
-
+  logger.info(
+    `[anchor] batch update anchor invite check: ${beautifyJsonStringify(dataArray)}`,
+  );
   // 构建批量插入语句参数
   const values = dataArray.map(data => {
     const {

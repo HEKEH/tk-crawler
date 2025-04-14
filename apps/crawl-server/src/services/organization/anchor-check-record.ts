@@ -1,5 +1,7 @@
 import { redisClient, RedisNamespace } from '@tk-crawler/database';
+import { beautifyJsonStringify } from '@tk-crawler/shared';
 import { ANCHOR_CHECK_OUTDATE_TIME } from '../../constants';
+import { logger } from '../../infra/logger';
 
 export const checkAnchorRecordRedisNamespace = new RedisNamespace(
   redisClient,
@@ -30,6 +32,12 @@ export async function batchIsAnchorRecentlyCheckedByOrg({
   anchorIds: string[];
   orgId: string;
 }): Promise<Record<string, boolean>> {
+  logger.trace(
+    `[anchor] batch is anchor recently checked by org: ${beautifyJsonStringify({
+      anchorIds,
+      orgId,
+    })}`,
+  );
   const records = await checkAnchorRecordRedisNamespace.mget(
     anchorIds.map(anchorId => getKey(orgId, anchorId)),
   );
@@ -45,6 +53,9 @@ export async function recordAnchorCheckByOrg(data: {
   anchorIds: string[];
   orgId: string;
 }) {
+  logger.trace(
+    `[anchor] record anchor check by org: ${beautifyJsonStringify(data)}`,
+  );
   await checkAnchorRecordRedisNamespace.mset(
     data.anchorIds.map(anchorId => [getKey(data.orgId, anchorId), 1]),
     ANCHOR_CHECK_OUTDATE_TIME,

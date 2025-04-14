@@ -2,7 +2,6 @@ import Redis from 'ioredis';
 import { getLogger } from '../infra';
 
 class RedisClient {
-  private static instance: RedisClient;
   private _client: Redis | undefined;
 
   get redis() {
@@ -70,13 +69,6 @@ class RedisClient {
         throw error;
       }
     }
-  }
-
-  public static getInstance(): RedisClient {
-    if (!RedisClient.instance) {
-      RedisClient.instance = new RedisClient();
-    }
-    return RedisClient.instance;
   }
 
   /** 基础的 get 方法 */
@@ -195,4 +187,7 @@ class RedisClient {
 export type IRedisClient = InstanceType<typeof RedisClient>;
 
 /** 导出单例实例 */
-export const redisClient = RedisClient.getInstance();
+export const redisClient = new RedisClient();
+
+/** 导出订阅实例，必须要与常规的 redisClient 使用不同的实例，因为redis 的 subscribe 方法会阻塞 */
+export const subscribeRedisClient = new RedisClient();

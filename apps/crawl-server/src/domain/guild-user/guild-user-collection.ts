@@ -1,19 +1,53 @@
-import type {
-  BroadcastAnchorMessageData,
-  BroadcastGuildUserMessage,
-  BroadcastGuildUserMessageData,
-  BroadcastGuildUserUpdateMessage,
+import {
+  type Area,
+  type BroadcastAnchorMessageData,
+  type BroadcastGuildUserMessage,
+  type BroadcastGuildUserMessageData,
+  type BroadcastGuildUserUpdateMessage,
+  getAreaByRegion,
 } from '@tk-crawler/biz-shared';
-import { beautifyJsonStringify } from '@tk-crawler/shared';
 import { logger } from '../../infra/logger';
+import { batchIsAnchorRecentlyCheckedByOrg } from '../../services';
 import { getAvailableGuildUser } from '../../services/guild-user';
-import { GuildUserModel, isGuildUserValid } from './guild-user-model';
+import { GuildUserModel } from './guild-user-model';
+
+export interface GuildUserCollectionContext {
+  readonly areas: Area[];
+  readonly orgId: string;
+}
+
+// 每次的主播检测数量
+const ANCHORS_CHECK_NUMBER = 30;
 
 export class GuildUserCollection {
   private _guildUsers: GuildUserModel[] = [];
 
-  constructor(data: BroadcastGuildUserMessageData[]) {
+  private _context: GuildUserCollectionContext;
+  private _areaAnchorsMap: Partial<Record<Area, BroadcastAnchorMessageData[]>> =
+    {};
+
+  private _queuedAnchorIdsSet: Set<string> = new Set();
+
+  /** 选择最合适的账号去检测当前area */
+  private async _chooseBestGuildUser(
+    area: Area,
+  ): Promise<GuildUserModel | null> {
+    const guildUsers = this._guildUsers.filter(
+      item => item.isValid && item.area === area,
+    );
+    if (guildUsers.length === 0) {
+      return null;
+    }
+    // TODO: 选择合适的账号去检测
+    return null;
+  }
+
+  constructor(
+    data: BroadcastGuildUserMessageData[],
+    context: GuildUserCollectionContext,
+  ) {
     this._guildUsers = data.map(item => new GuildUserModel(item));
+    this._context = context;
   }
 
   async handleGuildUsersChange(guild_users: BroadcastGuildUserMessageData[]) {
@@ -56,11 +90,91 @@ export class GuildUserCollection {
     }
   }
 
+  private async _shouldAnchorAddToQueue(data: BroadcastAnchorMessageData) {
+    const { region } = data;
+    const area = getAreaByRegion(region);
+    if (!(area && this._context.areas.includes(area))) {
+      return false;
+    }
+    const guildUserOfArea = this._guildUsers.find(
+      item => item.isValid && item.area === area,
+    );
+    if (!guildUserOfArea) {
+      return false;
+    }
+    if (this._queuedAnchorIdsSet.has(data.user_id)) {
+      return false;
+    }
+    return true;
+    // const isCheckedRecently = await isAnchorRecentlyCheckedByOrg({
+    //   anchorId: data.user_id,
+    //   orgId: this._context.orgId,
+    // });
+    // return !isCheckedRecently;
+  }
+
   async handleAnchorMessage(data: BroadcastAnchorMessageData) {
-    logger.trace(`handle anchor message:`, {
-      data: beautifyJsonStringify(data),
+    logger.trace(`guild user collection handle anchor message:`, {
+      data,
     });
-    // TODO: 更新主播信息
+    if (!(await this._shouldAnchorAddToQueue(data))) {
+      return;
+    }
+    this._queuedAnchorIdsSet.add(data.user_id);
+    const area = getAreaByRegion(data.region)!;
+    if (!this._areaAnchorsMap[area]) {
+      this._areaAnchorsMap[area] = [];
+    }
+    this._areaAnchorsMap[area].push(data);
+    if (this._areaAnchorsMap[area].length < ANCHORS_CHECK_NUMBER) {
+      return;
+    }
+    const batchAnchorIds = this._areaAnchorsMap[area].map(item => item.user_id);
+    // 再检测一次，避免重复检测
+    const batchIsAnchorRecentlyChecked =
+      await batchIsAnchorRecentlyCheckedByOrg({
+        anchorIds: batchAnchorIds,
+        orgId: this._context.orgId,
+      });
+
+    const notNeedCheckAnchorIds = batchAnchorIds.filter(
+      anchorId => batchIsAnchorRecentlyChecked[anchorId],
+    );
+    if (notNeedCheckAnchorIds.length) {
+      notNeedCheckAnchorIds.forEach(anchorId =>
+        this._queuedAnchorIdsSet.delete(anchorId),
+      );
+      this._areaAnchorsMap[area] = this._areaAnchorsMap[area].filter(
+        item => !notNeedCheckAnchorIds.includes(item.user_id),
+      );
+      if (this._areaAnchorsMap[area].length < ANCHORS_CHECK_NUMBER) {
+        return;
+      }
+    }
+    const anchorsToCheck = this._areaAnchorsMap[area].splice(
+      0,
+      ANCHORS_CHECK_NUMBER,
+    );
+    logger.trace('anchors to check', anchorsToCheck);
+    let checkSuccess = false;
+    while (!checkSuccess) {
+      const guildUser = await this._chooseBestGuildUser(area);
+      // 没有可用的账号，则退出
+      if (!guildUser) {
+        break;
+      }
+      const { success } = await guildUser.checkAnchors(anchorsToCheck);
+      checkSuccess = success; // 不成功则换下一个账号
+    }
+    if (!checkSuccess) {
+      // 如果一直不成功，则将主播重新加入队列
+      this._areaAnchorsMap[area].unshift(...anchorsToCheck);
+    } else {
+      // 如果成功，则将主播从队列中删除
+      anchorsToCheck.forEach(anchor =>
+        this._queuedAnchorIdsSet.delete(anchor.user_id),
+      );
+    }
   }
 
   private async _updateGuildUser(
@@ -72,7 +186,7 @@ export class GuildUserCollection {
       if (!guildUser.isValid) {
         await this._deleteGuildUser({ ids: [guildUser.id] });
       }
-    } else if (data.status !== undefined && isGuildUserValid(data.status)) {
+    } else {
       const { id, org_id } = data;
       const guildUserData = await getAvailableGuildUser({
         id,
@@ -83,6 +197,21 @@ export class GuildUserCollection {
       }
     }
   }
+
+  // private _updateAreaGuildUsersMap() {
+  //   const validGuildUsers = this._guildUsers.filter(item => item.isValid);
+  //   this._areaGuildUsersMap = validGuildUsers.reduce(
+  //     (acc, guildUser) => {
+  //       const area = guildUser.area!;
+  //       if (!acc[area]) {
+  //         acc[area] = [];
+  //       }
+  //       acc[area].push(guildUser);
+  //       return acc;
+  //     },
+  //     {} as Partial<Record<Area, GuildUserModel[]>>,
+  //   );
+  // }
 
   private _createGuildUser(data: BroadcastGuildUserMessageData) {
     const guildUser = new GuildUserModel(data);
@@ -102,5 +231,7 @@ export class GuildUserCollection {
   async destroy() {
     await Promise.all(this._guildUsers.map(guildUser => guildUser.destroy()));
     this._guildUsers = [];
+    this._areaAnchorsMap = {};
+    this._queuedAnchorIdsSet.clear();
   }
 }

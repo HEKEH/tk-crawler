@@ -56,4 +56,11 @@ export class RedisNamespace {
       await this._redisClient.del(...keys);
     }
   }
+
+  async delByPrefix(prefix: string): Promise<void> {
+    const keys = await this._redisClient.keys(`${this._prefix}:${prefix}*`);
+    if (keys.length > 0) {
+      await this._redisClient.del(...keys);
+    }
+  }
 }

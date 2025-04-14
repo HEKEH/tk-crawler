@@ -2,8 +2,8 @@ import type {
   Area,
   BroadcastGuildUserMessageData,
   BroadcastOrganizationMessageData,
-
-  TKGuildUserStatus } from '@tk-crawler/biz-shared';
+  TKGuildUserStatus,
+} from '@tk-crawler/biz-shared';
 import {
   OrganizationStatus,
   VALID_GUILD_USER_STATUS_LIST,
@@ -47,6 +47,9 @@ export async function getAvailableOrganizationList(): Promise<{
         where: {
           status: {
             in: VALID_GUILD_USER_STATUS_LIST,
+          },
+          area: {
+            not: null,
           },
         },
       },

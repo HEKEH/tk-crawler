@@ -119,8 +119,8 @@ export async function createTKGuildUser(
       type: 'create',
       data: {
         id: user.id.toString(),
-        username: user.username,
         org_id: user.org_id.toString(),
+        username: user.username,
         status: user.status,
         max_query_per_hour: user.max_query_per_hour,
         max_query_per_day: user.max_query_per_day,

@@ -3,14 +3,14 @@ import type {
   BroadcastAnchorMessage,
   BroadcastGuildUserMessage,
   BroadcastGuildUserMessageData,
-  BroadcastOrganizationMessageData } from '@tk-crawler/biz-shared';
-import {
-  OrganizationStatus,
+  BroadcastOrganizationMessageData,
 } from '@tk-crawler/biz-shared';
+import type { GuildUserCollectionContext } from '../guild-user/guild-user-collection';
+import { OrganizationStatus } from '@tk-crawler/biz-shared';
 import dayjs from 'dayjs';
 import { GuildUserCollection } from '../guild-user/guild-user-collection';
 
-export class OrganizationModel {
+export class OrganizationModel implements GuildUserCollectionContext {
   readonly id: string;
   private _name: string;
   private _membership_start_at: Date | null;
@@ -18,6 +18,14 @@ export class OrganizationModel {
   private _status: OrganizationStatus;
   private _areas: Area[];
   private _guildUserCollection: GuildUserCollection;
+
+  get orgId() {
+    return this.id;
+  }
+
+  get name() {
+    return this._name;
+  }
 
   get isValid() {
     return (
@@ -81,6 +89,6 @@ export class OrganizationModel {
     this._membership_expire_at = data.membership_expire_at;
     this._status = data.status;
     this._areas = data.areas;
-    this._guildUserCollection = new GuildUserCollection(data.guild_users);
+    this._guildUserCollection = new GuildUserCollection(data.guild_users, this);
   }
 }

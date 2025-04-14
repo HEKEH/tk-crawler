@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { getLogger } from '../infra';
-import { type IRedisClient, redisClient } from './client';
+import { type IRedisClient, subscribeRedisClient } from './client';
 
 interface MessageEnvelope<T = any> {
   id: string; // 唯一ID
@@ -186,4 +186,4 @@ class RedisMessageBus {
 
 export type IRedisMessageBus = InstanceType<typeof RedisMessageBus>;
 
-export const redisMessageBus = new RedisMessageBus(redisClient);
+export const redisMessageBus = new RedisMessageBus(subscribeRedisClient);

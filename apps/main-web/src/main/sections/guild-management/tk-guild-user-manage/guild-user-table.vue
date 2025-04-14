@@ -291,6 +291,8 @@ function getStatusTagType(status: TKGuildUserStatus) {
       return 'info';
     case TKGuildUserStatus.ERROR:
       return 'danger';
+    case TKGuildUserStatus.COOKIE_EXPIRED:
+      return 'danger';
     case TKGuildUserStatus.WAITING:
       return 'primary';
     case TKGuildUserStatus.INACTIVE:
@@ -311,6 +313,8 @@ function getStatusText(status: TKGuildUserStatus) {
       return '已停止';
     case TKGuildUserStatus.ERROR:
       return '出错';
+    case TKGuildUserStatus.COOKIE_EXPIRED:
+      return 'Cookie已过期';
     case TKGuildUserStatus.WAITING:
       return '等待中';
     case TKGuildUserStatus.INACTIVE:
@@ -326,7 +330,10 @@ function getStartOrStopButtonText(status: TKGuildUserStatus) {
   if (VALID_GUILD_USER_STATUS_LIST.includes(status)) {
     return '停止查询';
   }
-  if (status === TKGuildUserStatus.ERROR) {
+  if (
+    status === TKGuildUserStatus.ERROR ||
+    status === TKGuildUserStatus.COOKIE_EXPIRED
+  ) {
     return '点击重新启动';
   }
   return '点击启动查询';

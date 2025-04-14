@@ -42,6 +42,9 @@ export class OrganizationCollection {
       },
       {} as Partial<Record<Area, OrganizationModel[]>>,
     );
+    logger.trace(`update area organizations map:`, {
+      areaOrganizationsMap: this._areaOrganizationsMap,
+    });
   }
 
   async init() {
@@ -52,6 +55,7 @@ export class OrganizationCollection {
     this._organizations = rawOrganizations.map(
       item => new OrganizationModel(item),
     );
+    this._updateAreaOrganizationsMap();
     await Promise.all([
       this._subscribeMessageBus(
         ServerBroadcastMessageChannel.OrganizationMessage,
@@ -114,7 +118,7 @@ export class OrganizationCollection {
     );
     this._organizations = newOrgList;
     logger.info(`New organization list:`, {
-      data: this._organizations.map(org => org.id),
+      data: this._organizations.map(org => org.name),
     });
     this._updateAreaOrganizationsMap();
     await Promise.all(Object.values(oldOrgMap).map(org => org.destroy()));
@@ -150,7 +154,12 @@ export class OrganizationCollection {
       const originalAreas = orgModel.areas;
       orgModel.handleOrganizationUpdate(data);
       if (!orgModel.isValid) {
-        await this._deleteOrganization({ id: orgModel.id });
+        await this._deleteOrganization({ id: orgModel.id }, true);
+        originalAreas.forEach(area => {
+          this._areaOrganizationsMap[area] = this._areaOrganizationsMap[
+            area
+          ]!.filter(org => org.id !== orgModel.id);
+        });
         return;
       }
       const newAreas = orgModel.areas;
@@ -184,21 +193,26 @@ export class OrganizationCollection {
     });
   }
 
-  private async _deleteOrganization(data: { id: string }) {
+  private async _deleteOrganization(
+    data: { id: string },
+    ignoreArea?: boolean,
+  ) {
     const orgModel = this._organizations.find(org => org.id === data.id);
     if (orgModel) {
       await orgModel.destroy();
       this._organizations = this._organizations.filter(
         org => org.id !== data.id,
       );
-      const areas = orgModel.areas;
-      areas.forEach(area => {
-        if (this._areaOrganizationsMap[area]) {
-          this._areaOrganizationsMap[area] = this._areaOrganizationsMap[
-            area
-          ].filter(org => org.id !== data.id);
-        }
-      });
+      if (!ignoreArea) {
+        const areas = orgModel.areas;
+        areas.forEach(area => {
+          if (this._areaOrganizationsMap[area]) {
+            this._areaOrganizationsMap[area] = this._areaOrganizationsMap[
+              area
+            ].filter(org => org.id !== data.id);
+          }
+        });
+      }
     }
   }
 
@@ -218,10 +232,17 @@ export class OrganizationCollection {
   private async _handleAnchorMessage(message: BroadcastAnchorMessage) {
     const { data } = message;
     logger.trace(`handle anchor message:`, {
-      data: beautifyJsonStringify(data),
+      data,
     });
     const { region } = data;
     const area = getAreaByRegion(region);
+    logger.trace(`find organizations by region:`, {
+      region,
+      area,
+      organizations: ((area && this._areaOrganizationsMap[area]) || []).map(
+        org => org.name,
+      ),
+    });
     if (area && this._areaOrganizationsMap[area]?.length) {
       await Promise.all(
         this._areaOrganizationsMap[area].map(org =>

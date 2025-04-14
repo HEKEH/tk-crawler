@@ -8,18 +8,18 @@ import { getUrl } from '@tk-crawler/shared';
 import { getXBogus } from '../../get-x-bogus';
 import { commonPostRequest } from '../utils/common-request';
 
-export interface BatchCheckAnchorParams {
+export interface BatchCheckAnchorsParams {
   displayIds: string[];
   cookie: string;
   factionId: string;
 }
 
 /** 获取主播的签约状态 */
-export async function batchCheckAnchor({
+export async function batchCheckAnchors({
   displayIds,
   cookie,
   factionId,
-}: BatchCheckAnchorParams) {
+}: BatchCheckAnchorsParams) {
   const body = JSON.stringify({
     DisplayIDList: displayIds,
   });

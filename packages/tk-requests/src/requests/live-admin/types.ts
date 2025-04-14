@@ -30,7 +30,9 @@ export interface BatchCheckAnchorData {
 }
 
 export interface BatchCheckAnchorResponse {
-  status_code: number;
+  // 4030004 代表cookie过期需要重新激活
+  BaseResp?: { StatusCode: number; StatusMessage: string };
+  status_code?: number;
   data?: BatchCheckAnchorData;
   message?: string;
 }

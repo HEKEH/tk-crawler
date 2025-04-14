@@ -1,11 +1,9 @@
 import type {
   Area,
   BroadcastGuildUserMessageData,
-
-  TKGuildUserStatus } from '@tk-crawler/biz-shared';
-import {
-  VALID_GUILD_USER_STATUS_LIST,
+  TKGuildUserStatus,
 } from '@tk-crawler/biz-shared';
+import { VALID_GUILD_USER_STATUS_LIST } from '@tk-crawler/biz-shared';
 import { mysqlClient } from '@tk-crawler/database';
 
 export async function getAvailableGuildUser(data: {
@@ -29,6 +27,9 @@ export async function getAvailableGuildUser(data: {
       where: {
         id: BigInt(data.id),
         org_id: BigInt(data.org_id),
+        area: {
+          not: null,
+        },
         status: {
           in: VALID_GUILD_USER_STATUS_LIST,
         },

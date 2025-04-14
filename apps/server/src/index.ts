@@ -4,6 +4,7 @@ import {
   redisClient,
   redisMessageBus,
   setLogger as setDatabaseLogger,
+  subscribeRedisClient,
 } from '@tk-crawler/database';
 import initApp from './app';
 import config from './config';
@@ -17,7 +18,11 @@ logger.info('[port]', config.port);
   logger.info('server start');
   try {
     setDatabaseLogger(logger);
-    await Promise.all([redisClient.connect(config), mysqlClient.connect()]);
+    await Promise.all([
+      redisClient.connect(config),
+      subscribeRedisClient.connect(config),
+      mysqlClient.connect(),
+    ]);
   } catch (error) {
     logger.error('Start Databases Error:', error);
     process.exit(1);
@@ -46,7 +51,11 @@ logger.info('[port]', config.port);
       await redisMessageBus.quit();
       // 2. Close database connections
       logger.info('Closing database connections...');
-      await Promise.all([redisClient.quit(), mysqlClient.disconnect()]);
+      await Promise.all([
+        redisClient.quit(),
+        subscribeRedisClient.quit(),
+        mysqlClient.disconnect(),
+      ]);
       logger.info('Database connections closed');
 
       // 3. Perform other cleanup operations
@@ -68,12 +77,12 @@ logger.info('[port]', config.port);
   // Handle uncaught exceptions and rejected Promises
   process.on('uncaughtException', error => {
     logger.error('Uncaught exception:', error);
-    gracefulShutdown('uncaughtException');
+    // gracefulShutdown('uncaughtException');
   });
 
   process.on('unhandledRejection', reason => {
     logger.error('Unhandled Promise rejection:', reason);
-    gracefulShutdown('unhandledRejection');
+    // gracefulShutdown('unhandledRejection');
   });
 
   return null;

@@ -129,6 +129,7 @@ export async function stopLiveAdminAccount(
       TKGuildUserStatus.INACTIVE,
       TKGuildUserStatus.STOPPED,
       TKGuildUserStatus.ERROR,
+      TKGuildUserStatus.COOKIE_EXPIRED,
     ].includes(user.status)
   ) {
     throw new BusinessError('用户已停止');

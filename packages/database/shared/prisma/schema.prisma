@@ -76,14 +76,15 @@ model AnchorInviteCheck {
   invite_type    Int
   created_at     DateTime      @default(now()) @db.DateTime(3)
   updated_at     DateTime      @updatedAt @db.DateTime(3)
-  region         String        @db.VarChar(2)
+  area           String        @db.VarChar(6)
   organization   Organization  @relation(fields: [org_id], references: [id], onDelete: Cascade)
   anchor         Anchor        @relation(fields: [anchor_id], references: [user_id], onDelete: Cascade)
   checkedByUser  LiveAdminUser @relation(fields: [checked_by], references: [id], onDelete: Cascade)
 
+  @@unique([org_id, anchor_id], name: "org_id_anchor_id")
   @@index([org_id])
   @@index([checked_result])
-  @@index([region])
+  @@index([area])
 }
 
 // 机构表

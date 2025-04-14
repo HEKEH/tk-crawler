@@ -31,4 +31,6 @@ export enum TKGuildUserStatus {
   WARNING = 4,
   /** 已出错 */
   ERROR = 5,
+  /** 已过期 */
+  COOKIE_EXPIRED = 6,
 }

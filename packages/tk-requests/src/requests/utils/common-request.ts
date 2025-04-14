@@ -57,7 +57,7 @@ interface CommonPostRequestParams {
 }
 
 export async function commonPostRequest<
-  ResponseData extends { status_code: number; data?: any; message?: string },
+  ResponseData extends { status_code?: number; data?: any; message?: string },
 >({
   url,
   headers,

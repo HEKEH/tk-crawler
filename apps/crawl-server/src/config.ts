@@ -37,12 +37,6 @@ if (!jwtSecret) {
   process.exit(1);
 }
 
-const simplePasswordKey = env.CLIENT_SIMPLE_PASSWORD_KEY;
-if (!simplePasswordKey) {
-  logger.error('CLIENT_SIMPLE_PASSWORD_KEY is required');
-  process.exit(1);
-}
-
 const config = {
   /** service port */
   port: Number.parseInt(port, 10),
@@ -60,9 +54,6 @@ const config = {
   jwtTokenExpiresTime: env.JWT_TOKEN_EXPIRES_TIME
     ? Number.parseInt(env.JWT_TOKEN_EXPIRES_TIME, 10)
     : 1000 * 60 * 60 * 24 * 30, // 30 days
-
-  /** 简单加密密码 */
-  simplePasswordKey,
 };
 
 export default config;

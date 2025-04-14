@@ -19,7 +19,13 @@ import {
 } from '@tk-crawler/biz-shared';
 import { mysqlClient, redisMessageBus } from '@tk-crawler/database';
 import { getAnchorCheckCount } from '@tk-crawler/server-shared';
-import { isEmpty, transObjectValuesToString, xss } from '@tk-crawler/shared';
+import {
+  isEmpty,
+  simpleDecrypt,
+  transObjectValuesToString,
+  xss,
+} from '@tk-crawler/shared';
+import config from '../../config';
 import { logger } from '../../infra/logger';
 import { transformTKGuildUserFilterValues } from './filter';
 
@@ -185,7 +191,9 @@ export async function updateTKGuildUser(
     // 如果用户名或密码有变更，则将用户状态设置为未激活
     if (
       (updateData.username && updateData.username !== existUser.username) ||
-      (updateData.password && updateData.password !== existUser.password)
+      (updateData.password &&
+        simpleDecrypt(updateData.password, config.simplePasswordKey) !==
+          simpleDecrypt(existUser.password, config.simplePasswordKey))
     ) {
       updateData.status = TKGuildUserStatus.INACTIVE;
     }

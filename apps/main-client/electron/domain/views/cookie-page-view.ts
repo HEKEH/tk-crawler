@@ -141,7 +141,7 @@ export class CookiePageView implements IView {
     return view.webContents.loadURL(url);
   }
 
-  private async _openThirdPartyPageView() {
+  private async _openThirdPartyPageView(): Promise<'failed' | undefined> {
     this._openTurnId++;
     const currentOpenTurnId = this._openTurnId;
     if (!this._guildUser) {
@@ -195,6 +195,7 @@ export class CookiePageView implements IView {
         logger.error('Open cookie page error:', error);
         this._setStatus(GUILD_COOKIE_PAGE_HELP_STATUS.fail);
       }
+      return 'failed';
     }
   }
 
@@ -521,7 +522,11 @@ export class CookiePageView implements IView {
         this._removeResizeListener = null;
       };
       await this._openHelpView();
-      await this._openThirdPartyPageView();
+      const result = await this._openThirdPartyPageView();
+      if (result === 'failed') {
+        // 如果失败了，重试一次
+        await this._reopenThirdPartyPageView();
+      }
     } catch (error) {
       console.error('Error loading URL:', error);
     }

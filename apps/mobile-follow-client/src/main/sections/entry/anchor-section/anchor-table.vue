@@ -400,11 +400,11 @@ const columns = computed<Column<AnchorFrom87>[]>(() => [
     width: 160,
     cellRenderer: ({ rowData }: { rowData: AnchorFrom87 }) => (
       <div class="group-container">
-        {rowData.groups?.length
-          ? rowData.groups?.map(group => (
-              <div class="ellipsis-text">{group.name}</div>
-            ))
-          : '-'}
+        {rowData.group ? (
+          <div class="ellipsis-text">{rowData.group.name}</div>
+        ) : (
+          '-'
+        )}
       </div>
     ),
   },

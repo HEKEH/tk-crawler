@@ -18,12 +18,12 @@ export function transformAnchorFilterValuesToFilterValues(
   const filter: AnchorFrom87WhereInput = filterRest;
   filter.org_id = BigInt(orgId);
   if (has_grouped !== undefined) {
-    filter.AnchorFollowGroupRelation = has_grouped
+    filter.group_id = has_grouped
       ? {
-          some: {}, // 存在任何关联记录
+          not: null,
         }
       : {
-          none: {}, // 不存在任何关联记录
+          equals: null,
         };
   }
 

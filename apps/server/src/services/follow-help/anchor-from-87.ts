@@ -35,15 +35,10 @@ export async function getAnchorFrom87List(
       take: data.page_size,
       orderBy,
       include: {
-        AnchorFollowGroupRelation: {
+        group: {
           select: {
             id: true,
-            group: {
-              select: {
-                id: true,
-                name: true,
-              },
-            },
+            name: true,
           },
         },
       },
@@ -54,18 +49,20 @@ export async function getAnchorFrom87List(
   ]);
 
   return {
-    list: anchors.map(({ AnchorFollowGroupRelation, ...anchor }) => {
+    list: anchors.map(({ group, ...anchor }) => {
       const res = transObjectValuesToString(anchor, [
         'account_id',
         'id',
         'org_id',
       ]);
       return Object.assign(res, {
-        has_grouped: AnchorFollowGroupRelation.length > 0,
-        groups: AnchorFollowGroupRelation.map(({ group }) => ({
-          id: group.id.toString(),
-          name: group.name,
-        })),
+        has_grouped: group !== null,
+        group: group
+          ? {
+              id: group.id.toString(),
+              name: group.name,
+            }
+          : undefined,
       });
     }),
     total,
@@ -146,29 +143,20 @@ export async function createOrUpdateAnchorFrom87(
 
     const batchCreate = async () => {
       if (toCreate.length > 0) {
+        const groupId = request.add_new_anchors_to_group?.group_id
+          ? BigInt(request.add_new_anchors_to_group.group_id)
+          : undefined;
         const result = await tx.anchorFrom87.createMany({
-          data: toCreate,
+          data: toCreate.map(anchor =>
+            groupId
+              ? {
+                  ...anchor,
+                  group_id: groupId,
+                }
+              : anchor,
+          ),
           skipDuplicates: true,
         });
-        if (request.add_new_anchors_to_group?.group_id && result.count) {
-          const createdAccountIds = toCreate.map(anchor => anchor.account_id);
-          const createdAnchors = await tx.anchorFrom87.findMany({
-            where: {
-              account_id: {
-                in: createdAccountIds,
-              },
-            },
-            select: {
-              id: true,
-            },
-          });
-          await tx.anchorFollowGroupRelation.createMany({
-            data: createdAnchors.map(anchor => ({
-              group_id: BigInt(request.add_new_anchors_to_group!.group_id),
-              anchor_table_id: anchor.id,
-            })),
-          });
-        }
         return result;
       }
     };

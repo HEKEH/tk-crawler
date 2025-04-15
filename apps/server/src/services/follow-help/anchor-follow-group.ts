@@ -37,7 +37,7 @@ export async function getAnchorFollowGroupList(
 
   const { anchors_count, ...orderBy } = _orderBy;
   if (anchors_count) {
-    orderBy.AnchorFollowGroupRelation = {
+    orderBy.anchors = {
       _count: anchors_count,
     };
   }
@@ -54,7 +54,7 @@ export async function getAnchorFollowGroupList(
       include: {
         _count: {
           select: {
-            AnchorFollowGroupRelation: true,
+            anchors: true,
           },
         },
       },
@@ -69,7 +69,7 @@ export async function getAnchorFollowGroupList(
       ...group,
       id: group.id.toString(),
       org_id: group.org_id.toString(),
-      anchors_count: _count.AnchorFollowGroupRelation,
+      anchors_count: _count.anchors,
     })),
     total,
   };
@@ -85,27 +85,19 @@ export async function getAnchorFollowGroup(
   const group = await mysqlClient.prismaClient.anchorFollowGroup.findUnique({
     where: { id: BigInt(data.id), org_id: BigInt(data.org_id) },
     include: {
-      AnchorFollowGroupRelation: {
-        include: {
-          AnchorFrom87: true,
-        },
-      },
+      anchors: true,
     },
   });
 
   assert(group, '未找到主播分组');
 
-  const { AnchorFollowGroupRelation, ...rest } = group;
+  const { anchors, ...rest } = group;
 
   return transObjectValuesToString(
     {
       ...rest,
-      anchors: AnchorFollowGroupRelation.map(relation =>
-        transObjectValuesToString(relation.AnchorFrom87, [
-          'account_id',
-          'id',
-          'org_id',
-        ]),
+      anchors: anchors.map(anchor =>
+        transObjectValuesToString(anchor, ['account_id', 'id', 'org_id']),
       ),
     },
     ['id', 'org_id'],
@@ -122,13 +114,9 @@ export async function getAnchorFollowGroupWithAnchorIds(
   const group = await mysqlClient.prismaClient.anchorFollowGroup.findUnique({
     where: { id: BigInt(data.id), org_id: BigInt(data.org_id) },
     include: {
-      AnchorFollowGroupRelation: {
-        include: {
-          AnchorFrom87: {
-            select: {
-              account_id: true,
-            },
-          },
+      anchors: {
+        select: {
+          account_id: true,
         },
       },
     },
@@ -136,13 +124,11 @@ export async function getAnchorFollowGroupWithAnchorIds(
 
   assert(group, '未找到主播分组');
 
-  const { AnchorFollowGroupRelation, ...rest } = group;
+  const { anchors, ...rest } = group;
 
   return {
     ...transObjectValuesToString(rest, ['id', 'org_id']),
-    anchor_ids: AnchorFollowGroupRelation.map(relation =>
-      relation.AnchorFrom87.account_id.toString(),
-    ),
+    anchor_ids: anchors.map(anchor => anchor.account_id.toString()),
   };
 }
 
@@ -173,12 +159,15 @@ export async function createAnchorFollowGroup(
 
     // 创建关联关系
     if (anchor_table_ids?.length) {
-      await tx.anchorFollowGroupRelation.createMany({
-        data: anchor_table_ids.map(anchor_table_id => ({
+      await tx.anchorFrom87.updateMany({
+        where: {
+          id: {
+            in: anchor_table_ids.map(BigInt),
+          },
+        },
+        data: {
           group_id: group.id,
-          anchor_table_id: BigInt(anchor_table_id),
-        })),
-        skipDuplicates: true,
+        },
       });
     }
 
@@ -206,12 +195,15 @@ export async function batchAddToAnchorFollowGroup(
     assert(existGroup, '分组不存在');
 
     // 创建关联关系
-    await tx.anchorFollowGroupRelation.createMany({
-      data: anchor_table_ids.map(anchor_table_id => ({
+    await tx.anchorFrom87.updateMany({
+      where: {
+        id: {
+          in: anchor_table_ids.map(BigInt),
+        },
+      },
+      data: {
         group_id: BigInt(group_id),
-        anchor_table_id: BigInt(anchor_table_id),
-      })),
-      skipDuplicates: true,
+      },
     });
   });
 }
@@ -243,24 +235,29 @@ export async function updateAnchorFollowGroup(
     }
 
     if (removed_anchor_table_ids?.length) {
-      await tx.anchorFollowGroupRelation.deleteMany({
+      await tx.anchorFrom87.updateMany({
         where: {
-          group_id: BigInt(id),
-          anchor_table_id: {
+          id: {
             in: removed_anchor_table_ids.map(BigInt),
           },
+        },
+        data: {
+          group_id: null,
         },
       });
     }
 
     if (added_anchor_table_ids?.length) {
       // 创建新关联
-      await tx.anchorFollowGroupRelation.createMany({
-        data: added_anchor_table_ids.map(anchor_table_id => ({
+      await tx.anchorFrom87.updateMany({
+        where: {
+          id: {
+            in: added_anchor_table_ids.map(BigInt),
+          },
+        },
+        data: {
           group_id: BigInt(id),
-          anchor_table_id: BigInt(anchor_table_id),
-        })),
-        skipDuplicates: true,
+        },
       });
     }
   });
@@ -270,39 +267,11 @@ async function deleteAnchorFromGroups(
   tx: PrismaClientTransactionContext | PrismaClient,
   groupIds: bigint[],
 ) {
-  // 1. 找出属于指定分组的主播
-  const anchorsInGroups = await tx.anchorFrom87.findMany({
-    where: {
-      AnchorFollowGroupRelation: {
-        some: {
-          group_id: {
-            in: groupIds,
-          },
-        },
-      },
-    },
-    select: {
-      id: true,
-    },
-  });
-
-  // 2. 从指定分组中移除这些主播
-  await tx.anchorFollowGroupRelation.deleteMany({
+  // 从指定分组中移除这些主播
+  const deletedAnchors = await tx.anchorFrom87.deleteMany({
     where: {
       group_id: {
         in: groupIds,
-      },
-    },
-  });
-
-  // 3. 删除不再属于任何分组的主播
-  const deletedAnchors = await tx.anchorFrom87.deleteMany({
-    where: {
-      id: {
-        in: anchorsInGroups.map(anchor => anchor.id),
-      },
-      AnchorFollowGroupRelation: {
-        none: {}, // 没有任何关联记录
       },
     },
   });

@@ -32,7 +32,7 @@ export interface AnchorFrom87 {
 
   // 是否已分组
   has_grouped: boolean;
-  groups?: Pick<AnchorFollowGroup, 'id' | 'name'>[];
+  group?: Pick<AnchorFollowGroup, 'id' | 'name'>;
 }
 
 export type AnchorFrom87RawData = Omit<

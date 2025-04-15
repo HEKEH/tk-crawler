@@ -242,7 +242,7 @@ async function handleClearGroup() {
       org_id: globalStore.orgId,
       only_anchor: state.value.clearOption === 'only-anchor',
       filter:
-        state.value.clearOption === 'all'
+        state.value.clearScope === 'all'
           ? undefined
           : transformFilterViewValuesToFilterValues(filters.value),
     });

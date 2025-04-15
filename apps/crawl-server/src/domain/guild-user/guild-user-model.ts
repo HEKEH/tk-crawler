@@ -8,16 +8,13 @@ import type {
   BatchCheckAnchorResponse,
 } from '@tk-crawler/tk-requests';
 import {
+  CanUseInvitationType,
   TKGuildUserStatus,
   VALID_GUILD_USER_STATUS_LIST,
 } from '@tk-crawler/biz-shared';
 import { recordAnchorCheckCount } from '@tk-crawler/server-shared';
 import { beautifyJsonStringify } from '@tk-crawler/shared';
-import {
-  batchCheckAnchors,
-  CanUseInvitationType,
-  getProfile,
-} from '@tk-crawler/tk-requests';
+import { batchCheckAnchors, getProfile } from '@tk-crawler/tk-requests';
 import { logger } from '../../infra/logger';
 import {
   batchUpdateAnchorInviteCheck,

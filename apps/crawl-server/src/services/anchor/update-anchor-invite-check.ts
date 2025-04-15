@@ -1,20 +1,10 @@
-import type { Area } from '@tk-crawler/biz-shared';
-import type { CanUseInvitationType } from '@tk-crawler/tk-requests';
+import type { AnchorInviteCheckData } from '@tk-crawler/biz-shared';
 import assert from 'node:assert';
 import { mysqlClient } from '@tk-crawler/database';
 import { beautifyJsonStringify } from '@tk-crawler/shared';
 import { logger } from '../../infra/logger';
 
-interface UpdateAnchorInviteCheckData {
-  anchor_id: string;
-  org_id: string;
-  checked_by: string;
-  /** true 代表可邀约，false 代表不可邀约 */
-  checked_result: boolean;
-  invite_type: CanUseInvitationType | null;
-  checked_at: Date;
-  area: Area;
-}
+type UpdateAnchorInviteCheckData = AnchorInviteCheckData;
 
 export async function batchUpdateAnchorInviteCheck(
   dataArray: UpdateAnchorInviteCheckData[],

@@ -1,5 +1,6 @@
 import type {
   AnchorCrawledMessage,
+  AnchorRankLeague,
   CollectedAnchorInfo,
   Region,
 } from '@tk-crawler/biz-shared';
@@ -184,7 +185,8 @@ export class AnchorPool {
       current_diamonds: liveDiamondsInfoData.diamonds,
       // last_diamonds: liveDiamondsInfoData.diamonds,
       // highest_diamonds: liveDiamondsInfoData.diamonds,
-      rank_league: giftListInfoData.anchor_ranking_league ?? null,
+      rank_league: (giftListInfoData.anchor_ranking_league ??
+        null) as AnchorRankLeague | null,
       has_commerce_goods: anchor.has_commerce_goods,
       tag: anchor.tag,
     };

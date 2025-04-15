@@ -1,5 +1,5 @@
 import type { Prisma } from '.prisma/client';
-import type { RESPONSE_CODE } from '@tk-crawler/shared';
+import type { RESPONSE_CODE, SortOrder } from '@tk-crawler/shared';
 
 import type {
   AnchorFollowGroup,
@@ -44,7 +44,7 @@ export interface GetAnchorFollowGroupListRequest {
   page_size: number;
   filter?: AnchorFollowGroupListFilter;
   order_by?: Prisma.AnchorFollowGroupOrderByWithRelationInput & {
-    anchors_count?: 'asc' | 'desc';
+    anchors_count?: SortOrder;
   };
 }
 

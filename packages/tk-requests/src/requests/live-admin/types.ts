@@ -1,9 +1,5 @@
-export enum CanUseInvitationType {
-  /** 普通邀约 */
-  Regular = 3,
-  /** 金票邀约 */
-  Elite = 4,
-}
+import type { CanUseInvitationType } from '@tk-crawler/biz-shared';
+
 export interface AnchorCheckInfo {
   /** 0代表可邀约 */
   AnchorStatus: number;

@@ -1,5 +1,5 @@
 import type { Prisma } from '.prisma/client';
-import type { RESPONSE_CODE } from '@tk-crawler/shared';
+import type { RESPONSE_CODE, SortOrder } from '@tk-crawler/shared';
 
 import type {
   AnchorCommentTemplate,
@@ -40,7 +40,7 @@ export type AnchorCommentTemplateGroupListFilter =
 
 export type GetAnchorCommentTemplateGroupListOrderBy =
   Prisma.AnchorCommentTemplateGroupOrderByWithRelationInput & {
-    templates_count?: 'asc' | 'desc';
+    templates_count?: SortOrder;
   };
 
 export interface GetAnchorCommentTemplateGroupListRequest {

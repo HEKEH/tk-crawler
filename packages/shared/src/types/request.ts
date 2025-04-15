@@ -4,3 +4,10 @@ export enum RESPONSE_CODE {
   SERVER_ERROR = 2,
   TOKEN_INVALID = 3,
 }
+
+export interface RangeFilter<T = number> {
+  gte?: T;
+  lte?: T;
+}
+
+export type SortOrder = 'asc' | 'desc';

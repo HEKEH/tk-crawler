@@ -1,5 +1,5 @@
 import type { RESPONSE_CODE } from '@tk-crawler/shared';
-import type { CollectedAnchorInfo } from '../anchor';
+import type { CollectedAnchorInfo } from '../../anchor';
 
 export interface ShouldUpdateAnchorRequest {
   anchor_ids: string[];

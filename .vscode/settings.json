@@ -24,7 +24,8 @@
     "editor.formatOnSave": false
   },
   "files.associations": {
-    "redis.template.conf": "redisconf"
+    "redis.template.conf": "redisconf",
+    "redis-online.conf": "redisconf"
   },
   "[redisconf]": {
     "editor.formatOnSave": false

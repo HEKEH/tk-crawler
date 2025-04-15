@@ -24,16 +24,18 @@
     "prod:flush": "cross-env pm2 flush",
     "docker:build": "./scripts/docker/build-docker-image.sh && pnpm docker:output",
     "docker:build:local": "./scripts/docker/build-docker-image.sh -e ./.env.local.production -i tk-crawler-crawl-server-local",
-    "docker:output": "docker save -o ./docker-images/tk-crawler-crawl-server.tar tk-crawler-crawl-server:latest",
+    "docker:output": "mkdir -p ./docker-images && docker save -o ./docker-images/tk-crawler-crawl-server-$npm_package_version.tar tk-crawler-crawl-server:$npm_package_version",
     "lint": "eslint",
     "preinstall": "npx only-allow pnpm"
   },
   "dependencies": {
     "@tk-crawler/database": "workspace:*",
+    "canvas": "^3.0.1",
     "cross-env": "^7.0.3",
     "dotenv": "^16.4.7",
     "dotenv-cli": "^7.4.2",
     "i18next-fs-backend": "^2.3.2",
+    "jsdom": "^26.0.0",
     "pm2": "^5.4.3",
     "uuid": "^11.0.3"
   },

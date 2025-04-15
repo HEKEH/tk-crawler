@@ -1,7 +1,7 @@
 import type { Area } from '@tk-crawler/biz-shared';
 import type { CanUseInvitationType } from '@tk-crawler/tk-requests';
 import assert from 'node:assert';
-import { mysqlClient } from '@tk-crawler/database/mysql';
+import { mysqlClient } from '@tk-crawler/database';
 import { beautifyJsonStringify } from '@tk-crawler/shared';
 import { logger } from '../../infra/logger';
 

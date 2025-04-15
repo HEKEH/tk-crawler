@@ -16,6 +16,7 @@ import { beautifyJsonStringify } from '@tk-crawler/shared';
 import {
   batchCheckAnchors,
   CanUseInvitationType,
+  getProfile,
 } from '@tk-crawler/tk-requests';
 import { logger } from '../../infra/logger';
 import {
@@ -41,6 +42,8 @@ export class GuildUserModel {
   private _hasSystemError: boolean = false;
   private _systemErrorTimer: NodeJS.Timeout | null = null;
 
+  private _keepAliveTimer: NodeJS.Timeout | null = null;
+
   get username() {
     return this._username;
   }
@@ -59,6 +62,7 @@ export class GuildUserModel {
     this._maxQueryPerDay = data.max_query_per_day;
     this._cookie = data.cookie;
     this._factionId = data.faction_id;
+    this._keepAlive();
   }
 
   get isValid() {
@@ -69,6 +73,26 @@ export class GuildUserModel {
         this._cookie &&
         this._factionId,
     );
+  }
+
+  private async _keepAlive() {
+    this._keepAliveTimer = setTimeout(
+      async () => {
+        logger.info(`[guild-user] keep alive: ${this.id}`);
+        if (this.isValid) {
+          try {
+            await getProfile(
+              { cookie: this._cookie!, factionId: this._factionId!.toString() },
+              logger,
+            );
+          } catch (e) {
+            logger.error(`[guild-user] keep alive error: ${this.id}`, e);
+          }
+        }
+        this._keepAlive();
+      },
+      Math.floor(1000 * 60 * (3 + Math.random() * 4)),
+    ); // 3-7 分钟运行一次，保持cookie有效
   }
 
   get isQueryCountValid() {
@@ -238,6 +262,10 @@ export class GuildUserModel {
     if (this._systemErrorTimer) {
       clearTimeout(this._systemErrorTimer);
       this._systemErrorTimer = null;
+    }
+    if (this._keepAliveTimer) {
+      clearTimeout(this._keepAliveTimer);
+      this._keepAliveTimer = null;
     }
   }
 }

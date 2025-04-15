@@ -212,3 +212,32 @@ export interface StartupResponse {
     websiteID: number;
   };
 }
+
+interface TiktokUserBase {
+  avatar: string;
+  display_id: string;
+  in_emergency: boolean;
+  nickname: string;
+  no_permission: boolean;
+  user_id: string;
+}
+
+export interface GetProfileResponse {
+  status_code: number;
+  message: string;
+  prompts?: string;
+  data?: {
+    contact_name: string;
+    email: string;
+    facebook: string;
+    instagram: string;
+    line: string;
+    linkedin: string;
+    phone: string;
+    platform_user_id: string;
+    telegram: string;
+    tiktok_user_base: TiktokUserBase;
+    twitter: string;
+    whatsapp: string;
+  };
+}

@@ -78,7 +78,7 @@ export class GuildUserModel {
   private async _keepAlive() {
     this._keepAliveTimer = setTimeout(
       async () => {
-        logger.info(`[guild-user] keep alive: ${this.id}`);
+        logger.info(`[guild-user] keep alive: ${this.id} ${this._username}`);
         if (this.isValid) {
           try {
             await getProfile(
@@ -86,7 +86,10 @@ export class GuildUserModel {
               logger,
             );
           } catch (e) {
-            logger.error(`[guild-user] keep alive error: ${this.id}`, e);
+            logger.error(
+              `[guild-user] keep alive error: ${this.id} ${this._username}`,
+              e,
+            );
           }
         }
         this._keepAlive();
@@ -133,7 +136,9 @@ export class GuildUserModel {
 
   private async _updateGuildUserStatus(status: TKGuildUserStatus) {
     this._status = status;
-    logger.trace(`[guild-user] update status: ${this.id} ${status}`);
+    logger.trace(
+      `[guild-user] update status: ${this.id} ${this._username} ${status}`,
+    );
     await updateGuildUserStatus({
       id: this.id,
       status,
@@ -209,7 +214,10 @@ export class GuildUserModel {
         `[guild-user] batchCheckAnchors result: ${beautifyJsonStringify(result)}`,
       );
     } catch (e) {
-      logger.error(`[guild-user] check anchors error: ${this.id}`, e);
+      logger.error(
+        `[guild-user] check anchors error: ${this.id} ${this._username}`,
+        e,
+      );
       // 系统错误直接退出
       this._encounterSystemError();
       return {
@@ -246,7 +254,7 @@ export class GuildUserModel {
       });
     } catch (e) {
       logger.error(
-        `[guild-user] batch update anchor invite check error: ${this.id}`,
+        `[guild-user] batch update anchor invite check error: ${this.id} ${this._username}`,
         e,
       );
       return {

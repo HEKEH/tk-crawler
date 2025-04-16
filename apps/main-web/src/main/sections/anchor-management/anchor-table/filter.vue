@@ -191,6 +191,10 @@ function resetFilters() {
           type="date"
         />
       </div>
+      <div class="filter-item">
+        <label class="filter-label">直播标签</label>
+        <ElInput v-model="filters.tag" clearable size="small" />
+      </div>
       <div class="buttons">
         <ElButton type="primary" size="small" @click="handleSubmit">
           <ElIcon style="margin-right: 0.25rem">

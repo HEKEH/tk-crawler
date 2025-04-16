@@ -15,6 +15,7 @@ export interface GetAnchorListFilter {
   rank_league?: RangeFilter<AnchorRankLeague>;
   area?: Area;
   region?: Region;
+  tag?: string;
   has_commerce_goods?: boolean;
   follower_count?: RangeFilter;
   checked_result?: boolean;
@@ -41,7 +42,9 @@ export type GetAnchorListOrderBy =
   | { region: SortOrder }
   | { invite_type: SortOrder }
   | { rank_league: SortOrder }
-  | { has_commerce_goods: SortOrder };
+  | { has_commerce_goods: SortOrder }
+  | { tag: SortOrder }
+  | { room_id: SortOrder };
 
 export type AnchorInviteCheckOrderByInput =
   Prisma.AnchorInviteCheckOrderByWithRelationInput;

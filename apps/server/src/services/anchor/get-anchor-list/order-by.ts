@@ -40,6 +40,10 @@ export function transformAnchorListOrderBy(
     result.anchor = { region: orderBy.region };
   } else if ('has_commerce_goods' in orderBy && orderBy.has_commerce_goods) {
     result.anchor = { has_commerce_goods: orderBy.has_commerce_goods };
+  } else if ('tag' in orderBy && orderBy.tag) {
+    result.anchor = { tag: orderBy.tag };
+  } else if ('room_id' in orderBy && orderBy.room_id) {
+    result.anchor = { room_id: orderBy.room_id };
   } else {
     throw new BusinessError(`Invalid orderBy: ${JSON.stringify(orderBy)}`);
   }

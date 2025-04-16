@@ -18,6 +18,7 @@ export function transformAnchorListFilterValues(
     rank_league,
     region,
     has_commerce_goods,
+    tag,
     follower_count,
     audience_count,
     current_diamonds,
@@ -30,10 +31,10 @@ export function transformAnchorListFilterValues(
     invite_type,
   } = filterValues;
   const anchorFilter: AnchorListWhereInput['anchor'] = {};
-  if (user_id !== undefined) {
+  if (user_id) {
     anchorFilter.user_id = BigInt(user_id);
   }
-  if (display_id !== undefined) {
+  if (display_id) {
     anchorFilter.display_id = display_id;
   }
   if (invite_type !== undefined) {
@@ -65,6 +66,9 @@ export function transformAnchorListFilterValues(
       });
     }
   }
+  if (tag) {
+    anchorFilter.tag = tag;
+  }
   if (follower_count !== undefined) {
     anchorFilter.follower_count = follower_count;
   }
@@ -91,7 +95,7 @@ export function transformAnchorListFilterValues(
     filter.updated_at = updated_at;
   }
 
-  if (area !== undefined) {
+  if (area) {
     filter.area = area;
   }
 

@@ -300,13 +300,23 @@ onActivated(refetch);
             {{ scope.row.has_commerce_goods ? '是' : '否' }}
           </template>
         </ElTableColumn>
-        <ElTableColumn prop="tag" label="标签" min-width="120">
+        <ElTableColumn
+          prop="tag"
+          label="直播标签"
+          min-width="120"
+          sortable="custom"
+        >
           <template #default="scope">
             {{ scope.row.tag || '-' }}
           </template>
         </ElTableColumn>
 
-        <ElTableColumn prop="room_id" label="直播间ID" min-width="180" />
+        <ElTableColumn
+          prop="room_id"
+          label="直播间ID"
+          min-width="180"
+          sortable="custom"
+        />
 
         <!-- 时间信息 -->
         <ElTableColumn

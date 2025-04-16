@@ -18,6 +18,7 @@ export interface FilterViewValues {
   area?: Area | 'all';
   region?: Region | 'all';
   has_commerce_goods?: boolean | 'all';
+  tag?: string;
   follower_count: RangeViewFilter;
   current_diamonds: RangeViewFilter;
   last_diamonds: RangeViewFilter;
@@ -63,6 +64,7 @@ export function transformFilterViewValuesToFilterValues(
     updated_at: transformRangeViewFilterToRangeFilter(
       filterViewValues.updated_at,
     ),
+    tag: filterViewValues.tag,
   };
 }
 

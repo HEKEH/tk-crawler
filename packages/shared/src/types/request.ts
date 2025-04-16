@@ -17,7 +17,9 @@ export function transformRangeViewFilterToRangeFilter<T = number>(
 ): RangeFilter<T> | undefined {
   if (
     !rangeViewFilter?.length ||
-    rangeViewFilter.every(item => item === undefined)
+    rangeViewFilter.every(
+      item => item === undefined || item === '' || item === null,
+    )
   ) {
     return undefined;
   }

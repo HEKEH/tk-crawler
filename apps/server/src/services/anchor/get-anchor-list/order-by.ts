@@ -7,8 +7,11 @@ import { BusinessError } from '../../../utils';
 export function transformAnchorListOrderBy(
   orderBy: GetAnchorListOrderBy | undefined,
 ): AnchorInviteCheckOrderByInput {
-  if (!orderBy) {
-    return {};
+  if (!orderBy || Object.keys(orderBy).length === 0) {
+    // 默认时间倒序
+    return {
+      updated_at: 'desc',
+    };
   }
   const result: AnchorInviteCheckOrderByInput = {};
   if ('updated_at' in orderBy && orderBy.updated_at) {
@@ -35,6 +38,8 @@ export function transformAnchorListOrderBy(
     result.anchor = { rank_league: orderBy.rank_league };
   } else if ('region' in orderBy && orderBy.region) {
     result.anchor = { region: orderBy.region };
+  } else if ('has_commerce_goods' in orderBy && orderBy.has_commerce_goods) {
+    result.anchor = { has_commerce_goods: orderBy.has_commerce_goods };
   } else {
     throw new BusinessError(`Invalid orderBy: ${JSON.stringify(orderBy)}`);
   }

@@ -2,7 +2,7 @@ import type {
   GetAnchorFollowGroupListRequest,
   GetAnchorFollowGroupListResponseData,
 } from '@tk-crawler/biz-shared';
-import type { UseQueryParams } from './types';
+import type { UseQueryParams } from '@tk-crawler/view-shared';
 import { useQuery } from '@tanstack/vue-query';
 import { RESPONSE_CODE } from '@tk-crawler/shared';
 import { toValue } from 'vue';

@@ -17,6 +17,7 @@ export interface GetAnchorListFilter {
   region?: Region;
   has_commerce_goods?: boolean;
   follower_count?: RangeFilter;
+  checked_result?: boolean;
   audience_count?: RangeFilter;
   current_diamonds?: RangeFilter;
   last_diamonds?: RangeFilter;
@@ -39,7 +40,8 @@ export type GetAnchorListOrderBy =
   | { area: SortOrder }
   | { region: SortOrder }
   | { invite_type: SortOrder }
-  | { rank_league: SortOrder };
+  | { rank_league: SortOrder }
+  | { has_commerce_goods: SortOrder };
 
 export type AnchorInviteCheckOrderByInput =
   Prisma.AnchorInviteCheckOrderByWithRelationInput;
@@ -58,5 +60,6 @@ export interface GetAnchorListResponseData {
 
 export interface GetAnchorListResponse {
   status_code: RESPONSE_CODE;
-  data: GetAnchorListResponseData;
+  data?: GetAnchorListResponseData;
+  message?: string;
 }

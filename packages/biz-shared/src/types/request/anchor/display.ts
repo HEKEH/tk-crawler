@@ -12,7 +12,7 @@ export interface GetAnchorListFilter {
   user_id?: string;
   display_id?: string;
   invite_type?: CanUseInvitationType;
-  rank_league?: AnchorRankLeague;
+  rank_league?: RangeFilter<AnchorRankLeague>;
   area?: Area;
   region?: Region;
   has_commerce_goods?: boolean;

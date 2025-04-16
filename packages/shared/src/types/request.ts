@@ -10,4 +10,20 @@ export interface RangeFilter<T = number> {
   lte?: T;
 }
 
+export type RangeViewFilter<T = number> = [T | undefined, T | undefined];
+
+export function transformRangeViewFilterToRangeFilter<T = number>(
+  rangeViewFilter: RangeViewFilter<T> | undefined,
+): RangeFilter<T> | undefined {
+  if (
+    !rangeViewFilter?.length ||
+    rangeViewFilter.every(item => item === undefined)
+  ) {
+    return undefined;
+  }
+  return {
+    gte: rangeViewFilter[0],
+    lte: rangeViewFilter[1],
+  };
+}
 export type SortOrder = 'asc' | 'desc';

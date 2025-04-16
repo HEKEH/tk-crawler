@@ -26,8 +26,8 @@ import { useGetAnchorList } from '../../../hooks';
 import {} from '../../../requests';
 import { useGlobalStore } from '../../../utils/vue';
 import {
-  DefaultFilterViewValues,
   type FilterViewValues,
+  getDefaultFilterViewValues,
   transformFilterViewValuesToFilterValues,
 } from './filter';
 import TKAnchorFilter from './filter.vue';
@@ -44,17 +44,21 @@ const pageSize = ref(20);
 const sortField = ref<keyof DisplayedAnchorItem>();
 const sortOrder = ref<'ascending' | 'descending'>();
 
+const defaultFilterViewValues = computed(() =>
+  getDefaultFilterViewValues(globalStore.userProfile.orgInfo!.areas[0]),
+);
+
 // 过滤条件
-const filters = ref<FilterViewValues>(DefaultFilterViewValues);
+const filters = ref<FilterViewValues>(defaultFilterViewValues.value);
 
 // 处理过滤器变化
-function handleFilterChange(_filters: FilterViewValues) {
+function handleFilterSubmit(_filters: FilterViewValues) {
   filters.value = _filters;
   pageNum.value = 1; // 重置页码
 }
 
 function handleFilterReset() {
-  filters.value = DefaultFilterViewValues;
+  filters.value = defaultFilterViewValues.value;
   pageNum.value = 1; // 重置页码
 }
 
@@ -133,7 +137,8 @@ onActivated(refetch);
       <div class="filter-row">
         <TKAnchorFilter
           :model-value="filters"
-          @change="handleFilterChange"
+          :areas="globalStore.userProfile.orgInfo!.areas"
+          @submit="handleFilterSubmit"
           @reset="handleFilterReset"
         />
       </div>

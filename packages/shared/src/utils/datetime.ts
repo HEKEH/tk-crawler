@@ -6,6 +6,8 @@ import { I18N_LANGUAGE } from '../constants';
 dayjs.extend(timezone);
 dayjs.extend(utc);
 
+export const BrowserTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
 export function formatDateTime(
   value: string | number | Date,
   config: {
@@ -13,7 +15,7 @@ export function formatDateTime(
     timezone: string;
   } = {
     lang: I18N_LANGUAGE.ZH_CN,
-    timezone: 'Asia/Shanghai',
+    timezone: BrowserTimezone,
   },
 ) {
   if (!value) {

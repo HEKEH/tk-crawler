@@ -6,6 +6,7 @@ import type {
   GetAnchorListResponseData,
   Region,
 } from '@tk-crawler/biz-shared';
+import assert from 'node:assert';
 import { mysqlClient } from '@tk-crawler/database';
 import { beautifyJsonStringify } from '@tk-crawler/shared';
 import { logger } from '../../../infra/logger';
@@ -16,6 +17,10 @@ export async function getAnchorList(
   request: GetAnchorListRequest & { org_id: string },
 ): Promise<GetAnchorListResponseData> {
   logger.info('[Get Anchor List]', beautifyJsonStringify({ request }));
+  assert(request.org_id, 'org_id is required');
+  assert(request.page_num, 'page_num is required');
+  assert(request.page_size, 'page_size is required');
+  assert(request.page_size <= 200, 'page_size is too large');
 
   const { page_num, page_size, filter, order_by, org_id } = request;
   const where = transformAnchorListFilterValues(filter, org_id);

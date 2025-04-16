@@ -2,39 +2,36 @@
 import { ElMenu, ElMenuItem } from 'element-plus';
 import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { useGlobalStore } from '../../utils';
-import TKGuildUserManage from './tk-guild-user-manage/index.vue';
+import AnchorTable from './anchor-table/index.vue';
 
 defineOptions({
-  name: 'GuildManagement',
+  name: 'AnchorManagement',
 });
 
 enum MenuType {
-  TK_GUILD_USER = 'tk-guild-user',
+  ANCHOR_TABLE = 'anchor-table',
 }
 const route = useRoute();
 const router = useRouter();
-const globalStore = useGlobalStore();
-const hasPrivilege = computed(() => globalStore.userProfile.isAdmin);
 const MenuList = [
   {
-    type: MenuType.TK_GUILD_USER,
-    label: 'TK公会账号管理',
+    type: MenuType.ANCHOR_TABLE,
+    label: '主播列表',
   },
 ];
 const currentMenu = computed(() => {
-  return (route.params.subMenu || MenuList[0]?.type) as MenuType | undefined;
+  return (route.params.subMenu || MenuList[0].type) as MenuType;
 });
 
 function handleSelectMenu(key: string) {
   router.push({
-    path: `/guild-management/${key as MenuType}`,
+    path: `/anchor-management/${key as MenuType}`,
   });
 }
 </script>
 
 <template>
-  <div v-if="hasPrivilege" class="container">
+  <div class="container">
     <div class="left-part">
       <ElMenu
         :default-active="currentMenu"
@@ -52,7 +49,7 @@ function handleSelectMenu(key: string) {
     </div>
     <div class="right-part">
       <KeepAlive>
-        <TKGuildUserManage v-if="currentMenu === MenuType.TK_GUILD_USER" />
+        <AnchorTable v-if="currentMenu === MenuType.ANCHOR_TABLE" />
       </KeepAlive>
     </div>
   </div>

@@ -2,8 +2,10 @@ import type { RouteRecordRaw } from 'vue-router';
 import { createRouter, createWebHistory } from 'vue-router';
 import { getGlobalStore } from '../utils';
 import {
+  AnchorManagementRouteRecord,
   GuildManagementRouteRecord,
   LoginRouteRecord,
+  NoPrivilegeRouteRecord,
   SystemManagementRouteRecord,
 } from './route-records';
 
@@ -19,10 +21,17 @@ const routes: RouteRecordRaw[] = [
         next('/');
         return;
       }
-      globalStore.currentMenu = LoginRouteRecord.menu;
+      globalStore.currentMenu = LoginRouteRecord.menu ?? null;
       next();
     },
   },
+
+  {
+    path: NoPrivilegeRouteRecord.path,
+    name: NoPrivilegeRouteRecord.name,
+    component: NoPrivilegeRouteRecord.component,
+  },
+
   {
     path: '/',
     redirect: () => {
@@ -42,16 +51,22 @@ const routes: RouteRecordRaw[] = [
       }
       next();
     },
-    children: [SystemManagementRouteRecord, GuildManagementRouteRecord].map(
-      menu => ({
-        ...menu,
-        beforeEnter: async (to, from, next) => {
-          const globalStore = getGlobalStore();
-          globalStore.currentMenu = menu.menu;
-          next();
-        },
-      }),
-    ),
+    children: [
+      SystemManagementRouteRecord,
+      GuildManagementRouteRecord,
+      AnchorManagementRouteRecord,
+    ].map(menu => ({
+      ...menu,
+      beforeEnter: async (to, from, next) => {
+        const globalStore = getGlobalStore();
+        globalStore.currentMenu = menu.menu ?? null;
+        if (menu.roles && !menu.roles.includes(globalStore.userProfile.role!)) {
+          next(NoPrivilegeRouteRecord.path);
+          return;
+        }
+        next();
+      },
+    })),
   },
 ];
 

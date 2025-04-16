@@ -3,4 +3,5 @@ export enum Menu {
   Login = 'Login',
   SystemManagement = 'SystemManagement',
   GuildManagement = 'GuildManagement',
+  AnchorManagement = 'AnchorManagement',
 }

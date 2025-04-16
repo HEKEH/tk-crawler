@@ -13,6 +13,7 @@ import { MessageQueue } from '@tk-crawler/view-shared';
 import { markRaw } from 'vue';
 import { login, loginByToken } from '../requests';
 import {
+  AnchorManagementRouteRecord,
   GuildManagementRouteRecord,
   LoginRouteRecord,
   SystemManagementRouteRecord,
@@ -39,10 +40,14 @@ export default class GlobalStore {
     let records: CustomRouteRecord[] = [];
     if (!this.userProfile.hasLoggedIn) {
       records = [LoginRouteRecord];
-    } else if (this.userProfile.isAdmin) {
-      records = [SystemManagementRouteRecord, GuildManagementRouteRecord];
     } else {
-      records = [];
+      records = [
+        SystemManagementRouteRecord,
+        GuildManagementRouteRecord,
+        AnchorManagementRouteRecord,
+      ].filter(item => {
+        return !item.roles || item.roles.includes(this.userProfile.role!);
+      });
     }
     return records.map(item => ({
       menu: item.menu,

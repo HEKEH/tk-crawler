@@ -7,11 +7,7 @@ import type {
   TKGuildUser,
   UpdateTKGuildUserResponse,
 } from '@tk-crawler/biz-shared';
-import {
-  CopyDocument,
-  InfoFilled,
-  RefreshRight,
-} from '@element-plus/icons-vue';
+import { CopyDocument, InfoFilled } from '@element-plus/icons-vue';
 import { useQuery } from '@tanstack/vue-query';
 import {
   AREA_NAME_MAP,
@@ -28,6 +24,7 @@ import {
   AreaTooltipIcon,
   copyToClipboard,
   getPlatform,
+  RefreshButton,
 } from '@tk-crawler/view-shared';
 import {
   ElButton,
@@ -432,9 +429,7 @@ onActivated(refetch);
           <ElButton type="default" size="small" @click="resetSort">
             重置排序
           </ElButton>
-          <ElIcon class="header-row-icon" @click="refresh">
-            <RefreshRight />
-          </ElIcon>
+          <RefreshButton @click="refresh" />
         </div>
       </div>
       <ElTable

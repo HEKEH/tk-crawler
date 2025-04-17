@@ -5,13 +5,11 @@ import type {
   GetAnchorCommentTemplateGroupListResponseData,
   UpdateAnchorCommentTemplateGroupResponse,
 } from '@tk-crawler/biz-shared';
-import { RefreshRight } from '@element-plus/icons-vue';
 import { useQuery } from '@tanstack/vue-query';
 import { formatDateTime, RESPONSE_CODE } from '@tk-crawler/shared';
-import { ClearMessage } from '@tk-crawler/view-shared';
+import { ClearMessage, RefreshButton } from '@tk-crawler/view-shared';
 import {
   ElButton,
-  ElIcon,
   ElMessage,
   ElMessageBox,
   ElPagination,
@@ -324,9 +322,7 @@ async function handleCreateOrEdit(data: Partial<AnchorCommentTemplateGroup>) {
           <ElButton type="default" size="small" @click="resetSort">
             重置排序
           </ElButton>
-          <ElIcon class="header-row-icon" @click="refresh">
-            <RefreshRight />
-          </ElIcon>
+          <RefreshButton @click="refresh" />
         </div>
       </div>
       <ElTable

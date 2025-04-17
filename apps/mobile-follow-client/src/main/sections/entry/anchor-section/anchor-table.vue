@@ -7,14 +7,16 @@ import type {
 } from '@tk-crawler/biz-shared';
 import type { Column, SortBy } from 'element-plus';
 // import { confirmAfterSeconds } from '@tk-crawler/view-shared';
-import { RefreshRight } from '@element-plus/icons-vue';
 import { useQuery } from '@tanstack/vue-query';
 import { formatDateTime, RESPONSE_CODE } from '@tk-crawler/shared';
-import { ClearMessage, useTableMultiSelect } from '@tk-crawler/view-shared';
+import {
+  ClearMessage,
+  RefreshButton,
+  useTableMultiSelect,
+} from '@tk-crawler/view-shared';
 import {
   ElButton,
   ElCheckbox,
-  ElIcon,
   ElMessage,
   ElMessageBox,
   ElPagination,
@@ -565,9 +567,7 @@ const columns = computed<Column<AnchorFrom87>[]>(() => [
           <ElButton type="default" size="small" @click="resetSort">
             重置排序
           </ElButton>
-          <ElIcon class="header-row-icon" @click="refresh">
-            <RefreshRight />
-          </ElIcon>
+          <RefreshButton @click="refresh" />
         </div>
       </div>
       <div ref="tableContainer" class="table-container">

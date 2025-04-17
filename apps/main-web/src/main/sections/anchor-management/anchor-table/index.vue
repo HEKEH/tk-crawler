@@ -5,7 +5,6 @@ import type {
   GetAnchorListOrderBy,
   Region,
 } from '@tk-crawler/biz-shared';
-import { RefreshRight } from '@element-plus/icons-vue';
 import {
   AREA_NAME_MAP,
   CanUseInvitationType,
@@ -16,10 +15,10 @@ import {
   AreaTooltipIcon,
   ClearMessage,
   confirmAfterSeconds,
+  RefreshButton,
 } from '@tk-crawler/view-shared';
 import {
   ElButton,
-  ElIcon,
   ElMessage,
   ElPagination,
   ElTable,
@@ -205,9 +204,7 @@ onActivated(refetch);
           <ElButton type="default" size="small" @click="resetSort">
             重置排序
           </ElButton>
-          <ElIcon class="header-row-icon" @click="refresh">
-            <RefreshRight />
-          </ElIcon>
+          <RefreshButton @click="refresh" />
         </div>
       </div>
       <ElTable

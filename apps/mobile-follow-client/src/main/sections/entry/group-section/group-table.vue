@@ -1,14 +1,13 @@
 <script setup lang="tsx">
-import { RefreshRight } from '@element-plus/icons-vue';
 import type {
   AnchorFollowGroupItem,
   CreateAnchorFollowGroupRequest,
   UpdateAnchorFollowGroupResponse,
 } from '@tk-crawler/biz-shared';
 import { formatDateTime, RESPONSE_CODE } from '@tk-crawler/shared';
+import { RefreshButton } from '@tk-crawler/view-shared';
 import {
   ElButton,
-  ElIcon,
   ElMessage,
   ElMessageBox,
   ElPagination,
@@ -366,9 +365,7 @@ function handleCollectAnchorsToGroup(item: AnchorFollowGroupItem) {
           <ElButton type="default" size="small" @click="resetSort">
             重置排序
           </ElButton>
-          <ElIcon class="header-row-icon" @click="refresh">
-            <RefreshRight />
-          </ElIcon>
+          <RefreshButton @click="refresh" />
         </div>
       </div>
       <ElTable

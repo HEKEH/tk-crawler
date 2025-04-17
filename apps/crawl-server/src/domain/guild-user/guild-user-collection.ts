@@ -1,8 +1,9 @@
-import type {
-  Area,
-  BroadcastGuildUserMessage,
-  BroadcastGuildUserMessageData,
-  BroadcastGuildUserUpdateMessage,
+import {
+  type Area,
+  type BroadcastGuildUserMessage,
+  type BroadcastGuildUserMessageData,
+  type BroadcastGuildUserUpdateMessage,
+  TKGuildUserStatus,
 } from '@tk-crawler/biz-shared';
 import { getAnchorCheckCount } from '@tk-crawler/server-shared';
 import { getMinArrayValueIndex } from '@tk-crawler/shared';
@@ -81,6 +82,12 @@ export class GuildUserCollection {
     guildUsers = guildUsers.filter(item => item.isQueryCountValid);
     if (guildUsers.length === 0) {
       return null;
+    }
+    // 如果存在等待中的账号，则优先选择等待中的账号
+    if (guildUsers.find(item => item.status === TKGuildUserStatus.WAITING)) {
+      guildUsers = guildUsers.filter(
+        item => item.status === TKGuildUserStatus.WAITING,
+      );
     }
     // 选择当前查询次数最少的账号
     const minIndex = getMinArrayValueIndex(

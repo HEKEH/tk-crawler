@@ -7,14 +7,16 @@ import type {
   UpdateOrgRequest,
   UpdateOrgResponse,
 } from '@tk-crawler/biz-shared';
-import { RefreshRight } from '@element-plus/icons-vue';
 import { useQuery } from '@tanstack/vue-query';
 import { AREA_NAME_MAP, OrganizationStatus } from '@tk-crawler/biz-shared';
 import { formatDateTime, RESPONSE_CODE } from '@tk-crawler/shared';
-import { AreaTooltipIcon, confirmAfterSeconds } from '@tk-crawler/view-shared';
+import {
+  AreaTooltipIcon,
+  confirmAfterSeconds,
+  RefreshButton,
+} from '@tk-crawler/view-shared';
 import {
   ElButton,
-  ElIcon,
   ElMessage,
   ElMessageBox,
   ElPagination,
@@ -227,9 +229,7 @@ function onManageOrgMembers(org: OrganizationItem) {
           <ElButton type="default" size="small" @click="resetSort">
             重置排序
           </ElButton>
-          <ElIcon class="header-row-icon" @click="refresh">
-            <RefreshRight />
-          </ElIcon>
+          <RefreshButton @click="refresh" />
         </div>
       </div>
       <ElTable

@@ -62,6 +62,10 @@ export class GuildUserModel {
     this._keepAlive();
   }
 
+  get status() {
+    return this._status;
+  }
+
   get isValid() {
     return Boolean(
       !this._hasSystemError &&

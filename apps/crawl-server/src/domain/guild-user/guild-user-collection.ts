@@ -41,7 +41,11 @@ export class GuildUserCollection {
     if (guildUsersCount >= 50) {
       return minInterval;
     }
-    return maxInterval - ((maxInterval - minInterval) * guildUsersCount) / 50;
+    return (
+      maxInterval -
+      ((maxInterval - minInterval) * guildUsersCount) / 50 +
+      (10 * Math.random() - 5)
+    );
   }
 
   private async _updateGuildUsersQueryRecord(guildUsers: GuildUserModel[]) {

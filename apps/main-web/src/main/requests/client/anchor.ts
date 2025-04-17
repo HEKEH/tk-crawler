@@ -1,4 +1,5 @@
 import type {
+  ClearAnchorCheckRequest,
   ClearAnchorCheckResponse,
   GetAnchorListRequest,
   GetAnchorListResponse,
@@ -15,13 +16,7 @@ export function getAnchorList(params: GetAnchorListRequest, token: string) {
     baseURL: config.ownServerUrl,
     method: 'post',
     path: '/client/anchor/list',
-    params: {
-      ...params,
-      filter: {
-        ...params.filter,
-        checked_result: true, // 只查询可邀约的主播
-      },
-    },
+    params,
     onTokenInvalid: redirectToLogin,
     headers: {
       [CLIENT_TOKEN_HEADER_KEY]: token,
@@ -31,12 +26,13 @@ export function getAnchorList(params: GetAnchorListRequest, token: string) {
 
 export function clearAnchorCheck(
   token: string,
-  // params: ClearAnchorCheckRequest = {},
+  params: ClearAnchorCheckRequest,
 ) {
   return commonRequest<ClearAnchorCheckResponse>({
     baseURL: config.ownServerUrl,
     method: 'post',
     path: '/client/anchor/clear-check',
+    params,
     onTokenInvalid: redirectToLogin,
     headers: {
       [CLIENT_TOKEN_HEADER_KEY]: token,

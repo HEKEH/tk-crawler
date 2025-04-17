@@ -1,26 +1,29 @@
 import type { ElMessageBoxOptions } from 'element-plus';
+import type { VNode } from 'vue';
+import { getRandomShortString } from '@tk-crawler/shared';
 import { ElMessageBox } from 'element-plus';
 import '../styles/confirm-after-seconds.scss';
 
 const ConfirmButtonClass = 'confirm-after-seconds-btn';
 
 export async function confirmAfterSeconds(
-  message: string,
+  message: string | VNode,
   seconds: number = 2,
   options?: ElMessageBoxOptions,
 ) {
   let timer: NodeJS.Timeout | undefined;
+  const className = `${ConfirmButtonClass}-${getRandomShortString(8)}`;
   try {
-    const instance = ElMessageBox.confirm(message, {
+    const promise = ElMessageBox.confirm(message, {
       type: 'warning',
       confirmButtonText: `确定 (${seconds}s)`,
       cancelButtonText: '取消',
-      confirmButtonClass: `${ConfirmButtonClass} is-disabled`,
+      confirmButtonClass: `${className} is-disabled`,
       ...options,
     });
     const updateConfirmBtn = () => {
       const confirmBtn = document.querySelector(
-        `.${ConfirmButtonClass}`,
+        `.${className}`,
       ) as HTMLButtonElement;
       if (confirmBtn) {
         if (seconds > 0) {
@@ -38,10 +41,8 @@ export async function confirmAfterSeconds(
       seconds--;
       updateConfirmBtn();
     }, 1000);
-    await instance;
+    await promise;
+  } finally {
     timer && clearInterval(timer);
-  } catch (e) {
-    timer && clearInterval(timer);
-    throw e;
   }
 }

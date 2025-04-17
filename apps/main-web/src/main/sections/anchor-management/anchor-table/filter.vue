@@ -96,6 +96,14 @@ function resetFilters() {
         <ElInput v-model="filters.user_id" clearable size="small" />
       </div>
       <div class="filter-item">
+        <label class="filter-label">可邀约</label>
+        <ElSelect v-model="filters.checked_result" size="small">
+          <ElOption label="全部" value="all" />
+          <ElOption label="是" :value="true" />
+          <ElOption label="否" :value="false" />
+        </ElSelect>
+      </div>
+      <div class="filter-item">
         <label class="filter-label">邀约方式</label>
         <ElSelect v-model="filters.invite_type" size="small">
           <ElOption label="全部" value="all" />
@@ -131,6 +139,10 @@ function resetFilters() {
           <ElOption label="不含带货主播" :value="false" />
           <ElOption label="带货主播" :value="true" />
         </ElSelect>
+      </div>
+      <div class="filter-item">
+        <label class="filter-label">直播标签</label>
+        <ElInput v-model="filters.tag" clearable size="small" />
       </div>
       <div class="filter-range-item">
         <label class="filter-label">主播段位</label>
@@ -189,11 +201,10 @@ function resetFilters() {
           v-model="filters.updated_at"
           size="small"
           type="date"
+          start-placeholder="从"
+          end-placeholder="到"
+          clearable
         />
-      </div>
-      <div class="filter-item">
-        <label class="filter-label">直播标签</label>
-        <ElInput v-model="filters.tag" clearable size="small" />
       </div>
       <div class="buttons">
         <ElButton type="primary" size="small" @click="handleSubmit">

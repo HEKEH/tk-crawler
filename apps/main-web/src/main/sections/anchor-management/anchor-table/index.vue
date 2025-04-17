@@ -12,7 +12,11 @@ import {
   REGION_LABEL_MAP,
 } from '@tk-crawler/biz-shared';
 import { formatDateTime, RESPONSE_CODE } from '@tk-crawler/shared';
-import { AreaTooltipIcon, confirmAfterSeconds } from '@tk-crawler/view-shared';
+import {
+  AreaTooltipIcon,
+  ClearMessage,
+  confirmAfterSeconds,
+} from '@tk-crawler/view-shared';
 import {
   ElButton,
   ElIcon,
@@ -22,7 +26,7 @@ import {
   ElTableColumn,
   ElTag,
 } from 'element-plus';
-import { computed, onActivated, ref } from 'vue';
+import { computed, h, onActivated, reactive, ref } from 'vue';
 import { useGetAnchorList } from '../../../hooks';
 import { clearAnchorCheck } from '../../../requests';
 import { useGlobalStore } from '../../../utils/vue';
@@ -127,18 +131,43 @@ function handleSelectionChange(rows: DisplayedAnchorItem[]) {
 const hasSelectedRows = computed(() => selectedRows.value.length > 0);
 
 async function handleClearAnchorCheck() {
+  const state = reactive({
+    clearType: 'all' as 'all' | 'filtered',
+  });
+
   try {
     await confirmAfterSeconds(
-      '确定要清除这些数据吗？清除后数据将无法恢复，需要重新采集',
+      h(ClearMessage, {
+        value: state.clearType,
+        filteredRowsTotal: data.value?.total || 0,
+        onUpdate: val => {
+          state.clearType = val as 'all' | 'filtered';
+        },
+      }),
+      2,
+      {
+        title: '一键清空',
+        type: undefined,
+        showCancelButton: true,
+      },
     );
-  } catch {
-    return;
-  }
-  const resp = await clearAnchorCheck(globalStore.token);
-  if (resp.status_code === RESPONSE_CODE.SUCCESS) {
+
+    const resp = await clearAnchorCheck(globalStore.token, {
+      filter: state.clearType === 'all' ? undefined : queryFilter.value,
+    });
+
+    if (resp.status_code !== RESPONSE_CODE.SUCCESS) {
+      return;
+    }
+
+    ElMessage.success({
+      message: `共清空 ${resp.data!.deleted_count} 条数据`,
+      type: 'success',
+      duration: 2000,
+    });
+
     await refetch();
-    ElMessage.success('清除成功');
-  }
+  } catch {}
 }
 
 onActivated(refetch);
@@ -286,6 +315,17 @@ onActivated(refetch);
                 ? `${REGION_LABEL_MAP[scope.row.region as Region]} (${scope.row.region})`
                 : scope.row.region
             }}
+          </template>
+        </ElTableColumn>
+
+        <ElTableColumn
+          prop="checked_result"
+          label="可邀约"
+          min-width="100"
+          sortable="custom"
+        >
+          <template #default="scope">
+            {{ scope.row.checked_result ? '是' : '否' }}
           </template>
         </ElTableColumn>
 

@@ -40,6 +40,7 @@ export type GetAnchorListOrderBy =
   | { highest_diamonds: SortOrder }
   | { area: SortOrder }
   | { region: SortOrder }
+  | { checked_result: SortOrder }
   | { invite_type: SortOrder }
   | { rank_league: SortOrder }
   | { has_commerce_goods: SortOrder }
@@ -67,9 +68,16 @@ export interface GetAnchorListResponse {
   message?: string;
 }
 
-export interface ClearAnchorCheckRequest {}
+export interface ClearAnchorCheckRequest {
+  filter?: GetAnchorListFilter;
+}
+
+export interface ClearAnchorCheckResponseData {
+  deleted_count: number;
+}
 
 export interface ClearAnchorCheckResponse {
   status_code: RESPONSE_CODE;
+  data?: ClearAnchorCheckResponseData;
   message?: string;
 }

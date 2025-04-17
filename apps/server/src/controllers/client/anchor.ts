@@ -1,4 +1,7 @@
-import type { GetAnchorListRequest } from '@tk-crawler/biz-shared';
+import type {
+  ClearAnchorCheckRequest,
+  GetAnchorListRequest,
+} from '@tk-crawler/biz-shared';
 import type { Context, Next } from 'koa';
 import { clearAnchorCheck, getAnchorList } from '../../services';
 
@@ -12,8 +15,8 @@ export default class AnchorController {
 
   static async clearAnchorCheck(ctx: Context, next: Next) {
     const { org_info } = ctx.clientInfo!;
-    await clearAnchorCheck({ orgId: org_info.id });
-    ctx.body = ctx.t('Success');
+    const data = ctx.getRequestData<ClearAnchorCheckRequest>();
+    ctx.body = await clearAnchorCheck({ ...data, org_id: org_info.id });
     await next();
   }
 }

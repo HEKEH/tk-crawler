@@ -16,6 +16,8 @@ export function transformAnchorListOrderBy(
   const result: AnchorInviteCheckOrderByInput = {};
   if ('updated_at' in orderBy && orderBy.updated_at) {
     result.updated_at = orderBy.updated_at;
+  } else if ('checked_result' in orderBy && orderBy.checked_result) {
+    result.checked_result = orderBy.checked_result;
   } else if ('invite_type' in orderBy && orderBy.invite_type) {
     result.invite_type = orderBy.invite_type;
   } else if ('area' in orderBy && orderBy.area) {

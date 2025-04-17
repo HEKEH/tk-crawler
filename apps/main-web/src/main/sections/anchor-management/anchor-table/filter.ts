@@ -17,6 +17,7 @@ export interface FilterViewValues {
   rank_league: RangeViewFilter<AnchorRankLeague>;
   area?: Area | 'all';
   region?: Region | 'all';
+  checked_result?: boolean | 'all';
   has_commerce_goods?: boolean | 'all';
   tag?: string;
   follower_count: RangeViewFilter;
@@ -45,6 +46,7 @@ export function transformFilterViewValuesToFilterValues(
     ),
     area: transValue(filterViewValues.area),
     region: transValue(filterViewValues.region),
+    checked_result: transValue(filterViewValues.checked_result),
     has_commerce_goods: transValue(filterViewValues.has_commerce_goods),
     follower_count: transformRangeViewFilterToRangeFilter(
       filterViewValues.follower_count,
@@ -83,5 +85,6 @@ export function getDefaultFilterViewValues(
     highest_diamonds: [undefined, undefined],
     audience_count: [undefined, undefined],
     updated_at: [undefined, undefined],
+    checked_result: true,
   };
 }

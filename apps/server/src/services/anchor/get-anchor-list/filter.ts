@@ -26,7 +26,7 @@ export function transformAnchorListFilterValues(
     highest_diamonds,
 
     checked_result,
-    updated_at,
+    checked_at,
     area,
     invite_type,
   } = filterValues;
@@ -91,8 +91,8 @@ export function transformAnchorListFilterValues(
   if (checked_result !== undefined) {
     filter.checked_result = checked_result === true ? 1 : 0;
   }
-  if (updated_at !== undefined) {
-    filter.updated_at = updated_at;
+  if (checked_at !== undefined) {
+    filter.checked_at = checked_at;
   }
 
   if (area) {

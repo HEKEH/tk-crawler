@@ -198,7 +198,7 @@ function resetFilters() {
       <div class="filter-range-item">
         <label class="filter-label">最新时间</label>
         <RangeDateSelect
-          v-model="filters.updated_at"
+          v-model="filters.checked_at"
           size="small"
           type="date"
           start-placeholder="从"

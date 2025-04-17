@@ -381,13 +381,13 @@ onActivated(refetch);
 
         <!-- 时间信息 -->
         <ElTableColumn
-          prop="updated_at"
+          prop="checked_at"
           label="最新时间"
           min-width="190"
           sortable="custom"
         >
           <template #default="scope">
-            {{ formatDateTime(scope.row.updated_at) }}
+            {{ formatDateTime(scope.row.checked_at) }}
           </template>
         </ElTableColumn>
       </ElTable>

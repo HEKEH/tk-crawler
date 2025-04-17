@@ -23,14 +23,14 @@ export interface GetAnchorListFilter {
   current_diamonds?: RangeFilter;
   last_diamonds?: RangeFilter;
   highest_diamonds?: RangeFilter;
-  updated_at?: RangeFilter<Date>;
+  checked_at?: RangeFilter<Date>;
   // TODO 主播来源 多账号风险 分配状态 建联状态
 }
 
 export type AnchorListWhereInput = Prisma.AnchorInviteCheckWhereInput;
 
 export type GetAnchorListOrderBy =
-  | { updated_at: SortOrder }
+  | { checked_at: SortOrder }
   | { display_id: SortOrder }
   | { user_id: SortOrder }
   | { follower_count: SortOrder }

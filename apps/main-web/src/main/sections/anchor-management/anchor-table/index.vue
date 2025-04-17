@@ -11,11 +11,12 @@ import {
   CanUseInvitationType,
   REGION_LABEL_MAP,
 } from '@tk-crawler/biz-shared';
-import { formatDateTime } from '@tk-crawler/shared';
-import { AreaTooltipIcon } from '@tk-crawler/view-shared';
+import { formatDateTime, RESPONSE_CODE } from '@tk-crawler/shared';
+import { AreaTooltipIcon, confirmAfterSeconds } from '@tk-crawler/view-shared';
 import {
   ElButton,
   ElIcon,
+  ElMessage,
   ElPagination,
   ElTable,
   ElTableColumn,
@@ -23,7 +24,7 @@ import {
 } from 'element-plus';
 import { computed, onActivated, ref } from 'vue';
 import { useGetAnchorList } from '../../../hooks';
-import {} from '../../../requests';
+import { clearAnchorCheck } from '../../../requests';
 import { useGlobalStore } from '../../../utils/vue';
 import {
   type FilterViewValues,
@@ -125,6 +126,21 @@ function handleSelectionChange(rows: DisplayedAnchorItem[]) {
 }
 const hasSelectedRows = computed(() => selectedRows.value.length > 0);
 
+async function handleClearAnchorCheck() {
+  try {
+    await confirmAfterSeconds(
+      '确定要清除这些数据吗？清除后数据将无法恢复，需要重新采集',
+    );
+  } catch {
+    return;
+  }
+  const resp = await clearAnchorCheck(globalStore.token);
+  if (resp.status_code === RESPONSE_CODE.SUCCESS) {
+    await refetch();
+    ElMessage.success('清除成功');
+  }
+}
+
 onActivated(refetch);
 </script>
 
@@ -149,6 +165,14 @@ onActivated(refetch);
           </ElButton>
         </div>
         <div class="right-part">
+          <ElButton
+            v-if="globalStore.userProfile.isAdmin"
+            type="danger"
+            size="small"
+            @click="handleClearAnchorCheck"
+          >
+            一键清空
+          </ElButton>
           <ElButton type="default" size="small" @click="resetSort">
             重置排序
           </ElButton>

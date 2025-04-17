@@ -1,4 +1,5 @@
 import type {
+  ClearAnchorCheckResponse,
   GetAnchorListRequest,
   GetAnchorListResponse,
 } from '@tk-crawler/biz-shared';
@@ -21,6 +22,21 @@ export function getAnchorList(params: GetAnchorListRequest, token: string) {
         checked_result: true, // 只查询可邀约的主播
       },
     },
+    onTokenInvalid: redirectToLogin,
+    headers: {
+      [CLIENT_TOKEN_HEADER_KEY]: token,
+    },
+  });
+}
+
+export function clearAnchorCheck(
+  token: string,
+  // params: ClearAnchorCheckRequest = {},
+) {
+  return commonRequest<ClearAnchorCheckResponse>({
+    baseURL: config.ownServerUrl,
+    method: 'post',
+    path: '/client/anchor/clear-check',
     onTokenInvalid: redirectToLogin,
     headers: {
       [CLIENT_TOKEN_HEADER_KEY]: token,

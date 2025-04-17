@@ -1,13 +1,21 @@
 import Router from 'koa-router';
 import AnchorController from '../../controllers/client/anchor';
-import { clientTokenAuthMiddleware } from '../../middlewares';
+import {
+  checkHasMembershipAndValid,
+  checkIsAdminClientMiddleware,
+  clientTokenAuthMiddleware,
+} from '../../middlewares';
 
 const anchorRouter = new Router({
   prefix: '/anchor',
 });
 
-anchorRouter.use(clientTokenAuthMiddleware());
+anchorRouter.use(clientTokenAuthMiddleware(), checkHasMembershipAndValid);
 
 anchorRouter.post('/list', AnchorController.getAnchorList);
-
+anchorRouter.post(
+  '/clear-check',
+  checkIsAdminClientMiddleware,
+  AnchorController.clearAnchorCheck,
+);
 export default anchorRouter;

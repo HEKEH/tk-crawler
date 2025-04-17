@@ -66,3 +66,10 @@ export interface GetAnchorListResponse {
   data?: GetAnchorListResponseData;
   message?: string;
 }
+
+export interface ClearAnchorCheckRequest {}
+
+export interface ClearAnchorCheckResponse {
+  status_code: RESPONSE_CODE;
+  message?: string;
+}

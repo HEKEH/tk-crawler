@@ -38,7 +38,6 @@ import {
   ElPagination,
   ElTable,
   ElTableColumn,
-  ElTag,
   ElTooltip,
 } from 'element-plus';
 import { computed, onActivated, ref, toRaw } from 'vue';
@@ -59,6 +58,7 @@ import {
 } from './filter';
 import TKGuildUserFilter from './guild-user-filter.vue';
 import FormDialog from './guild-user-form-dialog.vue';
+import StatusTag from './status-tag.vue';
 
 defineOptions({
   name: 'TKGuildUserTable',
@@ -282,50 +282,6 @@ async function handleSubmitCreateOrEdit(data: Partial<TKGuildUser>) {
   ElMessage.success('保存成功');
 }
 
-// 获取状态标签类型
-function getStatusTagType(status: TKGuildUserStatus) {
-  switch (status) {
-    case TKGuildUserStatus.RUNNING:
-      return 'success';
-    case TKGuildUserStatus.STOPPED:
-      return 'info';
-    case TKGuildUserStatus.ERROR:
-      return 'danger';
-    case TKGuildUserStatus.COOKIE_EXPIRED:
-      return 'danger';
-    case TKGuildUserStatus.WAITING:
-      return 'primary';
-    case TKGuildUserStatus.INACTIVE:
-      return 'info';
-    case TKGuildUserStatus.WARNING:
-      return 'warning';
-    default:
-      return 'info';
-  }
-}
-
-// 获取状态显示文本
-function getStatusText(status: TKGuildUserStatus) {
-  switch (status) {
-    case TKGuildUserStatus.RUNNING:
-      return '运行中';
-    case TKGuildUserStatus.STOPPED:
-      return '已停止';
-    case TKGuildUserStatus.ERROR:
-      return '出错';
-    case TKGuildUserStatus.COOKIE_EXPIRED:
-      return 'Cookie过期';
-    case TKGuildUserStatus.WAITING:
-      return '等待中';
-    case TKGuildUserStatus.INACTIVE:
-      return '未激活';
-    case TKGuildUserStatus.WARNING:
-      return '有警告';
-    default:
-      return '未知';
-  }
-}
-
 function getStartOrStopButtonText(status: TKGuildUserStatus) {
   if (VALID_GUILD_USER_STATUS_LIST.includes(status)) {
     return '停止查询';
@@ -495,27 +451,21 @@ onActivated(refetch);
         @selection-change="handleSelectionChange"
       >
         <ElTableColumn type="selection" width="55" />
+        <ElTableColumn prop="username" label="后台查询账号" min-width="200" />
         <ElTableColumn label="启动/停止" min-width="120">
           <template #default="scope">
-            <div class="operation-buttons">
-              <ElButton
-                size="small"
-                :type="
-                  getStartOrStopType(scope.row.status) === 'stop'
-                    ? 'danger'
-                    : 'success'
-                "
-                @click="onStartOrStop(scope.row)"
-              >
-                {{ getStartOrStopButtonText(scope.row.status) }}
-              </ElButton>
-            </div>
-          </template>
-        </ElTableColumn>
-        <ElTableColumn prop="username" label="后台查询账号" min-width="200" />
-        <ElTableColumn prop="password" label="后台查询密码" min-width="160">
-          <template #default="scope">
-            <VisiblePassword :password="scope.row.password" />
+            <ElButton
+              class="start-or-stop-button"
+              size="small"
+              :type="
+                getStartOrStopType(scope.row.status) === 'stop'
+                  ? 'danger'
+                  : 'success'
+              "
+              @click="onStartOrStop(scope.row)"
+            >
+              {{ getStartOrStopButtonText(scope.row.status) }}
+            </ElButton>
           </template>
         </ElTableColumn>
         <ElTableColumn
@@ -525,12 +475,12 @@ onActivated(refetch);
           sortable="custom"
         >
           <template #default="scope">
-            <ElTag
-              :type="getStatusTagType(scope.row.status)"
-              class="status-tag"
-            >
-              {{ getStatusText(scope.row.status) }}
-            </ElTag>
+            <StatusTag v-memo="[scope.row.status]" :status="scope.row.status" />
+          </template>
+        </ElTableColumn>
+        <ElTableColumn prop="password" label="后台查询密码" min-width="160">
+          <template #default="scope">
+            <VisiblePassword :password="scope.row.password" />
           </template>
         </ElTableColumn>
         <ElTableColumn
@@ -590,7 +540,11 @@ onActivated(refetch);
         </ElTableColumn>
         <ElTableColumn prop="cookie" label="Cookie" min-width="200">
           <template #default="scope">
-            <div v-if="scope.row.cookie" class="cookie">
+            <div
+              v-if="scope.row.cookie"
+              v-memo="[scope.row.cookie]"
+              class="cookie"
+            >
               <span class="cookie-text">{{ scope.row.cookie }}</span>
               <ElTooltip content="复制Cookie" placement="top">
                 <ElIcon
@@ -722,6 +676,9 @@ onActivated(refetch);
     display: flex;
     align-items: center;
     column-gap: 6px;
+  }
+  .start-or-stop-button {
+    width: 100%;
   }
 }
 </style>

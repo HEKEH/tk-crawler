@@ -333,15 +333,13 @@ async function onStartOrStop(item: TKGuildUser) {
                   width: '100%',
                 }}
               >
-                浏览器环境无法支持启动账号功能，请在
+                浏览器环境无法支持此功能，请在
                 <span
                   style={{
                     fontWeight: 'bold',
-                    marginRight: '0.5rem',
-                    marginLeft: '0.5rem',
                   }}
                 >
-                  {MAIN_APP_PRODUCT_NAME}
+                  {`「${MAIN_APP_PRODUCT_NAME}」`}
                 </span>
                 中启动。
               </div>
@@ -377,6 +375,10 @@ async function onStartOrStop(item: TKGuildUser) {
           confirmButtonText: '确定',
         });
       } catch {}
+      return;
+    }
+    if (!globalStore.userProfile.hasMembership) {
+      ElMessage.warning('您没有权限进行修改，请先开通会员');
       return;
     }
     await window.ipcRenderer.invoke(CUSTOM_EVENTS.GO_TO_GUILD_COOKIE_PAGE, {

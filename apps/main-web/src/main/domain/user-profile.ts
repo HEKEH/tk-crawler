@@ -3,7 +3,6 @@ import {
   type OrgMemberItem,
   type OrgMemberLoginSuccessData,
   OrgMemberRole,
-  OrgMemberStatus,
 } from '@tk-crawler/biz-shared';
 
 export enum MembershipStatus {
@@ -42,7 +41,7 @@ export class UserProfile {
   }
 
   get membershipStatus(): MembershipStatus {
-    if (this._userInfo?.status === OrgMemberStatus.normal) {
+    if (this._orgInfo?.if_membership_valid) {
       return MembershipStatus.has_membership;
     }
     if (this._orgInfo?.membership_expire_at) {

@@ -2,7 +2,7 @@
 import { ElMenu, ElMenuItem } from 'element-plus';
 import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import AnchorTable from './anchor-table/index.vue';
+import AnchorTable from './anchor-table';
 
 defineOptions({
   name: 'AnchorManagement',

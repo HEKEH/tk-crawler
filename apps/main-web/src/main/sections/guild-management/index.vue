@@ -3,7 +3,7 @@ import { ElMenu, ElMenuItem } from 'element-plus';
 import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useGlobalStore } from '../../utils';
-import TKGuildUserManage from './tk-guild-user-manage/index.vue';
+import TKGuildUserManage from './tk-guild-user-manage';
 
 defineOptions({
   name: 'GuildManagement',

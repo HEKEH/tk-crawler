@@ -18,7 +18,7 @@ import { batchCheckAnchors, getProfile } from '@tk-crawler/tk-requests';
 import { logger } from '../../infra/logger';
 import {
   batchUpdateAnchorInviteCheck,
-  recordAnchorCheckByOrg,
+  // recordAnchorCheckByOrg,
   updateGuildUserStatus,
 } from '../../services';
 
@@ -76,6 +76,7 @@ export class GuildUserModel {
     this._keepAliveTimer = setTimeout(
       async () => {
         logger.info(`[guild-user] keep alive: ${this.id} ${this._username}`);
+        this._keepAlive();
         if (this.isValid) {
           try {
             await getProfile(
@@ -89,7 +90,6 @@ export class GuildUserModel {
             );
           }
         }
-        this._keepAlive();
       },
       Math.floor(1000 * 60 * (3 + Math.random() * 4)),
     ); // 3-7 分钟运行一次，保持cookie有效
@@ -165,8 +165,8 @@ export class GuildUserModel {
       }
       return null;
     };
-    await batchUpdateAnchorInviteCheck(
-      anchorInviteCheckData.map(item => {
+    const data = anchorInviteCheckData
+      .map(item => {
         return {
           anchor_id: item.UserBaseInfo.UserID!,
           org_id: this._orgId,
@@ -176,8 +176,12 @@ export class GuildUserModel {
           checked_at,
           area: this._area!,
         };
-      }),
-    );
+      })
+      .filter(item => item.anchor_id && item.anchor_id !== '0');
+    if (!data.length) {
+      return;
+    }
+    await batchUpdateAnchorInviteCheck(data);
   }
 
   private async _recordQueryByGuildUserCount() {
@@ -245,15 +249,16 @@ export class GuildUserModel {
     }
     try {
       await this._batchUpdateAnchorInviteCheck(anchorInviteCheckData);
-      await recordAnchorCheckByOrg({
-        anchorIds: anchors.map(item => item.user_id),
-        orgId: this._orgId,
-      });
+      // await recordAnchorCheckByOrg({
+      //   anchorIds: anchors.map(item => item.user_id),
+      //   orgId: this._orgId,
+      // });
     } catch (e) {
       logger.error(
         `[guild-user] batch update anchor invite check error: ${this.id} ${this._username}`,
         e,
       );
+      this._encounterSystemError();
       return {
         success: false,
       };

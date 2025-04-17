@@ -1,6 +1,6 @@
 import type {
   Area,
-  BroadcastAnchorMessage,
+  // BroadcastAnchorMessage,
   BroadcastGuildUserMessage,
   BroadcastGuildUserMessageData,
   BroadcastOrganizationMessage,
@@ -9,7 +9,7 @@ import type {
 } from '@tk-crawler/biz-shared';
 import type { RedisMessageBusCallback } from '@tk-crawler/database';
 import {
-  getAreaByRegion,
+  // getAreaByRegion,
   ServerBroadcastMessageChannel,
 } from '@tk-crawler/biz-shared';
 import { redisMessageBus } from '@tk-crawler/database';
@@ -69,12 +69,12 @@ export class OrganizationCollection {
           this._handleGuildUserMessage(message);
         },
       ),
-      this._subscribeMessageBus(
-        ServerBroadcastMessageChannel.AnchorMessage,
-        (message: BroadcastAnchorMessage) => {
-          this._handleAnchorMessage(message);
-        },
-      ),
+      // this._subscribeMessageBus(
+      //   ServerBroadcastMessageChannel.AnchorMessage,
+      //   (message: BroadcastAnchorMessage) => {
+      //     this._handleAnchorMessage(message);
+      //   },
+      // ),
     ]);
   }
 
@@ -229,28 +229,28 @@ export class OrganizationCollection {
     }
   }
 
-  private async _handleAnchorMessage(message: BroadcastAnchorMessage) {
-    const { data } = message;
-    logger.trace(`handle anchor message:`, {
-      data,
-    });
-    const { region } = data;
-    const area = getAreaByRegion(region);
-    logger.trace(`find organizations by region:`, {
-      region,
-      area,
-      organizations: ((area && this._areaOrganizationsMap[area]) || []).map(
-        org => org.name,
-      ),
-    });
-    if (area && this._areaOrganizationsMap[area]?.length) {
-      await Promise.all(
-        this._areaOrganizationsMap[area].map(org =>
-          org.handleAnchorMessage(message),
-        ),
-      );
-    }
-  }
+  // private async _handleAnchorMessage(message: BroadcastAnchorMessage) {
+  //   const { data } = message;
+  //   logger.trace(`handle anchor message:`, {
+  //     data,
+  //   });
+  //   const { region } = data;
+  //   const area = getAreaByRegion(region);
+  //   logger.trace(`find organizations by region:`, {
+  //     region,
+  //     area,
+  //     organizations: ((area && this._areaOrganizationsMap[area]) || []).map(
+  //       org => org.name,
+  //     ),
+  //   });
+  //   if (area && this._areaOrganizationsMap[area]?.length) {
+  //     await Promise.all(
+  //       this._areaOrganizationsMap[area].map(org =>
+  //         org.handleAnchorMessage(message),
+  //       ),
+  //     );
+  //   }
+  // }
 
   async destroy() {
     await this._unsubscribeMessageBus();

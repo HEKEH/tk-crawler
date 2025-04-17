@@ -5,8 +5,8 @@ import { Search } from '@element-plus/icons-vue';
 import {
   AnchorRankLeague,
   AREA_NAME_MAP,
-  AREA_REGIONS_MAP,
   CanUseInvitationType,
+  getRegionsByArea,
   REGION_LABEL_MAP,
 } from '@tk-crawler/biz-shared';
 import {
@@ -58,9 +58,9 @@ const regionOptions = computed(() => {
   const { areas } = props;
   let regions: Region[] = [];
   if (area === 'all' || area === undefined) {
-    regions = areas.map(area => AREA_REGIONS_MAP[area]).flat();
+    regions = areas.map(area => getRegionsByArea(area)).flat();
   } else {
-    regions = AREA_REGIONS_MAP[area];
+    regions = getRegionsByArea(area);
   }
   return regions.map(region => ({
     value: region,

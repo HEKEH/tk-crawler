@@ -1,6 +1,5 @@
 import type {
   Area,
-  BroadcastAnchorMessage,
   BroadcastGuildUserMessage,
   BroadcastGuildUserMessageData,
   BroadcastOrganizationMessageData,
@@ -39,13 +38,13 @@ export class OrganizationModel implements GuildUserCollectionContext {
     return this._areas;
   }
 
-  async handleAnchorMessage(message: BroadcastAnchorMessage) {
-    if (!this.isValid) {
-      return;
-    }
-    const { data } = message;
-    await this._guildUserCollection.handleAnchorMessage(data);
-  }
+  // async handleAnchorMessage(message: BroadcastAnchorMessage) {
+  //   if (!this.isValid) {
+  //     return;
+  //   }
+  //   const { data } = message;
+  //   await this._guildUserCollection.handleAnchorMessage(data);
+  // }
 
   async handleGuildUserMessage(message: BroadcastGuildUserMessage) {
     await this._guildUserCollection.handleGuildUserMessage(message);

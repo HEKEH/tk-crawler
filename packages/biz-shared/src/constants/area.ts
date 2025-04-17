@@ -2,7 +2,7 @@ import { Area } from '../types';
 import { Region } from '../types/region';
 import { REGION_LABEL_MAP } from './region';
 
-export const AREA_REGIONS_MAP: Record<Area, Region[]> = {
+const AREA_REGIONS_MAP: Record<Area, Region[]> = {
   // MENA 区域
   [Area.MENA]: [
     Region.AE,
@@ -147,6 +147,14 @@ export const AREA_REGIONS_MAP: Record<Area, Region[]> = {
   // US+ 区域
   // [Area.US_PLUS]: [Region.US, Region.CA],
 };
+
+export function getRegionsByArea(area: Area): Region[] {
+  return AREA_REGIONS_MAP[area];
+}
+
+export function getRegionsByAreas(areas: Area[]): Region[] {
+  return areas.flatMap(area => getRegionsByArea(area));
+}
 
 export const REGION_AREA_MAP: { [key in Region]?: Area } = (() => {
   const map: { [key in Region]?: Area } = {};

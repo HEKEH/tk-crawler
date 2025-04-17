@@ -39,10 +39,10 @@ model Anchor {
   taskAssigns        TaskAssign[]
   anchorConnects     AnchorConnect[]
 
-  @@index([region])
   @@index([follower_count])
   @@index([highest_diamonds])
   @@index([rank_league])
+  @@index([region, updated_at], name: "region_updated_at")
 }
 
 model LiveAdminUser {

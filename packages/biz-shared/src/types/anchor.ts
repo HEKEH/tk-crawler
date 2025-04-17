@@ -40,7 +40,7 @@ export enum CanUseInvitationType {
 export interface AnchorInviteCheckData {
   anchor_id: string;
   org_id: string;
-  checked_by: string;
+  checked_by: string | null;
   /** true 代表可邀约，false 代表不可邀约 */
   checked_result: boolean;
   invite_type: CanUseInvitationType | null;

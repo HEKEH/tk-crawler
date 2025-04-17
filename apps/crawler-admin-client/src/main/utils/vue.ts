@@ -12,11 +12,11 @@ export function provideGlobalStore() {
 }
 
 export function useGlobalStore(): GlobalStore {
-  const globalStore = inject(GlobalStoreKey);
-  if (!globalStore) {
+  const _globalStore = inject(GlobalStoreKey);
+  if (!_globalStore) {
     throw new Error(
       'GlobalStore is not provided. Please make sure you register it.',
     );
   }
-  return globalStore;
+  return _globalStore;
 }

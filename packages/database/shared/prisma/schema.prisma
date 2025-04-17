@@ -35,9 +35,7 @@ model Anchor {
   tag                String?             @db.VarChar(20)
   created_at         DateTime            @default(now()) @db.DateTime(3)
   updated_at         DateTime            @updatedAt @db.DateTime(3)
-  inviteChecks       AnchorInviteCheck[]
-  taskAssigns        TaskAssign[]
-  anchorConnects     AnchorConnect[]
+  invite_checks      AnchorInviteCheck[]
 
   @@index([follower_count])
   @@index([highest_diamonds])
@@ -46,40 +44,43 @@ model Anchor {
 }
 
 model LiveAdminUser {
-  id                 BigInt              @id @default(autoincrement()) @db.UnsignedBigInt
-  username           String              @unique @db.VarChar(50)
-  password           String              @db.VarChar(128)
-  org_id             BigInt              @db.UnsignedBigInt
-  status             Int                 @db.UnsignedTinyInt
-  max_query_per_hour Int                 @default(50) @db.UnsignedInt
-  max_query_per_day  Int                 @default(280) @db.UnsignedInt
-  cookie             String?             @db.Text
-  is_cookie_valid    Boolean?
-  created_at         DateTime            @default(now()) @db.DateTime(3)
-  updated_at         DateTime            @updatedAt @db.DateTime(3)
-  faction_id         Int?                @db.UnsignedInt
-  area               String?             @db.VarChar(6)
-  organization       Organization        @relation(fields: [org_id], references: [id], onDelete: Cascade)
-  inviteChecks       AnchorInviteCheck[]
+  id                  BigInt              @id @default(autoincrement()) @db.UnsignedBigInt
+  username            String              @unique @db.VarChar(50)
+  password            String              @db.VarChar(128)
+  org_id              BigInt              @db.UnsignedBigInt
+  status              Int                 @db.UnsignedTinyInt
+  max_query_per_hour  Int                 @default(50) @db.UnsignedInt
+  max_query_per_day   Int                 @default(280) @db.UnsignedInt
+  cookie              String?             @db.Text
+  is_cookie_valid     Boolean?
+  created_at          DateTime            @default(now()) @db.DateTime(3)
+  updated_at          DateTime            @updatedAt @db.DateTime(3)
+  faction_id          Int?                @db.UnsignedInt
+  area                String?             @db.VarChar(6)
+  organization        Organization        @relation(fields: [org_id], references: [id], onDelete: Cascade)
+  checkedInviteChecks AnchorInviteCheck[]
 
   @@index([org_id])
 }
 
 // 主播邀约验证数据表
 model AnchorInviteCheck {
-  id             BigInt        @id @default(autoincrement()) @db.UnsignedBigInt
-  org_id         BigInt        @db.UnsignedBigInt
-  anchor_id      BigInt        @db.UnsignedBigInt
-  checked_at     DateTime      @db.DateTime(3)
-  checked_by     BigInt        @db.UnsignedBigInt
-  checked_result Int           @db.UnsignedTinyInt
-  invite_type    Int?          @db.UnsignedTinyInt
-  created_at     DateTime      @default(now()) @db.DateTime(3)
-  updated_at     DateTime      @updatedAt @db.DateTime(3)
-  area           String        @db.VarChar(6)
-  organization   Organization  @relation(fields: [org_id], references: [id], onDelete: Cascade)
-  anchor         Anchor        @relation(fields: [anchor_id], references: [user_id], onDelete: Cascade)
-  checkedByUser  LiveAdminUser @relation(fields: [checked_by], references: [id], onDelete: Cascade)
+  id              BigInt         @id @default(autoincrement()) @db.UnsignedBigInt
+  org_id          BigInt         @db.UnsignedBigInt
+  anchor_id       BigInt         @db.UnsignedBigInt
+  checked_at      DateTime       @db.DateTime(3)
+  checked_by      BigInt?        @db.UnsignedBigInt
+  checked_result  Int            @db.UnsignedTinyInt
+  assign_to       BigInt?        @db.UnsignedBigInt
+  is_finished     Boolean        @default(false)
+  invite_type     Int?           @db.UnsignedTinyInt
+  created_at      DateTime       @default(now()) @db.DateTime(3)
+  updated_at      DateTime       @updatedAt @db.DateTime(3)
+  area            String         @db.VarChar(6)
+  organization    Organization   @relation(fields: [org_id], references: [id], onDelete: Cascade)
+  anchor          Anchor         @relation(fields: [anchor_id], references: [user_id], onDelete: Cascade)
+  assigned_user   OrgUser?       @relation(fields: [assign_to], references: [id], onDelete: SetNull)
+  checked_by_user LiveAdminUser? @relation(fields: [checked_by], references: [id], onDelete: SetNull)
 
   @@unique([org_id, anchor_id], name: "org_id_anchor_id")
   @@index([org_id])
@@ -89,42 +90,40 @@ model AnchorInviteCheck {
 
 // 机构表
 model Organization {
-  id                         BigInt                       @id @default(autoincrement()) @db.UnsignedBigInt
-  name                       String                       @unique @db.VarChar(100)
-  membership_start_at        DateTime?                    @db.DateTime(3)
-  membership_expire_at       DateTime?                    @db.DateTime(3)
-  status                     Int                          @db.UnsignedTinyInt
-  remark                     String?                      @db.VarChar(200)
-  created_at                 DateTime                     @default(now()) @db.DateTime(3)
-  updated_at                 DateTime                     @updatedAt @db.DateTime(3)
-  liveAdminUsers             LiveAdminUser[]
-  orgUsers                   OrgUser[]
+  id                             BigInt                       @id @default(autoincrement()) @db.UnsignedBigInt
+  name                           String                       @unique @db.VarChar(100)
+  membership_start_at            DateTime?                    @db.DateTime(3)
+  membership_expire_at           DateTime?                    @db.DateTime(3)
+  status                         Int                          @db.UnsignedTinyInt
+  remark                         String?                      @db.VarChar(200)
+  created_at                     DateTime                     @default(now()) @db.DateTime(3)
+  updated_at                     DateTime                     @updatedAt @db.DateTime(3)
+  liveAdminUsers                 LiveAdminUser[]
+  orgUsers                       OrgUser[]
   // 公会分区
-  areas                      OrgAreaRelation[]
-  inviteChecks               AnchorInviteCheck[]
-  taskAssigns                TaskAssign[]
-  anchorConnects             AnchorConnect[]
-  AnchorFollowGroup          AnchorFollowGroup[]
-  AnchorFrom87               AnchorFrom87[]
-  AnchorCommentTemplateGroup AnchorCommentTemplateGroup[]
-  AnchorCommentTemplate      AnchorCommentTemplate[]
+  areas                          OrgAreaRelation[]
+  invite_checks                  AnchorInviteCheck[]
+  anchor_follow_groups           AnchorFollowGroup[]
+  anchor_from_87s                AnchorFrom87[]
+  anchor_comment_template_groups AnchorCommentTemplateGroup[]
+  anchor_comment_templates       AnchorCommentTemplate[]
 }
 
 // 机构用户表
 model OrgUser {
-  id           BigInt       @id @default(autoincrement()) @db.UnsignedBigInt
-  org_id       BigInt       @db.UnsignedBigInt
-  username     String       @unique @db.VarChar(24)
-  display_name String       @db.VarChar(24)
-  password     String       @db.VarChar(128)
-  email        String?      @unique @db.VarChar(50)
-  mobile       String?      @unique @db.VarChar(20)
-  role_id      Int          @db.UnsignedInt
-  status       Int          @db.UnsignedTinyInt
-  created_at   DateTime     @default(now()) @db.DateTime(3)
-  updated_at   DateTime     @updatedAt @db.DateTime(3)
-  organization Organization @relation(fields: [org_id], references: [id], onDelete: Cascade)
-  taskAssigns  TaskAssign[]
+  id               BigInt              @id @default(autoincrement()) @db.UnsignedBigInt
+  org_id           BigInt              @db.UnsignedBigInt
+  username         String              @unique @db.VarChar(24)
+  display_name     String              @db.VarChar(24)
+  password         String              @db.VarChar(128)
+  email            String?             @unique @db.VarChar(50)
+  mobile           String?             @unique @db.VarChar(20)
+  role_id          Int                 @db.UnsignedInt
+  status           Int                 @db.UnsignedTinyInt
+  created_at       DateTime            @default(now()) @db.DateTime(3)
+  updated_at       DateTime            @updatedAt @db.DateTime(3)
+  organization     Organization        @relation(fields: [org_id], references: [id], onDelete: Cascade)
+  assigned_anchors AnchorInviteCheck[]
 
   @@index([org_id])
 }
@@ -141,35 +140,35 @@ model OrgAreaRelation {
 }
 
 // 任务分配表
-model TaskAssign {
-  id           BigInt       @id @default(autoincrement()) @db.UnsignedBigInt
-  org_id       BigInt       @db.UnsignedBigInt
-  anchor_id    BigInt       @db.UnsignedBigInt
-  org_user_id  BigInt       @db.UnsignedBigInt
-  created_at   DateTime     @default(now()) @db.DateTime(3)
-  updated_at   DateTime     @updatedAt @db.DateTime(3)
-  organization Organization @relation(fields: [org_id], references: [id], onDelete: Cascade)
-  anchor       Anchor       @relation(fields: [anchor_id], references: [user_id], onDelete: Cascade)
-  orgUser      OrgUser      @relation(fields: [org_user_id], references: [id], onDelete: Cascade)
+// model TaskAssign {
+//   id           BigInt       @id @default(autoincrement()) @db.UnsignedBigInt
+//   org_id       BigInt       @db.UnsignedBigInt
+//   anchor_id    BigInt       @db.UnsignedBigInt
+//   org_user_id  BigInt       @db.UnsignedBigInt
+//   created_at   DateTime     @default(now()) @db.DateTime(3)
+//   updated_at   DateTime     @updatedAt @db.DateTime(3)
+//   organization Organization @relation(fields: [org_id], references: [id], onDelete: Cascade)
+//   anchor       Anchor       @relation(fields: [anchor_id], references: [user_id], onDelete: Cascade)
+//   orgUser      OrgUser      @relation(fields: [org_user_id], references: [id], onDelete: Cascade)
 
-  @@unique([org_id, anchor_id], name: "org_id_anchor_id")
-  @@index([org_id])
-  @@index([org_user_id])
-}
+//   @@unique([org_id, anchor_id], name: "org_id_anchor_id")
+//   @@index([org_id])
+//   @@index([org_user_id])
+// }
 
-// 已建联状态表
-model AnchorConnect {
-  id           BigInt       @id @default(autoincrement()) @db.UnsignedBigInt
-  org_id       BigInt       @db.UnsignedBigInt
-  anchor_id    BigInt       @db.UnsignedBigInt
-  created_at   DateTime     @default(now()) @db.DateTime(3)
-  updated_at   DateTime     @updatedAt @db.DateTime(3)
-  organization Organization @relation(fields: [org_id], references: [id], onDelete: Cascade)
-  anchor       Anchor       @relation(fields: [anchor_id], references: [user_id], onDelete: Cascade)
+// // 已建联状态表
+// model AnchorConnect {
+//   id           BigInt       @id @default(autoincrement()) @db.UnsignedBigInt
+//   org_id       BigInt       @db.UnsignedBigInt
+//   anchor_id    BigInt       @db.UnsignedBigInt
+//   created_at   DateTime     @default(now()) @db.DateTime(3)
+//   updated_at   DateTime     @updatedAt @db.DateTime(3)
+//   organization Organization @relation(fields: [org_id], references: [id], onDelete: Cascade)
+//   anchor       Anchor       @relation(fields: [anchor_id], references: [user_id], onDelete: Cascade)
 
-  @@index([org_id])
-  @@index([anchor_id])
-}
+//   @@index([org_id])
+//   @@index([anchor_id])
+// }
 
 // 下面是临时表
 
@@ -203,7 +202,7 @@ model AnchorFrom87 {
 
   created_at   DateTime           @default(now())
   updated_at   DateTime           @updatedAt
-  group        AnchorFollowGroup? @relation(fields: [group_id], references: [id], onDelete: Cascade)
+  group        AnchorFollowGroup? @relation(fields: [group_id], references: [id], onDelete: SetNull)
   organization Organization       @relation(fields: [org_id], references: [id], onDelete: Cascade)
 
   @@unique([org_id, account_id], name: "org_id_account_id")
@@ -220,7 +219,7 @@ model AnchorFollowGroup {
   name         String         @db.VarChar(30)
   created_at   DateTime       @default(now())
   updated_at   DateTime       @updatedAt
-  organization Organization?  @relation(fields: [org_id], references: [id], onDelete: Cascade)
+  organization Organization   @relation(fields: [org_id], references: [id], onDelete: Cascade)
   anchors      AnchorFrom87[]
 
   @@unique([org_id, name], name: "org_id_name")

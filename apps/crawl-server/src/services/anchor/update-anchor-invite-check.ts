@@ -34,7 +34,7 @@ export async function batchUpdateAnchorInviteCheck(
     return [
       BigInt(anchor_id),
       BigInt(org_id),
-      BigInt(checked_by),
+      checked_by ? BigInt(checked_by) : null,
       checked_result ? 1 : 0,
       invite_type,
       checked_at,

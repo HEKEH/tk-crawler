@@ -1,4 +1,5 @@
 import type { Area } from './area';
+import type { OrgMemberItem } from './org-and-user';
 import type { Region } from './region';
 
 /** 被收集的主播信息 */
@@ -56,6 +57,7 @@ export interface DisplayedAnchorItem
   highest_diamonds: number;
   created_at: Date;
   updated_at: Date;
+  assigned_user?: Omit<OrgMemberItem, 'password'> | null;
 }
 
 export enum AnchorRankLeague {

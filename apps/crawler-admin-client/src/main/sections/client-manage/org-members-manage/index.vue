@@ -7,6 +7,7 @@ import type {
   OrgMemberItem,
   UpdateOrgMemberResponse,
 } from '@tk-crawler/biz-shared';
+import type { TableColumnCtx } from 'element-plus';
 import { useQuery } from '@tanstack/vue-query';
 import { OrgMemberRole, OrgMemberStatus } from '@tk-crawler/biz-shared';
 import { formatDateTime, RESPONSE_CODE } from '@tk-crawler/shared';
@@ -38,6 +39,12 @@ const props = defineProps<{
     org: OrganizationItem;
   };
 }>();
+
+interface ScopeType {
+  row: Omit<OrgMemberItem, 'password'>;
+  column: TableColumnCtx<Omit<OrgMemberItem, 'password'>>;
+  $index: number;
+}
 
 const tableRef = ref<InstanceType<typeof ElTable>>();
 const pageNum = ref(1);
@@ -102,7 +109,7 @@ const formDialogVisible = ref(false);
 const formData = ref<Partial<OrgMemberItem>>();
 const formMode = ref<'create' | 'edit'>('create');
 
-async function toggleDisableItem(row: OrgMemberItem) {
+async function toggleDisableItem(row: Omit<OrgMemberItem, 'password'>) {
   let updateResp: UpdateOrgMemberResponse;
   if (row.status === OrgMemberStatus.normal) {
     try {
@@ -135,7 +142,7 @@ async function toggleDisableItem(row: OrgMemberItem) {
   }
 }
 
-async function deleteItem(item: OrgMemberItem) {
+async function deleteItem(item: Omit<OrgMemberItem, 'password'>) {
   try {
     await confirmAfterSeconds(
       `确定要删除成员 ${item.username} 吗？删除后将无法恢复。一般情况下，更推荐使用禁用`,
@@ -158,7 +165,7 @@ function onAddItem() {
   formMode.value = 'create';
   formDialogVisible.value = true;
 }
-function onEditItem(item: OrgMemberItem) {
+function onEditItem(item: Omit<OrgMemberItem, 'password'>) {
   formData.value = item;
   formMode.value = 'edit';
   formDialogVisible.value = true;
@@ -229,17 +236,17 @@ async function handleSubmitCreateOrEdit(data: Partial<OrgMemberItem>) {
         <ElTableColumn prop="username" label="登录名" min-width="120" />
         <ElTableColumn prop="display_name" label="显示名" min-width="120" />
         <ElTableColumn prop="email" label="邮箱" min-width="120">
-          <template #default="scope">
+          <template #default="scope: ScopeType">
             {{ scope.row.email || '-' }}
           </template>
         </ElTableColumn>
         <ElTableColumn prop="mobile" label="手机号" min-width="120">
-          <template #default="scope">
+          <template #default="scope: ScopeType">
             {{ scope.row.mobile || '-' }}
           </template>
         </ElTableColumn>
         <ElTableColumn prop="role_id" label="角色" min-width="100">
-          <template #default="scope">
+          <template #default="scope: ScopeType">
             <ElTag
               size="small"
               :type="
@@ -255,7 +262,7 @@ async function handleSubmitCreateOrEdit(data: Partial<OrgMemberItem>) {
           </template>
         </ElTableColumn>
         <ElTableColumn prop="status" label="状态" min-width="100">
-          <template #default="scope">
+          <template #default="scope: ScopeType">
             <ElTag
               :type="
                 scope.row.status === OrgMemberStatus.normal
@@ -275,7 +282,7 @@ async function handleSubmitCreateOrEdit(data: Partial<OrgMemberItem>) {
           min-width="180"
           sortable="custom"
         >
-          <template #default="scope">
+          <template #default="scope: ScopeType">
             {{ formatDateTime(scope.row.created_at) }}
           </template>
         </ElTableColumn>
@@ -285,12 +292,12 @@ async function handleSubmitCreateOrEdit(data: Partial<OrgMemberItem>) {
           min-width="180"
           sortable="custom"
         >
-          <template #default="scope">
+          <template #default="scope: ScopeType">
             {{ formatDateTime(scope.row.updated_at) }}
           </template>
         </ElTableColumn>
         <ElTableColumn fixed="right" label="操作" min-width="220">
-          <template #default="scope">
+          <template #default="scope: ScopeType">
             <div>
               <ElButton
                 link

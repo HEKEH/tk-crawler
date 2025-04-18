@@ -5,13 +5,18 @@ import type {
   GetAnchorListOrderBy,
   Region,
 } from '@tk-crawler/biz-shared';
+import type { TableColumnCtx } from 'element-plus';
 import {
   AREA_NAME_MAP,
   CanUseInvitationType,
   REGION_LABEL_MAP,
   TIKTOK_URL,
 } from '@tk-crawler/biz-shared';
-import { formatDateTime, RESPONSE_CODE } from '@tk-crawler/shared';
+import {
+  formatDateTime,
+  getColorFromName,
+  RESPONSE_CODE,
+} from '@tk-crawler/shared';
 import {
   AreaTooltipIcon,
   ClearMessage,
@@ -23,6 +28,7 @@ import {
   ElButton,
   ElLink,
   ElMessage,
+  ElMessageBox,
   ElPagination,
   ElTable,
   ElTableColumn,
@@ -44,12 +50,18 @@ defineOptions({
   name: 'TKAnchorTable',
 });
 
+interface ScopeType {
+  row: DisplayedAnchorItem;
+  column: TableColumnCtx<DisplayedAnchorItem>;
+  $index: number;
+}
+
 const globalStore = useGlobalStore();
 
 const tableRef = ref<InstanceType<typeof ElTable>>();
 const pageNum = ref(1);
 const pageSize = ref(20);
-const sortField = ref<keyof DisplayedAnchorItem>();
+const sortField = ref<string>();
 const sortOrder = ref<'ascending' | 'descending'>();
 const queryOrderBy = computed<GetAnchorListOrderBy | undefined>(() => {
   return sortField.value
@@ -87,6 +99,7 @@ const { data, isLoading, isError, error, refetch } = useGetAnchorList(
     pageSize,
     filter: queryFilter,
     orderBy: queryOrderBy,
+    includeTaskAssign: true,
   },
   globalStore.token,
 );
@@ -96,7 +109,7 @@ function handleSortChange({
   prop,
   order,
 }: {
-  prop: keyof DisplayedAnchorItem;
+  prop: string;
   order: 'ascending' | 'descending' | null;
 }) {
   sortField.value = order ? prop : undefined;
@@ -189,7 +202,7 @@ async function handleSubmitTaskAssign(data: { orgMemberId: string }) {
   const result = await assignTask(
     {
       anchor_check_ids: taskAnchors.value.map(item => item.id),
-      org_member_id: data.orgMemberId ?? null,
+      org_member_id: data.orgMemberId,
     },
     globalStore.token,
   );
@@ -199,6 +212,61 @@ async function handleSubmitTaskAssign(data: { orgMemberId: string }) {
   await refetch();
   onCloseAssignTaskDialog();
   ElMessage.success('主播分配成功');
+}
+
+async function handleCancelAssignTask(data: DisplayedAnchorItem) {
+  try {
+    await ElMessageBox.confirm(
+      `确定取消将「${data.display_id}」分配给「${data.assigned_user!.display_name}」吗？`,
+      {
+        type: 'warning',
+        showCancelButton: true,
+      },
+    );
+  } catch {
+    return;
+  }
+  const result = await assignTask(
+    {
+      anchor_check_ids: [data.id],
+      org_member_id: null,
+    },
+    globalStore.token,
+  );
+  if (result.status_code !== RESPONSE_CODE.SUCCESS) {
+    return;
+  }
+  await refetch();
+  onCloseAssignTaskDialog();
+  ElMessage.success('主播取消分配成功');
+}
+
+async function batchCancelAssignTasks() {
+  const anchorCheckIds = selectedRows.value.map(item => item.id);
+  try {
+    await ElMessageBox.confirm(
+      `确定取消分配 ${anchorCheckIds.length} 个主播吗？`,
+      {
+        type: 'warning',
+        showCancelButton: true,
+      },
+    );
+  } catch {
+    return;
+  }
+  const result = await assignTask(
+    {
+      anchor_check_ids: anchorCheckIds,
+      org_member_id: null,
+    },
+    globalStore.token,
+  );
+  if (result.status_code !== RESPONSE_CODE.SUCCESS) {
+    return;
+  }
+  await refetch();
+  onCloseAssignTaskDialog();
+  ElMessage.success('主播批量取消分配成功');
 }
 
 onActivated(refetch);
@@ -227,6 +295,14 @@ onActivated(refetch);
             @click="openAssignTaskDialog(selectedRows)"
           >
             批量分配
+          </ElButton>
+          <ElButton
+            :disabled="!hasSelectedRows"
+            type="danger"
+            size="small"
+            @click="batchCancelAssignTasks"
+          >
+            批量取消分配
           </ElButton>
         </div>
         <div class="right-part">
@@ -265,7 +341,7 @@ onActivated(refetch);
           width="160"
           sortable="custom"
         >
-          <template #default="scope">
+          <template #default="scope: ScopeType">
             <div class="display-id-container">
               <ElLink
                 type="primary"
@@ -288,7 +364,7 @@ onActivated(refetch);
           width="210"
           sortable="custom"
         >
-          <template #default="scope">
+          <template #default="scope: ScopeType">
             <div class="user-id-container">
               <span class="user-id-text">{{ scope.row.user_id }}</span>
               <CopyIcon
@@ -296,6 +372,32 @@ onActivated(refetch);
                 :copy-content="scope.row.user_id"
               />
             </div>
+          </template>
+        </ElTableColumn>
+        <ElTableColumn
+          prop="assign_to"
+          label="分配状态"
+          min-width="120"
+          sortable="custom"
+        >
+          <template #default="scope: ScopeType">
+            <ElTag
+              v-if="!scope.row.assigned_user"
+              class="assigned-user-tag"
+              type="info"
+            >
+              未分配
+            </ElTag>
+            <ElTag
+              v-else
+              type="success"
+              class="assigned-user-tag"
+              :style="{
+                color: getColorFromName(scope.row.assigned_user.display_name),
+              }"
+            >
+              {{ scope.row.assigned_user.display_name }}
+            </ElTag>
           </template>
         </ElTableColumn>
         <!-- 数据统计 -->
@@ -311,7 +413,7 @@ onActivated(refetch);
           min-width="140"
           sortable="custom"
         >
-          <template #default="scope">
+          <template #default="scope: ScopeType">
             {{ scope.row.audience_count ?? '-' }}
           </template>
         </ElTableColumn>
@@ -329,7 +431,7 @@ onActivated(refetch);
           min-width="120"
           sortable="custom"
         >
-          <template #default="scope">
+          <template #default="scope: ScopeType">
             {{ scope.row.last_diamonds ?? '-' }}
           </template>
         </ElTableColumn>
@@ -347,7 +449,7 @@ onActivated(refetch);
           min-width="120"
           sortable="custom"
         >
-          <template #default="scope">
+          <template #default="scope: ScopeType">
             {{ scope.row.rank_league ?? '-' }}
           </template>
         </ElTableColumn>
@@ -357,7 +459,7 @@ onActivated(refetch);
           min-width="120"
           sortable="custom"
         >
-          <template #default="scope">
+          <template #default="scope: ScopeType">
             <div class="area-with-tooltip">
               {{ AREA_NAME_MAP[scope.row.area as Area] || '-' }}
               <AreaTooltipIcon :area="scope.row.area as Area" />
@@ -370,7 +472,7 @@ onActivated(refetch);
           min-width="120"
           sortable="custom"
         >
-          <template #default="scope">
+          <template #default="scope: ScopeType">
             {{
               REGION_LABEL_MAP[scope.row.region as Region]
                 ? `${REGION_LABEL_MAP[scope.row.region as Region]} (${scope.row.region})`
@@ -385,7 +487,7 @@ onActivated(refetch);
           min-width="100"
           sortable="custom"
         >
-          <template #default="scope">
+          <template #default="scope: ScopeType">
             {{ scope.row.checked_result ? '是' : '否' }}
           </template>
         </ElTableColumn>
@@ -397,7 +499,7 @@ onActivated(refetch);
           min-width="120"
           sortable="custom"
         >
-          <template #default="scope">
+          <template #default="scope: ScopeType">
             <ElTag
               v-if="scope.row.invite_type === CanUseInvitationType.Elite"
               type="warning"
@@ -421,7 +523,7 @@ onActivated(refetch);
           min-width="120"
           sortable="custom"
         >
-          <template #default="scope">
+          <template #default="scope: ScopeType">
             {{ scope.row.has_commerce_goods ? '是' : '否' }}
           </template>
         </ElTableColumn>
@@ -431,7 +533,7 @@ onActivated(refetch);
           min-width="120"
           sortable="custom"
         >
-          <template #default="scope">
+          <template #default="scope: ScopeType">
             {{ scope.row.tag || '-' }}
           </template>
         </ElTableColumn>
@@ -450,19 +552,27 @@ onActivated(refetch);
           min-width="190"
           sortable="custom"
         >
-          <template #default="scope">
+          <template #default="scope: ScopeType">
             {{ formatDateTime(scope.row.checked_at) }}
           </template>
         </ElTableColumn>
-        <ElTableColumn label="操作" min-width="100" fixed="right">
-          <template #default="scope">
+        <ElTableColumn label="操作" min-width="200" fixed="right">
+          <template #default="scope: ScopeType">
             <div class="operation-buttons">
               <ElButton
                 size="small"
                 type="primary"
                 @click="openAssignTaskDialog([scope.row])"
               >
-                分配
+                {{ scope.row.assigned_user ? '重新分配' : '分配主播' }}
+              </ElButton>
+              <ElButton
+                :disabled="!scope.row.assigned_user"
+                size="small"
+                type="danger"
+                @click="handleCancelAssignTask(scope.row)"
+              >
+                取消分配
               </ElButton>
             </div>
           </template>
@@ -603,6 +713,9 @@ onActivated(refetch);
       text-overflow: ellipsis;
       white-space: nowrap;
     }
+  }
+  .assigned-user-tag {
+    width: 100%;
   }
 }
 </style>

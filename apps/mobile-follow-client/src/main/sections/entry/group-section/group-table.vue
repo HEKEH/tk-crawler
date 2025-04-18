@@ -4,6 +4,7 @@ import type {
   CreateAnchorFollowGroupRequest,
   UpdateAnchorFollowGroupResponse,
 } from '@tk-crawler/biz-shared';
+import type { TableColumnCtx } from 'element-plus';
 import { formatDateTime, RESPONSE_CODE } from '@tk-crawler/shared';
 import { RefreshButton } from '@tk-crawler/view-shared';
 import {
@@ -36,6 +37,12 @@ import GroupFormDialog from './group-form-dialog.vue';
 defineOptions({
   name: 'GroupTable',
 });
+
+interface ScopeType {
+  row: AnchorFollowGroupItem;
+  column: TableColumnCtx<AnchorFollowGroupItem>;
+  $index: number;
+}
 
 const globalStore = useGlobalStore();
 
@@ -397,7 +404,7 @@ function handleCollectAnchorsToGroup(item: AnchorFollowGroupItem) {
           min-width="180"
           sortable="custom"
         >
-          <template #default="scope">
+          <template #default="scope: ScopeType">
             {{ formatDateTime(scope.row.created_at) }}
           </template>
         </ElTableColumn>
@@ -408,13 +415,13 @@ function handleCollectAnchorsToGroup(item: AnchorFollowGroupItem) {
           min-width="180"
           sortable="custom"
         >
-          <template #default="scope">
+          <template #default="scope: ScopeType">
             {{ formatDateTime(scope.row.updated_at) }}
           </template>
         </ElTableColumn>
 
         <ElTableColumn fixed="right" label="操作" min-width="140">
-          <template #default="scope">
+          <template #default="scope: ScopeType">
             <div>
               <ElButton
                 link

@@ -9,7 +9,7 @@ dayjs.extend(utc);
 export const BrowserTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 export function formatDateTime(
-  value: string | number | Date,
+  value: string | number | Date | null | undefined,
   config: {
     lang: I18N_LANGUAGE;
     timezone: string;

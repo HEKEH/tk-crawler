@@ -29,6 +29,7 @@ export function transformAnchorListFilterValues(
     checked_at,
     area,
     invite_type,
+    assign_to,
   } = filterValues;
   const anchorFilter: AnchorListWhereInput['anchor'] = {};
   if (user_id) {
@@ -93,6 +94,9 @@ export function transformAnchorListFilterValues(
   }
   if (checked_at !== undefined) {
     filter.checked_at = checked_at;
+  }
+  if (assign_to !== undefined && assign_to !== '') {
+    filter.assign_to = assign_to ? BigInt(assign_to) : null;
   }
 
   if (area) {

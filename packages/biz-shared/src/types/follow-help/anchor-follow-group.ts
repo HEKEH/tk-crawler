@@ -5,6 +5,8 @@ export interface AnchorFollowGroup {
   org_id: string;
   name: string;
   anchors: Omit<AnchorFrom87, 'has_grouped'>[];
+  created_at: Date;
+  updated_at: Date;
 }
 
 export interface AnchorFollowGroupWithAnchorIds {

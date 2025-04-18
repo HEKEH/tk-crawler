@@ -5,6 +5,7 @@ import type {
   OrgMemberItem,
   UpdateOrgMemberResponse,
 } from '@tk-crawler/biz-shared';
+import type { TableColumnCtx } from 'element-plus';
 import type { FilterViewValues } from './filter';
 import { OrgMemberRole, OrgMemberStatus } from '@tk-crawler/biz-shared';
 import { formatDateTime, RESPONSE_CODE } from '@tk-crawler/shared';
@@ -36,6 +37,12 @@ import FormDialog from './member-form-dialog.vue';
 defineOptions({
   name: 'OrgMembersManage',
 });
+
+interface ScopeType {
+  row: Omit<OrgMemberItem, 'password'>;
+  column: TableColumnCtx<Omit<OrgMemberItem, 'password'>>;
+  $index: number;
+}
 
 const tableRef = ref<InstanceType<typeof ElTable>>();
 const globalStore = useGlobalStore();
@@ -106,7 +113,7 @@ function refresh() {
   });
 }
 
-async function toggleDisableItem(row: OrgMemberItem) {
+async function toggleDisableItem(row: Omit<OrgMemberItem, 'password'>) {
   let updateResp: UpdateOrgMemberResponse;
   if (row.status === OrgMemberStatus.normal) {
     try {
@@ -139,7 +146,7 @@ async function toggleDisableItem(row: OrgMemberItem) {
   }
 }
 
-async function deleteItem(item: OrgMemberItem) {
+async function deleteItem(item: Omit<OrgMemberItem, 'password'>) {
   try {
     await confirmAfterSeconds(
       `确定要删除成员 ${item.username} 吗？删除后将无法恢复。一般情况下，更推荐使用禁用`,
@@ -168,7 +175,7 @@ function onAddItem() {
   formMode.value = 'create';
   formDialogVisible.value = true;
 }
-function onEditItem(item: OrgMemberItem) {
+function onEditItem(item: Omit<OrgMemberItem, 'password'>) {
   formData.value = item;
   formMode.value = 'edit';
   formDialogVisible.value = true;
@@ -271,7 +278,7 @@ async function handleSubmitCreateOrEdit(data: Partial<OrgMemberItem>) {
           min-width="120"
           sortable="custom"
         >
-          <template #default="scope">
+          <template #default="scope: ScopeType">
             {{ scope.row.email || '-' }}
           </template>
         </ElTableColumn>
@@ -281,7 +288,7 @@ async function handleSubmitCreateOrEdit(data: Partial<OrgMemberItem>) {
           min-width="120"
           sortable="custom"
         >
-          <template #default="scope">
+          <template #default="scope: ScopeType">
             {{ scope.row.mobile || '-' }}
           </template>
         </ElTableColumn>
@@ -291,7 +298,7 @@ async function handleSubmitCreateOrEdit(data: Partial<OrgMemberItem>) {
           min-width="100"
           sortable="custom"
         >
-          <template #default="scope">
+          <template #default="scope: ScopeType">
             <ElTag
               size="small"
               :type="
@@ -312,7 +319,7 @@ async function handleSubmitCreateOrEdit(data: Partial<OrgMemberItem>) {
           min-width="100"
           sortable="custom"
         >
-          <template #default="scope">
+          <template #default="scope: ScopeType">
             <ElTag
               :type="
                 scope.row.status === OrgMemberStatus.normal
@@ -332,7 +339,7 @@ async function handleSubmitCreateOrEdit(data: Partial<OrgMemberItem>) {
           min-width="180"
           sortable="custom"
         >
-          <template #default="scope">
+          <template #default="scope: ScopeType">
             {{ formatDateTime(scope.row.created_at) }}
           </template>
         </ElTableColumn>
@@ -342,7 +349,7 @@ async function handleSubmitCreateOrEdit(data: Partial<OrgMemberItem>) {
           min-width="180"
           sortable="custom"
         >
-          <template #default="scope">
+          <template #default="scope: ScopeType">
             {{ formatDateTime(scope.row.updated_at) }}
           </template>
         </ElTableColumn>
@@ -352,7 +359,7 @@ async function handleSubmitCreateOrEdit(data: Partial<OrgMemberItem>) {
           label="操作"
           min-width="220"
         >
-          <template #default="scope">
+          <template #default="scope: ScopeType">
             <div>
               <ElButton
                 link

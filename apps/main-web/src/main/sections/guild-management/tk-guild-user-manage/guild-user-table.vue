@@ -7,6 +7,7 @@ import type {
   TKGuildUser,
   UpdateTKGuildUserResponse,
 } from '@tk-crawler/biz-shared';
+import type { TableColumnCtx } from 'element-plus';
 import { InfoFilled } from '@element-plus/icons-vue';
 import { useQuery } from '@tanstack/vue-query';
 import {
@@ -60,6 +61,12 @@ import StatusTag from './status-tag.vue';
 defineOptions({
   name: 'TKGuildUserTable',
 });
+
+interface ScopeType {
+  row: TKGuildUser;
+  column: TableColumnCtx<TKGuildUser>;
+  $index: number;
+}
 
 const globalStore = useGlobalStore();
 
@@ -451,7 +458,7 @@ onActivated(refetch);
         <ElTableColumn type="selection" width="55" />
         <ElTableColumn prop="username" label="后台查询账号" min-width="200" />
         <ElTableColumn label="启动/停止" min-width="120">
-          <template #default="scope">
+          <template #default="scope: ScopeType">
             <ElButton
               class="start-or-stop-button"
               size="small"
@@ -472,12 +479,12 @@ onActivated(refetch);
           min-width="120"
           sortable="custom"
         >
-          <template #default="scope">
+          <template #default="scope: ScopeType">
             <StatusTag :status="scope.row.status" />
           </template>
         </ElTableColumn>
         <ElTableColumn prop="password" label="后台查询密码" min-width="160">
-          <template #default="scope">
+          <template #default="scope: ScopeType">
             <VisiblePassword :password="scope.row.password" />
           </template>
         </ElTableColumn>
@@ -487,7 +494,7 @@ onActivated(refetch);
           sortable="custom"
           min-width="160"
         >
-          <template #default="scope">
+          <template #default="scope: ScopeType">
             <div class="area-with-tooltip">
               {{ AREA_NAME_MAP[scope.row.area as Area] || '-' }}
               <AreaTooltipIcon :area="scope.row.area as Area" />
@@ -522,7 +529,7 @@ onActivated(refetch);
           min-width="205"
           sortable="custom"
         >
-          <template #default="scope">
+          <template #default="scope: ScopeType">
             {{ formatDateTime(scope.row.created_at) }}
           </template>
         </ElTableColumn>
@@ -532,12 +539,12 @@ onActivated(refetch);
           min-width="205"
           sortable="custom"
         >
-          <template #default="scope">
+          <template #default="scope: ScopeType">
             {{ formatDateTime(scope.row.updated_at) }}
           </template>
         </ElTableColumn>
         <ElTableColumn prop="cookie" label="Cookie" min-width="200">
-          <template #default="scope">
+          <template #default="scope: ScopeType">
             <div v-if="scope.row.cookie" class="cookie">
               <span class="cookie-text">{{ scope.row.cookie }}</span>
               <CopyIcon tooltip="复制Cookie" :copy-content="scope.row.cookie" />
@@ -545,7 +552,7 @@ onActivated(refetch);
           </template>
         </ElTableColumn>
         <ElTableColumn label="操作" min-width="140" fixed="right">
-          <template #default="scope">
+          <template #default="scope: ScopeType">
             <div class="operation-buttons">
               <ElButton
                 size="small"

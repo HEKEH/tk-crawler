@@ -46,6 +46,8 @@ export function transformAnchorListOrderBy(
     result.anchor = { tag: orderBy.tag };
   } else if ('room_id' in orderBy && orderBy.room_id) {
     result.anchor = { room_id: orderBy.room_id };
+  } else if ('assign_to' in orderBy && orderBy.assign_to) {
+    result.assign_to = orderBy.assign_to;
   } else {
     throw new BusinessError(`Invalid orderBy: ${JSON.stringify(orderBy)}`);
   }

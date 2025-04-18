@@ -5,6 +5,7 @@ import type {
   GetAnchorCommentTemplateListResponseData,
   UpdateAnchorCommentTemplateResponse,
 } from '@tk-crawler/biz-shared';
+import type { TableColumnCtx } from 'element-plus';
 import { useQuery } from '@tanstack/vue-query';
 import { formatDateTime, RESPONSE_CODE } from '@tk-crawler/shared';
 import { ClearMessage, RefreshButton } from '@tk-crawler/view-shared';
@@ -44,6 +45,12 @@ const props = defineProps<{
 const emits = defineEmits<{
   (e: 'deleteItems', templateIds: string[]): void;
 }>();
+
+interface ScopeType {
+  row: AnchorCommentTemplate;
+  column: TableColumnCtx<AnchorCommentTemplate>;
+  $index: number;
+}
 
 const globalStore = useGlobalStore();
 
@@ -372,7 +379,7 @@ async function handleCreateOrEdit(data: Partial<AnchorCommentTemplate>) {
           min-width="180"
           sortable="custom"
         >
-          <template #default="scope">
+          <template #default="scope: ScopeType">
             {{ formatDateTime(scope.row.created_at) }}
           </template>
         </ElTableColumn>
@@ -383,13 +390,13 @@ async function handleCreateOrEdit(data: Partial<AnchorCommentTemplate>) {
           min-width="180"
           sortable="custom"
         >
-          <template #default="scope">
+          <template #default="scope: ScopeType">
             {{ formatDateTime(scope.row.updated_at) }}
           </template>
         </ElTableColumn>
 
         <ElTableColumn fixed="right" label="操作" min-width="120">
-          <template #default="scope">
+          <template #default="scope: ScopeType">
             <div>
               <ElButton
                 link

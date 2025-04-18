@@ -22,7 +22,8 @@ export async function getAnchorList(
   assert(request.page_size, 'page_size is required');
   assert(request.page_size <= 200, 'page_size is too large');
 
-  const { page_num, page_size, filter, order_by, org_id } = request;
+  const { page_num, page_size, filter, order_by, org_id, include_task_assign } =
+    request;
   const where = transformAnchorListFilterValues(filter, org_id);
   const orderBy = transformAnchorListOrderBy(order_by);
 
@@ -34,6 +35,13 @@ export async function getAnchorList(
       take: page_size,
       include: {
         anchor: true,
+        assigned_user: include_task_assign
+          ? {
+              omit: {
+                password: true,
+              },
+            }
+          : false,
       },
     }),
     mysqlClient.prismaClient.anchorInviteCheck.count({
@@ -43,7 +51,7 @@ export async function getAnchorList(
 
   const list: DisplayedAnchorItem[] = anchorInviteChecks.map(item => {
     const { anchor } = item;
-    return {
+    const data: DisplayedAnchorItem = {
       id: item.id.toString(),
       user_id: anchor.user_id.toString(),
       display_id: anchor.display_id,
@@ -67,6 +75,23 @@ export async function getAnchorList(
       checked_by: item.checked_by ? item.checked_by.toString() : null,
       checked_result: item.checked_result === 1,
     };
+    if (include_task_assign) {
+      data.assigned_user = item.assigned_user
+        ? {
+            id: item.assigned_user.id.toString(),
+            username: item.assigned_user.username,
+            display_name: item.assigned_user.display_name,
+            org_id: item.assigned_user.org_id.toString(),
+            role_id: item.assigned_user.role_id,
+            status: item.assigned_user.status,
+            created_at: item.assigned_user.created_at,
+            updated_at: item.assigned_user.updated_at,
+            email: item.assigned_user.email,
+            mobile: item.assigned_user.mobile,
+          }
+        : null;
+    }
+    return data;
   });
 
   const result = {

@@ -2,13 +2,13 @@
 import type { DisplayedAnchorItem } from '@tk-crawler/biz-shared';
 import type { AssignTaskFormValues } from './assign-task-form.vue';
 import { ElDialog, ElScrollbar } from 'element-plus';
+import { computed } from 'vue';
 import AssignTaskForm from './assign-task-form.vue';
 
 const props = defineProps<{
   visible: boolean;
-  anchors: Pick<DisplayedAnchorItem, 'id' | 'display_id'>[];
+  anchors: Pick<DisplayedAnchorItem, 'id' | 'display_id' | 'assigned_user'>[];
   submit: (data: AssignTaskFormValues) => Promise<void>;
-  initialData?: Partial<AssignTaskFormValues>;
 }>();
 
 const emit = defineEmits<{
@@ -22,6 +22,15 @@ function handleClose() {
 function handleSubmit(data: AssignTaskFormValues) {
   return props.submit(data);
 }
+
+const initialData = computed<Partial<AssignTaskFormValues> | undefined>(() => {
+  if (props.anchors.length === 1) {
+    return {
+      orgMemberId: props.anchors[0]?.assigned_user?.id,
+    };
+  }
+  return undefined;
+});
 
 // const warningText = '不选择则清除分配';
 </script>

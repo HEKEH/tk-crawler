@@ -14,11 +14,13 @@ export function useGetAnchorList(
     pageSize,
     filter,
     orderBy,
+    includeTaskAssign,
   }: UseQueryParams<{
     pageNum: number;
     pageSize: number;
     filter?: GetAnchorListRequest['filter'];
     orderBy?: GetAnchorListRequest['order_by'];
+    includeTaskAssign?: boolean;
   }>,
   token: string,
 ) {
@@ -40,6 +42,7 @@ export function useGetAnchorList(
           page_size: toValue(pageSize),
           order_by: toValue(orderBy),
           filter: toValue(filter),
+          include_task_assign: toValue(includeTaskAssign),
         },
         token,
       );

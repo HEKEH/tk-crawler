@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import { type Area, OrgMemberRole } from '@tk-crawler/biz-shared';
+import {
+  type Area,
+  OrgMemberRole,
+  OrgMemberStatus,
+} from '@tk-crawler/biz-shared';
 import { ElOption, ElSelect, ElTag } from 'element-plus';
 import { computed, ref } from 'vue';
 import { useGetOrgMemberList } from '../hooks';
@@ -51,6 +55,7 @@ const value = computed<PropsValue | undefined>({
 
 const filter = computed(() => ({
   display_name: filterText.value?.trim() || undefined,
+  status: OrgMemberStatus.normal,
 }));
 
 const { data: orgMembers, isLoading } = useGetOrgMemberList(

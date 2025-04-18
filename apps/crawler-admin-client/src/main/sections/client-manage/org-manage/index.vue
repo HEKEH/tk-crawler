@@ -7,6 +7,7 @@ import type {
   UpdateOrgRequest,
   UpdateOrgResponse,
 } from '@tk-crawler/biz-shared';
+import type { TableColumnCtx } from 'element-plus';
 import { useQuery } from '@tanstack/vue-query';
 import { AREA_NAME_MAP, OrganizationStatus } from '@tk-crawler/biz-shared';
 import { formatDateTime, RESPONSE_CODE } from '@tk-crawler/shared';
@@ -47,6 +48,12 @@ const props = defineProps<{
     onOrgDelete: (org: OrganizationItem) => void;
   };
 }>();
+
+interface ScopeType {
+  row: OrganizationItem;
+  column: TableColumnCtx<OrganizationItem>;
+  $index: number;
+}
 
 const tableRef = ref<InstanceType<typeof ElTable>>();
 const pageNum = ref(1);
@@ -247,7 +254,7 @@ function onManageOrgMembers(org: OrganizationItem) {
         <ElTableColumn fixed prop="id" label="机构ID" min-width="100" />
         <ElTableColumn fixed prop="name" label="机构名称" min-width="100" />
         <ElTableColumn prop="status" label="状态" min-width="100">
-          <template #default="scope">
+          <template #default="scope: ScopeType">
             <ElTag
               :type="
                 scope.row.status === OrganizationStatus.normal
@@ -267,7 +274,7 @@ function onManageOrgMembers(org: OrganizationItem) {
           min-width="180"
           sortable="custom"
         >
-          <template #default="scope">
+          <template #default="scope: ScopeType">
             {{ formatDateTime(scope.row.membership_start_at) }}
           </template>
         </ElTableColumn>
@@ -277,7 +284,7 @@ function onManageOrgMembers(org: OrganizationItem) {
           min-width="180"
           sortable="custom"
         >
-          <template #default="scope">
+          <template #default="scope: ScopeType">
             {{ formatDateTime(scope.row.membership_expire_at) }}
           </template>
         </ElTableColumn>
@@ -286,14 +293,14 @@ function onManageOrgMembers(org: OrganizationItem) {
           label="会员是否有效"
           min-width="120"
         >
-          <template #default="scope">
+          <template #default="scope: ScopeType">
             <ElTag :type="scope.row.if_membership_valid ? 'success' : 'danger'">
               {{ scope.row.if_membership_valid ? '是' : '否' }}
             </ElTag>
           </template>
         </ElTableColumn>
         <ElTableColumn prop="areas" label="分区" min-width="160">
-          <template #default="scope">
+          <template #default="scope: ScopeType">
             <div class="area-tag">
               <ElTag
                 v-for="area in (scope.row as OrganizationItem).areas"
@@ -319,7 +326,7 @@ function onManageOrgMembers(org: OrganizationItem) {
           min-width="180"
           sortable="custom"
         >
-          <template #default="scope">
+          <template #default="scope: ScopeType">
             {{ formatDateTime(scope.row.created_at) }}
           </template>
         </ElTableColumn>
@@ -329,13 +336,13 @@ function onManageOrgMembers(org: OrganizationItem) {
           min-width="180"
           sortable="custom"
         >
-          <template #default="scope">
+          <template #default="scope: ScopeType">
             {{ formatDateTime(scope.row.updated_at) }}
           </template>
         </ElTableColumn>
         <ElTableColumn prop="remark" label="备注" min-width="100" />
         <ElTableColumn fixed="right" label="操作" min-width="220">
-          <template #default="scope">
+          <template #default="scope: ScopeType">
             <div class="action-row">
               <ElButton
                 link

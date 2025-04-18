@@ -1,8 +1,8 @@
 import type { AxiosRequestConfig } from 'axios';
+import { TIKTOK_URL } from '@tk-crawler/biz-shared';
 import axios from 'axios';
 import { getLogger } from '../../../infra/logger';
 import { extractRegionFromHtml } from '../../utils/extract-region';
-import { TIKTOK_URL } from '../constants';
 
 /** @deprecated */
 export async function getAnchorRegion({

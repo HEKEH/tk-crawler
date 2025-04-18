@@ -15,7 +15,7 @@ import {
   GUILD_COOKIE_PAGE_HELP_WIDTH,
 } from '@tk-crawler/main-client-shared';
 import { RESPONSE_CODE, sleep } from '@tk-crawler/shared';
-import { ipcMain, WebContentsView } from 'electron';
+import { globalShortcut, ipcMain, WebContentsView } from 'electron';
 import { isDevelopment, RENDERER_DIST, VITE_DEV_SERVER_URL } from '../../env';
 import { logger } from '../../infra/logger';
 import { startTKGuildUserAccount } from '../../requests/tk-guild-user';
@@ -41,6 +41,8 @@ export class CookiePageView implements IView {
   private _openTurnId: number = 0;
 
   private _cookies: string | undefined;
+
+  private _shortcutRegistered = false;
 
   private _removeResizeListener: (() => void) | null = null;
 
@@ -195,6 +197,7 @@ export class CookiePageView implements IView {
         }
       }
       this._parentWindow.contentView.addChildView(this._thirdPartyView);
+      this._registerDevToolsShortcut();
       this._setStatus(GUILD_COOKIE_PAGE_HELP_STATUS.opened);
       this._catchBatchCheckAnchorRequestCookies();
       await this._refreshRunningStatus();
@@ -558,7 +561,29 @@ export class CookiePageView implements IView {
     }
   }
 
+  private _registerDevToolsShortcut() {
+    if (this._shortcutRegistered) {
+      return;
+    }
+
+    globalShortcut.register('F12', () => {
+      if (this._thirdPartyView?.webContents) {
+        this._thirdPartyView.webContents.toggleDevTools();
+      }
+    });
+
+    this._shortcutRegistered = true;
+  }
+
+  private _unregisterDevToolsShortcut() {
+    if (this._shortcutRegistered) {
+      globalShortcut.unregister('F12');
+      this._shortcutRegistered = false;
+    }
+  }
+
   close() {
+    this._unregisterDevToolsShortcut();
     this._removeResizeListener?.();
     this._removeEventHandlers();
     this._closeThirdPartyPageView();

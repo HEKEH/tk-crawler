@@ -40,7 +40,7 @@ function getStatusText(status: TKGuildUserStatus) {
     case TKGuildUserStatus.ERROR:
       return '出错';
     case TKGuildUserStatus.COOKIE_EXPIRED:
-      return 'Cookie过期';
+      return 'Cookie失效';
     case TKGuildUserStatus.WAITING:
       return '等待中';
     case TKGuildUserStatus.INACTIVE:
@@ -55,7 +55,7 @@ function getStatusText(status: TKGuildUserStatus) {
 function getTip(status: TKGuildUserStatus) {
   switch (status) {
     case TKGuildUserStatus.COOKIE_EXPIRED:
-      return '由于TK严格的风控机制，有时候一次激活并不能免除后续验证，此时可能需要重复激活数次后，Cookie才能正常使用';
+      return '由于TK严格的风控机制，一次激活并不能保证Cookie后续验证通过，可能需要重复激活数次后，Cookie才能正常使用';
     default:
       return undefined;
   }
@@ -70,7 +70,7 @@ const tip = computed(() => getTip(props.status));
   <ElTag class="status-tag" :type="type">
     {{ text }}
     <ElTooltip v-if="tip" :content="tip" placement="top">
-      <ElIcon :size="12" class="ml-1">
+      <ElIcon class="status-tag-icon" :size="12">
         <InfoFilled />
       </ElIcon>
     </ElTooltip>
@@ -79,7 +79,11 @@ const tip = computed(() => getTip(props.status));
 
 <style scoped>
 .status-tag {
-  display: flex;
-  align-items: center;
+  width: 100%;
+  :global(.el-tag__content) {
+    display: flex;
+    align-items: center;
+    column-gap: 4px;
+  }
 }
 </style>

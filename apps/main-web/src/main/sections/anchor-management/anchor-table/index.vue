@@ -9,16 +9,19 @@ import {
   AREA_NAME_MAP,
   CanUseInvitationType,
   REGION_LABEL_MAP,
+  TIKTOK_URL,
 } from '@tk-crawler/biz-shared';
 import { formatDateTime, RESPONSE_CODE } from '@tk-crawler/shared';
 import {
   AreaTooltipIcon,
   ClearMessage,
   confirmAfterSeconds,
+  CopyIcon,
   RefreshButton,
 } from '@tk-crawler/view-shared';
 import {
   ElButton,
+  ElLink,
   ElMessage,
   ElPagination,
   ElTable,
@@ -225,15 +228,42 @@ onActivated(refetch);
         <ElTableColumn
           prop="display_id"
           label="主播ID"
-          min-width="160"
+          width="160"
           sortable="custom"
-        />
+        >
+          <template #default="scope">
+            <div class="display-id-container">
+              <ElLink
+                type="primary"
+                class="display-id-link"
+                :href="`${TIKTOK_URL}/@${scope.row.display_id}`"
+                target="_blank"
+              >
+                {{ scope.row.display_id }}
+              </ElLink>
+              <CopyIcon
+                tooltip="复制主播ID"
+                :copy-content="scope.row.display_id"
+              />
+            </div>
+          </template>
+        </ElTableColumn>
         <ElTableColumn
           prop="user_id"
           label="数字ID"
-          min-width="180"
+          width="210"
           sortable="custom"
-        />
+        >
+          <template #default="scope">
+            <div class="user-id-container">
+              <span class="user-id-text">{{ scope.row.user_id }}</span>
+              <CopyIcon
+                tooltip="复制数字ID"
+                :copy-content="scope.row.user_id"
+              />
+            </div>
+          </template>
+        </ElTableColumn>
         <!-- 数据统计 -->
         <ElTableColumn
           prop="follower_count"
@@ -480,6 +510,41 @@ onActivated(refetch);
     display: flex;
     align-items: center;
     column-gap: 6px;
+  }
+  .display-id-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 100%;
+    column-gap: 0.5rem;
+    overflow: hidden;
+    .display-id-link {
+      flex: 0 1 auto;
+      overflow: hidden;
+      color: var(--el-color-primary-dark-2);
+      :global(.el-link__inner) {
+        display: inline-block;
+        width: 100%;
+        font-weight: 400;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
+  }
+  .user-id-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    column-gap: 0.5rem;
+    max-width: 100%;
+    overflow: hidden;
+    .user-id-text {
+      flex: 0 1 auto;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
   }
 }
 </style>

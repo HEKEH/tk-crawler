@@ -1,4 +1,5 @@
 import type { TikTokQueryTokens } from './types';
+import { TIKTOK_URL } from '@tk-crawler/biz-shared';
 import { getUrl } from '@tk-crawler/shared';
 import { getXBogus } from '../../get-x-bogus';
 import { commonGetRequest } from '../utils/common-request';
@@ -7,7 +8,6 @@ import {
   COMMON_TIKTOK_HEADERS,
   COMMON_TIKTOK_QUERY,
   getTiktokRegionParams,
-  TIKTOK_URL,
 } from './constants';
 
 export async function checkTiktokCookieValid({

@@ -7,7 +7,7 @@ import type {
   TKGuildUser,
   UpdateTKGuildUserResponse,
 } from '@tk-crawler/biz-shared';
-import { CopyDocument, InfoFilled } from '@element-plus/icons-vue';
+import { InfoFilled } from '@element-plus/icons-vue';
 import { useQuery } from '@tanstack/vue-query';
 import {
   AREA_NAME_MAP,
@@ -22,7 +22,7 @@ import {
 import { formatDateTime, RESPONSE_CODE } from '@tk-crawler/shared';
 import {
   AreaTooltipIcon,
-  copyToClipboard,
+  CopyIcon,
   getPlatform,
   RefreshButton,
 } from '@tk-crawler/view-shared';
@@ -539,14 +539,7 @@ onActivated(refetch);
           <template #default="scope">
             <div v-if="scope.row.cookie" class="cookie">
               <span class="cookie-text">{{ scope.row.cookie }}</span>
-              <ElTooltip content="复制Cookie" placement="top">
-                <ElIcon
-                  class="copy-icon"
-                  @click="copyToClipboard(scope.row.cookie)"
-                >
-                  <CopyDocument />
-                </ElIcon>
-              </ElTooltip>
+              <CopyIcon tooltip="复制Cookie" :copy-content="scope.row.cookie" />
             </div>
           </template>
         </ElTableColumn>
@@ -651,18 +644,12 @@ onActivated(refetch);
     align-items: center;
     justify-content: space-between;
     flex-wrap: nowrap;
+    column-gap: 0.25rem;
     .cookie-text {
       flex: 1;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-    }
-    .copy-icon {
-      cursor: pointer;
-      margin-left: 0.5rem;
-      &:hover {
-        color: var(--el-color-primary);
-      }
     }
   }
   .area-with-tooltip {

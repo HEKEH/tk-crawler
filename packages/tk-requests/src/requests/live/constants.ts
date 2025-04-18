@@ -3,11 +3,11 @@ import {
   BROWSER_VERSION,
   DefaultRegion,
   Region,
+  TIKTOK_URL,
   USER_AGENT,
 } from '@tk-crawler/biz-shared';
 import { getRandomArrayElement } from '@tk-crawler/shared';
 
-export const TIKTOK_URL = 'https://www.tiktok.com';
 export const TIKTOK_WEBCAST_URL = 'https://webcast.tiktok.com';
 export const COMMON_TIKTOK_HEADERS = {
   accept: '*/*',

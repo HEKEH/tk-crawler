@@ -43,7 +43,12 @@ export class OrganizationCollection {
       {} as Partial<Record<Area, OrganizationModel[]>>,
     );
     logger.trace(`update area organizations map:`, {
-      areaOrganizationsMap: this._areaOrganizationsMap,
+      areaOrganizationsMap: Object.fromEntries(
+        Object.entries(this._areaOrganizationsMap).map(([area, orgs]) => [
+          area,
+          orgs.map(org => org.name),
+        ]),
+      ),
     });
   }
 

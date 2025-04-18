@@ -472,7 +472,7 @@ onActivated(refetch);
           sortable="custom"
         >
           <template #default="scope">
-            <StatusTag v-memo="[scope.row.status]" :status="scope.row.status" />
+            <StatusTag :status="scope.row.status" />
           </template>
         </ElTableColumn>
         <ElTableColumn prop="password" label="后台查询密码" min-width="160">
@@ -537,11 +537,7 @@ onActivated(refetch);
         </ElTableColumn>
         <ElTableColumn prop="cookie" label="Cookie" min-width="200">
           <template #default="scope">
-            <div
-              v-if="scope.row.cookie"
-              v-memo="[scope.row.cookie]"
-              class="cookie"
-            >
+            <div v-if="scope.row.cookie" class="cookie">
               <span class="cookie-text">{{ scope.row.cookie }}</span>
               <ElTooltip content="复制Cookie" placement="top">
                 <ElIcon

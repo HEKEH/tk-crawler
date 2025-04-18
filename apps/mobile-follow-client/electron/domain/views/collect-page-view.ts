@@ -14,7 +14,7 @@ import {
   COLLECT_PAGE_HELP_WIDTH,
   MOCK_ORG_ID,
 } from '@tk-mobile-follow-client/shared';
-import { ipcMain, WebContentsView } from 'electron';
+import { globalShortcut, ipcMain, WebContentsView } from 'electron';
 import { isDevelopment, RENDERER_DIST, VITE_DEV_SERVER_URL } from '../../env';
 import { logger } from '../../infra/logger';
 import { createOrUpdateAnchorFrom87 } from '../../requests';
@@ -41,6 +41,8 @@ export class CollectPageView implements IView {
   private _backToMainView: () => void;
 
   private _group: AnchorFollowGroupItem | null = null;
+
+  private _shortcutRegistered = false;
 
   constructor(props: { parentWindow: BaseWindow; backToMainView: () => void }) {
     this._parentWindow = props.parentWindow;
@@ -106,8 +108,30 @@ export class CollectPageView implements IView {
           });
         }
       }
+      this._registerDevToolsShortcut();
       this._parentWindow.contentView.addChildView(this._helpView);
       this._onResize();
+    }
+  }
+
+  private _registerDevToolsShortcut() {
+    if (this._shortcutRegistered) {
+      return;
+    }
+
+    globalShortcut.register('F12', () => {
+      if (this._thirdPartyView?.webContents) {
+        this._thirdPartyView.webContents.toggleDevTools();
+      }
+    });
+
+    this._shortcutRegistered = true;
+  }
+
+  private _unregisterDevToolsShortcut() {
+    if (this._shortcutRegistered) {
+      globalShortcut.unregister('F12');
+      this._shortcutRegistered = false;
     }
   }
 
@@ -333,6 +357,7 @@ export class CollectPageView implements IView {
 
   close() {
     this._group = null;
+    this._unregisterDevToolsShortcut();
     this._removeResizeListener?.();
     this._removeEventHandlers();
     this._closeThirdPartyPageView();

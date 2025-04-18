@@ -459,14 +459,14 @@ export class CookiePageView implements IView {
     let isActivateSuccess = false;
     let tryCount = 0;
     await sleep(1000);
-    while (!isActivateSuccess && tryCount < 20 && !this.isClosed) {
+    while (!isActivateSuccess && tryCount < 40 && !this.isClosed) {
       isActivateSuccess = await this._checkIfFinishActivate();
       tryCount++;
       if (!isActivateSuccess) {
         await sleep(1000);
       }
     }
-    await sleep(3000);
+    await sleep(2000);
     if (isActivateSuccess) {
       this._finishActivate();
     }

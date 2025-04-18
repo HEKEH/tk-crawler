@@ -21,6 +21,8 @@ export class MainView implements IView {
 
   private _removeResizeListener: (() => void) | null = null;
 
+  private _shortcutRegistered = false;
+
   private _isVisible = true;
 
   constructor(props: {
@@ -48,6 +50,7 @@ export class MainView implements IView {
       this._view.setVisible(true);
       this._isVisible = true;
       this._bindResizeListener();
+      this._registerDevToolsShortcut();
       return;
     }
     this._view = new WebContentsView({
@@ -65,11 +68,7 @@ export class MainView implements IView {
           });
         }
       }
-      globalShortcut.register('F12', () => {
-        if (this._view?.webContents) {
-          this._view.webContents.toggleDevTools();
-        }
-      });
+      this._registerDevToolsShortcut();
     });
     if (VITE_DEV_SERVER_URL) {
       await this._view.webContents.loadURL(`${VITE_DEV_SERVER_URL}index.html`);
@@ -80,6 +79,27 @@ export class MainView implements IView {
     }
     this._parentWindow.contentView.addChildView(this._view);
     this._bindResizeListener();
+  }
+
+  private _registerDevToolsShortcut() {
+    if (this._shortcutRegistered) {
+      return;
+    }
+
+    globalShortcut.register('F12', () => {
+      if (this._view?.webContents) {
+        this._view.webContents.toggleDevTools();
+      }
+    });
+
+    this._shortcutRegistered = true;
+  }
+
+  private _unregisterDevToolsShortcut() {
+    if (this._shortcutRegistered) {
+      globalShortcut.unregister('F12');
+      this._shortcutRegistered = false;
+    }
   }
 
   private _bindResizeListener() {
@@ -104,6 +124,7 @@ export class MainView implements IView {
 
   /** 只是隐藏视图，不销毁 */
   close() {
+    this._unregisterDevToolsShortcut();
     if (this._view) {
       this._view.setVisible(false);
       this._isVisible = false;

@@ -36,7 +36,7 @@ export async function searchAnchorsNeedCheck(data: {
       region: {
         in: regions,
       },
-      inviteChecks: {
+      invite_checks: {
         none: {
           org_id: BigInt(data.org_id),
           checked_at: {

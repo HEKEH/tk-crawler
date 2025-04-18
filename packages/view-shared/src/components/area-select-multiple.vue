@@ -72,7 +72,7 @@ const allOptions = computed<
   }[]
 >(() => {
   if (props.showAll) {
-    return [...props.options, { label: '全部', value: 'all' }];
+    return [{ label: '全部', value: 'all' }, ...props.options];
   }
   return props.options;
 });

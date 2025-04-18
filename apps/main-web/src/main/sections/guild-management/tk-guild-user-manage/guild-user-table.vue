@@ -399,6 +399,7 @@ onActivated(refetch);
       <div class="filter-row">
         <TKGuildUserFilter
           :model-value="filters"
+          :areas="globalStore.userProfile.orgInfo!.areas"
           @change="handleFilterChange"
           @reset="handleFilterReset"
         />
@@ -599,6 +600,11 @@ onActivated(refetch);
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  .filter-row {
+    width: 100%;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+  }
   .header-row {
     margin-bottom: 1rem;
     display: flex;

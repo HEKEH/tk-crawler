@@ -36,3 +36,13 @@ export enum TKGuildUserStatus {
   /** 已过期 */
   COOKIE_EXPIRED = 6,
 }
+
+export const TKGuildUserStatusList = [
+  TKGuildUserStatus.INACTIVE,
+  TKGuildUserStatus.WAITING,
+  TKGuildUserStatus.RUNNING,
+  TKGuildUserStatus.STOPPED,
+  TKGuildUserStatus.WARNING,
+  TKGuildUserStatus.ERROR,
+  TKGuildUserStatus.COOKIE_EXPIRED,
+];

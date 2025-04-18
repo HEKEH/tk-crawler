@@ -50,6 +50,13 @@ const pageNum = ref(1);
 const pageSize = ref(20);
 const sortField = ref<keyof DisplayedAnchorItem>();
 const sortOrder = ref<'ascending' | 'descending'>();
+const queryOrderBy = computed<GetAnchorListOrderBy | undefined>(() => {
+  return sortField.value
+    ? ({
+        [sortField.value]: sortOrder.value === 'ascending' ? 'asc' : 'desc',
+      } as GetAnchorListOrderBy)
+    : undefined;
+});
 
 const defaultFilterViewValues = computed(() =>
   getDefaultFilterViewValues(globalStore.userProfile.orgInfo!.areas[0]),
@@ -72,13 +79,7 @@ function handleFilterReset() {
 const queryFilter = computed(() => {
   return transformFilterViewValuesToFilterValues(filters.value);
 });
-const queryOrderBy = computed<GetAnchorListOrderBy | undefined>(() => {
-  return sortField.value
-    ? ({
-        [sortField.value]: sortOrder.value === 'ascending' ? 'asc' : 'desc',
-      } as GetAnchorListOrderBy)
-    : undefined;
-});
+
 const { data, isLoading, isError, error, refetch } = useGetAnchorList(
   {
     pageNum,
@@ -447,6 +448,11 @@ onActivated(refetch);
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  .filter-row {
+    width: 100%;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+  }
   .header-row {
     margin-bottom: 1rem;
     display: flex;

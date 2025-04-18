@@ -1,12 +1,32 @@
 import type {
+  GetOrgMemberListFilter,
   GetOrgMemberListRequest,
   GetOrgMemberListResponseData,
+  OrgUserWhereInput,
 } from '@tk-crawler/biz-shared';
 import type { Prisma } from '@tk-crawler/database';
 import assert from 'node:assert';
 import { mysqlClient } from '@tk-crawler/database';
 import { isEmpty } from '@tk-crawler/shared';
 import { logger } from '../../../infra/logger';
+
+export function transformOrgMemberListValues(
+  filterValues: GetOrgMemberListFilter = {},
+  orgId: string,
+): OrgUserWhereInput {
+  const { username, display_name, role_id, status, email, mobile } =
+    filterValues;
+  const where: OrgUserWhereInput = {
+    role_id: role_id !== undefined ? role_id : undefined,
+    status: status !== undefined ? status : undefined,
+    email: email !== undefined ? email : undefined,
+    mobile: mobile !== undefined ? mobile : undefined,
+    org_id: BigInt(orgId),
+    username: username ? { contains: username } : undefined,
+    display_name: display_name ? { contains: display_name } : undefined,
+  };
+  return where;
+}
 
 export async function getOrgMemberList(
   data: GetOrgMemberListRequest,
@@ -24,10 +44,10 @@ export async function getOrgMemberList(
         },
       ]
     : data.order_by!;
-  const where: Prisma.OrgUserWhereInput = {
-    org_id: BigInt(org_id),
-    ...data.filter,
-  };
+  const where: Prisma.OrgUserWhereInput = transformOrgMemberListValues(
+    data.filter,
+    org_id,
+  );
   const [orgMembers, total] = await Promise.all([
     mysqlClient.prismaClient.orgUser.findMany({
       where,

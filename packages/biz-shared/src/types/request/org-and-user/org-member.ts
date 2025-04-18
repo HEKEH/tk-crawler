@@ -1,6 +1,10 @@
 import type { Prisma } from '.prisma/client';
 import type { RESPONSE_CODE } from '@tk-crawler/shared';
-import type { OrgMemberItem } from '../../org-and-user';
+import type {
+  OrgMemberItem,
+  OrgMemberRole,
+  OrgMemberStatus,
+} from '../../org-and-user';
 
 export type CreateOrgMemberRequest = Omit<OrgMemberItem, 'id'>;
 
@@ -30,11 +34,22 @@ export interface DeleteOrgMemberResponse {
   message?: string;
 }
 
+export interface GetOrgMemberListFilter {
+  username?: string;
+  display_name?: string;
+  email?: string;
+  mobile?: string;
+  role_id?: OrgMemberRole;
+  status?: OrgMemberStatus;
+}
+
+export type OrgUserWhereInput = Prisma.OrgUserWhereInput;
+
 export interface GetOrgMemberListRequest {
   org_id: string;
   page_num: number;
   page_size: number;
-  filter?: Prisma.OrgUserWhereInput;
+  filter?: GetOrgMemberListFilter;
   order_by?: Prisma.OrgUserOrderByWithRelationInput;
 }
 

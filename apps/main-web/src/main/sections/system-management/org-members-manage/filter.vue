@@ -1,20 +1,13 @@
 <script setup lang="ts">
-import { AreaSelectSingle } from '@tk-crawler/view-shared';
 import type { FilterViewValues } from './filter';
 import { Search } from '@element-plus/icons-vue';
 import { ElButton, ElIcon, ElInput, ElSelect, ElOption } from 'element-plus';
 import { debounce } from 'lodash';
-import { computed, ref, watch } from 'vue';
-import {
-  Area,
-  AREA_OPTIONS,
-  TKGuildUserStatusList,
-} from '@tk-crawler/biz-shared';
-import { getStatusText } from './utils';
+import { ref, watch } from 'vue';
+import { OrgMemberRole, OrgMemberStatus } from '@tk-crawler/biz-shared';
 
 const props = defineProps<{
   modelValue: FilterViewValues;
-  areas: Area[];
 }>();
 
 const emit = defineEmits<{
@@ -47,28 +40,20 @@ function resetFilters() {
   emit('reset');
 }
 
-function handleSearchChange() {
-  handleFilterChange();
-}
-const debounceSearchChange = debounce(handleSearchChange, 500);
-
-const areaOptions = computed(() => {
-  const areaSet = new Set(props.areas);
-  return AREA_OPTIONS.filter(area => areaSet.has(area.value));
-});
+const debounceHandleFilterChange = debounce(handleFilterChange, 500);
 </script>
 
 <template>
   <div class="filter">
     <div class="filter-items">
       <div class="filter-item">
-        <label class="filter-label">搜索账号</label>
+        <label class="filter-label">登录名</label>
         <ElInput
-          v-model="filters.search"
-          placeholder="搜索账号"
+          v-model="filters.username"
+          placeholder="登录名"
           clearable
           size="small"
-          @input="debounceSearchChange"
+          @input="debounceHandleFilterChange"
         >
           <template #prefix>
             <ElIcon><Search /></ElIcon>
@@ -76,30 +61,62 @@ const areaOptions = computed(() => {
         </ElInput>
       </div>
       <div class="filter-item">
-        <label class="filter-label">状态</label>
-        <ElSelect
-          v-model="filters.status"
-          @change="handleFilterChange"
+        <label class="filter-label">显示名</label>
+        <ElInput
+          v-model="filters.display_name"
+          placeholder="显示名"
+          clearable
           size="small"
+          @input="debounceHandleFilterChange"
         >
-          <ElOption label="全部" value="all" />
-          <ElOption
-            v-for="status in TKGuildUserStatusList"
-            :key="status"
-            :label="getStatusText(status)"
-            :value="status"
-          />
+          <template #prefix>
+            <ElIcon><Search /></ElIcon>
+          </template>
+        </ElInput>
+      </div>
+      <div class="filter-item">
+        <label class="filter-label">邮箱</label>
+        <ElInput
+          v-model="filters.email"
+          placeholder="邮箱"
+          clearable
+          size="small"
+          @input="debounceHandleFilterChange"
+        />
+      </div>
+      <div class="filter-item">
+        <label class="filter-label">手机号</label>
+        <ElInput
+          v-model="filters.mobile"
+          placeholder="手机号"
+          clearable
+          size="small"
+          @input="debounceHandleFilterChange"
+        />
+      </div>
+      <div class="filter-item">
+        <label class="filter-label">角色</label>
+        <ElSelect
+          v-model="filters.role_id"
+          size="small"
+          @change="handleFilterChange"
+        >
+          <ElOption value="all" label="全部" />
+          <ElOption :value="OrgMemberRole.admin" label="管理员" />
+          <ElOption :value="OrgMemberRole.member" label="成员" />
         </ElSelect>
       </div>
       <div class="filter-item">
-        <label class="filter-label">分区</label>
-        <AreaSelectSingle
-          v-model="filters.area"
-          :options="areaOptions"
-          show-all
+        <label class="filter-label">状态</label>
+        <ElSelect
+          v-model="filters.status"
           size="small"
           @change="handleFilterChange"
-        />
+        >
+          <ElOption value="all" label="全部" />
+          <ElOption :value="OrgMemberStatus.normal" label="正常" />
+          <ElOption :value="OrgMemberStatus.disabled" label="禁用" />
+        </ElSelect>
       </div>
     </div>
 

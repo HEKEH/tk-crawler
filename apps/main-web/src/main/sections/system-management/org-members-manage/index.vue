@@ -5,6 +5,7 @@ import type {
   OrgMemberItem,
   UpdateOrgMemberResponse,
 } from '@tk-crawler/biz-shared';
+import type { FilterViewValues } from './filter';
 import { OrgMemberRole, OrgMemberStatus } from '@tk-crawler/biz-shared';
 import { formatDateTime, RESPONSE_CODE } from '@tk-crawler/shared';
 import { confirmAfterSeconds, RefreshButton } from '@tk-crawler/view-shared';
@@ -25,22 +26,16 @@ import {
   updateOrgMember,
 } from '../../../requests';
 import { useGlobalStore } from '../../../utils';
-import FormDialog from './member-form-dialog.vue';
-import OrgMemberFilter from './filter.vue';
 import {
-  FilterViewValues,
   getDefaultFilterViewValues,
   transformFilterViewValuesToFilterValues,
 } from './filter';
+import OrgMemberFilter from './filter.vue';
+import FormDialog from './member-form-dialog.vue';
 
 defineOptions({
   name: 'OrgMembersManage',
 });
-
-const OrgMemberRoleMap = {
-  [OrgMemberRole.admin]: '管理员',
-  [OrgMemberRole.member]: '普通成员',
-};
 
 const tableRef = ref<InstanceType<typeof ElTable>>();
 const globalStore = useGlobalStore();
@@ -297,7 +292,18 @@ async function handleSubmitCreateOrEdit(data: Partial<OrgMemberItem>) {
           sortable="custom"
         >
           <template #default="scope">
-            {{ OrgMemberRoleMap[scope.row.role_id as OrgMemberRole] }}
+            <ElTag
+              size="small"
+              :type="
+                scope.row.role_id === OrgMemberRole.admin ? 'primary' : 'info'
+              "
+            >
+              {{
+                scope.row.role_id === OrgMemberRole.admin
+                  ? '管理员'
+                  : '普通成员'
+              }}
+            </ElTag>
           </template>
         </ElTableColumn>
         <ElTableColumn

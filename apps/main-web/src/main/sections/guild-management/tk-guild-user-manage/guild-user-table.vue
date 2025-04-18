@@ -38,7 +38,7 @@ import {
   ElTooltip,
 } from 'element-plus';
 import { computed, onActivated, ref, toRaw } from 'vue';
-import VisiblePassword from '../../../components/visible-password.vue';
+import { VisiblePassword } from '../../../components';
 import {
   createTKGuildUser,
   deleteTKGuildUser,

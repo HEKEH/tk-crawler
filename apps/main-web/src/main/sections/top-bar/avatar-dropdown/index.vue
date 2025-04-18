@@ -22,7 +22,7 @@ import {
 import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import Key from '../../../assets/icons/key.svg';
-import Avatar from '../../../components/avatar.vue';
+import { Avatar } from '../../../components';
 import { MembershipStatus } from '../../../domain/user-profile';
 import { changePassword } from '../../../requests';
 import { useGlobalStore } from '../../../utils';

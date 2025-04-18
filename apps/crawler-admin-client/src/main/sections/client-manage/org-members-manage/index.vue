@@ -39,11 +39,6 @@ const props = defineProps<{
   };
 }>();
 
-const OrgMemberRoleMap = {
-  [OrgMemberRole.admin]: '管理员',
-  [OrgMemberRole.member]: '普通成员',
-};
-
 const tableRef = ref<InstanceType<typeof ElTable>>();
 const pageNum = ref(1);
 const pageSize = ref(10);
@@ -245,7 +240,18 @@ async function handleSubmitCreateOrEdit(data: Partial<OrgMemberItem>) {
         </ElTableColumn>
         <ElTableColumn prop="role_id" label="角色" min-width="100">
           <template #default="scope">
-            {{ OrgMemberRoleMap[scope.row.role_id as OrgMemberRole] }}
+            <ElTag
+              size="small"
+              :type="
+                scope.row.role_id === OrgMemberRole.admin ? 'primary' : 'info'
+              "
+            >
+              {{
+                scope.row.role_id === OrgMemberRole.admin
+                  ? '管理员'
+                  : '普通成员'
+              }}
+            </ElTag>
           </template>
         </ElTableColumn>
         <ElTableColumn prop="status" label="状态" min-width="100">

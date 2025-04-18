@@ -1,4 +1,4 @@
-import { WithMembershipCheck } from '../../../components/with-membership-check';
+import { WithMembershipCheck } from '../../../components';
 import RawAnchorTable from './index.vue';
 
 const AnchorTable = WithMembershipCheck(RawAnchorTable);

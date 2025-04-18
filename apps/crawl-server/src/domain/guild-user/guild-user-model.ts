@@ -18,6 +18,7 @@ import { batchCheckAnchors, getProfile } from '@tk-crawler/tk-requests';
 import { logger } from '../../infra/logger';
 import {
   batchUpdateAnchorInviteCheck,
+  deleteAnchorById,
   // recordAnchorCheckByOrg,
   updateGuildUserStatus,
 } from '../../services';
@@ -244,8 +245,9 @@ export class GuildUserModel {
       await this._updateGuildUserStatus(TKGuildUserStatus.RUNNING);
     }
     const anchorInviteCheckData = (result.data!.AnchorList || []).filter(
-      item => item.UserBaseInfo?.UserID,
+      item => item.UserBaseInfo?.UserID && item.UserBaseInfo.UserID !== '0',
     );
+    await this._compareAnchors(anchors, anchorInviteCheckData);
     if (!anchorInviteCheckData.length) {
       return {
         success: false,
@@ -270,6 +272,40 @@ export class GuildUserModel {
     return {
       success: true,
     };
+  }
+
+  /** 处理前后id不一致的情况，这种情况很罕见，但确实存在，怀疑是tiktok数据异常 */
+  private async _compareAnchors(
+    anchors: BroadcastAnchorMessageData[],
+    anchorInviteCheckData: AnchorCheckInfo[],
+  ) {
+    const anchorDisplayIdToIdMap = anchors.reduce(
+      (acc, item) => {
+        acc[item.display_id] = item.user_id;
+        return acc;
+      },
+      {} as Record<string, string>,
+    );
+    for (let i = anchorInviteCheckData.length - 1; i >= 0; i--) {
+      const userInfo = anchorInviteCheckData[i].UserBaseInfo;
+      const displayId = userInfo.DisplayID!;
+      const anchorId = userInfo.UserID!;
+      const anchorIdInAnchorTable = anchorDisplayIdToIdMap[displayId];
+      if (!anchorIdInAnchorTable) {
+        logger.warn(`[guild-user] anchor not found: ${displayId}`);
+        // 表中不存在这个display_id
+        anchorInviteCheckData.splice(i, 1);
+        continue;
+      }
+      // id不一致，删除表中的异常anchor
+      if (anchorId !== anchorIdInAnchorTable) {
+        logger.warn(
+          `[guild-user] anchor id not match: ${displayId} ${anchorId}(in batchCheckAnchors) ${anchorIdInAnchorTable}(in table)`,
+        );
+        await deleteAnchorById({ user_id: anchorIdInAnchorTable });
+        anchorInviteCheckData.splice(i, 1);
+      }
+    }
   }
 
   async destroy() {

@@ -30,8 +30,9 @@ import {
 } from 'element-plus';
 import { computed, h, onActivated, reactive, ref } from 'vue';
 import { useGetAnchorList } from '../../../hooks';
-import { clearAnchorCheck } from '../../../requests';
+import { assignTask, clearAnchorCheck } from '../../../requests';
 import { useGlobalStore } from '../../../utils/vue';
+import AssignTaskFormDialog from './assign-task-form-dialog.vue';
 import {
   type FilterViewValues,
   getDefaultFilterViewValues,
@@ -173,6 +174,33 @@ async function handleClearAnchorCheck() {
   } catch {}
 }
 
+const assignTaskDialogVisible = ref(false);
+const taskAnchors = ref<DisplayedAnchorItem[]>([]);
+
+function openAssignTaskDialog(item: DisplayedAnchorItem[]) {
+  taskAnchors.value = item;
+  assignTaskDialogVisible.value = true;
+}
+function onCloseAssignTaskDialog() {
+  assignTaskDialogVisible.value = false;
+  taskAnchors.value = [];
+}
+async function handleSubmitTaskAssign(data: { orgMemberId: string }) {
+  const result = await assignTask(
+    {
+      anchor_check_ids: taskAnchors.value.map(item => item.id),
+      org_member_id: data.orgMemberId ?? null,
+    },
+    globalStore.token,
+  );
+  if (result.status_code !== RESPONSE_CODE.SUCCESS) {
+    return;
+  }
+  await refetch();
+  onCloseAssignTaskDialog();
+  ElMessage.success('主播分配成功');
+}
+
 onActivated(refetch);
 </script>
 
@@ -192,8 +220,13 @@ onActivated(refetch);
       </div>
       <div class="header-row">
         <div class="left-part">
-          <ElButton :disabled="!hasSelectedRows" type="primary" size="small">
-            批量分配(TODO)
+          <ElButton
+            :disabled="!hasSelectedRows"
+            type="primary"
+            size="small"
+            @click="openAssignTaskDialog(selectedRows)"
+          >
+            批量分配
           </ElButton>
         </div>
         <div class="right-part">
@@ -220,7 +253,7 @@ onActivated(refetch);
             ? { prop: sortField, order: sortOrder }
             : undefined
         "
-        row-key="user_id"
+        row-key="id"
         @sort-change="handleSortChange"
         @selection-change="handleSelectionChange"
       >
@@ -421,6 +454,19 @@ onActivated(refetch);
             {{ formatDateTime(scope.row.checked_at) }}
           </template>
         </ElTableColumn>
+        <ElTableColumn label="操作" min-width="100" fixed="right">
+          <template #default="scope">
+            <div class="operation-buttons">
+              <ElButton
+                size="small"
+                type="primary"
+                @click="openAssignTaskDialog([scope.row])"
+              >
+                分配
+              </ElButton>
+            </div>
+          </template>
+        </ElTableColumn>
       </ElTable>
       <div class="pagination-row">
         <ElPagination
@@ -435,6 +481,12 @@ onActivated(refetch);
           @current-change="handlePageNumChange"
         />
       </div>
+      <AssignTaskFormDialog
+        :visible="assignTaskDialogVisible"
+        :anchors="taskAnchors"
+        :submit="handleSubmitTaskAssign"
+        @close="onCloseAssignTaskDialog"
+      />
     </template>
   </div>
 </template>

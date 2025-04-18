@@ -44,6 +44,7 @@ export async function getAnchorList(
   const list: DisplayedAnchorItem[] = anchorInviteChecks.map(item => {
     const { anchor } = item;
     return {
+      id: item.id.toString(),
       user_id: anchor.user_id.toString(),
       display_id: anchor.display_id,
       invite_type: item.invite_type,

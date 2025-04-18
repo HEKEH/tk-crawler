@@ -21,7 +21,7 @@ export default class TaskController {
       {
         ...data,
         org_id: org_info.id,
-        guild_user_id: user_info.id,
+        org_member_id: user_info.id,
       },
       false,
     );

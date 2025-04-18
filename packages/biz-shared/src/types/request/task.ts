@@ -2,7 +2,7 @@ import type { RESPONSE_CODE } from '@tk-crawler/shared';
 
 export interface AssignTaskRequest {
   anchor_check_ids: string[];
-  guild_user_id: string;
+  org_member_id: string | null;
 }
 
 export interface AssignTaskResponse {

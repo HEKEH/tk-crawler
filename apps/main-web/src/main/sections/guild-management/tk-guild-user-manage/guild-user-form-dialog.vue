@@ -46,7 +46,7 @@ function handleSubmit(data: GuildUserFormValues) {
   padding: 20px;
 }
 
-.description {
+/* .description {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -55,5 +55,5 @@ function handleSubmit(data: GuildUserFormValues) {
   background-color: var(--el-color-primary-light-9);
   border-radius: 4px;
   font-size: 14px;
-}
+} */
 </style>

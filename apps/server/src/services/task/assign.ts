@@ -11,9 +11,9 @@ export async function assignTask(
   shouldCheckGuildUser = true,
 ): Promise<void> {
   logger.info('[Task Assign]', { data });
-  const { anchor_check_ids, guild_user_id, org_id } = data;
+  const { anchor_check_ids, org_member_id, org_id } = data;
   assert(anchor_check_ids && anchor_check_ids.length > 0, '列表不能为空');
-  assert(guild_user_id, '用户不能为空');
+  assert(org_member_id !== undefined, '缺少用户参数');
   assert(org_id, '机构不能为空');
   const orgId = BigInt(org_id);
   const anchorCheckIds = anchor_check_ids.map(id => BigInt(id));
@@ -31,11 +31,11 @@ export async function assignTask(
   if (anchorNotInOrg) {
     throw new BusinessError('异常请求，试图操作不属于机构的数据');
   }
-  const guildUserId = BigInt(guild_user_id);
-  if (shouldCheckGuildUser) {
+  const orgMemberId = org_member_id ? BigInt(org_member_id) : null;
+  if (shouldCheckGuildUser && orgMemberId) {
     const guildUser = await mysqlClient.prismaClient.orgUser.findUnique({
       where: {
-        id: guildUserId,
+        id: orgMemberId,
         org_id: orgId,
       },
     });
@@ -51,7 +51,7 @@ export async function assignTask(
       },
     },
     data: {
-      assign_to: guildUserId,
+      assign_to: orgMemberId,
     },
   });
 }

@@ -40,7 +40,7 @@ function handleSubmit(data: GroupFormValues) {
     @close="handleClose"
   >
     <ElScrollbar>
-      <div class="description" v-if="props.anchors">
+      <div v-if="props.anchors" class="description">
         共选中 {{ props.anchors.length }} 个主播
       </div>
       <CreateGroupForm :submit="handleSubmit" @cancel="handleClose" />

@@ -51,6 +51,7 @@ export interface AnchorInviteCheckData {
 export interface DisplayedAnchorItem
   extends CollectedAnchorInfo,
     Omit<AnchorInviteCheckData, 'anchor_id'> {
+  id: string;
   last_diamonds: number | null;
   highest_diamonds: number;
   created_at: Date;

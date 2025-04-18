@@ -13,6 +13,7 @@ const props = withDefaults(
     modelValue?: PropsValue;
     placeholder?: string;
     showAll?: boolean;
+    clearable?: boolean;
   }>(),
   {
     placeholder: '请选择用户',
@@ -90,6 +91,7 @@ const showOptions = computed<
     :filter-method="handleFilter"
     :reserve-keyword="false"
     :loading="isLoading"
+    :clearable="clearable"
     @change="handleChange"
   >
     <ElOption

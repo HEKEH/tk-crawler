@@ -96,7 +96,15 @@ export function transformAnchorListFilterValues(
     filter.checked_at = checked_at;
   }
   if (assign_to !== undefined && assign_to !== '') {
-    filter.assign_to = assign_to ? BigInt(assign_to) : null;
+    if (assign_to === 'not_assigned') {
+      filter.assign_to = null;
+    } else if (assign_to === 'assigned') {
+      filter.assign_to = {
+        not: null,
+      };
+    } else {
+      filter.assign_to = BigInt(assign_to);
+    }
   }
 
   if (area) {

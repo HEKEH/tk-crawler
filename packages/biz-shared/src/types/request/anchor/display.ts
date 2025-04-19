@@ -24,7 +24,7 @@ export interface GetAnchorListFilter {
   last_diamonds?: RangeFilter;
   highest_diamonds?: RangeFilter;
   checked_at?: RangeFilter<Date>;
-  assign_to?: string | null;
+  assign_to?: string | 'not_assigned' | 'assigned';
   // TODO 主播来源 多账号风险 分配状态 建联状态
 }
 

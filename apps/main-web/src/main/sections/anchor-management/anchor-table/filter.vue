@@ -18,6 +18,7 @@ import {
 import { ElButton, ElIcon, ElInput, ElOption, ElSelect } from 'element-plus';
 import { cloneDeep } from 'lodash';
 import { computed, ref, watch } from 'vue';
+import { OrgMemberSelectSingle } from '../../../components';
 
 const props = defineProps<{
   modelValue: FilterViewValues;
@@ -96,20 +97,14 @@ function resetFilters() {
         <ElInput v-model="filters.user_id" clearable size="small" />
       </div>
       <div class="filter-item">
-        <label class="filter-label">可邀约</label>
-        <ElSelect v-model="filters.checked_result" size="small">
-          <ElOption label="全部" value="all" />
-          <ElOption label="是" :value="true" />
-          <ElOption label="否" :value="false" />
-        </ElSelect>
-      </div>
-      <div class="filter-item">
-        <label class="filter-label">邀约方式</label>
-        <ElSelect v-model="filters.invite_type" size="small">
-          <ElOption label="全部" value="all" />
-          <ElOption label="常规邀约" :value="CanUseInvitationType.Regular" />
-          <ElOption label="金牌邀约" :value="CanUseInvitationType.Elite" />
-        </ElSelect>
+        <label class="filter-label">分配状态</label>
+        <OrgMemberSelectSingle
+          v-model="filters.assign_to"
+          show-all
+          show-assigned
+          show-not-assigned
+          size="small"
+        />
       </div>
       <div class="filter-item">
         <label class="filter-label">主播分区</label>
@@ -130,6 +125,22 @@ function resetFilters() {
             :label="region.label"
             :value="region.value"
           />
+        </ElSelect>
+      </div>
+      <div class="filter-item">
+        <label class="filter-label">可邀约</label>
+        <ElSelect v-model="filters.checked_result" size="small">
+          <ElOption label="全部" value="all" />
+          <ElOption label="是" :value="true" />
+          <ElOption label="否" :value="false" />
+        </ElSelect>
+      </div>
+      <div class="filter-item">
+        <label class="filter-label">邀约方式</label>
+        <ElSelect v-model="filters.invite_type" size="small">
+          <ElOption label="全部" value="all" />
+          <ElOption label="常规邀约" :value="CanUseInvitationType.Regular" />
+          <ElOption label="金牌邀约" :value="CanUseInvitationType.Elite" />
         </ElSelect>
       </div>
       <div class="filter-item">

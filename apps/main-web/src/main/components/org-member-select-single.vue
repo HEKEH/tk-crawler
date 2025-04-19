@@ -17,11 +17,15 @@ const props = withDefaults(
     modelValue?: PropsValue;
     placeholder?: string;
     showAll?: boolean;
+    showAssigned?: boolean;
+    showNotAssigned?: boolean;
     clearable?: boolean;
   }>(),
   {
     placeholder: '请选择用户',
     showAll: false,
+    showAssigned: false,
+    showNotAssigned: false,
   },
 );
 
@@ -67,22 +71,30 @@ const { data: orgMembers, isLoading } = useGetOrgMemberList(
   globalStore.token,
 );
 
-const showOptions = computed<
-  {
-    label: string;
-    value: PropsValue;
-    role?: OrgMemberRole;
-  }[]
->(() => {
-  const options =
-    orgMembers.value?.list.map(item => ({
+interface Option {
+  label: string;
+  value: PropsValue;
+  role?: OrgMemberRole;
+}
+
+const showOptions = computed<Option[]>(() => {
+  const options: Option[] = [];
+  if (props.showAll) {
+    options.push({ label: '全部', value: 'all' });
+  }
+  if (props.showAssigned) {
+    options.push({ label: '已分配', value: 'assigned' });
+  }
+  if (props.showNotAssigned) {
+    options.push({ label: '未分配', value: 'not_assigned' });
+  }
+  options.push(
+    ...(orgMembers.value?.list.map(item => ({
       label: item.display_name,
       value: item.id,
       role: item.role_id,
-    })) ?? [];
-  if (props.showAll) {
-    return [{ label: '全部', value: 'all' }, ...options];
-  }
+    })) ?? []),
+  );
   return options;
 });
 </script>

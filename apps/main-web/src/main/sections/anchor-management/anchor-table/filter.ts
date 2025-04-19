@@ -26,7 +26,7 @@ export interface FilterViewValues {
   highest_diamonds: RangeViewFilter;
   audience_count: RangeViewFilter;
   checked_at: RangeViewFilter<Date>;
-  assign_to?: string | 'all' | null;
+  assign_to: string | 'all' | 'not_assigned' | 'assigned';
 }
 
 export function transformFilterViewValuesToFilterValues(
@@ -88,5 +88,6 @@ export function getDefaultFilterViewValues(
     audience_count: [undefined, undefined],
     checked_at: [undefined, undefined],
     checked_result: true,
+    assign_to: 'all',
   };
 }

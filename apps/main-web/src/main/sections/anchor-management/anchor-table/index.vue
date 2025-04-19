@@ -400,59 +400,6 @@ onActivated(refetch);
             </ElTag>
           </template>
         </ElTableColumn>
-        <!-- 数据统计 -->
-        <ElTableColumn
-          prop="follower_count"
-          label="粉丝数"
-          min-width="120"
-          sortable="custom"
-        />
-        <ElTableColumn
-          prop="audience_count"
-          label="直播间观众数"
-          min-width="140"
-          sortable="custom"
-        >
-          <template #default="scope: ScopeType">
-            {{ scope.row.audience_count ?? '-' }}
-          </template>
-        </ElTableColumn>
-
-        <!-- 钻石相关 -->
-        <ElTableColumn
-          prop="current_diamonds"
-          label="当前钻石"
-          min-width="120"
-          sortable="custom"
-        />
-        <ElTableColumn
-          prop="last_diamonds"
-          label="上次钻石"
-          min-width="120"
-          sortable="custom"
-        >
-          <template #default="scope: ScopeType">
-            {{ scope.row.last_diamonds ?? '-' }}
-          </template>
-        </ElTableColumn>
-        <ElTableColumn
-          prop="highest_diamonds"
-          label="最高钻石"
-          min-width="120"
-          sortable="custom"
-        />
-
-        <!-- 等级与区域 -->
-        <ElTableColumn
-          prop="rank_league"
-          label="直播段位"
-          min-width="120"
-          sortable="custom"
-        >
-          <template #default="scope: ScopeType">
-            {{ scope.row.rank_league ?? '-' }}
-          </template>
-        </ElTableColumn>
         <ElTableColumn
           prop="area"
           label="主播分区"
@@ -495,7 +442,7 @@ onActivated(refetch);
         <!-- 邀约相关 -->
         <ElTableColumn
           prop="invite_type"
-          label="邀约类型"
+          label="邀约方式"
           min-width="120"
           sortable="custom"
         >
@@ -513,6 +460,58 @@ onActivated(refetch);
               常规邀约
             </ElTag>
             <span v-else> - </span>
+          </template>
+        </ElTableColumn>
+        <!-- 数据统计 -->
+        <ElTableColumn
+          prop="follower_count"
+          label="粉丝数"
+          min-width="120"
+          sortable="custom"
+        />
+        <ElTableColumn
+          prop="audience_count"
+          label="直播间观众数"
+          min-width="140"
+          sortable="custom"
+        >
+          <template #default="scope: ScopeType">
+            {{ scope.row.audience_count ?? '-' }}
+          </template>
+        </ElTableColumn>
+
+        <!-- 钻石相关 -->
+        <ElTableColumn
+          prop="current_diamonds"
+          label="当前钻石"
+          min-width="120"
+          sortable="custom"
+        />
+        <ElTableColumn
+          prop="last_diamonds"
+          label="上次钻石"
+          min-width="120"
+          sortable="custom"
+        >
+          <template #default="scope: ScopeType">
+            {{ scope.row.last_diamonds ?? '-' }}
+          </template>
+        </ElTableColumn>
+        <ElTableColumn
+          prop="highest_diamonds"
+          label="最高钻石"
+          min-width="120"
+          sortable="custom"
+        />
+
+        <ElTableColumn
+          prop="rank_league"
+          label="直播段位"
+          min-width="120"
+          sortable="custom"
+        >
+          <template #default="scope: ScopeType">
+            {{ scope.row.rank_league ?? '-' }}
           </template>
         </ElTableColumn>
 

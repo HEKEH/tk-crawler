@@ -1,55 +1,33 @@
 <script setup lang="tsx">
 import type {
-  Area,
   DisplayedAnchorItem,
   GetAnchorListOrderBy,
-  Region,
 } from '@tk-crawler/biz-shared';
 import type { TableColumnCtx } from 'element-plus';
+import type { FilterViewValues } from './filter';
+import { RESPONSE_CODE } from '@tk-crawler/shared';
 import {
-  AREA_NAME_MAP,
-  CanUseInvitationType,
-  REGION_LABEL_MAP,
-  TIKTOK_URL,
-} from '@tk-crawler/biz-shared';
-import {
-  formatDateTime,
-  getColorFromName,
-  RESPONSE_CODE,
-} from '@tk-crawler/shared';
-import {
-  AreaTooltipIcon,
   ClearMessage,
   confirmAfterSeconds,
-  CopyIcon,
   RefreshButton,
+  useTableSort,
 } from '@tk-crawler/view-shared';
 import {
   ElButton,
-  ElLink,
   ElMessage,
   ElMessageBox,
   ElPagination,
   ElTable,
   ElTableColumn,
-  ElTag,
 } from 'element-plus';
-import { computed, h, onActivated, reactive, ref } from 'vue';
+import { h, onActivated, reactive, ref } from 'vue';
 import { useGetAnchorList } from '../../../hooks';
-import {
-  assignTask,
-  cancelClaimTask,
-  claimTask,
-  clearAnchorCheck,
-} from '../../../requests';
+import { assignTask, clearAnchorCheck } from '../../../requests';
 import { useGlobalStore } from '../../../utils/vue';
+import TKAnchorTableColumns from './anchor-table-columns.vue';
 import AssignTaskFormDialog from './assign-task-form-dialog.vue';
-import {
-  type FilterViewValues,
-  getDefaultFilterViewValues,
-  transformFilterViewValuesToFilterValues,
-} from './filter';
 import TKAnchorFilter from './filter.vue';
+import { useAnchorTableAdapter, useDefaultFilterViewValues } from './hooks';
 
 defineOptions({
   name: 'TKAnchorTable',
@@ -66,19 +44,13 @@ const globalStore = useGlobalStore();
 const tableRef = ref<InstanceType<typeof ElTable>>();
 const pageNum = ref(1);
 const pageSize = ref(20);
-const sortField = ref<string>();
-const sortOrder = ref<'ascending' | 'descending'>();
-const queryOrderBy = computed<GetAnchorListOrderBy | undefined>(() => {
-  return sortField.value
-    ? ({
-        [sortField.value]: sortOrder.value === 'ascending' ? 'asc' : 'desc',
-      } as GetAnchorListOrderBy)
-    : undefined;
-});
+const { sortField, sortOrder, orderBy, handleSortChange, resetSort } =
+  useTableSort<GetAnchorListOrderBy>({
+    tableRef,
+    pageNum,
+  });
 
-const defaultFilterViewValues = computed(() =>
-  getDefaultFilterViewValues(globalStore.userProfile.orgInfo?.areas[0]),
-);
+const defaultFilterViewValues = useDefaultFilterViewValues();
 
 // 过滤条件
 const filters = ref<FilterViewValues>(defaultFilterViewValues.value);
@@ -94,8 +66,8 @@ function handleFilterReset() {
   pageNum.value = 1; // 重置页码
 }
 
-const queryFilter = computed(() => {
-  return transformFilterViewValuesToFilterValues(filters.value);
+const { queryFilter, hiddenFilters } = useAnchorTableAdapter({
+  filters,
 });
 
 const { data, isLoading, isError, error, refetch } = useGetAnchorList(
@@ -103,29 +75,11 @@ const { data, isLoading, isError, error, refetch } = useGetAnchorList(
     pageNum,
     pageSize,
     filter: queryFilter,
-    orderBy: queryOrderBy,
+    orderBy,
     includeTaskAssign: true,
   },
   globalStore.token,
 );
-
-// 处理排序变化
-function handleSortChange({
-  prop,
-  order,
-}: {
-  prop: string;
-  order: 'ascending' | 'descending' | null;
-}) {
-  sortField.value = order ? prop : undefined;
-  sortOrder.value = order || undefined;
-}
-
-function resetSort() {
-  tableRef.value?.clearSort();
-  sortField.value = undefined;
-  sortOrder.value = undefined;
-}
 
 // 刷新功能
 const isRefreshing = ref(false);
@@ -150,7 +104,7 @@ const selectedRows = ref<DisplayedAnchorItem[]>([]);
 function handleSelectionChange(rows: DisplayedAnchorItem[]) {
   selectedRows.value = rows;
 }
-const hasSelectedRows = computed(() => selectedRows.value.length > 0);
+// const hasSelectedRows = computed(() => selectedRows.value.length > 0);
 
 async function handleClearAnchorCheck() {
   const state = reactive({
@@ -274,67 +228,67 @@ async function batchCancelAssignTasks() {
   ElMessage.success('主播批量取消分配成功');
 }
 
-async function handleClaimTask(taskAnchors: DisplayedAnchorItem[]) {
-  const result = await claimTask(
-    {
-      anchor_check_ids: taskAnchors.map(item => item.id),
-    },
-    globalStore.token,
-  );
-  if (result.status_code !== RESPONSE_CODE.SUCCESS) {
-    return;
-  }
-  await refetch();
-  ElMessage.success('认领任务成功');
-}
+// async function handleClaimTask(taskAnchors: DisplayedAnchorItem[]) {
+//   const result = await claimTask(
+//     {
+//       anchor_check_ids: taskAnchors.map(item => item.id),
+//     },
+//     globalStore.token,
+//   );
+//   if (result.status_code !== RESPONSE_CODE.SUCCESS) {
+//     return;
+//   }
+//   await refetch();
+//   ElMessage.success('认领任务成功');
+// }
 
-async function handleCancelClaimTask(taskAnchors: DisplayedAnchorItem[]) {
-  const result = await cancelClaimTask(
-    {
-      anchor_check_ids: taskAnchors.map(item => item.id),
-    },
-    globalStore.token,
-  );
-  if (result.status_code !== RESPONSE_CODE.SUCCESS) {
-    return;
-  }
-  await refetch();
-  ElMessage.success('取消任务成功');
-}
+// async function handleCancelClaimTask(taskAnchors: DisplayedAnchorItem[]) {
+//   const result = await cancelClaimTask(
+//     {
+//       anchor_check_ids: taskAnchors.map(item => item.id),
+//     },
+//     globalStore.token,
+//   );
+//   if (result.status_code !== RESPONSE_CODE.SUCCESS) {
+//     return;
+//   }
+//   await refetch();
+//   ElMessage.success('取消任务成功');
+// }
 
-async function handleBatchClaimTask() {
-  const taskAnchors = selectedRows.value.filter(item => !item.assigned_user);
-  try {
-    await ElMessageBox.confirm(
-      `确定认领 ${taskAnchors.length} 个未分配主播吗？`,
-      {
-        type: 'success',
-        showCancelButton: true,
-      },
-    );
-  } catch {
-    return;
-  }
-  await handleClaimTask(taskAnchors);
-}
+// async function handleBatchClaimTask() {
+//   const taskAnchors = selectedRows.value.filter(item => !item.assigned_user);
+//   try {
+//     await ElMessageBox.confirm(
+//       `确定认领 ${taskAnchors.length} 个未分配主播吗？`,
+//       {
+//         type: 'success',
+//         showCancelButton: true,
+//       },
+//     );
+//   } catch {
+//     return;
+//   }
+//   await handleClaimTask(taskAnchors);
+// }
 
-async function handleBatchCancelClaim() {
-  const taskAnchors = selectedRows.value.filter(
-    item => item.assigned_user?.id === globalStore.userProfile.userInfo?.id,
-  );
-  try {
-    await ElMessageBox.confirm(
-      `确定取消本人的 ${taskAnchors.length} 个任务吗？`,
-      {
-        type: 'warning',
-        showCancelButton: true,
-      },
-    );
-  } catch {
-    return;
-  }
-  await handleCancelClaimTask(taskAnchors);
-}
+// async function handleBatchCancelClaim() {
+//   const taskAnchors = selectedRows.value.filter(
+//     item => item.assigned_user?.id === globalStore.userProfile.userInfo?.id,
+//   );
+//   try {
+//     await ElMessageBox.confirm(
+//       `确定取消本人的 ${taskAnchors.length} 个任务吗？`,
+//       {
+//         type: 'warning',
+//         showCancelButton: true,
+//       },
+//     );
+//   } catch {
+//     return;
+//   }
+//   await handleCancelClaimTask(taskAnchors);
+// }
 
 onActivated(refetch);
 </script>
@@ -347,6 +301,7 @@ onActivated(refetch);
     <template v-if="!isError">
       <div class="filter-row">
         <TKAnchorFilter
+          :hidden-filters="hiddenFilters"
           :model-value="filters"
           :areas="globalStore.userProfile.orgInfo?.areas ?? []"
           @submit="handleFilterSubmit"
@@ -358,10 +313,16 @@ onActivated(refetch);
         <div class="right-part">
           <template v-if="globalStore.userProfile.isAdmin">
             <ElButton
-              :disabled="!hasSelectedRows"
+              :disabled="
+                !selectedRows.filter(item => item.checked_result).length
+              "
               type="primary"
               size="small"
-              @click="openAssignTaskDialog(selectedRows)"
+              @click="
+                openAssignTaskDialog(
+                  selectedRows.filter(item => item.checked_result),
+                )
+              "
             >
               批量分配
             </ElButton>
@@ -383,7 +344,7 @@ onActivated(refetch);
               一键清空
             </ElButton>
           </template>
-          <template v-else>
+          <!-- <template v-else>
             <ElButton
               type="primary"
               size="small"
@@ -408,7 +369,7 @@ onActivated(refetch);
             >
               批量取消任务
             </ElButton>
-          </template>
+          </template> -->
           <ElButton type="default" size="small" @click="resetSort">
             重置排序
           </ElButton>
@@ -428,228 +389,7 @@ onActivated(refetch);
         @sort-change="handleSortChange"
         @selection-change="handleSelectionChange"
       >
-        <ElTableColumn type="selection" width="55" />
-        <!-- 基本信息 -->
-        <ElTableColumn
-          prop="display_id"
-          label="主播ID"
-          width="160"
-          sortable="custom"
-        >
-          <template #default="scope: ScopeType">
-            <div class="display-id-container">
-              <ElLink
-                type="primary"
-                class="display-id-link"
-                :href="`${TIKTOK_URL}/@${scope.row.display_id}`"
-                target="_blank"
-              >
-                {{ scope.row.display_id }}
-              </ElLink>
-              <CopyIcon
-                tooltip="复制主播ID"
-                :copy-content="scope.row.display_id"
-              />
-            </div>
-          </template>
-        </ElTableColumn>
-        <ElTableColumn
-          prop="user_id"
-          label="数字ID"
-          width="210"
-          sortable="custom"
-        >
-          <template #default="scope: ScopeType">
-            <div class="user-id-container">
-              <span class="user-id-text">{{ scope.row.user_id }}</span>
-              <CopyIcon
-                tooltip="复制数字ID"
-                :copy-content="scope.row.user_id"
-              />
-            </div>
-          </template>
-        </ElTableColumn>
-        <ElTableColumn
-          prop="assign_to"
-          label="分配状态"
-          min-width="120"
-          sortable="custom"
-        >
-          <template #default="scope: ScopeType">
-            <ElTag
-              v-if="!scope.row.assigned_user"
-              class="assigned-user-tag"
-              type="info"
-            >
-              未分配
-            </ElTag>
-            <ElTag
-              v-else
-              type="success"
-              class="assigned-user-tag"
-              :style="{
-                color: getColorFromName(scope.row.assigned_user.display_name),
-              }"
-            >
-              {{ scope.row.assigned_user.display_name }}
-            </ElTag>
-          </template>
-        </ElTableColumn>
-        <ElTableColumn
-          prop="area"
-          label="主播分区"
-          min-width="120"
-          sortable="custom"
-        >
-          <template #default="scope: ScopeType">
-            <div class="area-with-tooltip">
-              {{ AREA_NAME_MAP[scope.row.area as Area] || '-' }}
-              <AreaTooltipIcon :area="scope.row.area as Area" />
-            </div>
-          </template>
-        </ElTableColumn>
-        <ElTableColumn
-          prop="region"
-          label="国家或地区"
-          min-width="120"
-          sortable="custom"
-        >
-          <template #default="scope: ScopeType">
-            {{
-              REGION_LABEL_MAP[scope.row.region as Region]
-                ? `${REGION_LABEL_MAP[scope.row.region as Region]} (${scope.row.region})`
-                : scope.row.region
-            }}
-          </template>
-        </ElTableColumn>
-
-        <ElTableColumn
-          prop="checked_result"
-          label="可邀约"
-          min-width="100"
-          sortable="custom"
-        >
-          <template #default="scope: ScopeType">
-            {{ scope.row.checked_result ? '是' : '否' }}
-          </template>
-        </ElTableColumn>
-
-        <!-- 邀约相关 -->
-        <ElTableColumn
-          prop="invite_type"
-          label="邀约方式"
-          min-width="120"
-          sortable="custom"
-        >
-          <template #default="scope: ScopeType">
-            <ElTag
-              v-if="scope.row.invite_type === CanUseInvitationType.Elite"
-              type="warning"
-            >
-              金票邀约
-            </ElTag>
-            <ElTag
-              v-else-if="scope.row.invite_type === CanUseInvitationType.Regular"
-              type="success"
-            >
-              常规邀约
-            </ElTag>
-            <span v-else> - </span>
-          </template>
-        </ElTableColumn>
-        <!-- 数据统计 -->
-        <ElTableColumn
-          prop="follower_count"
-          label="粉丝数"
-          min-width="120"
-          sortable="custom"
-        />
-        <ElTableColumn
-          prop="audience_count"
-          label="直播间观众数"
-          min-width="140"
-          sortable="custom"
-        >
-          <template #default="scope: ScopeType">
-            {{ scope.row.audience_count ?? '-' }}
-          </template>
-        </ElTableColumn>
-
-        <!-- 钻石相关 -->
-        <ElTableColumn
-          prop="current_diamonds"
-          label="当前钻石"
-          min-width="120"
-          sortable="custom"
-        />
-        <ElTableColumn
-          prop="last_diamonds"
-          label="上次钻石"
-          min-width="120"
-          sortable="custom"
-        >
-          <template #default="scope: ScopeType">
-            {{ scope.row.last_diamonds ?? '-' }}
-          </template>
-        </ElTableColumn>
-        <ElTableColumn
-          prop="highest_diamonds"
-          label="最高钻石"
-          min-width="120"
-          sortable="custom"
-        />
-
-        <ElTableColumn
-          prop="rank_league"
-          label="直播段位"
-          min-width="120"
-          sortable="custom"
-        >
-          <template #default="scope: ScopeType">
-            {{ scope.row.rank_league ?? '-' }}
-          </template>
-        </ElTableColumn>
-
-        <!-- 其他信息 -->
-        <ElTableColumn
-          prop="has_commerce_goods"
-          label="带货主播"
-          min-width="120"
-          sortable="custom"
-        >
-          <template #default="scope: ScopeType">
-            {{ scope.row.has_commerce_goods ? '是' : '否' }}
-          </template>
-        </ElTableColumn>
-        <ElTableColumn
-          prop="tag"
-          label="直播标签"
-          min-width="140"
-          sortable="custom"
-        >
-          <template #default="scope: ScopeType">
-            {{ scope.row.tag || '-' }}
-          </template>
-        </ElTableColumn>
-
-        <ElTableColumn
-          prop="room_id"
-          label="直播间ID"
-          min-width="190"
-          sortable="custom"
-        />
-
-        <!-- 时间信息 -->
-        <ElTableColumn
-          prop="checked_at"
-          label="最新时间"
-          min-width="192"
-          sortable="custom"
-        >
-          <template #default="scope: ScopeType">
-            {{ formatDateTime(scope.row.checked_at) }}
-          </template>
-        </ElTableColumn>
+        <TKAnchorTableColumns />
         <ElTableColumn
           label="操作"
           :min-width="globalStore.userProfile.isAdmin ? 180 : 120"
@@ -661,6 +401,7 @@ onActivated(refetch);
                 <ElButton
                   size="small"
                   type="primary"
+                  :disabled="!scope.row.checked_result"
                   @click="openAssignTaskDialog([scope.row])"
                 >
                   {{ scope.row.assigned_user ? '重新分配' : '分配主播' }}
@@ -674,7 +415,7 @@ onActivated(refetch);
                   取消分配
                 </ElButton>
               </template>
-              <template v-else>
+              <!-- <template v-else>
                 <ElButton
                   v-if="!scope.row.assigned_user"
                   size="small"
@@ -694,7 +435,7 @@ onActivated(refetch);
                 >
                   取消任务
                 </ElButton>
-              </template>
+              </template> -->
             </div>
           </template>
         </ElTableColumn>
@@ -775,74 +516,6 @@ onActivated(refetch);
   .main-table {
     flex: 1;
     width: 100%;
-  }
-  .cookie {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: nowrap;
-    .cookie-text {
-      flex: 1;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-    .copy-icon {
-      cursor: pointer;
-      margin-left: 0.5rem;
-      &:hover {
-        color: var(--el-color-primary);
-      }
-    }
-  }
-  .area-with-tooltip {
-    display: flex;
-    align-items: center;
-    column-gap: 6px;
-  }
-  .display-id-container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    max-width: 100%;
-    column-gap: 0.5rem;
-    overflow: hidden;
-    .display-id-link {
-      flex: 0 1 auto;
-      overflow: hidden;
-      color: var(--el-color-primary-dark-2);
-      :global(.el-link__inner) {
-        display: inline-block;
-        width: 100%;
-        font-weight: 400;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
-    }
-  }
-  .user-id-container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    column-gap: 0.5rem;
-    max-width: 100%;
-    overflow: hidden;
-    .user-id-text {
-      flex: 0 1 auto;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-  }
-  .assigned-user-tag {
-    width: 100%;
-    :global(.el-tag__content) {
-      max-width: 100%;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
   }
 }
 </style>

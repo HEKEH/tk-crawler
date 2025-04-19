@@ -13,12 +13,11 @@ enum MenuType {
 }
 const route = useRoute();
 const router = useRouter();
-const MenuList = [
-  {
-    type: MenuType.ANCHOR_TABLE,
-    label: '主播列表',
-  },
-];
+const anchorTableMenu = {
+  type: MenuType.ANCHOR_TABLE,
+  label: '主播列表',
+};
+const MenuList = [anchorTableMenu];
 const currentMenu = computed(() => {
   return (route.params.subMenu || MenuList[0].type) as MenuType;
 });

@@ -23,6 +23,7 @@ import { OrgMemberSelectSingle } from '../../../components';
 const props = defineProps<{
   modelValue: FilterViewValues;
   areas: Area[];
+  hiddenFilters?: string[];
 }>();
 
 const emit = defineEmits<{
@@ -88,15 +89,15 @@ function resetFilters() {
 <template>
   <div class="filter">
     <div class="filter-items">
-      <div class="filter-item">
+      <div v-if="!hiddenFilters?.includes('display_id')" class="filter-item">
         <label class="filter-label">主播ID</label>
         <ElInput v-model="filters.display_id" clearable size="small" />
       </div>
-      <div class="filter-item">
+      <div v-if="!hiddenFilters?.includes('user_id')" class="filter-item">
         <label class="filter-label">数字ID</label>
         <ElInput v-model="filters.user_id" clearable size="small" />
       </div>
-      <div class="filter-item">
+      <div v-if="!hiddenFilters?.includes('assign_to')" class="filter-item">
         <label class="filter-label">分配状态</label>
         <OrgMemberSelectSingle
           v-model="filters.assign_to"
@@ -107,7 +108,7 @@ function resetFilters() {
           size="small"
         />
       </div>
-      <div class="filter-item">
+      <div v-if="!hiddenFilters?.includes('area')" class="filter-item">
         <label class="filter-label">主播分区</label>
         <AreaSelectSingle
           :model-value="filters.area"
@@ -116,7 +117,7 @@ function resetFilters() {
           @update:model-value="onAreaChange"
         />
       </div>
-      <div class="filter-item">
+      <div v-if="!hiddenFilters?.includes('region')" class="filter-item">
         <label class="filter-label">国家或地区</label>
         <ElSelect v-model="filters.region" size="small">
           <ElOption label="全部" value="all" />
@@ -128,7 +129,10 @@ function resetFilters() {
           />
         </ElSelect>
       </div>
-      <div class="filter-item">
+      <div
+        v-if="!hiddenFilters?.includes('checked_result')"
+        class="filter-item"
+      >
         <label class="filter-label">可邀约</label>
         <ElSelect v-model="filters.checked_result" size="small">
           <ElOption label="全部" value="all" />
@@ -136,7 +140,7 @@ function resetFilters() {
           <ElOption label="否" :value="false" />
         </ElSelect>
       </div>
-      <div class="filter-item">
+      <div v-if="!hiddenFilters?.includes('invite_type')" class="filter-item">
         <label class="filter-label">邀约方式</label>
         <ElSelect v-model="filters.invite_type" size="small">
           <ElOption label="全部" value="all" />
@@ -144,7 +148,10 @@ function resetFilters() {
           <ElOption label="金牌邀约" :value="CanUseInvitationType.Elite" />
         </ElSelect>
       </div>
-      <div class="filter-item">
+      <div
+        v-if="!hiddenFilters?.includes('has_commerce_goods')"
+        class="filter-item"
+      >
         <label class="filter-label">过滤带货</label>
         <ElSelect v-model="filters.has_commerce_goods" size="small">
           <ElOption label="全部" value="all" />
@@ -152,11 +159,14 @@ function resetFilters() {
           <ElOption label="带货主播" :value="true" />
         </ElSelect>
       </div>
-      <div class="filter-item">
+      <div v-if="!hiddenFilters?.includes('tag')" class="filter-item">
         <label class="filter-label">直播标签</label>
         <ElInput v-model="filters.tag" clearable size="small" />
       </div>
-      <div class="filter-range-item">
+      <div
+        v-if="!hiddenFilters?.includes('rank_league')"
+        class="filter-range-item"
+      >
         <label class="filter-label">主播段位</label>
         <RangeSelect
           v-model="filters.rank_league"
@@ -167,7 +177,10 @@ function resetFilters() {
           clearable
         />
       </div>
-      <div class="filter-range-item">
+      <div
+        v-if="!hiddenFilters?.includes('follower_count')"
+        class="filter-range-item"
+      >
         <label class="filter-label">粉丝数</label>
         <RangeNumberInput
           v-model="filters.follower_count"
@@ -177,7 +190,10 @@ function resetFilters() {
           :precision="0"
         />
       </div>
-      <div class="filter-range-item">
+      <div
+        v-if="!hiddenFilters?.includes('current_diamonds')"
+        class="filter-range-item"
+      >
         <label class="filter-label">当前钻石</label>
         <RangeNumberInput
           v-model="filters.current_diamonds"
@@ -187,7 +203,10 @@ function resetFilters() {
           :precision="0"
         />
       </div>
-      <div class="filter-range-item">
+      <div
+        v-if="!hiddenFilters?.includes('last_diamonds')"
+        class="filter-range-item"
+      >
         <label class="filter-label">上次钻石</label>
         <RangeNumberInput
           v-model="filters.last_diamonds"
@@ -197,7 +216,10 @@ function resetFilters() {
           :precision="0"
         />
       </div>
-      <div class="filter-range-item">
+      <div
+        v-if="!hiddenFilters?.includes('highest_diamonds')"
+        class="filter-range-item"
+      >
         <label class="filter-label">最高钻石</label>
         <RangeNumberInput
           v-model="filters.highest_diamonds"
@@ -207,7 +229,10 @@ function resetFilters() {
           :precision="0"
         />
       </div>
-      <div class="filter-range-item">
+      <div
+        v-if="!hiddenFilters?.includes('checked_at')"
+        class="filter-range-item"
+      >
         <label class="filter-label">最新时间</label>
         <RangeDateSelect
           v-model="filters.checked_at"

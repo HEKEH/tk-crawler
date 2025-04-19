@@ -323,10 +323,13 @@ async function handleBatchCancelClaim() {
     item => item.assigned_user?.id === globalStore.userProfile.userInfo?.id,
   );
   try {
-    await ElMessageBox.confirm(`确定取消 ${taskAnchors.length} 个任务吗？`, {
-      type: 'warning',
-      showCancelButton: true,
-    });
+    await ElMessageBox.confirm(
+      `确定取消本人的 ${taskAnchors.length} 个任务吗？`,
+      {
+        type: 'warning',
+        showCancelButton: true,
+      },
+    );
   } catch {
     return;
   }

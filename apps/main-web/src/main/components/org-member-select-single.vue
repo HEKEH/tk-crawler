@@ -20,12 +20,14 @@ const props = withDefaults(
     showAssigned?: boolean;
     showNotAssigned?: boolean;
     clearable?: boolean;
+    selfFirst?: boolean;
   }>(),
   {
     placeholder: '请选择用户',
     showAll: false,
     showAssigned: false,
     showNotAssigned: false,
+    selfFirst: false,
   },
 );
 
@@ -90,14 +92,22 @@ const showOptions = computed<Option[]>(() => {
     options.push({ label: '未分配', value: 'not_assigned' });
   }
   const selfId = globalStore.userProfile.userInfo?.id;
-  options.push(
-    ...(orgMembers.value?.list.map(item => ({
+  const membersOptions =
+    orgMembers.value?.list.map(item => ({
       label: item.display_name,
       value: item.id,
       role: item.role_id,
       isSelf: item.id === selfId,
-    })) ?? []),
-  );
+    })) ?? [];
+  if (props.selfFirst) {
+    const selfIndex = membersOptions.findIndex(item => item.isSelf);
+    if (selfIndex !== -1) {
+      const self = membersOptions[selfIndex];
+      membersOptions.splice(selfIndex, 1);
+      membersOptions.unshift(self);
+    }
+  }
+  options.push(...membersOptions);
   return options;
 });
 </script>

@@ -103,6 +103,7 @@ function resetFilters() {
           show-all
           show-assigned
           show-not-assigned
+          self-first
           size="small"
         />
       </div>

@@ -74,7 +74,7 @@ export function getColorFromName(name: string): string {
     hash = name.charCodeAt(i) + ((hash << 5) - hash);
   }
 
-  if (name.length <= 3) {
+  if (name.length <= 5) {
     const index = hash % TEXT_COLORS.length;
     const color = TEXT_COLORS[index];
     nameToColorMap[name] = color;

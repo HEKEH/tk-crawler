@@ -18,4 +18,6 @@ taskRouter.post(
   TaskController.assignTask,
 );
 taskRouter.post('/claim', TaskController.claimTask);
+taskRouter.post('/cancel-claim', TaskController.cancelClaimTask);
+
 export default taskRouter;

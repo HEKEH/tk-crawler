@@ -75,6 +75,7 @@ interface Option {
   label: string;
   value: PropsValue;
   role?: OrgMemberRole;
+  isSelf?: boolean;
 }
 
 const showOptions = computed<Option[]>(() => {
@@ -88,11 +89,13 @@ const showOptions = computed<Option[]>(() => {
   if (props.showNotAssigned) {
     options.push({ label: '未分配', value: 'not_assigned' });
   }
+  const selfId = globalStore.userProfile.userInfo?.id;
   options.push(
     ...(orgMembers.value?.list.map(item => ({
       label: item.display_name,
       value: item.id,
       role: item.role_id,
+      isSelf: item.id === selfId,
     })) ?? []),
   );
   return options;
@@ -119,6 +122,7 @@ const showOptions = computed<Option[]>(() => {
     >
       <div class="option">
         {{ option.label }}
+        <ElTag v-if="option.isSelf" size="small" type="success"> 本人 </ElTag>
         <ElTag
           v-if="option.role"
           size="small"

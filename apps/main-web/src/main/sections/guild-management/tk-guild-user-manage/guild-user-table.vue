@@ -406,7 +406,7 @@ onActivated(refetch);
       <div class="filter-row">
         <TKGuildUserFilter
           :model-value="filters"
-          :areas="globalStore.userProfile.orgInfo!.areas"
+          :areas="globalStore.userProfile.orgInfo?.areas ?? []"
           @change="handleFilterChange"
           @reset="handleFilterReset"
         />

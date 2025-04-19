@@ -18,3 +18,12 @@ export interface ClaimTaskResponse {
   status_code: RESPONSE_CODE;
   message?: string;
 }
+
+export interface CancelClaimTaskRequest {
+  anchor_check_ids: string[];
+}
+
+export interface CancelClaimTaskResponse {
+  status_code: RESPONSE_CODE;
+  message?: string;
+}

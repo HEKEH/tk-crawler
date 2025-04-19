@@ -38,7 +38,7 @@ const routes: RouteRecordRaw[] = [
       const globalStore = getGlobalStore();
       const firstMenu = globalStore.menus[0];
       if (firstMenu) {
-        return firstMenu.path;
+        return firstMenu.jumpTo ?? firstMenu.path;
       }
       return '';
     },

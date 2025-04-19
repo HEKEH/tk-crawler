@@ -36,7 +36,12 @@ import {
 } from 'element-plus';
 import { computed, h, onActivated, reactive, ref } from 'vue';
 import { useGetAnchorList } from '../../../hooks';
-import { assignTask, clearAnchorCheck } from '../../../requests';
+import {
+  assignTask,
+  cancelClaimTask,
+  claimTask,
+  clearAnchorCheck,
+} from '../../../requests';
 import { useGlobalStore } from '../../../utils/vue';
 import AssignTaskFormDialog from './assign-task-form-dialog.vue';
 import {
@@ -72,7 +77,7 @@ const queryOrderBy = computed<GetAnchorListOrderBy | undefined>(() => {
 });
 
 const defaultFilterViewValues = computed(() =>
-  getDefaultFilterViewValues(globalStore.userProfile.orgInfo!.areas[0]),
+  getDefaultFilterViewValues(globalStore.userProfile.orgInfo?.areas[0]),
 );
 
 // 过滤条件
@@ -237,7 +242,6 @@ async function handleCancelAssignTask(data: DisplayedAnchorItem) {
     return;
   }
   await refetch();
-  onCloseAssignTaskDialog();
   ElMessage.success('主播取消分配成功');
 }
 
@@ -267,8 +271,66 @@ async function batchCancelAssignTasks() {
     return;
   }
   await refetch();
-  onCloseAssignTaskDialog();
   ElMessage.success('主播批量取消分配成功');
+}
+
+async function handleClaimTask(taskAnchors: DisplayedAnchorItem[]) {
+  const result = await claimTask(
+    {
+      anchor_check_ids: taskAnchors.map(item => item.id),
+    },
+    globalStore.token,
+  );
+  if (result.status_code !== RESPONSE_CODE.SUCCESS) {
+    return;
+  }
+  await refetch();
+  ElMessage.success('认领任务成功');
+}
+
+async function handleCancelClaimTask(taskAnchors: DisplayedAnchorItem[]) {
+  const result = await cancelClaimTask(
+    {
+      anchor_check_ids: taskAnchors.map(item => item.id),
+    },
+    globalStore.token,
+  );
+  if (result.status_code !== RESPONSE_CODE.SUCCESS) {
+    return;
+  }
+  await refetch();
+  ElMessage.success('取消任务成功');
+}
+
+async function handleBatchClaimTask() {
+  const taskAnchors = selectedRows.value.filter(item => !item.assigned_user);
+  try {
+    await ElMessageBox.confirm(
+      `确定认领 ${taskAnchors.length} 个未分配主播吗？`,
+      {
+        type: 'success',
+        showCancelButton: true,
+      },
+    );
+  } catch {
+    return;
+  }
+  await handleClaimTask(taskAnchors);
+}
+
+async function handleBatchCancelClaim() {
+  const taskAnchors = selectedRows.value.filter(
+    item => item.assigned_user?.id === globalStore.userProfile.userInfo?.id,
+  );
+  try {
+    await ElMessageBox.confirm(`确定取消 ${taskAnchors.length} 个任务吗？`, {
+      type: 'warning',
+      showCancelButton: true,
+    });
+  } catch {
+    return;
+  }
+  await handleCancelClaimTask(taskAnchors);
 }
 
 onActivated(refetch);
@@ -283,7 +345,7 @@ onActivated(refetch);
       <div class="filter-row">
         <TKAnchorFilter
           :model-value="filters"
-          :areas="globalStore.userProfile.orgInfo!.areas"
+          :areas="globalStore.userProfile.orgInfo?.areas ?? []"
           @submit="handleFilterSubmit"
           @reset="handleFilterReset"
         />
@@ -291,30 +353,59 @@ onActivated(refetch);
       <div class="header-row">
         <div class="left-part"></div>
         <div class="right-part">
-          <ElButton
-            :disabled="!hasSelectedRows"
-            type="primary"
-            size="small"
-            @click="openAssignTaskDialog(selectedRows)"
-          >
-            批量分配
-          </ElButton>
-          <ElButton
-            :disabled="!selectedRows.filter(item => item.assigned_user).length"
-            type="danger"
-            size="small"
-            @click="batchCancelAssignTasks"
-          >
-            批量取消分配
-          </ElButton>
-          <ElButton
-            v-if="globalStore.userProfile.isAdmin"
-            type="danger"
-            size="small"
-            @click="handleClearAnchorCheck"
-          >
-            一键清空
-          </ElButton>
+          <template v-if="globalStore.userProfile.isAdmin">
+            <ElButton
+              :disabled="!hasSelectedRows"
+              type="primary"
+              size="small"
+              @click="openAssignTaskDialog(selectedRows)"
+            >
+              批量分配
+            </ElButton>
+            <ElButton
+              :disabled="
+                !selectedRows.filter(item => item.assigned_user).length
+              "
+              type="danger"
+              size="small"
+              @click="batchCancelAssignTasks"
+            >
+              批量取消分配
+            </ElButton>
+            <ElButton
+              type="danger"
+              size="small"
+              @click="handleClearAnchorCheck"
+            >
+              一键清空
+            </ElButton>
+          </template>
+          <template v-else>
+            <ElButton
+              type="primary"
+              size="small"
+              :disabled="
+                !selectedRows.filter(item => !item.assigned_user).length
+              "
+              @click="handleBatchClaimTask"
+            >
+              批量认领任务
+            </ElButton>
+            <ElButton
+              :disabled="
+                !selectedRows.filter(
+                  item =>
+                    item.assigned_user?.id ===
+                    globalStore.userProfile.userInfo?.id,
+                ).length
+              "
+              type="danger"
+              size="small"
+              @click="handleBatchCancelClaim"
+            >
+              批量取消任务
+            </ElButton>
+          </template>
           <ElButton type="default" size="small" @click="resetSort">
             重置排序
           </ElButton>
@@ -556,24 +647,51 @@ onActivated(refetch);
             {{ formatDateTime(scope.row.checked_at) }}
           </template>
         </ElTableColumn>
-        <ElTableColumn label="操作" min-width="200" fixed="right">
+        <ElTableColumn
+          label="操作"
+          :min-width="globalStore.userProfile.isAdmin ? 180 : 120"
+          fixed="right"
+        >
           <template #default="scope: ScopeType">
             <div class="operation-buttons">
-              <ElButton
-                size="small"
-                type="primary"
-                @click="openAssignTaskDialog([scope.row])"
-              >
-                {{ scope.row.assigned_user ? '重新分配' : '分配主播' }}
-              </ElButton>
-              <ElButton
-                :disabled="!scope.row.assigned_user"
-                size="small"
-                type="danger"
-                @click="handleCancelAssignTask(scope.row)"
-              >
-                取消分配
-              </ElButton>
+              <template v-if="globalStore.userProfile.isAdmin">
+                <ElButton
+                  size="small"
+                  type="primary"
+                  @click="openAssignTaskDialog([scope.row])"
+                >
+                  {{ scope.row.assigned_user ? '重新分配' : '分配主播' }}
+                </ElButton>
+                <ElButton
+                  :disabled="!scope.row.assigned_user"
+                  size="small"
+                  type="danger"
+                  @click="handleCancelAssignTask(scope.row)"
+                >
+                  取消分配
+                </ElButton>
+              </template>
+              <template v-else>
+                <ElButton
+                  v-if="!scope.row.assigned_user"
+                  size="small"
+                  type="primary"
+                  @click="handleClaimTask([scope.row])"
+                >
+                  认领任务
+                </ElButton>
+                <ElButton
+                  v-else-if="
+                    scope.row.assigned_user.id ===
+                    globalStore.userProfile.userInfo?.id
+                  "
+                  size="small"
+                  type="danger"
+                  @click="handleCancelClaimTask([scope.row])"
+                >
+                  取消任务
+                </ElButton>
+              </template>
             </div>
           </template>
         </ElTableColumn>

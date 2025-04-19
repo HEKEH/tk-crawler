@@ -73,7 +73,7 @@ export function transformFilterViewValuesToFilterValues(
 }
 
 export function getDefaultFilterViewValues(
-  defaultArea: Area,
+  defaultArea: Area | undefined,
 ): FilterViewValues {
   return {
     area: defaultArea,

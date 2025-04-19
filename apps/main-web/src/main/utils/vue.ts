@@ -2,7 +2,10 @@ import type { InjectionKey } from 'vue';
 import { inject, provide, reactive } from 'vue';
 import GlobalStore from '../domain/global-store';
 
-const GlobalStoreKey: InjectionKey<GlobalStore> = Symbol('GlobalStore');
+// 将 Symbol 存储在 window 对象上，确保热更新时不会重新创建
+const GlobalStoreKey: InjectionKey<GlobalStore> =
+  (window as any).__TK_GLOBAL_STORE_KEY__ ||
+  ((window as any).__TK_GLOBAL_STORE_KEY__ = Symbol('GlobalStore'));
 
 let globalStore: GlobalStore;
 

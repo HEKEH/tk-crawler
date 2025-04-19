@@ -256,7 +256,7 @@ async function handleSubmitCreateOrEdit(data: Partial<OrgMemberItem>) {
               {{
                 scope.row.role_id === OrgMemberRole.admin
                   ? '管理员'
-                  : '普通成员'
+                  : '普通用户'
               }}
             </ElTag>
           </template>

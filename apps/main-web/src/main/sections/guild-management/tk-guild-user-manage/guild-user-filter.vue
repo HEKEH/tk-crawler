@@ -1,15 +1,12 @@
 <script setup lang="ts">
-import { AreaSelectSingle } from '@tk-crawler/view-shared';
+import type { Area } from '@tk-crawler/biz-shared';
 import type { FilterViewValues } from './filter';
 import { Search } from '@element-plus/icons-vue';
-import { ElButton, ElIcon, ElInput, ElSelect, ElOption } from 'element-plus';
+import { AREA_OPTIONS, TKGuildUserStatusList } from '@tk-crawler/biz-shared';
+import { AreaSelectSingle } from '@tk-crawler/view-shared';
+import { ElButton, ElIcon, ElInput, ElOption, ElSelect } from 'element-plus';
 import { debounce } from 'lodash';
 import { computed, ref, watch } from 'vue';
-import {
-  Area,
-  AREA_OPTIONS,
-  TKGuildUserStatusList,
-} from '@tk-crawler/biz-shared';
 import { getStatusText } from './utils';
 
 const props = defineProps<{
@@ -79,8 +76,8 @@ const areaOptions = computed(() => {
         <label class="filter-label">状态</label>
         <ElSelect
           v-model="filters.status"
-          @change="handleFilterChange"
           size="small"
+          @change="handleFilterChange"
         >
           <ElOption label="全部" value="all" />
           <ElOption
@@ -105,7 +102,7 @@ const areaOptions = computed(() => {
 
     <div class="buttons">
       <ElButton text type="primary" size="small" @click="resetFilters">
-        筛选重置
+        重置
       </ElButton>
     </div>
   </div>
@@ -139,7 +136,7 @@ const areaOptions = computed(() => {
 }
 
 .buttons {
-  margin-left: 2rem;
+  margin-left: 1.5rem;
   display: flex;
   gap: 1rem;
   align-items: center;

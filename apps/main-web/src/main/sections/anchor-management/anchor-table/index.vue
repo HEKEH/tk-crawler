@@ -242,7 +242,9 @@ async function handleCancelAssignTask(data: DisplayedAnchorItem) {
 }
 
 async function batchCancelAssignTasks() {
-  const anchorCheckIds = selectedRows.value.map(item => item.id);
+  const anchorCheckIds = selectedRows.value
+    .filter(item => item.assigned_user)
+    .map(item => item.id);
   try {
     await ElMessageBox.confirm(
       `确定取消分配 ${anchorCheckIds.length} 个主播吗？`,
@@ -287,7 +289,8 @@ onActivated(refetch);
         />
       </div>
       <div class="header-row">
-        <div class="left-part">
+        <div class="left-part"></div>
+        <div class="right-part">
           <ElButton
             :disabled="!hasSelectedRows"
             type="primary"
@@ -297,15 +300,13 @@ onActivated(refetch);
             批量分配
           </ElButton>
           <ElButton
-            :disabled="!hasSelectedRows"
+            :disabled="!selectedRows.filter(item => item.assigned_user).length"
             type="danger"
             size="small"
             @click="batchCancelAssignTasks"
           >
             批量取消分配
           </ElButton>
-        </div>
-        <div class="right-part">
           <ElButton
             v-if="globalStore.userProfile.isAdmin"
             type="danger"
@@ -529,7 +530,7 @@ onActivated(refetch);
         <ElTableColumn
           prop="tag"
           label="直播标签"
-          min-width="120"
+          min-width="140"
           sortable="custom"
         >
           <template #default="scope: ScopeType">
@@ -540,7 +541,7 @@ onActivated(refetch);
         <ElTableColumn
           prop="room_id"
           label="直播间ID"
-          min-width="180"
+          min-width="190"
           sortable="custom"
         />
 
@@ -548,7 +549,7 @@ onActivated(refetch);
         <ElTableColumn
           prop="checked_at"
           label="最新时间"
-          min-width="190"
+          min-width="192"
           sortable="custom"
         >
           <template #default="scope: ScopeType">
@@ -715,6 +716,12 @@ onActivated(refetch);
   }
   .assigned-user-tag {
     width: 100%;
+    :global(.el-tag__content) {
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
   }
 }
 </style>

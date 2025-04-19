@@ -124,7 +124,7 @@ const showOptions = computed<Option[]>(() => {
           size="small"
           :type="option.role === OrgMemberRole.admin ? 'primary' : 'info'"
         >
-          {{ option.role === OrgMemberRole.admin ? '管理员' : '普通成员' }}
+          {{ option.role === OrgMemberRole.admin ? '管理员' : '普通用户' }}
         </ElTag>
       </div>
     </ElOption>

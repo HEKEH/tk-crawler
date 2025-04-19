@@ -122,7 +122,7 @@ const debounceHandleFilterChange = debounce(handleFilterChange, 500);
 
     <div class="buttons">
       <ElButton text type="primary" size="small" @click="resetFilters">
-        筛选重置
+        重置
       </ElButton>
     </div>
   </div>
@@ -156,7 +156,7 @@ const debounceHandleFilterChange = debounce(handleFilterChange, 500);
 }
 
 .buttons {
-  margin-left: 2rem;
+  margin-left: 1.5rem;
   display: flex;
   gap: 1rem;
   align-items: center;

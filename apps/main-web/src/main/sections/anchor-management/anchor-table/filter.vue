@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Area, Region } from '@tk-crawler/biz-shared';
 import type { FilterViewValues } from './filter';
-import { Search } from '@element-plus/icons-vue';
+import { Refresh, Search } from '@element-plus/icons-vue';
 import {
   AnchorRankLeague,
   AREA_NAME_MAP,
@@ -217,27 +217,30 @@ function resetFilters() {
           clearable
         />
       </div>
-      <div class="buttons">
-        <ElButton type="primary" size="small" @click="handleSubmit">
-          <ElIcon style="margin-right: 0.25rem">
-            <Search />
-          </ElIcon>
-          搜索
-        </ElButton>
-        <ElButton type="default" size="small" @click="resetFilters">
-          搜索重置
-        </ElButton>
-      </div>
+    </div>
+    <div class="buttons">
+      <ElButton type="primary" size="small" @click="handleSubmit">
+        <ElIcon style="margin-right: 0.25rem">
+          <Search />
+        </ElIcon>
+        搜索
+      </ElButton>
+      <ElButton type="default" size="small" @click="resetFilters">
+        <ElIcon style="margin-right: 0.25rem">
+          <Refresh />
+        </ElIcon>
+        重置
+      </ElButton>
     </div>
   </div>
 </template>
 
 <style scoped>
 .filter {
-  margin-bottom: 1rem;
-  display: flex;
+  /* margin-bottom: 1rem; */
+  /* display: flex; */
   max-width: 100%;
-  align-items: center;
+  /* align-items: center; */
   padding: 0 0.5rem;
 }
 
@@ -271,6 +274,7 @@ function resetFilters() {
 .buttons {
   display: flex;
   align-items: center;
+  margin-top: 1rem;
 
   :global(.el-button) {
     font-size: 13px;

@@ -2,8 +2,9 @@ import type { InjectionKey } from 'vue';
 import { inject, provide, reactive } from 'vue';
 import GlobalStore from '../domain/global-store';
 
-const GlobalStoreKey: InjectionKey<GlobalStore> = Symbol('GlobalStore');
-
+const GlobalStoreKey: InjectionKey<GlobalStore> =
+  (window as any).__TK_GLOBAL_STORE_KEY__ ||
+  ((window as any).__TK_GLOBAL_STORE_KEY__ = Symbol('GlobalStore'));
 /** register global store when init */
 export function provideGlobalStore() {
   const globalStore: GlobalStore = reactive(new GlobalStore()) as GlobalStore;

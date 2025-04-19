@@ -42,7 +42,7 @@ const statusOptions = [
 
 const roleOptions = [
   { label: '管理员', value: OrgMemberRole.admin },
-  { label: '普通成员', value: OrgMemberRole.member },
+  { label: '普通用户', value: OrgMemberRole.member },
 ];
 
 const rules = computed<FormRules>(() => {

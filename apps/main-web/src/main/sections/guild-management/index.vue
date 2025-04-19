@@ -19,7 +19,7 @@ const hasPrivilege = computed(() => globalStore.userProfile.isAdmin);
 const MenuList = [
   {
     type: MenuType.TK_GUILD_USER,
-    label: 'TK公会账号管理',
+    label: '查询账号管理',
   },
 ];
 const currentMenu = computed(() => {

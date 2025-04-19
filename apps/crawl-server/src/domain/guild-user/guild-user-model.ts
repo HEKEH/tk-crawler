@@ -160,7 +160,6 @@ export class GuildUserModel {
   private async _batchUpdateAnchorInviteCheck(
     anchorInviteCheckData: AnchorCheckInfo[],
   ) {
-    const checked_at = new Date();
     const getInviteType = (types: CanUseInvitationType[] | undefined) => {
       if (types?.includes(CanUseInvitationType.Elite)) {
         return CanUseInvitationType.Elite;
@@ -178,7 +177,6 @@ export class GuildUserModel {
           checked_by: this.id,
           checked_result: item.MultiAccountNotMeetBasicQualification === false,
           invite_type: getInviteType(item.CanUseInvitationType),
-          checked_at,
           area: this._area!,
         };
       })

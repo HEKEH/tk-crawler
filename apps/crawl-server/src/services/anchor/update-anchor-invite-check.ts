@@ -4,7 +4,7 @@ import { mysqlClient } from '@tk-crawler/database';
 import { beautifyJsonStringify } from '@tk-crawler/shared';
 import { logger } from '../../infra/logger';
 
-type UpdateAnchorInviteCheckData = AnchorInviteCheckData;
+type UpdateAnchorInviteCheckData = Omit<AnchorInviteCheckData, 'checked_at'>;
 
 export async function batchUpdateAnchorInviteCheck(
   dataArray: UpdateAnchorInviteCheckData[],
@@ -15,15 +15,8 @@ export async function batchUpdateAnchorInviteCheck(
   );
   // 构建批量插入语句参数
   const values = dataArray.map(data => {
-    const {
-      anchor_id,
-      org_id,
-      checked_by,
-      checked_result,
-      invite_type,
-      checked_at,
-      area,
-    } = data;
+    const { anchor_id, org_id, checked_by, checked_result, invite_type, area } =
+      data;
 
     assert(anchor_id !== undefined, 'anchor_id is required');
     assert(org_id !== undefined, 'org_id is required');
@@ -37,14 +30,13 @@ export async function batchUpdateAnchorInviteCheck(
       checked_by ? BigInt(checked_by) : null,
       checked_result ? 1 : 0,
       invite_type,
-      checked_at,
       area,
     ];
   });
 
   // 构建 SQL 参数占位符
   const placeholders = values
-    .map(() => '(?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP(3))')
+    .map(() => '(?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP(3), CURRENT_TIMESTAMP(3))')
     .join(', ');
 
   // 展平数组用于 SQL 参数
@@ -53,14 +45,14 @@ export async function batchUpdateAnchorInviteCheck(
   // 执行 MySQL 的 INSERT ... ON DUPLICATE KEY UPDATE 语句
   const sql = `
     INSERT INTO AnchorInviteCheck
-    (anchor_id, org_id, checked_by, checked_result, invite_type, checked_at, area, updated_at)
+    (anchor_id, org_id, checked_by, checked_result, invite_type, area, checked_at, updated_at)
     VALUES ${placeholders}
     ON DUPLICATE KEY UPDATE
     checked_by = VALUES(checked_by),
     checked_result = VALUES(checked_result),
     invite_type = VALUES(invite_type),
-    checked_at = VALUES(checked_at),
     area = VALUES(area),
+    checked_at = CURRENT_TIMESTAMP(3),
     updated_at = CURRENT_TIMESTAMP(3)
   `;
 

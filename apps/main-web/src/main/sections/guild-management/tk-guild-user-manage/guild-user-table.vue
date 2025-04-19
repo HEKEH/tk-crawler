@@ -8,10 +8,11 @@ import type {
   UpdateTKGuildUserResponse,
 } from '@tk-crawler/biz-shared';
 import type { TableColumnCtx } from 'element-plus';
-import { InfoFilled } from '@element-plus/icons-vue';
+// import { InfoFilled } from '@element-plus/icons-vue';
 import { useQuery } from '@tanstack/vue-query';
 import {
   AREA_NAME_MAP,
+  TIKTOK_LIVE_ADMIN_URL,
   TKGuildUserStatus,
   VALID_GUILD_USER_STATUS_LIST,
 } from '@tk-crawler/biz-shared';
@@ -29,7 +30,6 @@ import {
 } from '@tk-crawler/view-shared';
 import {
   ElButton,
-  ElIcon,
   ElLink,
   ElMessage,
   ElMessageBox,
@@ -413,19 +413,31 @@ onActivated(refetch);
       </div>
       <div class="header-row">
         <div class="left-part">
-          <ElButton type="primary" size="small" @click="onAddItem">
-            添加TK后台查询账号
-            <ElTooltip
-              popper-style="max-width: 200px;"
-              content="添加账号越多，查询速度越快"
-              placement="top"
-              effect="light"
-            >
-              <ElIcon style="font-size: 14px; margin-left: 0.25rem">
+          <ElTooltip
+            popper-style="max-width: 320px;"
+            placement="top"
+            effect="dark"
+          >
+            <template #content>
+              <span>
+                请添加
+                <ElLink
+                  type="primary"
+                  style="vertical-align: baseline"
+                  :href="TIKTOK_LIVE_ADMIN_URL"
+                  target="_blank"
+                  >{{ TIKTOK_LIVE_ADMIN_URL }}</ElLink
+                >
+                网站的账号。添加查询账号越多，查询速度越快
+              </span>
+            </template>
+            <ElButton type="primary" size="small" @click="onAddItem">
+              添加查询账号
+              <!-- <ElIcon style="font-size: 14px; margin-left: 0.25rem">
                 <InfoFilled />
-              </ElIcon>
-            </ElTooltip>
-          </ElButton>
+              </ElIcon> -->
+            </ElButton>
+          </ElTooltip>
         </div>
         <div class="right-part">
           <ElButton

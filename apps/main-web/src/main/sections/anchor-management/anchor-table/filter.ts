@@ -26,6 +26,7 @@ export interface FilterViewValues {
   highest_diamonds: RangeViewFilter;
   audience_count: RangeViewFilter;
   checked_at: RangeViewFilter<Date>;
+  assign_to?: string | 'all' | null;
 }
 
 export function transformFilterViewValuesToFilterValues(
@@ -67,6 +68,7 @@ export function transformFilterViewValuesToFilterValues(
       filterViewValues.checked_at,
     ),
     tag: filterViewValues.tag,
+    assign_to: transValue(filterViewValues.assign_to),
   };
 }
 

@@ -3,10 +3,10 @@ import type { DisplayedAnchorItem } from '@tk-crawler/biz-shared';
 import type { TableColumnCtx } from 'element-plus';
 import { ElButton, ElTableColumn } from 'element-plus';
 import AssignTaskFormDialog from '../assign-task-form-dialog.vue';
-import { useTasks, type UseTasksParams } from '../hooks';
+import { useTaskAssign, type UseTaskAssignParams } from '../hooks';
 
 const props = defineProps<{
-  refetch: UseTasksParams['refetch'];
+  refetch: UseTaskAssignParams['refetch'];
 }>();
 
 interface ScopeType {
@@ -22,7 +22,7 @@ const {
   onCloseAssignTaskDialog,
   handleSubmitTaskAssign,
   handleCancelAssignTask,
-} = useTasks(props);
+} = useTaskAssign(props);
 </script>
 
 <template>

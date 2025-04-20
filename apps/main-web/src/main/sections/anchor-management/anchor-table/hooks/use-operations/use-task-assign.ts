@@ -9,13 +9,13 @@ import { ref } from 'vue';
 import { assignTask } from '../../../../../requests';
 import { useGlobalStore } from '../../../../../utils';
 
-export interface UseTasksParams {
+export interface UseTaskAssignParams {
   refetch: () => Promise<
     QueryObserverResult<GetAnchorListResponseData | undefined, Error>
   >;
 }
 
-export function useTasks(params: UseTasksParams) {
+export function useTaskAssign(params: UseTaskAssignParams) {
   const globalStore = useGlobalStore();
   const assignTaskDialogVisible = ref(false);
   const taskAnchors = ref<DisplayedAnchorItem[]>([]);
@@ -95,67 +95,6 @@ export function useTasks(params: UseTasksParams) {
     await params.refetch();
     ElMessage.success('主播批量取消分配成功');
   }
-  // async function handleClaimTask(taskAnchors: DisplayedAnchorItem[]) {
-  //   const result = await claimTask(
-  //     {
-  //       anchor_check_ids: taskAnchors.map(item => item.id),
-  //     },
-  //     globalStore.token,
-  //   );
-  //   if (result.status_code !== RESPONSE_CODE.SUCCESS) {
-  //     return;
-  //   }
-  //   await refetch();
-  //   ElMessage.success('认领任务成功');
-  // }
-
-  // async function handleCancelClaimTask(taskAnchors: DisplayedAnchorItem[]) {
-  //   const result = await cancelClaimTask(
-  //     {
-  //       anchor_check_ids: taskAnchors.map(item => item.id),
-  //     },
-  //     globalStore.token,
-  //   );
-  //   if (result.status_code !== RESPONSE_CODE.SUCCESS) {
-  //     return;
-  //   }
-  //   await refetch();
-  //   ElMessage.success('取消任务成功');
-  // }
-
-  // async function handleBatchClaimTask() {
-  //   const taskAnchors = selectedRows.value.filter(item => !item.assigned_user);
-  //   try {
-  //     await ElMessageBox.confirm(
-  //       `确定认领 ${taskAnchors.length} 个未分配主播吗？`,
-  //       {
-  //         type: 'success',
-  //         showCancelButton: true,
-  //       },
-  //     );
-  //   } catch {
-  //     return;
-  //   }
-  //   await handleClaimTask(taskAnchors);
-  // }
-
-  // async function handleBatchCancelClaim() {
-  //   const taskAnchors = selectedRows.value.filter(
-  //     item => item.assigned_user?.id === globalStore.userProfile.userInfo?.id,
-  //   );
-  //   try {
-  //     await ElMessageBox.confirm(
-  //       `确定取消本人的 ${taskAnchors.length} 个任务吗？`,
-  //       {
-  //         type: 'warning',
-  //         showCancelButton: true,
-  //       },
-  //     );
-  //   } catch {
-  //     return;
-  //   }
-  //   await handleCancelClaimTask(taskAnchors);
-  // }
   return {
     assignTaskDialogVisible,
     taskAnchors,

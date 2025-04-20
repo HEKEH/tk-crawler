@@ -72,11 +72,8 @@ export function transformFilterViewValuesToFilterValues(
   };
 }
 
-export function getDefaultFilterViewValues(
-  defaultArea: Area | undefined,
-): FilterViewValues {
+export function getCommonDefaultFilterViewValues(): FilterViewValues {
   return {
-    area: defaultArea,
     invite_type: 'all',
     region: 'all',
     has_commerce_goods: 'all',

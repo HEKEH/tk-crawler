@@ -11,11 +11,11 @@ import { h, reactive } from 'vue';
 import { clearAnchorCheck } from '../../../../requests';
 import { useGlobalStore } from '../../../../utils';
 import AssignTaskFormDialog from '../assign-task-form-dialog.vue';
-import { useTasks, type UseTasksParams } from '../hooks';
+import { useTaskAssign, type UseTaskAssignParams } from '../hooks';
 
 const props = defineProps<{
   queryFilter: GetAnchorListFilter | undefined;
-  refetch: UseTasksParams['refetch'];
+  refetch: UseTaskAssignParams['refetch'];
   data: GetAnchorListResponseData | undefined;
   selectedRows: DisplayedAnchorItem[];
 }>();
@@ -28,7 +28,7 @@ const {
   onCloseAssignTaskDialog,
   handleSubmitTaskAssign,
   batchCancelAssignTasks,
-} = useTasks(props);
+} = useTaskAssign(props);
 
 async function handleClearAnchorCheck() {
   const state = reactive({
@@ -102,30 +102,3 @@ async function handleClearAnchorCheck() {
     @close="onCloseAssignTaskDialog"
   />
 </template>
-
-<!-- <template v-else>
-  <ElButton
-    type="primary"
-    size="small"
-    :disabled="
-      !selectedRows.filter(item => !item.assigned_user).length
-    "
-    @click="handleBatchClaimTask"
-  >
-    批量认领任务
-  </ElButton>
-  <ElButton
-    :disabled="
-      !selectedRows.filter(
-        item =>
-          item.assigned_user?.id ===
-          globalStore.userProfile.userInfo?.id,
-      ).length
-    "
-    type="danger"
-    size="small"
-    @click="handleBatchCancelClaim"
-  >
-    批量取消任务
-  </ElButton>
-</template> -->

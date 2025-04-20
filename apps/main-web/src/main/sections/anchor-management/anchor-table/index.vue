@@ -3,16 +3,25 @@ import type {
   DisplayedAnchorItem,
   GetAnchorListOrderBy,
 } from '@tk-crawler/biz-shared';
-import type { FilterViewValues } from './filter';
 import { RefreshButton, useTableSort } from '@tk-crawler/view-shared';
 import { ElButton, ElPagination, ElTable } from 'element-plus';
-import { onActivated, ref } from 'vue';
+import { computed, onActivated, ref } from 'vue';
 import { useGetAnchorList } from '../../../hooks';
 import { useGlobalStore } from '../../../utils/vue';
 import TKAnchorTableColumns from './anchor-table-columns.vue';
+import {
+  type FilterViewValues,
+  getCommonDefaultFilterViewValues,
+  transformFilterViewValuesToFilterValues,
+} from './filter';
 import TKAnchorFilter from './filter.vue';
-import { useAnchorTableAdapter, useDefaultFilterViewValues } from './hooks';
-import { AdminBatchOperationButtons, AdminOperationColumn } from './operation';
+import {
+  AdminBatchOperationButtons,
+  AdminOperationColumn,
+  MemberBatchOperationButtons,
+  MemberOperationColumn,
+} from './operation';
+import './styles.scss';
 
 defineOptions({
   name: 'TKAnchorTable',
@@ -29,7 +38,14 @@ const { sortField, sortOrder, orderBy, handleSortChange, resetSort } =
     pageNum,
   });
 
-const defaultFilterViewValues = useDefaultFilterViewValues();
+const defaultFilterViewValues = computed(() => {
+  const commonDefaultFilterViewValues = getCommonDefaultFilterViewValues();
+  return {
+    ...commonDefaultFilterViewValues,
+    area: globalStore.userProfile.orgInfo?.areas?.[0],
+    assign_to: 'all',
+  };
+});
 
 // 过滤条件
 const filters = ref<FilterViewValues>(defaultFilterViewValues.value);
@@ -45,8 +61,8 @@ function handleFilterReset() {
   pageNum.value = 1; // 重置页码
 }
 
-const { queryFilter, hiddenFilters } = useAnchorTableAdapter({
-  filters,
+const queryFilter = computed(() => {
+  return transformFilterViewValuesToFilterValues(filters.value);
 });
 
 const { data, isLoading, isError, error, refetch } = useGetAnchorList(
@@ -89,14 +105,13 @@ onActivated(refetch);
 </script>
 
 <template>
-  <div v-loading="isLoading || isRefreshing" class="tk-guild-user-table">
+  <div v-loading="isLoading || isRefreshing" class="tk-anchor-user-table">
     <div v-if="isError" class="error-msg">
       {{ error?.message }}
     </div>
     <template v-if="!isError">
       <div class="filter-row">
         <TKAnchorFilter
-          :hidden-filters="hiddenFilters"
           :model-value="filters"
           :areas="globalStore.userProfile.orgInfo?.areas ?? []"
           @submit="handleFilterSubmit"
@@ -111,6 +126,11 @@ onActivated(refetch);
             :query-filter="queryFilter"
             :refetch="refetch"
             :data="data"
+            :selected-rows="selectedRows"
+          />
+          <MemberBatchOperationButtons
+            v-else
+            :refetch="refetch"
             :selected-rows="selectedRows"
           />
           <ElButton type="default" size="small" @click="resetSort">
@@ -137,6 +157,7 @@ onActivated(refetch);
           v-if="globalStore.userProfile.isAdmin"
           :refetch="refetch"
         />
+        <MemberOperationColumn v-else :refetch="refetch" />
       </ElTable>
       <div class="pagination-row">
         <ElPagination
@@ -154,60 +175,3 @@ onActivated(refetch);
     </template>
   </div>
 </template>
-
-<style scoped>
-.tk-guild-user-table {
-  padding: 2rem 1rem;
-  position: relative;
-  height: fit-content;
-  max-height: 100%;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  .filter-row {
-    width: 100%;
-    overflow: hidden;
-    margin-bottom: 0.5rem;
-  }
-  .header-row {
-    margin-bottom: 1rem;
-    display: flex;
-    justify-content: space-between;
-    .left-part {
-      display: flex;
-      align-items: center;
-      padding-left: 0.5rem;
-    }
-    .right-part {
-      display: flex;
-      align-items: center;
-      padding-right: 0.5rem;
-    }
-  }
-  .header-row-icon {
-    cursor: pointer;
-    font-size: 18px;
-    margin-left: 0.5rem;
-    &:hover {
-      color: var(--el-color-primary);
-    }
-  }
-  .error-msg {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--el-color-danger);
-  }
-  .pagination-row {
-    width: 100%;
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 1rem;
-    padding-right: 1rem;
-  }
-  .main-table {
-    flex: 1;
-    width: 100%;
-  }
-}
-</style>

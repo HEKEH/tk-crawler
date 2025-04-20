@@ -10,6 +10,7 @@ defineOptions({
 
 enum MenuType {
   ANCHOR_TABLE = 'anchor-table',
+  ANCHOR_CONTACT = 'anchor-contact',
 }
 const route = useRoute();
 const router = useRouter();

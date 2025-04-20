@@ -1,0 +1,54 @@
+.tk-anchor-user-table {
+  padding: 2rem 1rem;
+  position: relative;
+  height: fit-content;
+  max-height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  .filter-row {
+    width: 100%;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+  }
+  .header-row {
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    .left-part {
+      display: flex;
+      align-items: center;
+      padding-left: 0.5rem;
+    }
+    .right-part {
+      display: flex;
+      align-items: center;
+      padding-right: 0.5rem;
+    }
+  }
+  .header-row-icon {
+    cursor: pointer;
+    font-size: 18px;
+    margin-left: 0.5rem;
+    &:hover {
+      color: var(--el-color-primary);
+    }
+  }
+  .error-msg {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--el-color-danger);
+  }
+  .pagination-row {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1rem;
+    padding-right: 1rem;
+  }
+  .main-table {
+    flex: 1;
+    width: 100%;
+  }
+}

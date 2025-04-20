@@ -19,5 +19,7 @@ taskRouter.post(
 );
 taskRouter.post('/claim', TaskController.claimTask);
 taskRouter.post('/cancel-claim', TaskController.cancelClaimTask);
+taskRouter.post('/anchor-contacted', TaskController.anchorContacted);
+taskRouter.post('/cancel-anchor-contact', TaskController.cancelAnchorContact);
 
 export default taskRouter;

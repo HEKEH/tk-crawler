@@ -4,6 +4,7 @@ import type {
   DisplayedAnchorItem,
   GetAnchorListRequest,
   GetAnchorListResponseData,
+  OrgMemberItem,
   Region,
 } from '@tk-crawler/biz-shared';
 import assert from 'node:assert';
@@ -22,8 +23,15 @@ export async function getAnchorList(
   assert(request.page_size, 'page_size is required');
   assert(request.page_size <= 200, 'page_size is too large');
 
-  const { page_num, page_size, filter, order_by, org_id, include_task_assign } =
-    request;
+  const {
+    page_num,
+    page_size,
+    filter,
+    order_by,
+    org_id,
+    include_task_assign,
+    include_anchor_contact,
+  } = request;
   const where = transformAnchorListFilterValues(filter, org_id);
   const orderBy = transformAnchorListOrderBy(order_by);
 
@@ -42,12 +50,39 @@ export async function getAnchorList(
               },
             }
           : false,
+        contacted_user: include_anchor_contact
+          ? {
+              omit: {
+                password: true,
+              },
+            }
+          : false,
       },
     }),
     mysqlClient.prismaClient.anchorInviteCheck.count({
       where,
     }),
   ]);
+
+  function transUserProps(
+    user: (typeof anchorInviteChecks)[number]['assigned_user'] | null,
+  ): Omit<OrgMemberItem, 'password'> | null {
+    if (!user) {
+      return null;
+    }
+    return {
+      id: user.id.toString(),
+      username: user.username,
+      display_name: user.display_name,
+      org_id: user.org_id.toString(),
+      role_id: user.role_id,
+      status: user.status,
+      created_at: user.created_at,
+      updated_at: user.updated_at,
+      email: user.email,
+      mobile: user.mobile,
+    };
+  }
 
   const list: DisplayedAnchorItem[] = anchorInviteChecks.map(item => {
     const { anchor } = item;
@@ -76,20 +111,10 @@ export async function getAnchorList(
       checked_result: item.checked_result === 1,
     };
     if (include_task_assign) {
-      data.assigned_user = item.assigned_user
-        ? {
-            id: item.assigned_user.id.toString(),
-            username: item.assigned_user.username,
-            display_name: item.assigned_user.display_name,
-            org_id: item.assigned_user.org_id.toString(),
-            role_id: item.assigned_user.role_id,
-            status: item.assigned_user.status,
-            created_at: item.assigned_user.created_at,
-            updated_at: item.assigned_user.updated_at,
-            email: item.assigned_user.email,
-            mobile: item.assigned_user.mobile,
-          }
-        : null;
+      data.assigned_user = transUserProps(item.assigned_user);
+    }
+    if (include_anchor_contact) {
+      data.contacted_user = transUserProps(item.contacted_user);
     }
     return data;
   });

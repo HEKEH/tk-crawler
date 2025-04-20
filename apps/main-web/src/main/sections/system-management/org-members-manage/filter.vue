@@ -122,7 +122,7 @@ const debounceHandleFilterChange = debounce(handleFilterChange, 500);
 
     <div class="buttons">
       <ElButton text type="primary" size="small" @click="resetFilters">
-        重置
+        搜索重置
       </ElButton>
     </div>
   </div>

@@ -15,6 +15,7 @@ import {
   transformFilterViewValuesToFilterValues,
 } from '../anchor-table/filter';
 import TKAnchorFilter from '../anchor-table/filter.vue';
+import { BatchOperationButtons, OperationColumn } from './operation';
 import '../anchor-table/styles.scss';
 
 defineOptions({
@@ -32,12 +33,12 @@ const { sortField, sortOrder, orderBy, handleSortChange, resetSort } =
     pageNum,
   });
 
-const defaultFilterViewValues = computed(() => {
+const defaultFilterViewValues = computed<FilterViewValues>(() => {
   const commonDefaultFilterViewValues = getCommonDefaultFilterViewValues();
   return {
     ...commonDefaultFilterViewValues,
     area: globalStore.userProfile.orgInfo?.areas?.[0],
-    assign_to: 'all',
+    contacted_by: 'not_contacted',
   };
 });
 
@@ -70,6 +71,7 @@ const { data, isLoading, isError, error, refetch } = useGetAnchorList(
     filter: queryFilter,
     orderBy,
     includeTaskAssign: true,
+    includeAnchorContact: true,
   },
   globalStore.token,
 );
@@ -110,7 +112,7 @@ onActivated(refetch);
     <template v-if="!isError">
       <div class="filter-row">
         <TKAnchorFilter
-          :hidden-filters="['assign_to', 'checked_result']"
+          :hidden-filters="['assign_to', 'checked_result', 'contacted_by']"
           :model-value="filters"
           :areas="globalStore.userProfile.orgInfo?.areas ?? []"
           @submit="handleFilterSubmit"
@@ -120,18 +122,10 @@ onActivated(refetch);
       <div class="header-row">
         <div class="left-part"></div>
         <div class="right-part">
-          <!-- <AdminBatchOperationButtons
-            v-if="globalStore.userProfile.isAdmin"
-            :query-filter="queryFilter"
+          <BatchOperationButtons
             :refetch="refetch"
-            :data="data"
             :selected-rows="selectedRows"
           />
-          <MemberBatchOperationButtons
-            v-else
-            :refetch="refetch"
-            :selected-rows="selectedRows"
-          /> -->
           <ElButton type="default" size="small" @click="resetSort">
             重置排序
           </ElButton>
@@ -152,11 +146,7 @@ onActivated(refetch);
         @selection-change="handleSelectionChange"
       >
         <TKAnchorTableColumns />
-        <!-- <AdminOperationColumn
-          v-if="globalStore.userProfile.isAdmin"
-          :refetch="refetch"
-        />
-        <MemberOperationColumn v-else :refetch="refetch" /> -->
+        <OperationColumn :refetch="refetch" />
       </ElTable>
       <div class="pagination-row">
         <ElPagination

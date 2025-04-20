@@ -31,7 +31,7 @@ const anchorsAssignedToSelfSelected = computed(() =>
     :disabled="!anchorsNotAssignedSelected.length"
     @click="handleBatchClaimTask(anchorsNotAssignedSelected)"
   >
-    批量认领任务
+    批量认领分配
   </ElButton>
   <ElButton
     :disabled="!anchorsAssignedToSelfSelected.length"
@@ -39,6 +39,6 @@ const anchorsAssignedToSelfSelected = computed(() =>
     size="small"
     @click="handleBatchCancelClaim(anchorsAssignedToSelfSelected)"
   >
-    批量取消任务
+    批量重置分配
   </ElButton>
 </template>

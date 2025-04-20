@@ -19,6 +19,8 @@ const props = withDefaults(
     showAll?: boolean;
     showAssigned?: boolean;
     showNotAssigned?: boolean;
+    showContacted?: boolean;
+    showNotContacted?: boolean;
     clearable?: boolean;
     selfFirst?: boolean;
   }>(),
@@ -90,6 +92,12 @@ const showOptions = computed<Option[]>(() => {
   }
   if (props.showNotAssigned) {
     options.push({ label: '未分配', value: 'not_assigned' });
+  }
+  if (props.showContacted) {
+    options.push({ label: '已建联', value: 'contacted' });
+  }
+  if (props.showNotContacted) {
+    options.push({ label: '未建联', value: 'not_contacted' });
   }
   const selfId = globalStore.userProfile.userInfo?.id;
   const membersOptions =

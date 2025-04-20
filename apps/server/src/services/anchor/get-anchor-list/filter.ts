@@ -30,6 +30,7 @@ export function transformAnchorListFilterValues(
     area,
     invite_type,
     assign_to,
+    contacted_by,
   } = filterValues;
   const anchorFilter: AnchorListWhereInput['anchor'] = {};
   if (user_id) {
@@ -104,6 +105,17 @@ export function transformAnchorListFilterValues(
       };
     } else {
       filter.assign_to = BigInt(assign_to);
+    }
+  }
+  if (contacted_by !== undefined && contacted_by !== '') {
+    if (contacted_by === 'not_contacted') {
+      filter.contacted_by = null;
+    } else if (contacted_by === 'contacted') {
+      filter.contacted_by = {
+        not: null,
+      };
+    } else {
+      filter.contacted_by = BigInt(contacted_by);
     }
   }
 

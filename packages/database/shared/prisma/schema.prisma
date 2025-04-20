@@ -72,14 +72,15 @@ model AnchorInviteCheck {
   checked_by      BigInt?        @db.UnsignedBigInt
   checked_result  Int            @db.UnsignedTinyInt
   assign_to       BigInt?        @db.UnsignedBigInt
-  is_finished     Boolean        @default(false)
+  contacted_by    BigInt?        @db.UnsignedBigInt
   invite_type     Int?           @db.UnsignedTinyInt
   created_at      DateTime       @default(now()) @db.DateTime(3)
   updated_at      DateTime       @updatedAt @db.DateTime(3)
   area            String         @db.VarChar(6)
   organization    Organization   @relation(fields: [org_id], references: [id], onDelete: Cascade)
   anchor          Anchor         @relation(fields: [anchor_id], references: [user_id], onDelete: Cascade)
-  assigned_user   OrgUser?       @relation(fields: [assign_to], references: [id], onDelete: SetNull)
+  assigned_user   OrgUser?       @relation(name: "anchor_assign_relation", fields: [assign_to], references: [id], onDelete: SetNull)
+  contacted_user  OrgUser?       @relation(name: "anchor_contact_relation", fields: [contacted_by], references: [id], onDelete: SetNull)
   checked_by_user LiveAdminUser? @relation(fields: [checked_by], references: [id], onDelete: SetNull)
 
   @@unique([org_id, anchor_id], name: "org_id_anchor_id")
@@ -123,7 +124,8 @@ model OrgUser {
   created_at       DateTime            @default(now()) @db.DateTime(3)
   updated_at       DateTime            @updatedAt @db.DateTime(3)
   organization     Organization        @relation(fields: [org_id], references: [id], onDelete: Cascade)
-  assigned_anchors AnchorInviteCheck[]
+  assigned_anchors AnchorInviteCheck[] @relation("anchor_assign_relation")
+  contact_anchors  AnchorInviteCheck[] @relation("anchor_contact_relation")
 
   @@index([org_id])
 }

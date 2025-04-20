@@ -25,7 +25,8 @@ export interface GetAnchorListFilter {
   highest_diamonds?: RangeFilter;
   checked_at?: RangeFilter<Date>;
   assign_to?: string | 'not_assigned' | 'assigned';
-  // TODO 主播来源 多账号风险 分配状态 建联状态
+  contacted_by?: string | 'not_contacted' | 'contacted';
+  // TODO 主播来源 多账号风险
 }
 
 export type AnchorListWhereInput = Prisma.AnchorInviteCheckWhereInput;
@@ -47,7 +48,8 @@ export type GetAnchorListOrderBy =
   | { has_commerce_goods: SortOrder }
   | { tag: SortOrder }
   | { room_id: SortOrder }
-  | { assign_to: SortOrder };
+  | { assign_to: SortOrder }
+  | { contacted_by: SortOrder };
 
 export type AnchorInviteCheckOrderByInput =
   Prisma.AnchorInviteCheckOrderByWithRelationInput;
@@ -58,6 +60,7 @@ export interface GetAnchorListRequest {
   filter?: GetAnchorListFilter;
   order_by?: GetAnchorListOrderBy;
   include_task_assign?: boolean;
+  include_anchor_contact?: boolean;
 }
 
 export interface GetAnchorListResponseData {

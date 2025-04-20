@@ -5,19 +5,19 @@ import type {
 } from '@tk-crawler/biz-shared';
 import { RESPONSE_CODE } from '@tk-crawler/shared';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import { cancelClaimTask, claimTask } from '../../../../../requests';
+import { anchorContacted, cancelAnchorContact } from '../../../../../requests';
 import { useGlobalStore } from '../../../../../utils';
 
-export interface UseTaskClaimParams {
+export interface UseAnchorContactParams {
   refetch: () => Promise<
     QueryObserverResult<GetAnchorListResponseData | undefined, Error>
   >;
 }
 
-export function useTaskClaim(params: UseTaskClaimParams) {
+export function useAnchorContact(params: UseAnchorContactParams) {
   const globalStore = useGlobalStore();
-  async function handleClaimTask(taskAnchors: DisplayedAnchorItem[]) {
-    const result = await claimTask(
+  async function handleContactAnchor(taskAnchors: DisplayedAnchorItem[]) {
+    const result = await anchorContacted(
       {
         anchor_check_ids: taskAnchors.map(item => item.id),
       },
@@ -27,11 +27,11 @@ export function useTaskClaim(params: UseTaskClaimParams) {
       return;
     }
     await params.refetch();
-    ElMessage.success('认领分配成功');
+    ElMessage.success('操作成功');
   }
 
-  async function handleCancelClaimTask(taskAnchors: DisplayedAnchorItem[]) {
-    const result = await cancelClaimTask(
+  async function handleCancelAnchorContact(taskAnchors: DisplayedAnchorItem[]) {
+    const result = await cancelAnchorContact(
       {
         anchor_check_ids: taskAnchors.map(item => item.id),
       },
@@ -41,14 +41,14 @@ export function useTaskClaim(params: UseTaskClaimParams) {
       return;
     }
     await params.refetch();
-    ElMessage.success('取消任务成功');
+    ElMessage.success('操作成功');
   }
 
-  async function handleBatchClaimTask(anchors: DisplayedAnchorItem[]) {
-    const taskAnchors = anchors.filter(item => !item.assigned_user);
+  async function handleBatchContactAnchor(anchors: DisplayedAnchorItem[]) {
+    const taskAnchors = anchors.filter(item => !item.contacted_user);
     try {
       await ElMessageBox.confirm(
-        `确定认领 ${taskAnchors.length} 个未分配主播的建联任务吗？`,
+        `确定已完成建联 ${taskAnchors.length} 个主播吗？`,
         {
           type: 'success',
           showCancelButton: true,
@@ -57,16 +57,16 @@ export function useTaskClaim(params: UseTaskClaimParams) {
     } catch {
       return;
     }
-    await handleClaimTask(taskAnchors);
+    await handleContactAnchor(taskAnchors);
   }
 
-  async function handleBatchCancelClaim(anchors: DisplayedAnchorItem[]) {
-    const taskAnchors = anchors.filter(
-      item => item.assigned_user?.id === globalStore.userProfile.userInfo?.id,
-    );
+  async function handleBatchCancelAnchorContact(
+    anchors: DisplayedAnchorItem[],
+  ) {
+    const taskAnchors = anchors.filter(item => item.contacted_user);
     try {
       await ElMessageBox.confirm(
-        `确定取消本人的 ${taskAnchors.length} 个任务吗？`,
+        `确定取消 ${taskAnchors.length} 个建联状态吗？`,
         {
           type: 'warning',
           showCancelButton: true,
@@ -75,12 +75,12 @@ export function useTaskClaim(params: UseTaskClaimParams) {
     } catch {
       return;
     }
-    await handleCancelClaimTask(taskAnchors);
+    await handleCancelAnchorContact(taskAnchors);
   }
   return {
-    handleClaimTask,
-    handleCancelClaimTask,
-    handleBatchClaimTask,
-    handleBatchCancelClaim,
+    handleContactAnchor,
+    handleCancelAnchorContact,
+    handleBatchContactAnchor,
+    handleBatchCancelAnchorContact,
   };
 }

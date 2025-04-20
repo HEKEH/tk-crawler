@@ -108,6 +108,28 @@ function resetFilters() {
           size="small"
         />
       </div>
+      <div v-if="!hiddenFilters?.includes('contacted_by')" class="filter-item">
+        <label class="filter-label">建联状态</label>
+        <OrgMemberSelectSingle
+          v-model="filters.contacted_by"
+          show-all
+          show-contacted
+          show-not-contacted
+          self-first
+          size="small"
+        />
+      </div>
+      <div
+        v-if="!hiddenFilters?.includes('contacted_by_simple')"
+        class="filter-item"
+      >
+        <label class="filter-label">建联状态</label>
+        <ElSelect v-model="filters.contacted_by" size="small">
+          <ElOption label="全部" value="all" />
+          <ElOption label="已建联" value="contacted" />
+          <ElOption label="未建联" value="not_contacted" />
+        </ElSelect>
+      </div>
       <div v-if="!hiddenFilters?.includes('area')" class="filter-item">
         <label class="filter-label">主播分区</label>
         <AreaSelectSingle
@@ -255,7 +277,7 @@ function resetFilters() {
         <ElIcon style="margin-right: 0.25rem">
           <Refresh />
         </ElIcon>
-        重置
+        搜索重置
       </ElButton>
     </div>
   </div>

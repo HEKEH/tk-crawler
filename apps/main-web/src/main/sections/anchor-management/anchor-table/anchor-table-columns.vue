@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Area, DisplayedAnchorItem, Region } from '@tk-crawler/biz-shared';
+import type { TableColumnCtx } from 'element-plus';
 import {
   AREA_NAME_MAP,
   CanUseInvitationType,
@@ -8,18 +9,17 @@ import {
 } from '@tk-crawler/biz-shared';
 import { formatDateTime, getColorFromName } from '@tk-crawler/shared';
 import { AreaTooltipIcon, CopyIcon } from '@tk-crawler/view-shared';
-import type { TableColumnCtx } from 'element-plus';
 import { ElLink, ElTableColumn, ElTag } from 'element-plus';
 
 defineOptions({
   name: 'TKAnchorTableColumns',
 });
 
+defineProps<Props>();
+
 interface Props {
   hiddenColumns?: string[];
 }
-
-defineProps<Props>();
 
 interface ScopeType {
   row: DisplayedAnchorItem;
@@ -71,6 +71,29 @@ interface ScopeType {
     </template>
   </ElTableColumn>
   <ElTableColumn
+    v-if="!hiddenColumns?.includes('contacted_by')"
+    prop="contacted_by"
+    label="建联状态"
+    min-width="120"
+    sortable="custom"
+  >
+    <template #default="scope: ScopeType">
+      <ElTag v-if="!scope.row.contacted_user" class="org-user-tag" type="info">
+        未建联
+      </ElTag>
+      <ElTag
+        v-else
+        type="success"
+        class="org-user-tag"
+        :style="{
+          color: getColorFromName(scope.row.contacted_user.display_name),
+        }"
+      >
+        {{ scope.row.contacted_user.display_name }}
+      </ElTag>
+    </template>
+  </ElTableColumn>
+  <ElTableColumn
     v-if="!hiddenColumns?.includes('assign_to')"
     prop="assign_to"
     label="分配状态"
@@ -78,17 +101,13 @@ interface ScopeType {
     sortable="custom"
   >
     <template #default="scope: ScopeType">
-      <ElTag
-        v-if="!scope.row.assigned_user"
-        class="assigned-user-tag"
-        type="info"
-      >
+      <ElTag v-if="!scope.row.assigned_user" class="org-user-tag" type="info">
         未分配
       </ElTag>
       <ElTag
         v-else
         type="success"
-        class="assigned-user-tag"
+        class="org-user-tag"
         :style="{
           color: getColorFromName(scope.row.assigned_user.display_name),
         }"
@@ -329,7 +348,7 @@ interface ScopeType {
     white-space: nowrap;
   }
 }
-.assigned-user-tag {
+.org-user-tag {
   width: 100%;
   :global(.el-tag__content) {
     max-width: 100%;

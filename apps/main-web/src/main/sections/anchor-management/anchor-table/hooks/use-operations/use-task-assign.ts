@@ -93,7 +93,7 @@ export function useTaskAssign(params: UseTaskAssignParams) {
       return;
     }
     await params.refetch();
-    ElMessage.success('主播批量取消分配成功');
+    ElMessage.success('批量重置分配成功');
   }
   return {
     assignTaskDialogVisible,

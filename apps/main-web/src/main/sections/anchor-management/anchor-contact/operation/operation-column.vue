@@ -2,11 +2,10 @@
 import type { DisplayedAnchorItem } from '@tk-crawler/biz-shared';
 import type { TableColumnCtx } from 'element-plus';
 import { ElButton, ElTableColumn } from 'element-plus';
-import { useGlobalStore } from '../../../../utils';
-import { type UseTaskAssignParams, useTaskClaim } from '../hooks';
+import { useAnchorContact, type UseAnchorContactParams } from '../hooks';
 
 const props = defineProps<{
-  refetch: UseTaskAssignParams['refetch'];
+  refetch: UseAnchorContactParams['refetch'];
 }>();
 
 interface ScopeType {
@@ -15,9 +14,8 @@ interface ScopeType {
   $index: number;
 }
 
-const globalStore = useGlobalStore();
-
-const { handleClaimTask, handleCancelClaimTask } = useTaskClaim(props);
+const { handleContactAnchor, handleCancelAnchorContact } =
+  useAnchorContact(props);
 </script>
 
 <template>
@@ -25,22 +23,20 @@ const { handleClaimTask, handleCancelClaimTask } = useTaskClaim(props);
     <template #default="scope: ScopeType">
       <div class="operation-buttons">
         <ElButton
-          v-if="!scope.row.assigned_user"
+          v-if="scope.row.assigned_user && !scope.row.contacted_user"
           size="small"
           type="primary"
-          @click="handleClaimTask([scope.row])"
+          @click="handleContactAnchor([scope.row])"
         >
-          认领建联分配
+          完成建联
         </ElButton>
         <ElButton
-          v-else-if="
-            scope.row.assigned_user.id === globalStore.userProfile.userInfo?.id
-          "
+          v-else-if="scope.row.contacted_user"
           size="small"
           type="danger"
-          @click="handleCancelClaimTask([scope.row])"
+          @click="handleCancelAnchorContact([scope.row])"
         >
-          重置建联分配
+          重置建联
         </ElButton>
       </div>
     </template>

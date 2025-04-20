@@ -1,4 +1,6 @@
 import type {
+  AnchorContactedRequest,
+  AnchorContactedResponse,
   AssignTaskRequest,
   AssignTaskResponse,
   CancelClaimTaskRequest,
@@ -42,6 +44,35 @@ export function cancelClaimTask(params: CancelClaimTaskRequest, token: string) {
     baseURL: config.ownServerUrl,
     method: 'post',
     path: '/client/task/cancel-claim',
+    params,
+    onTokenInvalid: redirectToLogin,
+    headers: {
+      [CLIENT_TOKEN_HEADER_KEY]: token,
+    },
+  });
+}
+
+export function anchorContacted(params: AnchorContactedRequest, token: string) {
+  return commonRequest<AnchorContactedResponse>({
+    baseURL: config.ownServerUrl,
+    method: 'post',
+    path: '/client/task/anchor-contacted',
+    params,
+    onTokenInvalid: redirectToLogin,
+    headers: {
+      [CLIENT_TOKEN_HEADER_KEY]: token,
+    },
+  });
+}
+
+export function cancelAnchorContact(
+  params: AnchorContactedRequest,
+  token: string,
+) {
+  return commonRequest<AnchorContactedResponse>({
+    baseURL: config.ownServerUrl,
+    method: 'post',
+    path: '/client/task/cancel-anchor-contact',
     params,
     onTokenInvalid: redirectToLogin,
     headers: {

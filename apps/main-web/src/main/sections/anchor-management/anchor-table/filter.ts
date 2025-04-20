@@ -27,6 +27,7 @@ export interface FilterViewValues {
   audience_count: RangeViewFilter;
   checked_at: RangeViewFilter<Date>;
   assign_to?: string | 'all' | 'not_assigned' | 'assigned';
+  contacted_by?: string | 'all' | 'not_contacted' | 'contacted';
 }
 
 export function transformFilterViewValuesToFilterValues(
@@ -69,6 +70,7 @@ export function transformFilterViewValuesToFilterValues(
     ),
     tag: filterViewValues.tag,
     assign_to: transValue(filterViewValues.assign_to),
+    contacted_by: transValue(filterViewValues.contacted_by),
   };
 }
 
@@ -85,6 +87,5 @@ export function getCommonDefaultFilterViewValues(): FilterViewValues {
     audience_count: [undefined, undefined],
     checked_at: [undefined, undefined],
     checked_result: true,
-    assign_to: 'all',
   };
 }

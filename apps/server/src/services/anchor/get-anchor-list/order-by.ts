@@ -48,6 +48,8 @@ export function transformAnchorListOrderBy(
     result.anchor = { room_id: orderBy.room_id };
   } else if ('assign_to' in orderBy && orderBy.assign_to) {
     result.assign_to = orderBy.assign_to;
+  } else if ('contacted_by' in orderBy && orderBy.contacted_by) {
+    result.contacted_by = orderBy.contacted_by;
   } else {
     throw new BusinessError(`Invalid orderBy: ${JSON.stringify(orderBy)}`);
   }

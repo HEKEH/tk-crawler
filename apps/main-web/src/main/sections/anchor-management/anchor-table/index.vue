@@ -38,12 +38,13 @@ const { sortField, sortOrder, orderBy, handleSortChange, resetSort } =
     pageNum,
   });
 
-const defaultFilterViewValues = computed(() => {
+const defaultFilterViewValues = computed<FilterViewValues>(() => {
   const commonDefaultFilterViewValues = getCommonDefaultFilterViewValues();
   return {
     ...commonDefaultFilterViewValues,
     area: globalStore.userProfile.orgInfo?.areas?.[0],
     assign_to: 'all',
+    contacted_by: 'all',
   };
 });
 
@@ -72,6 +73,7 @@ const { data, isLoading, isError, error, refetch } = useGetAnchorList(
     filter: queryFilter,
     orderBy,
     includeTaskAssign: true,
+    includeAnchorContact: true,
   },
   globalStore.token,
 );
@@ -113,6 +115,7 @@ onActivated(refetch);
       <div class="filter-row">
         <TKAnchorFilter
           :model-value="filters"
+          :hidden-filters="['contacted_by_simple']"
           :areas="globalStore.userProfile.orgInfo?.areas ?? []"
           @submit="handleFilterSubmit"
           @reset="handleFilterReset"

@@ -27,3 +27,12 @@ export interface CancelClaimTaskResponse {
   status_code: RESPONSE_CODE;
   message?: string;
 }
+
+export interface AnchorContactedRequest {
+  anchor_check_ids: string[];
+}
+
+export interface AnchorContactedResponse {
+  status_code: RESPONSE_CODE;
+  message?: string;
+}

@@ -132,14 +132,16 @@ const showOptions = computed<Option[]>(() => {
     >
       <div class="option">
         {{ option.label }}
-        <ElTag v-if="option.isSelf" size="small" type="success"> 本人 </ElTag>
-        <ElTag
-          v-if="option.role"
-          size="small"
-          :type="option.role === OrgMemberRole.admin ? 'primary' : 'info'"
-        >
-          {{ option.role === OrgMemberRole.admin ? '管理员' : '普通用户' }}
-        </ElTag>
+        <div class="member-tags">
+          <ElTag v-if="option.isSelf" size="small" type="success"> 本人 </ElTag>
+          <ElTag
+            v-if="option.role"
+            size="small"
+            :type="option.role === OrgMemberRole.admin ? 'primary' : 'info'"
+          >
+            {{ option.role === OrgMemberRole.admin ? '管理员' : '普通用户' }}
+          </ElTag>
+        </div>
       </div>
     </ElOption>
   </ElSelect>
@@ -151,5 +153,10 @@ const showOptions = computed<Option[]>(() => {
   align-items: center;
   justify-content: space-between;
   column-gap: 0.25rem;
+  .member-tags {
+    display: flex;
+    align-items: center;
+    column-gap: 0.25rem;
+  }
 }
 </style>

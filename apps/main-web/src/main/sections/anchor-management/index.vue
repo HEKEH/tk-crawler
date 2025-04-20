@@ -2,11 +2,15 @@
 import { ElMenu, ElMenuItem } from 'element-plus';
 import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { useGlobalStore } from '../../utils';
+import AnchorContactTable from './anchor-contact';
 import AnchorTable from './anchor-table';
 
 defineOptions({
   name: 'AnchorManagement',
 });
+
+const globalStore = useGlobalStore();
 
 enum MenuType {
   ANCHOR_TABLE = 'anchor-table',
@@ -18,9 +22,17 @@ const anchorTableMenu = {
   type: MenuType.ANCHOR_TABLE,
   label: '主播列表',
 };
-const MenuList = [anchorTableMenu];
+const anchorContactMenu = {
+  type: MenuType.ANCHOR_CONTACT,
+  label: '主播建联',
+};
+const MenuList = computed(() =>
+  globalStore.userProfile.isAdmin
+    ? [anchorTableMenu, anchorContactMenu]
+    : [anchorContactMenu, anchorTableMenu],
+);
 const currentMenu = computed(() => {
-  return (route.params.subMenu || MenuList[0].type) as MenuType;
+  return (route.params.subMenu || MenuList.value[0].type) as MenuType;
 });
 
 function handleSelectMenu(key: string) {
@@ -50,6 +62,9 @@ function handleSelectMenu(key: string) {
     <div class="right-part">
       <KeepAlive>
         <AnchorTable v-if="currentMenu === MenuType.ANCHOR_TABLE" />
+      </KeepAlive>
+      <KeepAlive>
+        <AnchorContactTable v-if="currentMenu === MenuType.ANCHOR_CONTACT" />
       </KeepAlive>
     </div>
   </div>

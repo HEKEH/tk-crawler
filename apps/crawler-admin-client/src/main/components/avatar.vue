@@ -11,7 +11,8 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  url: '/default-avatar.jpeg',
+  // 目前没有加路由，可以使用相对路径。如果加路由，会有问题。但是加绝对路径，在生产环境也会报错。遇到问题时需要重新修改
+  url: 'default-avatar.jpeg',
   size: 40,
   alt: '头像',
 });

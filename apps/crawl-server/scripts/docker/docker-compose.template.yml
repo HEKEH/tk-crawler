@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  server:
+    container_name: ${IMAGE_NAME}
+    image: ${IMAGE_NAME}:${VERSION}
+    ports:
+      - '${PORT}:${PORT}'
+    volumes:
+      - /var/log/${IMAGE_NAME}:/var/log/${IMAGE_NAME}
+    restart: unless-stopped

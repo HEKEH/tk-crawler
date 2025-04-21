@@ -16,9 +16,9 @@ async function loginTiktok() {
 
 <template>
   <div class="cookie-not-valid-view">
-    <div>无法获取Tiktok Cookie，或者 Cookie 已失效，请重新登录 Tiktok 账号</div>
+    <div>TK未登录或登录状态已失效，请重新登录TK账号以继续使用</div>
     <ElButton type="primary" @click.prevent="loginTiktok">
-      打开Tiktok登录页
+      打开TK登录页
     </ElButton>
   </div>
 </template>

@@ -54,13 +54,13 @@ async function handlePasswordChange(data: OrgMemberChangePasswordRequest) {
 <template>
   <ElDropdown trigger="hover" popper-class="avatar-dropdown-menu">
     <div class="avatar-wrapper">
-      <Avatar :size="32" url="/default-avatar.jpeg" />
+      <Avatar :size="32" />
     </div>
 
     <template #dropdown>
       <div class="dropdown-content">
         <div class="user-info">
-          <Avatar :size="28" url="/default-avatar.jpeg" />
+          <Avatar :size="28" />
           <div class="user-details">
             <div class="username">{{ userInfo.username }}</div>
           </div>

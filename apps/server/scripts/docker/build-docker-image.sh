@@ -181,6 +181,38 @@ function run_container() {
   fi
 }
 
+function generate_docker_compose_file() {
+  local docker_compose_file="${SCRIPT_DIR}/docker-compose.yml"
+  local template_file="${SCRIPT_DIR}/docker-compose.template.yml"
+
+  # Check template exists
+  if [ ! -f "$template_file" ]; then
+    log_error "Template file not found: $template_file"
+    exit 1
+  fi
+
+  # Validate required variables
+  if [ -z "$VERSION" ] || [ -z "$PORT" ] || [ -z "$IMAGE_NAME" ]; then
+    log_error "Required variables VERSION or PORT or IMAGE_NAME not set"
+    exit 1
+  fi
+
+  # Generate new file using envsubst
+
+  # 替换变量
+  IMAGE_NAME=$IMAGE_NAME \
+    PORT=$PORT \
+    VERSION=$VERSION \
+    envsubst '${IMAGE_NAME} ${PORT} ${VERSION}' <"$template_file" >"$docker_compose_file"
+
+  if [ $? -eq 0 ] && [ -s "$docker_compose_file" ]; then
+    log "Docker compose file generated: ${docker_compose_file}"
+  else
+    log_error "Failed to generate docker-compose file"
+    exit 1
+  fi
+}
+
 function main() {
   log "Starting build process..."
 
@@ -201,6 +233,8 @@ function main() {
   else
     log "Build-only mode, skipping container deployment"
   fi
+
+  generate_docker_compose_file
 
   log "All tasks completed successfully. See ${LOG_FILE} for details."
 }

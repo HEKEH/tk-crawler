@@ -11,6 +11,7 @@ export const CUSTOM_EVENTS = {
   ANCHOR_CRAWLED: 'anchor-crawled',
   // 请求错误，一般是vpn问题
   CRAWL_REQUEST_ERROR: 'crawl-request-error',
+  CLEAR_TIKTOK_COOKIE: 'clear-tiktok-cookie',
 };
 
 export const TOKEN_EVENTS = {

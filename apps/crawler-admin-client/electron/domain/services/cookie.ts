@@ -44,3 +44,20 @@ export function saveTiktokCookie(cookies: [string, string][] | string) {
     logger.error('Failed to save cookie file:', error);
   }
 }
+
+export function clearTiktokCookie() {
+  const cookiePath = getTiktokCookiePath();
+  if (!cookiePath) {
+    throw new Error('Cookie path is not set');
+  }
+  try {
+    const dir = dirname(cookiePath);
+    if (!existsSync(dir)) {
+      mkdirSync(dir, { recursive: true });
+    }
+    writeFileSync(cookiePath, '');
+    setTiktokCookie('');
+  } catch (error) {
+    logger.error('Failed to clear cookie file:', error);
+  }
+}

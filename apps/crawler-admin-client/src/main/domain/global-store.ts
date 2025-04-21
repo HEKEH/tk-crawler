@@ -3,6 +3,7 @@ import type {
   SystemUserLoginSuccessData,
 } from '@tk-crawler/biz-shared';
 import type { Subscription } from 'rxjs';
+import { CUSTOM_EVENTS } from '@tk-crawler-admin-client/shared';
 import {
   InitializationState,
   MessageCenter,
@@ -103,6 +104,7 @@ export default class GlobalStore {
   async logout() {
     await removeToken();
     await this.clear();
+    await window.ipcRenderer.invoke(CUSTOM_EVENTS.CLEAR_TIKTOK_COOKIE);
     this._gotoLoginPage();
   }
 
@@ -123,10 +125,6 @@ export default class GlobalStore {
       this._initializationState.reset();
       throw error;
     }
-  }
-
-  async initCrawlerManage() {
-    await this.crawlerManage.init();
   }
 
   setCurrentMenu(menu: Page) {

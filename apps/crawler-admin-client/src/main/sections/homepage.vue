@@ -11,7 +11,6 @@ defineOptions({
   name: 'Homepage',
 });
 const globalStore = useGlobalStore();
-globalStore.initCrawlerManage();
 
 const currentPage = computed(() => {
   return globalStore.currentPage;

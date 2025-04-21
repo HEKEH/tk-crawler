@@ -13,7 +13,7 @@ import {
 import { ipcMain } from 'electron';
 import { CUSTOM_EVENTS } from '../../constants';
 import { logger } from '../../infra/logger';
-import { syncTiktokCookie } from './cookie';
+import { clearTiktokCookie, syncTiktokCookie } from './cookie';
 import { getToken, removeToken, saveToken } from './token';
 
 export class Services {
@@ -118,6 +118,7 @@ export class Services {
     this._addEventHandler(CUSTOM_EVENTS.GET_CRAWL_STATUS, () => {
       return this._crawler.crawlStatus;
     });
+    this._addEventHandler(CUSTOM_EVENTS.CLEAR_TIKTOK_COOKIE, clearTiktokCookie);
     this._addEventHandler(TOKEN_EVENTS.GET_TOKEN, getToken);
     this._addEventHandler(TOKEN_EVENTS.SET_TOKEN, (_, token) =>
       saveToken(token),

@@ -12,6 +12,8 @@ import {
 } from '../requests';
 
 export default class CrawlerManage {
+  private _isCookieChecked: boolean = false;
+
   private _isInitialized: boolean = false;
 
   private _tiktokCookieValidStatus: IsCookieValidResultStatus =
@@ -21,8 +23,8 @@ export default class CrawlerManage {
 
   private _crawlStatusInterval: NodeJS.Timeout | null = null;
 
-  get isInitialized() {
-    return this._isInitialized;
+  get isCookieChecked() {
+    return this._isCookieChecked;
   }
 
   get crawlStatus() {
@@ -65,12 +67,16 @@ export default class CrawlerManage {
   }
 
   async checkTiktokCookieValid() {
-    this._isInitialized = false;
+    this._isCookieChecked = false;
     this._tiktokCookieValidStatus = await checkTiktokCookieValid();
-    this._isInitialized = true;
+    this._isCookieChecked = true;
   }
 
   async init() {
+    if (this._isInitialized) {
+      return;
+    }
+    this._isInitialized = true;
     this._addEventListeners();
     // 实时监控crawl状态
     this._crawlStatusInterval = setInterval(
@@ -114,5 +120,6 @@ export default class CrawlerManage {
       clearInterval(this._crawlStatusInterval);
       this._crawlStatusInterval = null;
     }
+    this._isInitialized = false;
   }
 }

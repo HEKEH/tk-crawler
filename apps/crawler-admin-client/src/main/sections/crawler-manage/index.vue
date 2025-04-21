@@ -22,6 +22,8 @@ const globalStore = useGlobalStore();
 
 const crawlerManage = computed(() => globalStore.crawlerManage);
 
+crawlerManage.value.init();
+
 async function loginTiktok() {
   await crawlerManage.value.loginTiktok();
 }
@@ -90,8 +92,8 @@ onBeforeUnmount(() => {
 
 <template>
   <div
-    v-if="!crawlerManage.isInitialized"
-    v-loading="!crawlerManage.isInitialized"
+    v-if="!crawlerManage.isCookieChecked"
+    v-loading="true"
     :style="{ width: '100%', height: '100%', overflow: 'hidden' }"
     element-loading-text="加载中..."
   />

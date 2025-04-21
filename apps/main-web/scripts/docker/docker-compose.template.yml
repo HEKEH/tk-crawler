@@ -1,0 +1,9 @@
+version: '3.8'
+
+services:
+  server:
+    container_name: ${IMAGE_NAME}
+    image: ${IMAGE_NAME}:${VERSION}
+    ports:
+      - '${PORT}:8080'
+    restart: unless-stopped

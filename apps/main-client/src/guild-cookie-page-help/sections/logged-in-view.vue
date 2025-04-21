@@ -16,12 +16,12 @@ function finish() {
     <div class="description">
       激活过程中有可能遇到如下验证弹窗，此时需要您在页面手动操作来通过验证。
     </div>
-    <ElImage class="image" src="/images/live-admin-verify-popup.png" />
+    <ElImage class="image" src="images/live-admin-verify-popup.png" />
     <div class="description">
       如果您看到如下页面，则表明激活成功。此时请点击右侧完成按钮 →
       <ElButton type="primary" size="small" @click="finish"> 完成 </ElButton>
     </div>
-    <ElImage class="image" src="/images/account-activate-finish.png" />
+    <ElImage class="image" src="images/account-activate-finish.png" />
   </div>
 </template>
 

@@ -130,8 +130,8 @@ importers:
         version: 11.1.0
     devDependencies:
       '@types/bcryptjs':
-        specifier: ^2.4.6
-        version: 2.4.6
+        specifier: ^3.0.0
+        version: 3.0.0
       '@types/koa':
         specifier: ^2.15.0
         version: 2.15.0
@@ -151,8 +151,8 @@ importers:
         specifier: ^1.7.9
         version: 1.8.3
       bcryptjs:
-        specifier: ^2.4.3
-        version: 2.4.3
+        specifier: ^3.0.2
+        version: 3.0.2
       dayjs:
         specifier: ^1.11.13
         version: 1.11.13
@@ -190,6 +190,9 @@ importers:
       '@tanstack/vue-query':
         specifier: ^5.66.11
         version: 5.68.0(vue@3.5.13)
+      '@tk-crawler/plugins':
+        specifier: workspace:*
+        version: link:../../packages/plugins
       '@types/global-agent':
         specifier: ^2.1.3
         version: 2.1.3
@@ -250,6 +253,9 @@ importers:
 
   apps/follow-client:
     devDependencies:
+      '@tk-crawler/plugins':
+        specifier: workspace:*
+        version: link:../../packages/plugins
       '@types/global-agent':
         specifier: ^2.1.3
         version: 2.1.3
@@ -419,6 +425,9 @@ importers:
       '@tanstack/vue-query':
         specifier: ^5.66.11
         version: 5.68.0(vue@3.5.13)
+      '@tk-crawler/plugins':
+        specifier: workspace:*
+        version: link:../../packages/plugins
       '@types/global-agent':
         specifier: ^2.1.3
         version: 2.1.3
@@ -499,8 +508,8 @@ importers:
         version: 11.1.0
     devDependencies:
       '@types/bcryptjs':
-        specifier: ^2.4.6
-        version: 2.4.6
+        specifier: ^3.0.0
+        version: 3.0.0
       '@types/koa':
         specifier: ^2.15.0
         version: 2.15.0
@@ -520,8 +529,8 @@ importers:
         specifier: ^1.7.9
         version: 1.8.3
       bcryptjs:
-        specifier: ^2.4.3
-        version: 2.4.3
+        specifier: ^3.0.2
+        version: 3.0.2
       dayjs:
         specifier: ^1.11.13
         version: 1.11.13
@@ -589,12 +598,18 @@ importers:
         specifier: ^11.0.3
         version: 11.1.0
     devDependencies:
+      '@types/bcryptjs':
+        specifier: ^3.0.0
+        version: 3.0.0
       '@types/ioredis':
         specifier: ^5.0.0
         version: 5.0.0
       '@types/uuid':
         specifier: ^10.0.0
         version: 10.0.0
+      bcryptjs:
+        specifier: ^3.0.2
+        version: 3.0.2
 
   packages/electron-utils:
     dependencies:
@@ -637,9 +652,16 @@ importers:
 
   packages/server-shared:
     dependencies:
+      bcryptjs:
+        specifier: ^3.0.2
+        version: 3.0.2
       dayjs:
         specifier: ^1.11.13
         version: 1.11.13
+    devDependencies:
+      '@types/bcryptjs':
+        specifier: ^3.0.0
+        version: 3.0.0
 
   packages/shared:
     dependencies:
@@ -694,6 +716,9 @@ importers:
       element-plus:
         specifier: ^2.9.6
         version: 2.9.6(vue@3.5.13)
+      rxjs:
+        specifier: ^7.8.1
+        version: 7.8.2
       vue:
         specifier: ^3.5.12
         version: 3.5.13(typescript@5.5.4)
@@ -2987,8 +3012,11 @@ packages:
     resolution: {integrity: sha512-ebDJ9b0e702Yr7pWgB0jzm+CX4Srzz8RcXtLJDJB+BSccqMa36uyH/zUsSYao5+BD1ytv3k3rPYCq4mAE1hsXA==}
     dev: true
 
-  /@types/bcryptjs@2.4.6:
-    resolution: {integrity: sha512-9xlo6R2qDs5uixm0bcIqCeMCE6HiQsIyel9KQySStiyqNl2tnj2mP3DX1Nf56MD6KMenNNlBBsy3LJ7gUEQPXQ==}
+  /@types/bcryptjs@3.0.0:
+    resolution: {integrity: sha512-WRZOuCuaz8UcZZE4R5HXTco2goQSI2XxjGY3hbM/xDvwmqFWd4ivooImsMx65OKM6CtNKbnZ5YL+YwAwK7c1dg==}
+    deprecated: This is a stub types definition. bcryptjs provides its own type definitions, so you do not need this installed.
+    dependencies:
+      bcryptjs: 3.0.2
     dev: true
 
   /@types/body-parser@1.19.5:
@@ -4458,9 +4486,9 @@ packages:
     engines: {node: '>=10.0.0'}
     dev: false
 
-  /bcryptjs@2.4.3:
-    resolution: {integrity: sha512-V/Hy/X9Vt7f3BbPJEi8BdVFMByHi+jNXrYkW3huaybV/kQ0KJg0Y6PkEMbn+zeT+i+SiKZ/HMqJGIIt4LZDqNQ==}
-    dev: true
+  /bcryptjs@3.0.2:
+    resolution: {integrity: sha512-k38b3XOZKv60C4E2hVsXTolJWfkGRMbILBIe2IBITXciy5bOsTKot5kDrf3ZfufQtQOUN5mXceUEpU1rTl9Uog==}
+    hasBin: true
 
   /binary-extensions@2.3.0:
     resolution: {integrity: sha512-Ceh+7ox5qe7LJuLHoY0feh3pHuUDHAcRUeyL2VYghZwfpkNIy/+8Ocg0a3UuSoYzavmylwuLWQOf3hl0jjMMIw==}

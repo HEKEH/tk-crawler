@@ -34,6 +34,7 @@ import {
   updateOrg,
   updateOrgMembership,
 } from '../../../requests';
+import { useGlobalStore } from '../../../utils';
 import OrgFormDialog from './org-form-dialog.vue';
 import OrgMembershipDialog from './org-membership-dialog.vue';
 
@@ -55,6 +56,8 @@ interface ScopeType {
   $index: number;
 }
 
+const globalStore = useGlobalStore();
+
 const tableRef = ref<InstanceType<typeof ElTable>>();
 const pageNum = ref(1);
 const pageSize = ref(10);
@@ -70,11 +73,14 @@ const { data, isLoading, isError, error, refetch } = useQuery<
     const orderBy = sortField.value
       ? { [sortField.value]: sortOrder.value === 'ascending' ? 'asc' : 'desc' }
       : undefined;
-    const response = await getOrgList({
-      page_num: pageNum.value,
-      page_size: pageSize.value,
-      order_by: orderBy,
-    });
+    const response = await getOrgList(
+      {
+        page_num: pageNum.value,
+        page_size: pageSize.value,
+        order_by: orderBy,
+      },
+      globalStore.token,
+    );
     return response.data;
   },
   placeholderData: previousData => previousData,
@@ -125,15 +131,21 @@ async function toggleDisableItem(row: OrganizationItem) {
     } catch {
       return;
     }
-    updateResp = await updateOrg({
-      id: row.id,
-      status: OrganizationStatus.disabled,
-    });
+    updateResp = await updateOrg(
+      {
+        id: row.id,
+        status: OrganizationStatus.disabled,
+      },
+      globalStore.token,
+    );
   } else {
-    updateResp = await updateOrg({
-      id: row.id,
-      status: OrganizationStatus.normal,
-    });
+    updateResp = await updateOrg(
+      {
+        id: row.id,
+        status: OrganizationStatus.normal,
+      },
+      globalStore.token,
+    );
   }
   if (updateResp.status_code === RESPONSE_CODE.SUCCESS) {
     await refetch();
@@ -149,7 +161,7 @@ async function deleteOrganization(item: OrganizationItem) {
   } catch {
     return;
   }
-  const resp = await deleteOrg({ id: item.id });
+  const resp = await deleteOrg({ id: item.id }, globalStore.token);
   if (resp.status_code === RESPONSE_CODE.SUCCESS) {
     await refetch();
     ElMessage.success('删除成功');
@@ -178,10 +190,11 @@ function onCloseFormDialog() {
 async function handleCreateOrEdit(data: Partial<OrganizationItem>) {
   let result: CreateOrgResponse | UpdateOrgResponse;
   if (formMode.value === 'create') {
-    result = await createOrg(data as CreateOrgRequest);
+    result = await createOrg(data as CreateOrgRequest, globalStore.token);
   } else {
     result = await updateOrg(
       omit(data, ['created_at', 'updated_at']) as UpdateOrgRequest,
+      globalStore.token,
     );
   }
   if (result.status_code !== RESPONSE_CODE.SUCCESS) {
@@ -200,10 +213,13 @@ function openUpdateOrgMembershipDialog(item: OrganizationItem) {
   orgMembershipDialogVisible.value = true;
 }
 async function handleUpdateOrgMembership(data: { membership_days: number }) {
-  const resp = await updateOrgMembership({
-    id: orgMembershipEditId.value!,
-    membership_days: data.membership_days,
-  });
+  const resp = await updateOrgMembership(
+    {
+      id: orgMembershipEditId.value!,
+      membership_days: data.membership_days,
+    },
+    globalStore.token,
+  );
   if (resp.status_code === RESPONSE_CODE.SUCCESS) {
     await refetch();
     onCloseOrgMembershipDialog();

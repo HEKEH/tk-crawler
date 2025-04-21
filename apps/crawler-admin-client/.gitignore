@@ -1,3 +1,4 @@
 dist-electron
 release
-tiktok-cookies
+.tiktok-cookies
+.system-admin-token

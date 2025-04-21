@@ -4,12 +4,15 @@ import {
   commonRequest as sharedCommonRequest,
 } from '@tk-crawler/shared';
 import { ElNotification } from 'element-plus';
+import { Subject } from 'rxjs';
 
 interface CommonRequestParams<RequestParams>
   extends Omit<SharedCommonRequestParams<RequestParams>, 'onBusinessError'> {
   hideErrorNotify?: boolean;
   onTokenInvalid?: () => void;
 }
+
+export const TokenInvalidSubject = new Subject<void>();
 
 export async function commonRequest<
   ResponseData extends { status_code: number; message?: string },
@@ -28,6 +31,7 @@ export async function commonRequest<
     }
     if (data.status_code === RESPONSE_CODE.TOKEN_INVALID) {
       onTokenInvalid?.();
+      TokenInvalidSubject.next();
     }
   }
   return data;

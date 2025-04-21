@@ -4,12 +4,12 @@ import type {
   AnchorFrom87RawData,
 } from '@tk-crawler/biz-shared';
 import type { IpcRendererEvent } from 'electron';
+import { ArrowRight, DataAnalysis } from '@element-plus/icons-vue';
 import { ElectronRenderListeners } from '@tk-crawler/electron-utils/render';
 import { MessageQueue } from '@tk-crawler/view-shared';
 import { COLLECT_PAGE_HELP_EVENTS } from '@tk-mobile-follow-client/shared';
-import { markRaw, onBeforeUnmount, ref } from 'vue';
 import { ElIcon } from 'element-plus';
-import { DataAnalysis, ArrowRight } from '@element-plus/icons-vue';
+import { markRaw, onBeforeUnmount, ref } from 'vue';
 
 defineOptions({
   name: 'CollectView',
@@ -51,6 +51,7 @@ electronRenderListeners.on(
   onAnchorListFetched,
 );
 onBeforeUnmount(() => {
+  messageQueue.clearMessages();
   electronRenderListeners.off(
     COLLECT_PAGE_HELP_EVENTS.ANCHOR_LIST_FETCHED,
     onAnchorListFetched,
@@ -69,7 +70,7 @@ onBeforeUnmount(() => {
         >将右侧表格"每页显示条数"设置为200，可大幅提升数据采集速度。
       </div>
     </div>
-    <div class="tip" v-if="groupName">
+    <div v-if="groupName" class="tip">
       <ElIcon><DataAnalysis /></ElIcon>
       正在为分组
       <span class="group-name">「{{ groupName }}」</span>

@@ -1,16 +1,16 @@
 <script setup lang="ts">
+import type { IpcRendererEvent } from 'electron';
 import { ArrowLeftBold } from '@element-plus/icons-vue';
+import { ElectronRenderListeners } from '@tk-crawler/electron-utils/render';
 import {
   GUILD_COOKIE_PAGE_HELP_EVENTS,
   GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS,
 } from '@tk-crawler/main-client-shared';
+import { MessageQueue } from '@tk-crawler/view-shared';
 import { ElButton, ElIcon } from 'element-plus';
 import { onBeforeUnmount, ref } from 'vue';
 import LoggedInView from './logged-in-view.vue';
 import NotLoginView from './not-login-view.vue';
-import { MessageQueue } from '@tk-crawler/view-shared';
-import { ElectronRenderListeners } from '@tk-crawler/electron-utils/render';
-import { IpcRendererEvent } from 'electron';
 
 defineOptions({
   name: 'MainView',
@@ -53,6 +53,7 @@ electronRenderListeners.on(
 );
 
 onBeforeUnmount(() => {
+  messageQueue.clearMessages();
   electronRenderListeners.off(
     GUILD_COOKIE_PAGE_HELP_EVENTS.REQUEST_ERROR,
     handleRequestError,

@@ -1,4 +1,5 @@
-export enum Menu {
+export enum Page {
   Crawler = 'Crawler',
   Client = 'Client',
+  Login = 'Login',
 }

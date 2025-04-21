@@ -1,8 +1,5 @@
-import type {
-  AnchorFollowGroupItem } from '@tk-crawler/biz-shared';
-import {
-  RequestErrorType,
-} from '@tk-crawler/biz-shared';
+import type { AnchorFollowGroupItem } from '@tk-crawler/biz-shared';
+import { RequestErrorType } from '@tk-crawler/biz-shared';
 import { ElectronRenderListeners } from '@tk-crawler/electron-utils/render';
 import { MessageCenter } from '@tk-crawler/shared';
 import { MessageQueue } from '@tk-crawler/view-shared';
@@ -121,6 +118,7 @@ export default class GlobalStore {
   }
 
   clear() {
+    this._messageQueue.clearMessages();
     this._removeEventListeners();
   }
 }

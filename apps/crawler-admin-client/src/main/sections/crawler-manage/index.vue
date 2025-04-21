@@ -9,7 +9,7 @@ import { RequestErrorType } from '@tk-crawler/biz-shared';
 import { ElectronRenderListeners } from '@tk-crawler/electron-utils/render';
 import { MessageQueue } from '@tk-crawler/view-shared';
 import { onBeforeUnmount, onMounted } from 'vue';
-import { useGlobalStore } from '../../utils/vue';
+import { useGlobalStore } from '../../utils';
 import ControlButtons from './control-buttons.vue';
 import CookieCheckErrorView from './cookie-check-error-view.vue';
 import CookieNotValidView from './cookie-not-valid-view.vue';

@@ -61,5 +61,6 @@ export class MessageQueue {
     this._messageQueue.forEach(msg => {
       msg.instance.close();
     });
+    this._messageQueue = [];
   }
 }

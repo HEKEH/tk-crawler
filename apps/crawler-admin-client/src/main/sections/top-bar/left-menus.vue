@@ -1,24 +1,35 @@
 <script setup lang="ts">
 import { ElLink } from 'element-plus';
-import { Menu } from '../../types';
-import { useGlobalStore } from '../../utils/vue';
+import { computed } from 'vue';
+import { Page } from '../../types';
+import { useGlobalStore } from '../../utils';
 
 defineOptions({
   name: 'LeftMenus',
 });
 
-const Menus = [
-  {
-    key: Menu.Crawler,
-    name: '爬虫管理',
-  },
-  {
-    key: Menu.Client,
-    name: '客户管理',
-  },
-];
-
 const globalStore = useGlobalStore();
+
+const Menus = computed(() => {
+  if (globalStore.currentPage === Page.Login) {
+    return [
+      {
+        key: Page.Login,
+        name: '登录',
+      },
+    ];
+  }
+  return [
+    {
+      key: Page.Crawler,
+      name: '爬虫管理',
+    },
+    {
+      key: Page.Client,
+      name: '客户管理',
+    },
+  ];
+});
 </script>
 
 <template>
@@ -26,7 +37,7 @@ const globalStore = useGlobalStore();
     <div v-for="menu in Menus" :key="menu.key" class="left-menu">
       <ElLink
         class="left-menu-item"
-        :class="{ active: globalStore.currentMenu === menu.key }"
+        :class="{ active: globalStore.currentPage === menu.key }"
         :underline="false"
         @click="globalStore.setCurrentMenu(menu.key)"
       >

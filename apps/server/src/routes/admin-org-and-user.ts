@@ -1,7 +1,10 @@
 import Router from 'koa-router';
 import OrgAndUserController from '../controllers/org-and-user';
+import { systemTokenAuthMiddleware } from '../middlewares';
 
 const adminOrgAndUserRouter = new Router({ prefix: '/admin/org-and-user' });
+
+adminOrgAndUserRouter.use(systemTokenAuthMiddleware());
 
 adminOrgAndUserRouter.post('/get-org-list', OrgAndUserController.getOrgList);
 

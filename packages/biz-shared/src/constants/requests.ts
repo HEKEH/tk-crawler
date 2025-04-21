@@ -1,5 +1,5 @@
 export const CLIENT_TOKEN_HEADER_KEY = 'x-tkc-token';
-export const ADMIN_TOKEN_HEADER_KEY = 'x-tka-token';
+export const SYSTEM_TOKEN_HEADER_KEY = 'x-tk-sys-token';
 
 export const LOG_ID_HEADER_KEY = 'x-tkc-log-id';
 

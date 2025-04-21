@@ -7,7 +7,10 @@
     "preinstall": "npx only-allow pnpm"
   },
   "peerDependencies": {
+    "bcryptjs": "^3.0.2",
     "dayjs": "^1.11.13"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@types/bcryptjs": "^3.0.0"
+  }
 }

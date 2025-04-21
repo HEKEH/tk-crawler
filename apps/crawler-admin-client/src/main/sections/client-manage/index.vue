@@ -3,7 +3,7 @@ import type OrgMembersManageTabModel from '../../domain/client-manage/members-ma
 import type OrgManageTabModel from '../../domain/client-manage/org-manage-tab-model';
 import { ElTabPane, ElTabs } from 'element-plus';
 import { ClientTabType } from '../../domain/client-manage/types';
-import { useGlobalStore } from '../../utils/vue';
+import { useGlobalStore } from '../../utils';
 import OrgManage from './org-manage/index.vue';
 import OrgMembersManage from './org-members-manage/index.vue';
 

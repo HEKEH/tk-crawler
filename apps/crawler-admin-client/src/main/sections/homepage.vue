@@ -1,17 +1,20 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { Menu } from '../types';
-import { useGlobalStore } from '../utils/vue';
+import { Page } from '../types';
+import { useGlobalStore } from '../utils';
 import ClientManage from './client-manage/index.vue';
 import CrawlerManage from './crawler-manage/index.vue';
+import Login from './login/index.vue';
 import TopBar from './top-bar/index.vue';
 
 defineOptions({
   name: 'Homepage',
 });
 const globalStore = useGlobalStore();
-const currentMenu = computed(() => {
-  return globalStore.currentMenu;
+globalStore.initCrawlerManage();
+
+const currentPage = computed(() => {
+  return globalStore.currentPage;
 });
 </script>
 
@@ -19,9 +22,10 @@ const currentMenu = computed(() => {
   <div class="homepage">
     <TopBar />
     <div class="body">
-      <CrawlerManage v-if="currentMenu === Menu.Crawler" />
+      <Login v-if="currentPage === Page.Login" />
+      <CrawlerManage v-else-if="currentPage === Page.Crawler" />
       <KeepAlive>
-        <ClientManage v-if="currentMenu === Menu.Client" />
+        <ClientManage v-if="currentPage === Page.Client" />
       </KeepAlive>
     </div>
   </div>

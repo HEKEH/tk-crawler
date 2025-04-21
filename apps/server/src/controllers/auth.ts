@@ -5,7 +5,7 @@ import type {
 } from '@tk-crawler/biz-shared';
 import type { Context, Next } from 'koa';
 import { logger } from '../infra/logger';
-import { changePassword, orgMemberLogin } from '../services';
+import { changeOrgUserPassword, orgMemberLogin } from '../services';
 
 export default class AuthController {
   static async orgMemberLogin(ctx: Context, next: Next) {
@@ -22,7 +22,10 @@ export default class AuthController {
 
   static async changePassword(ctx: Context, next: Next) {
     const data = ctx.getRequestData<OrgMemberChangePasswordRequest>();
-    await changePassword(data, ctx.clientInfo!.user_info as OrgMemberItem);
+    await changeOrgUserPassword(
+      data,
+      ctx.clientInfo!.user_info as OrgMemberItem,
+    );
     ctx.body = ctx.t('Success');
     await next();
   }

@@ -1,7 +1,10 @@
 import type { CommonResult, MessageCenter } from '@tk-crawler/shared';
 import type { Crawler } from '../crawler';
 import type { ViewsManager } from '../views';
-import { IsCookieValidResultStatus } from '@tk-crawler-admin-client/shared';
+import {
+  IsCookieValidResultStatus,
+  TOKEN_EVENTS,
+} from '@tk-crawler-admin-client/shared';
 import { getVerifyFp } from '@tk-crawler/biz-shared';
 import {
   checkTiktokCookieValid,
@@ -11,6 +14,7 @@ import { ipcMain } from 'electron';
 import { CUSTOM_EVENTS } from '../../constants';
 import { logger } from '../../infra/logger';
 import { syncTiktokCookie } from './cookie';
+import { getToken, removeToken, saveToken } from './token';
 
 export class Services {
   private _crawler: Crawler;
@@ -111,6 +115,11 @@ export class Services {
     this._addEventHandler(CUSTOM_EVENTS.STOP_LIVE_ANCHOR_CRAWL, () => {
       return this._stopCrawl();
     });
+    this._addEventHandler(TOKEN_EVENTS.GET_TOKEN, getToken);
+    this._addEventHandler(TOKEN_EVENTS.SET_TOKEN, (_, token) =>
+      saveToken(token),
+    );
+    this._addEventHandler(TOKEN_EVENTS.REMOVE_TOKEN, removeToken);
   }
 
   destroy() {

@@ -5,7 +5,7 @@
 
 // export function getTiktokCookiePath() {
 //   if (isProduction) {
-//     return path.join(app.getPath('userData'), 'tiktok-cookies');
+//     return path.join(app.getPath('userData'), '.tiktok-cookies');
 //   }
-//   return path.join(process.cwd(), 'tiktok-cookies');
+//   return path.join(process.cwd(), '.tiktok-cookies');
 // }

@@ -9,6 +9,7 @@ interface CustomContext {
   t: (key: string, options?: TOptions) => string;
 
   readonly clientInfo?: OrgMemberUserInfoWithOrgInfo;
+  readonly systemUserInfo?: SystemUserInfo;
 }
 
 declare module 'koa' {

@@ -27,7 +27,7 @@ export async function getOrgMemberInfoByToken(
   if (expires < Date.now()) {
     throw new TokenInvalidError('Token已过期，请重新登录');
   }
-  const user = await mysqlClient.prismaClient.orgUser.findFirst({
+  const user = await mysqlClient.prismaClient.orgUser.findUnique({
     where: {
       id: BigInt(userId),
     },

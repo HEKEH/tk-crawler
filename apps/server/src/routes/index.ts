@@ -4,6 +4,7 @@ import anchorPoolRouter from './anchor-pool';
 import authRouter from './auth';
 import clientRouter from './client';
 import followHelpRouter from './follow-help';
+import systemRouter from './system';
 
 const router = new Router();
 
@@ -16,5 +17,5 @@ router.use(
 router.use(authRouter.routes(), authRouter.allowedMethods());
 router.use(followHelpRouter.routes(), followHelpRouter.allowedMethods());
 router.use(clientRouter.routes(), clientRouter.allowedMethods());
-
+router.use(systemRouter.routes(), systemRouter.allowedMethods());
 export default router;

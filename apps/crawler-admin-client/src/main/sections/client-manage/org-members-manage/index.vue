@@ -28,6 +28,7 @@ import {
   getOrgMemberList,
   updateOrgMember,
 } from '../../../requests';
+import { useGlobalStore } from '../../../utils';
 import FormDialog from './member-form-dialog.vue';
 
 defineOptions({
@@ -51,6 +52,7 @@ const pageNum = ref(1);
 const pageSize = ref(10);
 const sortField = ref<keyof OrgMemberItem>();
 const sortOrder = ref<'ascending' | 'descending'>();
+const globalStore = useGlobalStore();
 
 const { data, isLoading, isError, error, refetch } = useQuery<
   GetOrgMemberListResponseData | undefined
@@ -68,12 +70,15 @@ const { data, isLoading, isError, error, refetch } = useQuery<
     const orderBy = sortField.value
       ? { [sortField.value]: sortOrder.value === 'ascending' ? 'asc' : 'desc' }
       : undefined;
-    const response = await getOrgMemberList({
-      org_id: props.model.org.id,
-      page_num: pageNum.value,
-      page_size: pageSize.value,
-      order_by: orderBy,
-    });
+    const response = await getOrgMemberList(
+      {
+        org_id: props.model.org.id,
+        page_num: pageNum.value,
+        page_size: pageSize.value,
+        order_by: orderBy,
+      },
+      globalStore.token,
+    );
     return response.data;
   },
   placeholderData: previousData => previousData,
@@ -121,21 +126,27 @@ async function toggleDisableItem(row: Omit<OrgMemberItem, 'password'>) {
     } catch {
       return;
     }
-    updateResp = await updateOrgMember({
-      org_id: row.org_id,
-      data: {
-        id: row.id,
-        status: OrgMemberStatus.disabled,
+    updateResp = await updateOrgMember(
+      {
+        org_id: row.org_id,
+        data: {
+          id: row.id,
+          status: OrgMemberStatus.disabled,
+        },
       },
-    });
+      globalStore.token,
+    );
   } else {
-    updateResp = await updateOrgMember({
-      org_id: row.org_id,
-      data: {
-        id: row.id,
-        status: OrgMemberStatus.normal,
+    updateResp = await updateOrgMember(
+      {
+        org_id: row.org_id,
+        data: {
+          id: row.id,
+          status: OrgMemberStatus.normal,
+        },
       },
-    });
+      globalStore.token,
+    );
   }
   if (updateResp.status_code === RESPONSE_CODE.SUCCESS) {
     await refetch();
@@ -150,10 +161,13 @@ async function deleteItem(item: Omit<OrgMemberItem, 'password'>) {
   } catch {
     return;
   }
-  const resp = await deleteOrgMember({
-    id: item.id,
-    org_id: item.org_id,
-  });
+  const resp = await deleteOrgMember(
+    {
+      id: item.id,
+      org_id: item.org_id,
+    },
+    globalStore.token,
+  );
   if (resp.status_code === RESPONSE_CODE.SUCCESS) {
     await refetch();
     ElMessage.success('删除成功');
@@ -179,18 +193,24 @@ async function handleSubmitCreateOrEdit(data: Partial<OrgMemberItem>) {
   const orgId = props.model.org.id;
   let result: CreateOrgMemberResponse | UpdateOrgMemberResponse;
   if (formMode.value === 'create') {
-    result = await createOrgMember({
-      ...data,
-      org_id: orgId,
-    } as CreateOrgMemberRequest);
-  } else {
-    result = await updateOrgMember({
-      org_id: orgId,
-      data: {
+    result = await createOrgMember(
+      {
         ...data,
-        id: data.id!,
+        org_id: orgId,
+      } as CreateOrgMemberRequest,
+      globalStore.token,
+    );
+  } else {
+    result = await updateOrgMember(
+      {
+        org_id: orgId,
+        data: {
+          ...data,
+          id: data.id!,
+        },
       },
-    });
+      globalStore.token,
+    );
   }
   if (result.status_code !== RESPONSE_CODE.SUCCESS) {
     return;

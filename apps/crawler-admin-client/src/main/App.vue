@@ -3,7 +3,7 @@ import { ElConfigProvider, ElNotification } from 'element-plus';
 import zhCn from 'element-plus/es/locale/lang/zh-cn';
 import { onBeforeUnmount, onErrorCaptured } from 'vue';
 import Homepage from './sections/homepage.vue';
-import { provideGlobalStore } from './utils/vue';
+import { provideGlobalStore } from './utils';
 
 import 'element-plus/dist/index.css';
 

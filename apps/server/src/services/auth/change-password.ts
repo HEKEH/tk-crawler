@@ -8,7 +8,7 @@ import config from '../../config';
 import { logger } from '../../infra/logger';
 import { BusinessError, hashPassword, verifyPassword } from '../../utils';
 
-export async function changePassword(
+export async function changeOrgUserPassword(
   data: OrgMemberChangePasswordRequest,
   user: OrgMemberItem,
 ): Promise<void> {

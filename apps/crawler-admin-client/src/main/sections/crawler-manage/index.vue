@@ -8,11 +8,11 @@ import {
 import { RequestErrorType } from '@tk-crawler/biz-shared';
 import { ElectronRenderListeners } from '@tk-crawler/electron-utils/render';
 import { MessageQueue } from '@tk-crawler/view-shared';
-import { onBeforeUnmount, onMounted } from 'vue';
+import { computed, onBeforeUnmount, onMounted } from 'vue';
 import { useGlobalStore } from '../../utils';
-import ControlButtons from './control-buttons.vue';
 import CookieCheckErrorView from './cookie-check-error-view.vue';
 import CookieNotValidView from './cookie-not-valid-view.vue';
+import NormalView from './normal-view.vue';
 
 defineOptions({
   name: 'CrawlerManage',
@@ -20,21 +20,14 @@ defineOptions({
 
 const globalStore = useGlobalStore();
 
-const crawlerManage = globalStore.crawlerManage;
+const crawlerManage = computed(() => globalStore.crawlerManage);
 
 async function loginTiktok() {
-  await crawlerManage.loginTiktok();
+  await crawlerManage.value.loginTiktok();
 }
 
 async function retryCheckCookieValid() {
-  await crawlerManage.checkTiktokCookieValid();
-}
-
-async function start() {
-  await crawlerManage.start();
-}
-async function stop() {
-  await crawlerManage.stop();
+  await crawlerManage.value.checkTiktokCookieValid();
 }
 
 const messageQueue = new MessageQueue({
@@ -118,12 +111,7 @@ onBeforeUnmount(() => {
       :cookie-valid-status="crawlerManage.tiktokCookieValidStatus"
       @retry="retryCheckCookieValid"
     />
-    <ControlButtons
-      v-else
-      :is-crawling="crawlerManage.isCrawling"
-      @start="start"
-      @stop="stop"
-    />
+    <NormalView v-else />
   </div>
 </template>
 

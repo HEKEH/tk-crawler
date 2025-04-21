@@ -1,4 +1,5 @@
 import type { MessageCenter } from '@tk-crawler/shared';
+import { CrawlStatus } from '@tk-crawler/biz-shared';
 import { LiveAnchorCrawler } from '@tk-crawler/core';
 import config from '../../config';
 
@@ -6,6 +7,16 @@ export class Crawler {
   private _liveAnchorCrawler: LiveAnchorCrawler;
 
   private _messageCenter: MessageCenter;
+
+  get crawlStatus() {
+    if (this._liveAnchorCrawler.isSuspended) {
+      return CrawlStatus.SUSPENDED;
+    }
+    if (this._liveAnchorCrawler.isRunning) {
+      return CrawlStatus.RUNNING;
+    }
+    return CrawlStatus.STOPPED;
+  }
 
   constructor(props: { messageCenter: MessageCenter }) {
     this._messageCenter = props.messageCenter;

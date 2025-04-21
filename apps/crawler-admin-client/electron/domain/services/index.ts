@@ -115,6 +115,9 @@ export class Services {
     this._addEventHandler(CUSTOM_EVENTS.STOP_LIVE_ANCHOR_CRAWL, () => {
       return this._stopCrawl();
     });
+    this._addEventHandler(CUSTOM_EVENTS.GET_CRAWL_STATUS, () => {
+      return this._crawler.crawlStatus;
+    });
     this._addEventHandler(TOKEN_EVENTS.GET_TOKEN, getToken);
     this._addEventHandler(TOKEN_EVENTS.SET_TOKEN, (_, token) =>
       saveToken(token),

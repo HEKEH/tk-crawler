@@ -1,5 +1,6 @@
 export * from './anchor';
 export * from './area';
+export * from './crawl';
 export * from './error';
 export * from './follow-help';
 export * from './messages';

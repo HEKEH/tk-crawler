@@ -31,6 +31,10 @@ const TOKEN_UPDATE_INTERVAL = 5000; // 5s更新一次
 
 const UPDATE_CHANNEL_SUB_TAGS_INTERVAL = 300000; // 5分钟更新一次
 
+const CRAWL_SUSPEND_TIMEOUT = 1000 * 60 * 3; // 3分钟
+
+const CONTINUOUS_ERRORS_THRESHOLD = 5;
+
 /** 爬虫逻辑 */
 export class LiveAnchorCrawler {
   private _intervals: {
@@ -40,8 +44,6 @@ export class LiveAnchorCrawler {
   } = {};
 
   // private _settings?: LiveAnchorCrawlerSettings;
-
-  private _isRunning = false;
 
   private _queryId: number = Math.random();
 
@@ -61,6 +63,24 @@ export class LiveAnchorCrawler {
   private _messageCenter: MessageCenter;
 
   private _onCookieOutdatedSubscription: Subscription;
+
+  private _isRunning = false;
+
+  /** 记录连续出现的错误 */
+  private _continuousErrors: Error[] = [];
+
+  /** 因错误而暂停 */
+  private _isSuspended = false;
+
+  private _suspendedTimeout: NodeJS.Timeout | null = null;
+
+  get isSuspended() {
+    return this._isSuspended;
+  }
+
+  get isRunning() {
+    return this._isRunning;
+  }
 
   constructor(props: {
     crawlerInterval: number;
@@ -148,6 +168,9 @@ export class LiveAnchorCrawler {
 
   private async _crawl() {
     try {
+      if (this._isSuspended) {
+        return;
+      }
       const queryId = this._queryId;
       getLogger().debug('发起一轮新查询');
       const channelId = getRandomChannelId();
@@ -203,9 +226,21 @@ export class LiveAnchorCrawler {
           }
         }
         await this._anchorPool.addAnchors(anchorInfos);
+        this._continuousErrors = [];
       }
     } catch (error) {
       getLogger().error('[feed] error', error);
+      if (this._isSuspended) {
+        return;
+      }
+      this._continuousErrors.push(error as Error);
+      if (this._continuousErrors.length >= CONTINUOUS_ERRORS_THRESHOLD) {
+        this._isSuspended = true;
+        this._continuousErrors = [];
+        this._suspendedTimeout = setTimeout(() => {
+          this._isSuspended = false;
+        }, CRAWL_SUSPEND_TIMEOUT);
+      }
     }
   }
 
@@ -244,6 +279,11 @@ export class LiveAnchorCrawler {
       return;
     }
     this._isRunning = false;
+    if (this._suspendedTimeout) {
+      clearTimeout(this._suspendedTimeout);
+      this._suspendedTimeout = null;
+    }
+    this._isSuspended = false;
     getLogger().info('stop live anchor crawler');
     Object.values(this._intervals).forEach(interval => {
       clearInterval(interval);

@@ -2,6 +2,7 @@ import type {
   OrgMemberLoginRequest,
   OrgMemberLoginSuccessData,
 } from '@tk-crawler/biz-shared';
+import type { Subscription } from 'rxjs';
 import type { CustomRouteRecord } from '../router/route-records';
 import type { Menu } from '../types';
 import {
@@ -9,9 +10,10 @@ import {
   MessageCenter,
   RESPONSE_CODE,
 } from '@tk-crawler/shared';
-import { MessageQueue } from '@tk-crawler/view-shared';
+import { MessageQueue, TokenInvalidSubject } from '@tk-crawler/view-shared';
 import { markRaw } from 'vue';
 import { login, loginByToken } from '../requests';
+import { redirectToLogin } from '../router';
 import {
   AnchorManagementRouteRecord,
   GuildManagementRouteRecord,
@@ -33,6 +35,8 @@ export default class GlobalStore {
       messageOffset: 200,
     }),
   );
+
+  private _tokenInvalidSubscription: Subscription | null = null;
 
   readonly messageCenter = markRaw(new MessageCenter());
 
@@ -138,7 +142,7 @@ export default class GlobalStore {
 
   async logout() {
     await removeToken();
-    this.clear();
+    this._clear();
   }
 
   async init() {
@@ -151,6 +155,12 @@ export default class GlobalStore {
     }
     try {
       this._initializationState.initializeBegin();
+      this._tokenInvalidSubscription = markRaw(
+        TokenInvalidSubject.subscribe(() => {
+          this._clear();
+          redirectToLogin();
+        }),
+      );
       this._addEventListeners();
       await this._loginByToken();
       this._initializationState.initializeComplete();
@@ -160,9 +170,17 @@ export default class GlobalStore {
     }
   }
 
-  clear() {
+  private _clear() {
     this._token = '';
     this._userProfile.clear();
     // this._removeEventListeners();
+  }
+
+  destroy() {
+    if (this._tokenInvalidSubscription) {
+      this._tokenInvalidSubscription.unsubscribe();
+      this._tokenInvalidSubscription = null;
+    }
+    this._clear();
   }
 }

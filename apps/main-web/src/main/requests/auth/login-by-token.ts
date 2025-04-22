@@ -5,7 +5,6 @@ import {
 
 import { commonRequest } from '@tk-crawler/view-shared';
 import config from '../../config';
-import { redirectToLogin } from '../../router';
 
 export function loginByToken(
   token: string,
@@ -18,7 +17,6 @@ export function loginByToken(
     headers: {
       [CLIENT_TOKEN_HEADER_KEY]: token,
     },
-    onTokenInvalid: redirectToLogin,
     hideErrorNotify,
   });
 }

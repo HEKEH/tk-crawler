@@ -13,7 +13,6 @@ import { CLIENT_TOKEN_HEADER_KEY } from '@tk-crawler/biz-shared';
 
 import { commonRequest } from '@tk-crawler/view-shared';
 import config from '../../config';
-import { redirectToLogin } from '../../router';
 
 export function getOrgMemberList(
   params: Omit<GetOrgMemberListRequest, 'org_id'>,
@@ -24,7 +23,6 @@ export function getOrgMemberList(
     method: 'post',
     path: '/client/org-and-user/get-org-member-list',
     params,
-    onTokenInvalid: redirectToLogin,
     headers: {
       [CLIENT_TOKEN_HEADER_KEY]: token,
     },
@@ -40,7 +38,6 @@ export function createOrgMember(
     method: 'post',
     path: '/client/org-and-user/create-org-member',
     params,
-    onTokenInvalid: redirectToLogin,
     headers: {
       [CLIENT_TOKEN_HEADER_KEY]: token,
     },
@@ -56,7 +53,6 @@ export function updateOrgMember(
     method: 'post',
     path: '/client/org-and-user/update-org-member',
     params,
-    onTokenInvalid: redirectToLogin,
     headers: {
       [CLIENT_TOKEN_HEADER_KEY]: token,
     },
@@ -72,7 +68,6 @@ export function deleteOrgMember(
     method: 'post',
     path: '/client/org-and-user/delete-org-member',
     params,
-    onTokenInvalid: redirectToLogin,
     headers: {
       [CLIENT_TOKEN_HEADER_KEY]: token,
     },

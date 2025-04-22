@@ -67,9 +67,11 @@ export default class GlobalStore {
     if (this._tokenInvalidSubscription) {
       this._tokenInvalidSubscription.unsubscribe();
     }
-    this._tokenInvalidSubscription = TokenInvalidSubject.subscribe(() => {
-      this._gotoLoginPage();
-    });
+    this._tokenInvalidSubscription = markRaw(
+      TokenInvalidSubject.subscribe(() => {
+        this._gotoLoginPage();
+      }),
+    );
   }
 
   private _gotoLoginPage() {

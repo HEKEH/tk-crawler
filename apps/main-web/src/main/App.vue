@@ -17,7 +17,7 @@ const isLoading = computed(() => {
 });
 
 onBeforeUnmount(() => {
-  globalStore.clear();
+  globalStore.destroy();
 });
 onErrorCaptured(e => {
   ElNotification.error({

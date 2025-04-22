@@ -75,8 +75,12 @@ const router = createRouter({
   routes,
 });
 
-export function redirectToLogin() {
-  router.push('/login');
+export async function redirectToLogin() {
+  try {
+    await router.push('/login');
+  } catch (err) {
+    console.error('Navigation failed:', err);
+  }
 }
 
 export default router;

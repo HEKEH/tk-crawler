@@ -11,7 +11,6 @@ import type {
 import { CLIENT_TOKEN_HEADER_KEY } from '@tk-crawler/biz-shared';
 import { commonRequest } from '@tk-crawler/view-shared';
 import config from '../../config';
-import { redirectToLogin } from '../../router';
 
 export function assignTask(params: AssignTaskRequest, token: string) {
   return commonRequest<AssignTaskResponse>({
@@ -19,7 +18,6 @@ export function assignTask(params: AssignTaskRequest, token: string) {
     method: 'post',
     path: '/client/task/assign',
     params,
-    onTokenInvalid: redirectToLogin,
     headers: {
       [CLIENT_TOKEN_HEADER_KEY]: token,
     },
@@ -32,7 +30,6 @@ export function claimTask(params: ClaimTaskRequest, token: string) {
     method: 'post',
     path: '/client/task/claim',
     params,
-    onTokenInvalid: redirectToLogin,
     headers: {
       [CLIENT_TOKEN_HEADER_KEY]: token,
     },
@@ -45,7 +42,6 @@ export function cancelClaimTask(params: CancelClaimTaskRequest, token: string) {
     method: 'post',
     path: '/client/task/cancel-claim',
     params,
-    onTokenInvalid: redirectToLogin,
     headers: {
       [CLIENT_TOKEN_HEADER_KEY]: token,
     },
@@ -58,7 +54,6 @@ export function anchorContacted(params: AnchorContactedRequest, token: string) {
     method: 'post',
     path: '/client/task/anchor-contacted',
     params,
-    onTokenInvalid: redirectToLogin,
     headers: {
       [CLIENT_TOKEN_HEADER_KEY]: token,
     },
@@ -74,7 +69,6 @@ export function cancelAnchorContact(
     method: 'post',
     path: '/client/task/cancel-anchor-contact',
     params,
-    onTokenInvalid: redirectToLogin,
     headers: {
       [CLIENT_TOKEN_HEADER_KEY]: token,
     },

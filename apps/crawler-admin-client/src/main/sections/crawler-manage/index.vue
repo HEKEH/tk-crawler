@@ -5,7 +5,7 @@ import {
   CUSTOM_EVENTS,
   IsCookieValidResultStatus,
 } from '@tk-crawler-admin-client/shared';
-import { RequestErrorType } from '@tk-crawler/biz-shared';
+import { REGION_LABEL_MAP, RequestErrorType } from '@tk-crawler/biz-shared';
 import { ElectronRenderListeners } from '@tk-crawler/electron-utils/render';
 import { MessageQueue } from '@tk-crawler/view-shared';
 import { computed, onBeforeUnmount, onMounted } from 'vue';
@@ -38,7 +38,7 @@ const messageQueue = new MessageQueue({
 
 function handleAnchorCrawled(_: IpcRendererEvent, data: AnchorCrawledMessage) {
   messageQueue.showMessage({
-    message: `抓取到主播${data.anchor.display_id}的信息`,
+    message: `抓取到主播「${data.anchor.display_id}」(${REGION_LABEL_MAP[data.anchor.region]})`,
     type: 'success',
   });
 }

@@ -23,7 +23,6 @@ import {
 } from '@tk-crawler/shared';
 import { commonRequest } from '@tk-crawler/view-shared';
 import config from '../../config';
-import { redirectToLogin } from '../../router';
 
 // Get TK Guild User list
 export async function getTKGuildUserList(
@@ -35,7 +34,6 @@ export async function getTKGuildUserList(
     method: 'post',
     path: '/client/tk-guild-user/get-user-list',
     params,
-    onTokenInvalid: redirectToLogin,
     headers: {
       [CLIENT_TOKEN_HEADER_KEY]: token,
     },
@@ -62,7 +60,6 @@ export async function getTKGuildUserDetail(
     method: 'post',
     path: '/client/tk-guild-user/get-user-detail',
     params,
-    onTokenInvalid: redirectToLogin,
     headers: {
       [CLIENT_TOKEN_HEADER_KEY]: token,
     },
@@ -93,7 +90,6 @@ export function createTKGuildUser(
     method: 'post',
     path: '/client/tk-guild-user/create-user',
     params,
-    onTokenInvalid: redirectToLogin,
     headers: {
       [CLIENT_TOKEN_HEADER_KEY]: token,
     },
@@ -120,7 +116,6 @@ export function updateTKGuildUser(
     method: 'post',
     path: '/client/tk-guild-user/update-user',
     params,
-    onTokenInvalid: redirectToLogin,
     headers: {
       [CLIENT_TOKEN_HEADER_KEY]: token,
     },
@@ -137,7 +132,6 @@ export function deleteTKGuildUser(
     method: 'post',
     path: '/client/tk-guild-user/delete-user',
     params,
-    onTokenInvalid: redirectToLogin,
     headers: {
       [CLIENT_TOKEN_HEADER_KEY]: token,
     },
@@ -171,7 +165,6 @@ export function startTKGuildUserAccount(
     method: 'post',
     path: '/client/tk-guild-user/start-live-admin-account',
     params,
-    onTokenInvalid: redirectToLogin,
     headers: {
       [CLIENT_TOKEN_HEADER_KEY]: token,
     },
@@ -188,7 +181,6 @@ export function stopTKGuildUserAccount(
     method: 'post',
     path: '/client/tk-guild-user/stop-live-admin-account',
     params,
-    onTokenInvalid: redirectToLogin,
     headers: {
       [CLIENT_TOKEN_HEADER_KEY]: token,
     },

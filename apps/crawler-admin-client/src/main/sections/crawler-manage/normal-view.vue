@@ -22,6 +22,7 @@ async function stop() {
 
 <template>
   <div class="normal-view">
+    <div class="normal-view-description">TK 账号状态正常，可以继续采集数据</div>
     <ControlButtons
       :is-crawling="crawlerManage.crawlStatus !== CrawlStatus.STOPPED"
       @start="start"
@@ -44,6 +45,11 @@ async function stop() {
   display: flex;
   flex-direction: column;
   align-items: center;
+  .normal-view-description {
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    color: var(--el-text-color-regular);
+  }
   .suspended-status {
     margin-top: 3rem;
     font-size: 1rem;

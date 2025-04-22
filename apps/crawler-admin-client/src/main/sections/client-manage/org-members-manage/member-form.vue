@@ -32,7 +32,7 @@ const formRef = ref<FormInstance>();
 const form = reactive({
   ...props.initialData,
   status: props.initialData?.status ?? OrgMemberStatus.normal,
-  role_id: props.initialData?.role_id ?? OrgMemberRole.member,
+  role_id: props.initialData?.role_id ?? OrgMemberRole.admin,
 });
 
 const statusOptions = [

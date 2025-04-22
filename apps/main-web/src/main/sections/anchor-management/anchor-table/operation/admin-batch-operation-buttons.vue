@@ -95,10 +95,12 @@ async function handleClearAnchorCheck() {
   <ElButton type="danger" size="small" @click="handleClearAnchorCheck">
     一键清空
   </ElButton>
-  <AssignTaskFormDialog
-    :visible="assignTaskDialogVisible"
-    :anchors="taskAnchors"
-    :submit="handleSubmitTaskAssign"
-    @close="onCloseAssignTaskDialog"
-  />
+  <Teleport to="body">
+    <AssignTaskFormDialog
+      :visible="assignTaskDialogVisible"
+      :anchors="taskAnchors"
+      :submit="handleSubmitTaskAssign"
+      @close="onCloseAssignTaskDialog"
+    />
+  </Teleport>
 </template>

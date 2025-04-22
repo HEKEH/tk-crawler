@@ -103,7 +103,7 @@ const debounceHandleFilterChange = debounce(handleFilterChange, 500);
         >
           <ElOption value="all" label="全部" />
           <ElOption :value="OrgMemberRole.admin" label="管理员" />
-          <ElOption :value="OrgMemberRole.member" label="成员" />
+          <ElOption :value="OrgMemberRole.member" label="普通用户" />
         </ElSelect>
       </div>
       <div class="filter-item">

@@ -348,7 +348,7 @@ async function onStartOrStop(item: TKGuildUser) {
                 >
                   {`「${MAIN_APP_PRODUCT_NAME}」`}
                 </span>
-                中启动。
+                中尝试。
               </div>
               <div
                 style={{

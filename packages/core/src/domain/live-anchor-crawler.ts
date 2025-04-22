@@ -185,14 +185,15 @@ export class LiveAnchorCrawler {
       const queryId = this._queryId;
       getLogger().debug('发起一轮新查询');
       const channelId = getRandomChannelId();
+      const channelSubTagMap = Object.fromEntries(
+        Object.entries(this._channelSubTagsMap).map(([key, value]) => [
+          key,
+          [...value],
+        ]),
+      ) as ChannelSubTagMap;
       const channelParams = getChannelParamsByChannelId(
         channelId,
-        Object.fromEntries(
-          Object.entries(this._channelSubTagsMap).map(([key, value]) => [
-            key,
-            [...value],
-          ]),
-        ) as ChannelSubTagMap,
+        channelSubTagMap,
       );
       const feed = await tiktokRequestErrorHandler(
         getFeed({

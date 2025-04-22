@@ -7,11 +7,10 @@ import {
 import { ChannelId } from '../live/constants';
 
 export function getRandomChannelId() {
-  // 自定义权重，目前游戏主播比较多，因此权重较大
   return getRandomArrayElementWithWeight<ChannelId>([
-    [ChannelId.GAMING_WITH_TAG, 8],
+    [ChannelId.SUGGESTED, 16],
+    [ChannelId.GAMING_WITH_TAG, 4],
     [ChannelId.LIFESTYLE_WITH_TAG, 2],
-    [ChannelId.SUGGESTED, 1],
     [ChannelId.RECOMMEND, 1],
     [ChannelId.GAMING, 1],
   ]);

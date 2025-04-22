@@ -47,7 +47,7 @@ model Anchor {
   @@index([follower_count])
   @@index([highest_diamonds])
   @@index([rank_league])
-  @@index([region, updated_at], name: "region_updated_at")
+  @@index([region, updated_at(sort: Desc)], name: "region_updated_at_desc")
 }
 
 model LiveAdminUser {

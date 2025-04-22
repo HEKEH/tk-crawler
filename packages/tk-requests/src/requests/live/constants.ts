@@ -106,6 +106,210 @@ export const TIKTOK_REGION_PARAMS_MAP = new Proxy(
         webcast_language: 'en',
       },
     },
+    [Region.ES]: {
+      headers: {
+        'accept-language': 'en-US,en;q=0.9',
+      },
+      params: {
+        region: Region.ES,
+        tz_name: 'Europe/Madrid',
+        browser_language: 'en-US',
+        app_language: 'en',
+        webcast_language: 'en',
+      },
+    },
+    [Region.FR]: {
+      headers: {
+        'accept-language': 'en-US,en;q=0.9',
+      },
+      params: {
+        region: Region.FR,
+        tz_name: 'Europe/Paris',
+        browser_language: 'en-US',
+        app_language: 'en',
+        webcast_language: 'en',
+      },
+    },
+    [Region.DE]: {
+      headers: {
+        'accept-language': 'en-US,en;q=0.9',
+      },
+      params: {
+        region: Region.DE,
+        tz_name: 'Europe/Berlin',
+        browser_language: 'en-US',
+        app_language: 'en',
+        webcast_language: 'en',
+      },
+    },
+    [Region.IT]: {
+      headers: {
+        'accept-language': 'en-US,en;q=0.9',
+      },
+      params: {
+        region: Region.IT,
+        tz_name: 'Europe/Rome',
+        browser_language: 'en-US',
+        app_language: 'en',
+        webcast_language: 'en',
+      },
+    },
+    [Region.RU]: {
+      headers: {
+        'accept-language': 'en-US,en;q=0.9',
+      },
+      params: {
+        region: Region.RU,
+        tz_name: 'Europe/Moscow',
+        browser_language: 'en-US',
+        app_language: 'en',
+        webcast_language: 'en',
+      },
+    },
+    [Region.JP]: {
+      headers: {
+        'accept-language': 'en-US,en;q=0.9',
+      },
+      params: {
+        region: Region.JP,
+        tz_name: 'Asia/Tokyo',
+        browser_language: 'en-US',
+        app_language: 'en',
+        webcast_language: 'en',
+      },
+    },
+    [Region.KR]: {
+      headers: {
+        'accept-language': 'en-US,en;q=0.9',
+      },
+      params: {
+        region: Region.KR,
+        tz_name: 'Asia/Seoul',
+        browser_language: 'en-US',
+        app_language: 'en',
+        webcast_language: 'en',
+      },
+    },
+    [Region.BR]: {
+      headers: {
+        'accept-language': 'en-US,en;q=0.9',
+      },
+      params: {
+        region: Region.BR,
+        tz_name: 'America/Sao_Paulo',
+        browser_language: 'en-US',
+        app_language: 'en',
+        webcast_language: 'en',
+      },
+    },
+    [Region.PT]: {
+      headers: {
+        'accept-language': 'en-US,en;q=0.9',
+      },
+      params: {
+        region: Region.PT,
+        tz_name: 'Europe/Lisbon',
+        browser_language: 'en-US',
+        app_language: 'en',
+        webcast_language: 'en',
+      },
+    },
+    [Region.SA]: {
+      headers: {
+        'accept-language': 'en-US,en;q=0.9',
+      },
+      params: {
+        region: Region.SA,
+        tz_name: 'Asia/Riyadh',
+        browser_language: 'en-US',
+        app_language: 'en',
+        webcast_language: 'en',
+      },
+    },
+    [Region.AU]: {
+      headers: {
+        'accept-language': 'en-US,en;q=0.9',
+      },
+      params: {
+        region: Region.AU,
+        tz_name: 'Australia/Sydney',
+        browser_language: 'en-US',
+        app_language: 'en',
+        webcast_language: 'en',
+      },
+    },
+    [Region.CA]: {
+      headers: {
+        'accept-language': 'en-US,en;q=0.9',
+      },
+      params: {
+        region: Region.CA,
+        tz_name: 'America/Toronto',
+        browser_language: 'en-US',
+        app_language: 'en',
+        webcast_language: 'en',
+      },
+    },
+    [Region.IN]: {
+      headers: {
+        'accept-language': 'en-US,en;q=0.9',
+      },
+      params: {
+        region: Region.IN,
+        tz_name: 'Asia/Kolkata',
+        browser_language: 'en-US',
+        app_language: 'en',
+        webcast_language: 'en',
+      },
+    },
+    [Region.ID]: {
+      headers: {
+        'accept-language': 'en-US,en;q=0.9',
+      },
+      params: {
+        region: Region.ID,
+        tz_name: 'Asia/Jakarta',
+        browser_language: 'en-US',
+        app_language: 'en',
+        webcast_language: 'en',
+      },
+    },
+    [Region.MX]: {
+      headers: {
+        'accept-language': 'en-US,en;q=0.9',
+      },
+      params: {
+        region: Region.MX,
+        tz_name: 'America/Mexico_City',
+        browser_language: 'en-US',
+        app_language: 'en',
+        webcast_language: 'en',
+      },
+    },
+    [Region.TH]: {
+      headers: {
+        'accept-language': 'en-US,en;q=0.9',
+      },
+      params: {
+        region: Region.TH,
+        tz_name: 'Asia/Bangkok',
+        browser_language: 'en-US',
+        app_language: 'en',
+        webcast_language: 'en',
+      },
+    },
+    [Region.VN]: {
+      headers: {
+        'accept-language': 'en-US,en;q=0.9',
+      },
+      params: {
+        region: Region.VN,
+        tz_name: 'Asia/Ho_Chi_Minh',
+        browser_language: 'en-US',
+        app_language: 'en',
+        webcast_language: 'en',
+      },
+    },
   },
   {
     get: (target, prop) => {
@@ -114,7 +318,18 @@ export const TIKTOK_REGION_PARAMS_MAP = new Proxy(
       }
       const res = target[prop as keyof typeof target];
       if (!res) {
-        return target[DefaultRegion];
+        return {
+          headers: {
+            'accept-language': 'en-US,en;q=0.9',
+          },
+          params: {
+            region: prop as Region,
+            tz_name: 'Asia/Shanghai',
+            browser_language: 'en-US',
+            app_language: 'en',
+            webcast_language: 'en',
+          },
+        };
       }
       return res;
     },

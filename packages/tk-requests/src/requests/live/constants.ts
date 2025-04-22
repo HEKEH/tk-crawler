@@ -6,7 +6,9 @@ import {
   TIKTOK_URL,
   USER_AGENT,
 } from '@tk-crawler/biz-shared';
-import { getRandomArrayElement } from '@tk-crawler/shared';
+import {
+  getRandomArrayElementWithWeight,
+} from '@tk-crawler/shared';
 
 export const TIKTOK_WEBCAST_URL = 'https://webcast.tiktok.com';
 export const COMMON_TIKTOK_HEADERS = {
@@ -75,6 +77,7 @@ export const TIKTOK_REGION_PARAMS_MAP = new Proxy(
         'accept-language': 'en-US,en;q=0.9',
       },
       params: {
+        priority_region: Region.US,
         region: Region.US,
         tz_name: 'America/New_York',
         browser_language: 'en-US',
@@ -87,6 +90,7 @@ export const TIKTOK_REGION_PARAMS_MAP = new Proxy(
         'accept-language': 'zh-CN,zh;q=0.9',
       },
       params: {
+        priority_region: Region.CN,
         region: Region.CN,
         tz_name: 'Asia/Shanghai',
         browser_language: 'zh-CN',
@@ -99,6 +103,7 @@ export const TIKTOK_REGION_PARAMS_MAP = new Proxy(
         'accept-language': 'en-GB,en;q=0.9',
       },
       params: {
+        priority_region: Region.GB,
         region: Region.GB,
         tz_name: 'Europe/London',
         browser_language: 'en-GB',
@@ -111,6 +116,7 @@ export const TIKTOK_REGION_PARAMS_MAP = new Proxy(
         'accept-language': 'en-US,en;q=0.9',
       },
       params: {
+        priority_region: Region.ES,
         region: Region.ES,
         tz_name: 'Europe/Madrid',
         browser_language: 'en-US',
@@ -123,6 +129,7 @@ export const TIKTOK_REGION_PARAMS_MAP = new Proxy(
         'accept-language': 'en-US,en;q=0.9',
       },
       params: {
+        priority_region: Region.FR,
         region: Region.FR,
         tz_name: 'Europe/Paris',
         browser_language: 'en-US',
@@ -135,6 +142,7 @@ export const TIKTOK_REGION_PARAMS_MAP = new Proxy(
         'accept-language': 'en-US,en;q=0.9',
       },
       params: {
+        priority_region: Region.DE,
         region: Region.DE,
         tz_name: 'Europe/Berlin',
         browser_language: 'en-US',
@@ -147,6 +155,7 @@ export const TIKTOK_REGION_PARAMS_MAP = new Proxy(
         'accept-language': 'en-US,en;q=0.9',
       },
       params: {
+        priority_region: Region.IT,
         region: Region.IT,
         tz_name: 'Europe/Rome',
         browser_language: 'en-US',
@@ -159,6 +168,7 @@ export const TIKTOK_REGION_PARAMS_MAP = new Proxy(
         'accept-language': 'en-US,en;q=0.9',
       },
       params: {
+        priority_region: Region.RU,
         region: Region.RU,
         tz_name: 'Europe/Moscow',
         browser_language: 'en-US',
@@ -171,6 +181,7 @@ export const TIKTOK_REGION_PARAMS_MAP = new Proxy(
         'accept-language': 'en-US,en;q=0.9',
       },
       params: {
+        priority_region: Region.JP,
         region: Region.JP,
         tz_name: 'Asia/Tokyo',
         browser_language: 'en-US',
@@ -183,6 +194,7 @@ export const TIKTOK_REGION_PARAMS_MAP = new Proxy(
         'accept-language': 'en-US,en;q=0.9',
       },
       params: {
+        priority_region: Region.KR,
         region: Region.KR,
         tz_name: 'Asia/Seoul',
         browser_language: 'en-US',
@@ -195,6 +207,7 @@ export const TIKTOK_REGION_PARAMS_MAP = new Proxy(
         'accept-language': 'en-US,en;q=0.9',
       },
       params: {
+        priority_region: Region.BR,
         region: Region.BR,
         tz_name: 'America/Sao_Paulo',
         browser_language: 'en-US',
@@ -207,6 +220,7 @@ export const TIKTOK_REGION_PARAMS_MAP = new Proxy(
         'accept-language': 'en-US,en;q=0.9',
       },
       params: {
+        priority_region: Region.PT,
         region: Region.PT,
         tz_name: 'Europe/Lisbon',
         browser_language: 'en-US',
@@ -219,6 +233,7 @@ export const TIKTOK_REGION_PARAMS_MAP = new Proxy(
         'accept-language': 'en-US,en;q=0.9',
       },
       params: {
+        priority_region: Region.SA,
         region: Region.SA,
         tz_name: 'Asia/Riyadh',
         browser_language: 'en-US',
@@ -231,6 +246,7 @@ export const TIKTOK_REGION_PARAMS_MAP = new Proxy(
         'accept-language': 'en-US,en;q=0.9',
       },
       params: {
+        priority_region: Region.AU,
         region: Region.AU,
         tz_name: 'Australia/Sydney',
         browser_language: 'en-US',
@@ -243,6 +259,7 @@ export const TIKTOK_REGION_PARAMS_MAP = new Proxy(
         'accept-language': 'en-US,en;q=0.9',
       },
       params: {
+        priority_region: Region.CA,
         region: Region.CA,
         tz_name: 'America/Toronto',
         browser_language: 'en-US',
@@ -256,6 +273,7 @@ export const TIKTOK_REGION_PARAMS_MAP = new Proxy(
       },
       params: {
         region: Region.IN,
+        priority_region: Region.IN,
         tz_name: 'Asia/Kolkata',
         browser_language: 'en-US',
         app_language: 'en',
@@ -268,6 +286,7 @@ export const TIKTOK_REGION_PARAMS_MAP = new Proxy(
       },
       params: {
         region: Region.ID,
+        priority_region: Region.ID,
         tz_name: 'Asia/Jakarta',
         browser_language: 'en-US',
         app_language: 'en',
@@ -280,6 +299,7 @@ export const TIKTOK_REGION_PARAMS_MAP = new Proxy(
       },
       params: {
         region: Region.MX,
+        priority_region: Region.MX,
         tz_name: 'America/Mexico_City',
         browser_language: 'en-US',
         app_language: 'en',
@@ -292,6 +312,7 @@ export const TIKTOK_REGION_PARAMS_MAP = new Proxy(
       },
       params: {
         region: Region.TH,
+        priority_region: Region.TH,
         tz_name: 'Asia/Bangkok',
         browser_language: 'en-US',
         app_language: 'en',
@@ -304,6 +325,7 @@ export const TIKTOK_REGION_PARAMS_MAP = new Proxy(
       },
       params: {
         region: Region.VN,
+        priority_region: Region.VN,
         tz_name: 'Asia/Ho_Chi_Minh',
         browser_language: 'en-US',
         app_language: 'en',
@@ -323,6 +345,7 @@ export const TIKTOK_REGION_PARAMS_MAP = new Proxy(
             'accept-language': 'en-US,en;q=0.9',
           },
           params: {
+            priority_region: prop as Region,
             region: prop as Region,
             tz_name: 'Asia/Shanghai',
             browser_language: 'en-US',
@@ -340,6 +363,7 @@ export const TIKTOK_REGION_PARAMS_MAP = new Proxy(
       'accept-language': string;
     };
     params: {
+      priority_region: Region;
       region: Region;
       tz_name: string;
       browser_language: string;
@@ -353,5 +377,12 @@ export function getTiktokRegionParams(region: Region[] | 'all') {
   if (region === 'all') {
     return TIKTOK_REGION_PARAMS_MAP.all;
   }
-  return TIKTOK_REGION_PARAMS_MAP[getRandomArrayElement(region) || 'all'];
+  const len = region.length;
+  // 越排前面的优先级越高
+  const elements: Readonly<[Region, number][]> = region.map((item, index) => [
+    item,
+    len - index,
+  ]);
+  const randomRegion = getRandomArrayElementWithWeight(elements);
+  return TIKTOK_REGION_PARAMS_MAP[randomRegion || 'all'];
 }

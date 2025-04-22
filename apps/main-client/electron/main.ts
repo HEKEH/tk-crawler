@@ -17,6 +17,7 @@ import {
 import { app, BaseWindow } from 'electron';
 import { GlobalManager } from './domain';
 import { logger } from './infra/logger';
+import { setIntervalImmediate } from '@tk-crawler/shared';
 
 // const require = createRequire(import.meta.url)
 // const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -34,7 +35,16 @@ async function main() {
   const globalManager = GlobalManager.getInstance();
   await globalManager.start();
 
-  autoUpdater.checkForUpdates();
+  let autoUpdateCheckInterval: NodeJS.Timeout | null;
+  const initAutoUpdateCheck = () => {
+    autoUpdateCheckInterval = setIntervalImmediate(
+      () => {
+        autoUpdater.checkForUpdates();
+      },
+      1000 * 60 * 10, // 每10分钟检测一次
+    );
+  };
+  initAutoUpdateCheck();
 
   app.on('activate', async () => {
     // On OS X it's common to re-create a window in the app when the
@@ -42,12 +52,20 @@ async function main() {
     if (BaseWindow.getAllWindows().length === 0) {
       await globalManager.start();
     }
-    autoUpdater.checkForUpdates();
+    if (!autoUpdateCheckInterval) {
+      initAutoUpdateCheck();
+    } else {
+      autoUpdater.checkForUpdates();
+    }
   });
   // Quit when all windows are closed, except on macOS. There, it's common
   // for applications and their menu bar to stay active until the user quits
   // explicitly with Cmd + Q.
   app.on('window-all-closed', () => {
+    if (autoUpdateCheckInterval) {
+      clearInterval(autoUpdateCheckInterval);
+      autoUpdateCheckInterval = null;
+    }
     if (process.platform !== 'darwin') {
       globalManager.destroy();
       app.quit();

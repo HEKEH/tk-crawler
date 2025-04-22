@@ -2,6 +2,7 @@
 import type { AnchorCrawledMessage } from '@tk-crawler/biz-shared';
 import type { IpcRendererEvent } from 'electron';
 import {
+  CRAWL_EVENTS,
   CUSTOM_EVENTS,
   IsCookieValidResultStatus,
 } from '@tk-crawler-admin-client/shared';
@@ -33,7 +34,8 @@ async function retryCheckCookieValid() {
 }
 
 const messageQueue = new MessageQueue({
-  messageOffset: 200,
+  messageOffset: 400,
+  maxMessages: 6,
 });
 
 function handleAnchorCrawled(_: IpcRendererEvent, data: AnchorCrawledMessage) {
@@ -46,15 +48,12 @@ function handleAnchorCrawled(_: IpcRendererEvent, data: AnchorCrawledMessage) {
 const electronRenderListeners = ElectronRenderListeners.getInstance();
 
 onMounted(() => {
-  electronRenderListeners.on(CUSTOM_EVENTS.ANCHOR_CRAWLED, handleAnchorCrawled);
+  electronRenderListeners.on(CRAWL_EVENTS.ANCHOR_CRAWLED, handleAnchorCrawled);
 });
 
 onBeforeUnmount(() => {
   messageQueue.clearMessages();
-  electronRenderListeners.off(
-    CUSTOM_EVENTS.ANCHOR_CRAWLED,
-    handleAnchorCrawled,
-  );
+  electronRenderListeners.off(CRAWL_EVENTS.ANCHOR_CRAWLED, handleAnchorCrawled);
 });
 
 function handleCrawlRequestError(

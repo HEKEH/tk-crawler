@@ -1,4 +1,7 @@
-import { IsCookieValidResultStatus } from '@tk-crawler-admin-client/shared';
+import {
+  CRAWL_EVENTS,
+  IsCookieValidResultStatus,
+} from '@tk-crawler-admin-client/shared';
 import { CrawlStatus } from '@tk-crawler/biz-shared';
 import { ElectronRenderListeners } from '@tk-crawler/electron-utils/render';
 import { ElNotification } from 'element-plus';
@@ -94,7 +97,7 @@ export default class CrawlerManage {
     const ipcRenderer = markRaw(window.ipcRenderer);
     if (ipcRenderer) {
       this._crawlStatus = await ipcRenderer.invoke(
-        CUSTOM_EVENTS.GET_CRAWL_STATUS,
+        CRAWL_EVENTS.GET_CRAWL_STATUS,
       );
     }
   }

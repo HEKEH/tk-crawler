@@ -1,3 +1,4 @@
+import type { Area } from '@tk-crawler/biz-shared';
 import type { MessageCenter } from '@tk-crawler/shared';
 import { CrawlStatus } from '@tk-crawler/biz-shared';
 import { LiveAnchorCrawler } from '@tk-crawler/core';
@@ -7,6 +8,14 @@ export class Crawler {
   private _liveAnchorCrawler: LiveAnchorCrawler;
 
   private _messageCenter: MessageCenter;
+
+  get crawlArea() {
+    return this._liveAnchorCrawler.crawlArea;
+  }
+
+  setCrawlArea(crawlArea: Area | 'all') {
+    this._liveAnchorCrawler.setCrawlArea(crawlArea);
+  }
 
   get crawlStatus() {
     if (this._liveAnchorCrawler.isSuspended) {

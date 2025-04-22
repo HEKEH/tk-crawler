@@ -2,6 +2,7 @@ import type { CommonResult, MessageCenter } from '@tk-crawler/shared';
 import type { Crawler } from '../crawler';
 import type { ViewsManager } from '../views';
 import {
+  CRAWL_EVENTS,
   IsCookieValidResultStatus,
   TOKEN_EVENTS,
 } from '@tk-crawler-admin-client/shared';
@@ -109,14 +110,20 @@ export class Services {
     this._addEventHandler(CUSTOM_EVENTS.OPEN_TIKTOK_LOGIN_PAGE, () => {
       return this._viewManager.openTkLoginPage();
     });
-    this._addEventHandler(CUSTOM_EVENTS.START_LIVE_ANCHOR_CRAWL, () => {
+    this._addEventHandler(CRAWL_EVENTS.START_LIVE_ANCHOR_CRAWL, () => {
       return this._startCrawl();
     });
-    this._addEventHandler(CUSTOM_EVENTS.STOP_LIVE_ANCHOR_CRAWL, () => {
+    this._addEventHandler(CRAWL_EVENTS.STOP_LIVE_ANCHOR_CRAWL, () => {
       return this._stopCrawl();
     });
-    this._addEventHandler(CUSTOM_EVENTS.GET_CRAWL_STATUS, () => {
+    this._addEventHandler(CRAWL_EVENTS.GET_CRAWL_STATUS, () => {
       return this._crawler.crawlStatus;
+    });
+    this._addEventHandler(CRAWL_EVENTS.GET_CRAWL_AREA, () => {
+      return this._crawler.crawlArea;
+    });
+    this._addEventHandler(CRAWL_EVENTS.SET_CRAWL_AREA, (_, crawlArea) => {
+      this._crawler.setCrawlArea(crawlArea);
     });
     this._addEventHandler(CUSTOM_EVENTS.CLEAR_TIKTOK_COOKIE, clearTiktokCookie);
     this._addEventHandler(TOKEN_EVENTS.GET_TOKEN, getToken);

@@ -1,3 +1,4 @@
+import type { Area } from '@tk-crawler/biz-shared';
 import type { MessageCenter } from '@tk-crawler/shared';
 import type {
   ChannelSubTagMap,
@@ -7,6 +8,7 @@ import type {
 import type { Subscription } from 'rxjs';
 import type { RawAnchorParam } from './anchor-pool';
 import {
+  getRegionsByArea,
   tiktokRequestErrorHandler,
   TKRequestMessage,
 } from '@tk-crawler/biz-shared';
@@ -37,6 +39,7 @@ const CONTINUOUS_ERRORS_THRESHOLD = 5;
 
 /** 爬虫逻辑 */
 export class LiveAnchorCrawler {
+  private _crawlArea: Area | 'all' = 'all';
   private _intervals: {
     [key in
       | 'updateTokensInterval'
@@ -80,6 +83,14 @@ export class LiveAnchorCrawler {
 
   get isRunning() {
     return this._isRunning;
+  }
+
+  get crawlArea() {
+    return this._crawlArea;
+  }
+
+  setCrawlArea(crawlArea: Area | 'all') {
+    this._crawlArea = crawlArea;
   }
 
   constructor(props: {
@@ -185,7 +196,10 @@ export class LiveAnchorCrawler {
       );
       const feed = await tiktokRequestErrorHandler(
         getFeed({
-          region: 'all',
+          region:
+            this._crawlArea === 'all'
+              ? 'all'
+              : getRegionsByArea(this._crawlArea),
           tokens: this._queryTokens,
           channelParams,
         }),

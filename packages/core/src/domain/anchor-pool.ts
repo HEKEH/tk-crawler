@@ -2,7 +2,6 @@ import type {
   AnchorCrawledMessage,
   AnchorRankLeague,
   CollectedAnchorInfo,
-  Region,
 } from '@tk-crawler/biz-shared';
 import type { MessageCenter } from '@tk-crawler/shared';
 import type { TikTokQueryTokens } from '@tk-crawler/tk-requests';
@@ -46,7 +45,7 @@ class StopCrawlError extends Error {
 
 /** 当前主播的集合 */
 export class AnchorPool {
-  private _region: Region[] | 'all' = 'all';
+  // private _region: Region[] | 'all' = 'all';
 
   private _taskQueue: FrequencyLimitTaskQueue = new FrequencyLimitTaskQueue({
     frequencyLimit: 300,
@@ -162,12 +161,12 @@ export class AnchorPool {
     }
     const [giftListInfo, liveDiamondsInfo] = await Promise.all([
       getAnchorInfoFromGiftList({
-        region: this._region,
+        region: 'all',
         tokens: this._queryTokens,
         roomId: anchor.room_id,
       }),
       getLiveDiamonds({
-        region: this._region,
+        region: 'all',
         tokens: this._queryTokens,
         anchorId: anchor.user_id,
         roomId: anchor.room_id,

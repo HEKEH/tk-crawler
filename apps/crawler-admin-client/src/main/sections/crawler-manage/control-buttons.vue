@@ -31,10 +31,10 @@ async function stop() {
       :loading="props.isCrawling"
       @click.prevent="start"
     >
-      {{ props.isCrawling ? '正在采集主播数据' : '开始采集主播数据' }}
+      {{ props.isCrawling ? '正在采集主播' : '开始采集主播' }}
     </ElButton>
     <ElButton :disabled="!props.isCrawling" @click.prevent="stop">
-      停止采集主播数据
+      停止采集主播
     </ElButton>
   </div>
 </template>

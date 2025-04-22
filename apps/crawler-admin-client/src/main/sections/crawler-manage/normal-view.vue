@@ -1,6 +1,12 @@
 <script setup lang="ts">
+import type { Area } from '@tk-crawler/biz-shared';
+import { InfoFilled } from '@element-plus/icons-vue';
 import { CrawlStatus } from '@tk-crawler/biz-shared';
-import { computed } from 'vue';
+import { setIntervalImmediate } from '@tk-crawler/shared';
+import { AreaSelectSingle } from '@tk-crawler/view-shared';
+import { ElIcon, ElTooltip } from 'element-plus';
+import { computed, onBeforeUnmount, ref } from 'vue';
+import { CRAWL_EVENTS } from '../../constants';
 import { useGlobalStore } from '../../utils';
 import ControlButtons from './control-buttons.vue';
 
@@ -18,10 +24,55 @@ async function start() {
 async function stop() {
   await crawlerManage.value.stop();
 }
+const crawlArea = ref<Area | 'all'>('all');
+
+function handleCrawlAreaChange(area: Area | 'all' = 'all') {
+  crawlArea.value = area;
+  window.ipcRenderer.invoke(CRAWL_EVENTS.SET_CRAWL_AREA, area);
+}
+
+const crawlAreaInterval = setIntervalImmediate(async () => {
+  try {
+    const area = await window.ipcRenderer.invoke(CRAWL_EVENTS.GET_CRAWL_AREA);
+    crawlArea.value = area;
+  } catch (error) {
+    console.error(error);
+  }
+}, 1000);
+
+onBeforeUnmount(() => {
+  clearInterval(crawlAreaInterval);
+});
 </script>
 
 <template>
   <div class="normal-view">
+    <div class="area-select-container">
+      <div class="area-select-label">
+        优先地区设置
+        <ElTooltip placement="top">
+          <template #content>
+            <div>采集优先地区</div>
+            <div>• 建议与 VPN 地区配置保持一致。实测 VPN 对结果影响更大</div>
+            <div>
+              •
+              注：这个参数的作用是让TK优先推荐所选地区的主播，但并不限于这些地区
+            </div>
+          </template>
+          <ElIcon class="area-select-label-tooltip-icon">
+            <InfoFilled />
+          </ElIcon>
+        </ElTooltip>
+      </div>
+      <div class="area-select">
+        <AreaSelectSingle
+          :model-value="crawlArea"
+          show-all
+          popper-class="crawl-area-select-popper"
+          @change="handleCrawlAreaChange"
+        />
+      </div>
+    </div>
     <div class="normal-view-description">TK 账号状态正常，可以继续采集数据</div>
     <ControlButtons
       :is-crawling="crawlerManage.crawlStatus !== CrawlStatus.STOPPED"
@@ -39,21 +90,80 @@ async function stop() {
 
 <style scoped>
 .normal-view {
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 1rem;
+  --spacing-md: 1.5rem;
+  --spacing-lg: 2rem;
+  --spacing-xl: 3rem;
+  --font-size-base: 1rem;
+  --font-size-sm: 14px;
+  --select-width: 200px;
+
   width: 100%;
   height: 100%;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
-  .normal-view-description {
-    margin-bottom: 1rem;
-    font-size: 1rem;
-    color: var(--el-text-color-regular);
+  padding: var(--spacing-md);
+}
+
+.area-select-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+  gap: var(--spacing-sm);
+}
+
+.area-select-label {
+  display: flex;
+  align-items: center;
+  width: fit-content;
+  font-size: var(--font-size-sm);
+  color: var(--el-text-color-regular);
+  white-space: nowrap;
+  justify-content: flex-end;
+  gap: var(--spacing-xs);
+}
+
+.area-select-label-tooltip-icon {
+  cursor: help;
+  font-size: var(--font-size-sm);
+  color: var(--el-text-color-secondary);
+  transition: color 0.2s ease;
+}
+
+.area-select-label-tooltip-icon:hover {
+  color: var(--el-text-color-primary);
+}
+
+.area-select {
+  width: var(--select-width);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.normal-view-description {
+  margin-bottom: var(--spacing-sm);
+  font-size: var(--font-size-base);
+  color: var(--el-text-color-regular);
+  text-align: center;
+}
+
+.suspended-status {
+  margin-top: var(--spacing-xl);
+  font-size: var(--font-size-base);
+  color: var(--el-color-danger);
+  text-align: center;
+  max-width: calc(var(--select-width) + var(--label-width));
+  line-height: 1.5;
+}
+.crawl-area-select-popper {
+  :global(.el-select-dropdown) {
+    max-height: 210px !important;
   }
-  .suspended-status {
-    margin-top: 3rem;
-    font-size: 1rem;
-    color: var(--el-color-danger);
+  :global(.el-select-dropdown .el-select-dropdown__wrap) {
+    max-height: 210px !important;
   }
 }
 </style>

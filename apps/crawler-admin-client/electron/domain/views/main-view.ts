@@ -10,7 +10,7 @@ import path from 'node:path';
 import { TKRequestMessage } from '@tk-crawler/biz-shared';
 import { bindViewToWindowBounds } from '@tk-crawler/electron-utils/main';
 import { globalShortcut, WebContentsView } from 'electron';
-import { CUSTOM_EVENTS } from '../../constants';
+import { CRAWL_EVENTS, CUSTOM_EVENTS } from '../../constants';
 import { isDevelopment, RENDERER_DIST, VITE_DEV_SERVER_URL } from '../../env';
 
 export class MainView implements IView {
@@ -53,7 +53,7 @@ export class MainView implements IView {
       this._messageCenter.addListener(
         TKRequestMessage.ANCHOR_CRAWLED,
         (data: AnchorCrawledMessage) => {
-          this._view?.webContents.send(CUSTOM_EVENTS.ANCHOR_CRAWLED, data);
+          this._view?.webContents.send(CRAWL_EVENTS.ANCHOR_CRAWLED, data);
         },
       ),
     );

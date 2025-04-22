@@ -235,13 +235,19 @@ export class LiveAnchorCrawler {
       }
       this._continuousErrors.push(error as Error);
       if (this._continuousErrors.length >= CONTINUOUS_ERRORS_THRESHOLD) {
-        this._isSuspended = true;
-        this._continuousErrors = [];
-        this._suspendedTimeout = setTimeout(() => {
-          this._isSuspended = false;
-        }, CRAWL_SUSPEND_TIMEOUT);
+        this._suspend();
       }
     }
+  }
+
+  private _suspend() {
+    this._isSuspended = true;
+    this._continuousErrors = [];
+    this._anchorPool.suspend();
+    this._suspendedTimeout = setTimeout(() => {
+      this._isSuspended = false;
+      this._anchorPool.start();
+    }, CRAWL_SUSPEND_TIMEOUT);
   }
 
   private async _run() {

@@ -17,6 +17,8 @@ export class FrequencyLimitTaskQueue {
   private _isProcessing = false;
   private _currentlyRunning = false;
 
+  private _paused = false;
+
   constructor(props: {
     frequencyLimit: number;
     onlyOneTask: boolean;
@@ -25,6 +27,15 @@ export class FrequencyLimitTaskQueue {
     this._limit = props.frequencyLimit;
     this._onlyOneTask = props.onlyOneTask;
     this._taskInterval = props.taskInterval;
+  }
+
+  pause() {
+    this._paused = true;
+  }
+
+  resume() {
+    this._paused = false;
+    this._processQueue();
   }
 
   addTask<T>(task: () => Promise<T>): Promise<T> {
@@ -53,12 +64,12 @@ export class FrequencyLimitTaskQueue {
   }
 
   private async _processQueue() {
-    if (this._isProcessing) {
+    if (this._isProcessing || this._paused) {
       return;
     }
     this._isProcessing = true;
 
-    while (this._queue.length > 0) {
+    while (this._queue.length > 0 && !this._paused) {
       this._cleanOldTimestamps();
 
       if (this._timestamps.length >= this._limit) {

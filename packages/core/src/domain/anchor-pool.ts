@@ -71,11 +71,17 @@ export class AnchorPool {
 
   start() {
     this._stopped = false;
+    this._taskQueue.resume();
   }
 
   stop() {
     this._stopped = true;
     this._taskQueue.clear();
+  }
+
+  suspend() {
+    this._stopped = true;
+    this._taskQueue.pause();
   }
 
   private _shouldUpdateAnchors(anchorIds: string[]) {

@@ -253,6 +253,10 @@ export const REGION_OPTIONS: RegionOption[] = [
   { label: '南非', value: Region.ZA },
   { label: '赞比亚', value: Region.ZM },
   { label: '津巴布韦', value: Region.ZW },
+  { label: '肯尼亚', value: Region.KE },
+  { label: '南极洲', value: Region.AQ },
+  { label: '布韦岛', value: Region.BV },
+  { label: '吉尔吉斯斯坦', value: Region.KG },
 ];
 
 export const REGION_LABEL_MAP = REGION_OPTIONS.reduce(

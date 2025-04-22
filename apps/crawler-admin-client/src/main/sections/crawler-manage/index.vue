@@ -38,7 +38,7 @@ const messageQueue = new MessageQueue({
 
 function handleAnchorCrawled(_: IpcRendererEvent, data: AnchorCrawledMessage) {
   messageQueue.showMessage({
-    message: `抓取到主播「${data.anchor.display_id}」(${REGION_LABEL_MAP[data.anchor.region]})`,
+    message: `抓取到主播「${data.anchor.display_id}」(${REGION_LABEL_MAP[data.anchor.region] || data.anchor.region})`,
     type: 'success',
   });
 }

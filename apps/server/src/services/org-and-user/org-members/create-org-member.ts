@@ -1,4 +1,5 @@
 import type { CreateOrgMemberRequest } from '@tk-crawler/biz-shared';
+import assert from 'node:assert';
 import { mysqlClient } from '@tk-crawler/database';
 import { logger } from '../../../infra/logger';
 import { BusinessError, hashPassword } from '../../../utils';
@@ -8,6 +9,9 @@ export async function createOrgMember(
   data: CreateOrgMemberRequest,
 ): Promise<void> {
   const { password, ...rest } = data;
+  rest.username = rest.username?.trim();
+  assert(rest.username, 'username is required');
+  assert(password, 'password is required');
   logger.info('[Create Org Member]', { data: { ...rest, password: '******' } });
   const username = rest.username;
   if (await checkOrgMemberNameExist(username)) {

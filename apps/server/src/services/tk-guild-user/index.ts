@@ -101,10 +101,14 @@ export async function getTKGuildUserDetail(
 
 // Create TK Guild User
 export async function createTKGuildUser(
-  data: CreateTKGuildUserRequest & {
+  _data: CreateTKGuildUserRequest & {
     org_id: string;
   },
 ): Promise<CreateTKGuildUserResponse['data']> {
+  const data = {
+    ..._data,
+    username: _data.username?.trim(),
+  };
   logger.info('[Create TK Guild User]', { data });
 
   const { username, password, org_id } = data;
@@ -156,14 +160,21 @@ export async function createTKGuildUser(
 
 // Update TK Guild User
 export async function updateTKGuildUser(
-  data: UpdateTKGuildUserRequest & { org_id: string },
+  _request: UpdateTKGuildUserRequest & { org_id: string },
 ): Promise<void> {
-  logger.info('[Update TK Guild User]', { data });
+  const request = {
+    ..._request,
+    data: {
+      ..._request.data,
+      username: _request.data.username?.trim(),
+    },
+  };
+  logger.info('[Update TK Guild User]', { request });
 
-  const { id } = data.data;
+  const { id } = request.data;
   assert(id, '用户ID不能为空');
 
-  const { org_id } = data;
+  const { org_id } = request;
   assert(org_id, '机构ID不能为空');
 
   await mysqlClient.prismaClient.$transaction(async tx => {
@@ -178,7 +189,7 @@ export async function updateTKGuildUser(
     assert(existUser, '用户不存在');
 
     // eslint-disable-next-line ts/no-unused-vars
-    const { id: _, ...updateData } = data.data;
+    const { id: _, ...updateData } = request.data;
 
     // Apply XSS protection to string fields
     if (updateData.username) {

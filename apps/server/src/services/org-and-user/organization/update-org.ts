@@ -8,7 +8,11 @@ import { omit } from 'lodash';
 import { logger } from '../../../infra/logger';
 import { BusinessError } from '../../../utils';
 
-export async function updateOrg(data: UpdateOrgRequest): Promise<void> {
+export async function updateOrg(_data: UpdateOrgRequest): Promise<void> {
+  const data = {
+    ..._data,
+    name: _data.name?.trim(),
+  };
   logger.info('[Update Org]', { data });
   if (data.name) {
     const orgNameFind = await mysqlClient.prismaClient.organization.findFirst({

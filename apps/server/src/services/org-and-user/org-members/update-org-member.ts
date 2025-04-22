@@ -8,6 +8,7 @@ export async function updateOrgMember({
   data,
 }: UpdateOrgMemberRequest): Promise<void> {
   const { password, id, ...rest } = data;
+  rest.username = rest.username?.trim();
   if (rest.username) {
     const usernameFind = await mysqlClient.prismaClient.orgUser.findFirst({
       select: { id: true },
@@ -31,7 +32,7 @@ export async function updateOrgMember({
     const hashedPassword = await hashPassword(password);
     updateData = { ...rest, password: hashedPassword };
     logger.info('[Update Org Member]', {
-      data: { ...data, password: '******' },
+      data: { ...rest, id, password: '******' },
     });
   } else {
     updateData = rest;

@@ -9,7 +9,13 @@ import { logger } from '../../../infra/logger';
 import { BusinessError } from '../../../utils';
 import { checkOrgNameExist } from './check-org-name-exist';
 
-export async function createOrg(data: CreateOrgRequest): Promise<void> {
+export async function createOrg(_data: CreateOrgRequest): Promise<void> {
+  const data = {
+    ..._data,
+    name: _data.name?.trim(),
+  };
+  assert(data.name, '组织名称不能为空');
+  assert(data.areas && data.areas.length > 0, '区域不能为空');
   logger.info('[Create Org]', { data });
   if (await checkOrgNameExist(data.name)) {
     throw new BusinessError('组织名称已存在');

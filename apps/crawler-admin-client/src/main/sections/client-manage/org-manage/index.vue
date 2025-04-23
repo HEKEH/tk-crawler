@@ -337,6 +337,12 @@ function onManageOrgMembers(org: OrganizationItem) {
           min-width="120"
         />
         <ElTableColumn
+          sortable="custom"
+          prop="mobile_device_limit"
+          label="设备数量上限"
+          min-width="140"
+        />
+        <ElTableColumn
           prop="created_at"
           label="创建时间"
           min-width="180"

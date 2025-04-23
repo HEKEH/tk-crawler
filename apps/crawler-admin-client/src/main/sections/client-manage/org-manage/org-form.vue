@@ -12,6 +12,7 @@ import {
   ElForm,
   ElFormItem,
   ElInput,
+  ElInputNumber,
   ElMessageBox,
   ElOption,
   ElSelect,
@@ -57,6 +58,7 @@ const rules: FormRules = {
     },
   ],
   status: [{ required: true, message: '请选择状态' }],
+  mobile_device_limit: [{ required: true, message: '请输入设备数量上限' }],
   areas: [{ required: true, message: '请选择地区' }],
   membershipDates: [
     {
@@ -121,6 +123,7 @@ async function handleSubmit() {
           name: form.name,
           status: form.status,
           areas,
+          mobile_device_limit: form.mobile_device_limit,
           membership_start_at: form.membership_start_at ?? null,
           membership_expire_at: form.membership_expire_at ?? null,
           remark: form.remark,
@@ -186,6 +189,17 @@ function handleCancel() {
           :value="item.value"
         />
       </ElSelect>
+    </ElFormItem>
+
+    <ElFormItem label="设备数量上限" prop="mobile_device_limit">
+      <ElInputNumber
+        v-model="form.mobile_device_limit"
+        style="width: 100%"
+        type="number"
+        :precision="0"
+        placeholder="请输入"
+        :min="1"
+      />
     </ElFormItem>
 
     <ElFormItem label="备注" prop="remark">

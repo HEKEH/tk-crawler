@@ -15,7 +15,13 @@ export async function getSystemUserInfoByToken(
   if (typeof token !== 'string') {
     throw new BusinessError('Token必须为字符串');
   }
-  const { userId, expires } = parseToken(token);
+  const { userId, expires } = (() => {
+    try {
+      return parseToken(token);
+    } catch {
+      throw new TokenInvalidError('Token无效，请重新登录');
+    }
+  })();
   if (!userId || !expires) {
     throw new TokenInvalidError('Token无效，请重新登录');
   }

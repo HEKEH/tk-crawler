@@ -20,7 +20,13 @@ export async function getOrgMemberInfoByToken(
   if (typeof token !== 'string') {
     throw new BusinessError('Token必须为字符串');
   }
-  const { userId, expires, deviceId } = parseToken(token);
+  const { userId, expires, deviceId } = (() => {
+    try {
+      return parseToken(token);
+    } catch {
+      throw new TokenInvalidError('Token无效，请重新登录');
+    }
+  })();
   if (!userId || !expires) {
     throw new TokenInvalidError('Token无效，请重新登录');
   }

@@ -23,5 +23,12 @@ export function validatePassword(password: string): PasswordValidationResult {
     };
   }
 
+  if (password.includes(' ')) {
+    return {
+      isValid: false,
+      error: '密码不能包含空格',
+    };
+  }
+
   return { isValid: true };
 }

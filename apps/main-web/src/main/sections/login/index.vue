@@ -31,6 +31,14 @@ const rules: Record<string, FormItemRule[]> = {
   username: [
     { required: true, message: '请输入用户名' },
     { min: 2, max: 20, message: '长度在 2 到 20 个字符' },
+    {
+      validator: (rule, value, callback) => {
+        if (value && value.includes(' ')) {
+          callback(new Error('名字不要有空格'));
+        }
+        callback();
+      },
+    },
   ],
   password: [
     { required: true, message: '请输入密码' },

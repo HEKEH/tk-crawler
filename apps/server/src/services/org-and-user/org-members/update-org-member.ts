@@ -5,10 +5,13 @@ import { BusinessError, hashPassword } from '../../../utils';
 
 export async function updateOrgMember({
   org_id,
-  data,
+  data: _data,
 }: UpdateOrgMemberRequest): Promise<void> {
+  const data = {
+    ..._data,
+    username: _data.username?.trim(),
+  };
   const { password, id, ...rest } = data;
-  rest.username = rest.username?.trim();
   if (rest.username) {
     const usernameFind = await mysqlClient.prismaClient.orgUser.findFirst({
       select: { id: true },

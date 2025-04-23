@@ -50,6 +50,14 @@ const rules = computed<FormRules>(() => {
     username: [
       { required: true, message: '请输入登录名' },
       { min: 2, max: 24, message: '长度在 2 到 24 个字符' },
+      {
+        validator: (rule, value, callback) => {
+          if (value && value.includes(' ')) {
+            callback(new Error('名字不要有空格'));
+          }
+          callback();
+        },
+      },
     ],
     display_name: [
       { required: true, message: '请输入显示名' },

@@ -33,6 +33,14 @@ const rules: FormRules = {
   name: [
     { required: true, message: '请输入模板组名' },
     { min: 2, max: 30, message: '长度在 2 到 30 个字符' },
+    {
+      validator: (rule, value, callback) => {
+        if (value && value.includes(' ')) {
+          callback(new Error('名字不要有空格'));
+        }
+        callback();
+      },
+    },
   ],
 };
 

@@ -12,8 +12,12 @@ import { BusinessError, generateToken } from '../../utils';
 import { getOrgMemberInfoByLogin } from '../auth';
 
 export async function mobileOrgMemberLogin(
-  request: MobileOrgMemberLoginRequest,
+  _request: MobileOrgMemberLoginRequest,
 ): Promise<MobileOrgMemberLoginResponse['data']> {
+  const request = {
+    ..._request,
+    username: _request.username?.trim(),
+  };
   logger.info('[Mobile Org Member Login]', request);
   assert(request.username, '用户名不能为空');
   assert(request.password, '密码不能为空');

@@ -45,11 +45,26 @@ const rules: FormRules = {
   username: [
     { required: true, message: '请输入后台查询账号' },
     { min: 2, max: 30, message: '长度在 2 到 30 个字符' },
+    {
+      validator: (rule, value, callback) => {
+        if (value && value.includes(' ')) {
+          callback(new Error('名字不要有空格'));
+        }
+        callback();
+      },
+    },
   ],
-  password: [{ required: true, message: '请输入后台查询密码' }],
-  // area: [{ required: true, message: '请选择分区' }],
-  max_query_per_hour: [{ required: true, message: '请输入每小时查询次数' }],
-  max_query_per_day: [{ required: true, message: '请输入每天查询次数' }],
+  password: [
+    { required: true, message: '请输入后台查询密码' },
+    {
+      validator: (rule, value, callback) => {
+        if (value && value.includes(' ')) {
+          callback(new Error('密码不要有空格'));
+        }
+        callback();
+      },
+    },
+  ],
 };
 
 const isLoading = ref(false);

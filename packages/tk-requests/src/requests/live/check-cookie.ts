@@ -6,7 +6,7 @@ import { commonGetRequest } from '../utils/common-request';
 import { getTiktokCookie } from '../utils/cookie';
 import {
   COMMON_TIKTOK_HEADERS,
-  COMMON_TIKTOK_QUERY,
+  getDynamicCommonTiktokQuery,
   getTiktokRegionParams,
 } from './constants';
 
@@ -25,7 +25,7 @@ export async function checkTiktokCookieValid({
     baseUrl: TIKTOK_URL,
     path: '/passport/web/account/info/',
     params: {
-      ...COMMON_TIKTOK_QUERY,
+      ...getDynamicCommonTiktokQuery(),
       user_is_login: 'true',
       ...regionParams,
       ...tokens,

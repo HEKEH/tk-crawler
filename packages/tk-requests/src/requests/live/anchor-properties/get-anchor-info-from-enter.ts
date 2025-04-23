@@ -7,7 +7,7 @@ import { commonPostRequest } from '../../utils/common-request';
 import { getTiktokCookie } from '../../utils/cookie';
 import {
   COMMON_TIKTOK_HEADERS,
-  COMMON_TIKTOK_QUERY,
+  getDynamicCommonTiktokQuery,
   getTiktokRegionParams,
   TIKTOK_WEBCAST_URL,
 } from '../constants';
@@ -62,7 +62,7 @@ export async function getAnchorInfoFromEnter({
     baseUrl: TIKTOK_WEBCAST_URL,
     path: '/webcast/room/enter/',
     params: {
-      ...COMMON_TIKTOK_QUERY,
+      ...getDynamicCommonTiktokQuery(),
       ...regionParams,
       ...tokens,
       user_is_login: 'false',

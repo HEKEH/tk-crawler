@@ -7,7 +7,7 @@ import { commonGetRequest } from '../../utils/common-request';
 import { getTiktokCookie } from '../../utils/cookie';
 import {
   COMMON_TIKTOK_HEADERS,
-  COMMON_TIKTOK_QUERY,
+  getDynamicCommonTiktokQuery,
   getTiktokRegionParams,
   TIKTOK_WEBCAST_URL,
 } from '../constants';
@@ -52,7 +52,7 @@ export async function getLiveDiamonds({
     baseUrl: TIKTOK_WEBCAST_URL,
     path: '/webcast/ranklist/online_audience/',
     params: {
-      ...COMMON_TIKTOK_QUERY,
+      ...getDynamicCommonTiktokQuery(),
       user_is_login: 'true',
       ...regionParams,
       anchor_id: anchorId,

@@ -7,7 +7,7 @@ import { getXBogus } from '../../../get-x-bogus';
 import { commonGetRequest } from '../../utils/common-request';
 import {
   COMMON_TIKTOK_HEADERS,
-  COMMON_TIKTOK_QUERY,
+  getDynamicCommonTiktokQuery,
   getTiktokRegionParams,
   TIKTOK_WEBCAST_URL,
 } from '../constants';
@@ -23,7 +23,7 @@ export async function getFeed({
     baseUrl: TIKTOK_WEBCAST_URL,
     path: '/webcast/feed/',
     params: {
-      ...COMMON_TIKTOK_QUERY,
+      ...getDynamicCommonTiktokQuery(),
       ...regionParams,
       ...channelParams,
       ...tokens,

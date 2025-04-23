@@ -6,7 +6,7 @@ import { getXBogus } from '../../../get-x-bogus';
 import { commonGetRequest } from '../../utils/common-request';
 import {
   COMMON_TIKTOK_HEADERS,
-  COMMON_TIKTOK_QUERY,
+  getDynamicCommonTiktokQuery,
   getTiktokRegionParams,
   TIKTOK_WEBCAST_URL,
 } from '../constants';
@@ -54,7 +54,7 @@ export async function getAnchorInfoFromGiftList({
     baseUrl: TIKTOK_WEBCAST_URL,
     path: '/webcast/gift/list/',
     params: {
-      ...COMMON_TIKTOK_QUERY,
+      ...getDynamicCommonTiktokQuery(),
       ...regionParams,
       room_id: roomId,
       ...tokens,

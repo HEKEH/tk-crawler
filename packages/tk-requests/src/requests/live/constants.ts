@@ -7,6 +7,7 @@ import {
   USER_AGENT,
 } from '@tk-crawler/biz-shared';
 import {
+  getRandomArrayElement,
   getRandomArrayElementWithWeight,
 } from '@tk-crawler/shared';
 
@@ -40,7 +41,10 @@ export const CHANNEL_IDS = Object.values(ChannelId).filter(
   value => typeof value === 'number',
 ) as ChannelId[];
 
-export const COMMON_TIKTOK_QUERY = {
+const BASE_DEVICE_ID = '7451966978395973866';
+const BASE_HISTORY_LEN = getRandomArrayElement([2, 3, 4, 5]);
+
+const COMMON_TIKTOK_QUERY = {
   aid: '1988',
   app_name: 'tiktok_web',
   browser_name: BROWSER_NAME,
@@ -50,13 +54,11 @@ export const COMMON_TIKTOK_QUERY = {
   channel: 'tiktok_web',
   cookie_enabled: 'true',
   data_collection_enabled: 'false',
-  device_id: '7451966978406073866',
   device_platform: 'web_pc',
   device_type: 'web_h265',
   focus_state: 'false',
   from_page: 'user',
   hidden_banner: 'true',
-  history_len: '5',
   is_fullscreen: 'true',
   is_non_personalized: '0',
   is_page_visible: 'true',
@@ -69,6 +71,33 @@ export const COMMON_TIKTOK_QUERY = {
   screen_width: '2560',
   user_is_login: 'false',
 };
+
+let queryCount = 0;
+let currentDynamicQuery = {
+  ...COMMON_TIKTOK_QUERY,
+  device_id: BASE_DEVICE_ID,
+  history_len: BASE_HISTORY_LEN,
+};
+
+export function getDynamicCommonTiktokQuery() {
+  queryCount++;
+  if (queryCount > 1000) {
+    queryCount = 0;
+    const deviceId = (
+      BigInt(BASE_DEVICE_ID) + BigInt(Math.ceil(Math.random() * 1000000))
+    ).toString();
+    let historyLen = currentDynamicQuery.history_len + 1;
+    if (historyLen > 12) {
+      historyLen = getRandomArrayElement([2, 3, 4, 5]);
+    }
+    currentDynamicQuery = {
+      ...COMMON_TIKTOK_QUERY,
+      device_id: deviceId,
+      history_len: historyLen,
+    };
+  }
+  return currentDynamicQuery;
+}
 
 export const TIKTOK_REGION_PARAMS_MAP = new Proxy(
   {

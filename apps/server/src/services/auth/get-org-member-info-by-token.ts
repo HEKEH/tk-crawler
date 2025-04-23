@@ -20,7 +20,7 @@ export async function getOrgMemberInfoByToken(
   if (typeof token !== 'string') {
     throw new BusinessError('Token必须为字符串');
   }
-  const { userId, expires } = parseToken(token);
+  const { userId, expires, deviceId } = parseToken(token);
   if (!userId || !expires) {
     throw new TokenInvalidError('Token无效，请重新登录');
   }
@@ -77,5 +77,6 @@ export async function getOrgMemberInfoByToken(
         Boolean(org.membership_expire_at) &&
         dayjs(org.membership_expire_at).isAfter(new Date()),
     },
+    device_id: deviceId,
   };
 }

@@ -32,7 +32,9 @@ export async function systemUserLogin(
     throw new BusinessError('密码错误, 请重新登录');
   }
 
-  const token = await generateToken(user.id.toString());
+  const token = await generateToken({
+    userId: user.id.toString(),
+  });
   return {
     user_info: {
       ...rest,

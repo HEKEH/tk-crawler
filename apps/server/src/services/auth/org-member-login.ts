@@ -8,16 +8,20 @@ import { OrganizationStatus, OrgMemberStatus } from '@tk-crawler/biz-shared';
 import { mysqlClient } from '@tk-crawler/database';
 import { simpleDecrypt } from '@tk-crawler/shared';
 import dayjs from 'dayjs';
+import { omit } from 'lodash';
 import config from '../../config';
 import { logger } from '../../infra/logger';
 import { BusinessError, generateToken, verifyPassword } from '../../utils';
 
-export async function orgMemberLogin(
+export async function getOrgMemberInfoByLogin(
   request: OrgMemberLoginRequest,
-): Promise<OrgMemberLoginResponseData> {
-  logger.info('[Org Member Login]', request);
-  assert(request.username, '用户名不能为空');
-  assert(request.password, '密码不能为空');
+  options?: {
+    /** 是否包含移动设备 */
+    include_mobile_devices?: boolean;
+    /** 是否不解密密码 */
+    not_decrypt_password?: boolean;
+  },
+) {
   const user = await mysqlClient.prismaClient.orgUser.findUnique({
     where: {
       username: request.username,
@@ -30,6 +34,13 @@ export async function orgMemberLogin(
               area: true,
             },
           },
+          mobile_devices: options?.include_mobile_devices
+            ? {
+                select: {
+                  device_id: true,
+                },
+              }
+            : undefined,
         },
       },
     },
@@ -40,11 +51,10 @@ export async function orgMemberLogin(
   if (user.status !== OrgMemberStatus.normal) {
     throw new BusinessError('用户已禁用, 请重新登录');
   }
-  const { password, organization, ...rest } = user;
-  const passwordDecrypted = simpleDecrypt(
-    request.password,
-    config.simplePasswordKey,
-  );
+  const { password, organization } = user;
+  const passwordDecrypted = options?.not_decrypt_password
+    ? request.password
+    : simpleDecrypt(request.password, config.simplePasswordKey);
   if (!(await verifyPassword(passwordDecrypted, password))) {
     throw new BusinessError('密码错误, 请重新登录');
   }
@@ -55,11 +65,24 @@ export async function orgMemberLogin(
   if (organization.status !== OrganizationStatus.normal) {
     throw new BusinessError('所属组织已禁用, 请重新登录');
   }
+  return user;
+}
 
-  const token = await generateToken(user.id.toString());
+export async function orgMemberLogin(
+  request: OrgMemberLoginRequest,
+): Promise<OrgMemberLoginResponseData> {
+  logger.info('[Org Member Login]', request);
+  assert(request.username, '用户名不能为空');
+  assert(request.password, '密码不能为空');
+  const user = await getOrgMemberInfoByLogin(request);
+  const { organization, ...rest } = user;
+
+  const token = await generateToken({
+    userId: user.id.toString(),
+  });
   return {
     user_info: {
-      ...rest,
+      ...omit(rest, 'password'),
       id: rest.id.toString(),
       org_id: rest.org_id.toString(),
     },

@@ -19,7 +19,7 @@ export function useAnchorContact(params: UseAnchorContactParams) {
   async function handleContactAnchor(taskAnchors: DisplayedAnchorItem[]) {
     const result = await anchorContacted(
       {
-        anchor_check_ids: taskAnchors.map(item => item.id),
+        ids: taskAnchors.map(item => item.id),
       },
       globalStore.token,
     );
@@ -33,7 +33,7 @@ export function useAnchorContact(params: UseAnchorContactParams) {
   async function handleCancelAnchorContact(taskAnchors: DisplayedAnchorItem[]) {
     const result = await cancelAnchorContact(
       {
-        anchor_check_ids: taskAnchors.map(item => item.id),
+        ids: taskAnchors.map(item => item.id),
       },
       globalStore.token,
     );

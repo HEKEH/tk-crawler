@@ -16,7 +16,11 @@ export default class AuthController {
 
   static async orgMemberLoginByToken(ctx: Context, next: Next) {
     logger.info('[Org Member Login By Token]');
-    ctx.body = ctx.clientInfo!;
+    const clientInfo = ctx.clientInfo!;
+    ctx.body = {
+      user_info: clientInfo.user_info,
+      org_info: clientInfo.org_info,
+    };
     await next();
   }
 

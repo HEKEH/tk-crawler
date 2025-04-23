@@ -106,6 +106,7 @@ model Organization {
   remark                         String?                      @db.VarChar(200)
   created_at                     DateTime                     @default(now()) @db.DateTime(3)
   updated_at                     DateTime                     @updatedAt @db.DateTime(3)
+  mobile_device_limit            Int                          @default(10) @db.UnsignedInt
   liveAdminUsers                 LiveAdminUser[]
   orgUsers                       OrgUser[]
   // 公会分区
@@ -115,6 +116,7 @@ model Organization {
   anchor_from_87s                AnchorFrom87[]
   anchor_comment_template_groups AnchorCommentTemplateGroup[]
   anchor_comment_templates       AnchorCommentTemplate[]
+  mobile_devices                 MobileDevice[]
 }
 
 // 机构用户表
@@ -146,6 +148,19 @@ model OrgAreaRelation {
   @@unique([org_id, area], name: "org_id_area")
   @@index([org_id])
   @@index([area])
+}
+
+model MobileDevice {
+  id           BigInt       @id @default(autoincrement()) @db.UnsignedBigInt
+  device_id    BigInt       @db.UnsignedBigInt
+  device_name  String       @db.VarChar(50)
+  org_id       BigInt       @db.UnsignedBigInt
+  created_at   DateTime     @default(now()) @db.DateTime(3)
+  updated_at   DateTime     @updatedAt @db.DateTime(3)
+  organization Organization @relation(fields: [org_id], references: [id], onDelete: Cascade)
+
+  @@unique([org_id, device_id], name: "org_id_device_id")
+  @@index([org_id])
 }
 
 // 任务分配表

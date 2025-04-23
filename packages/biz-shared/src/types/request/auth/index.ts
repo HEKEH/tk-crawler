@@ -11,6 +11,7 @@ export interface OrgMemberUserInfoWithOrgInfo {
     password?: string;
   };
   org_info: Omit<OrganizationItem, 'user_count'>;
+  device_id?: string;
 }
 
 export type OrgMemberLoginSuccessData = OrgMemberUserInfoWithOrgInfo;

@@ -1,10 +1,14 @@
 import { decode, encode } from 'jwt-simple';
 import config from '../config';
 
-export function generateToken(userId: string) {
+interface TokenData {
+  userId: string;
+  deviceId?: string;
+}
+export function generateToken(data: TokenData) {
   return encode(
     {
-      userId,
+      ...data,
       expires: Date.now() + config.jwtTokenExpiresTime,
     },
     config.jwtSecret,
@@ -12,9 +16,6 @@ export function generateToken(userId: string) {
   );
 }
 
-export function parseToken(token: string): {
-  userId: string;
-  expires: number;
-} {
+export function parseToken(token: string): TokenData & { expires: number } {
   return decode(token, config.jwtSecret, false, config.jwtAlgorithm);
 }

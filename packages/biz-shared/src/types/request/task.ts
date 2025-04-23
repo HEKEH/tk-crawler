@@ -29,7 +29,7 @@ export interface CancelClaimTaskResponse {
 }
 
 export interface AnchorContactedRequest {
-  anchor_check_ids: string[];
+  ids: string[];
 }
 
 export interface AnchorContactedResponse {

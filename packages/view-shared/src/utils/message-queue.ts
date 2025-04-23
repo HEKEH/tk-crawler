@@ -28,6 +28,9 @@ export class MessageQueue {
     message: string;
     type: 'error' | 'success' | 'warning' | 'info';
   }) {
+    if (document.visibilityState === 'hidden') {
+      return;
+    }
     const messageId = Math.random();
     const message: QueueMessage = {
       id: messageId,

@@ -18,10 +18,10 @@ export async function getAnchorList(
   request: GetAnchorListRequest & { org_id: string },
 ): Promise<GetAnchorListResponseData> {
   logger.info('[Get Anchor List]', beautifyJsonStringify({ request }));
-  assert(request.org_id, 'org_id is required');
-  assert(request.page_num, 'page_num is required');
-  assert(request.page_size, 'page_size is required');
-  assert(request.page_size <= 200, 'page_size is too large');
+  assert(request.org_id, '机构ID不能为空');
+  assert(request.page_num, '页码不能为空');
+  assert(request.page_size, '每页数量不能为空');
+  assert(request.page_size <= 1000, '每页数量不能超过1000');
 
   const {
     page_num,

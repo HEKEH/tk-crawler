@@ -30,6 +30,9 @@ export interface OrganizationItem {
   user_count: number;
   /** 分区 */
   areas: Area[];
+
+  /** 设备限制 */
+  mobile_device_limit: number;
 }
 
 export enum OrgMemberStatus {

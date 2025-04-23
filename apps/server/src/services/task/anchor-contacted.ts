@@ -11,7 +11,7 @@ export async function anchorContacted(
   },
 ): Promise<void> {
   logger.info('[Anchor Contacted]', { data });
-  const { anchor_check_ids, org_member_id, org_id } = data;
+  const { ids: anchor_check_ids, org_member_id, org_id } = data;
   assert(anchor_check_ids && anchor_check_ids.length > 0, '列表不能为空');
   assert(org_member_id !== undefined, '缺少用户参数');
   assert(org_id, '机构不能为空');

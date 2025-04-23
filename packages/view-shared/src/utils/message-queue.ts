@@ -4,7 +4,7 @@ import { ElMessage } from 'element-plus';
 interface QueueMessage {
   id: number;
   timestamp: number;
-  instance: MessageHandler;
+  instance: MessageHandler | undefined;
 }
 
 export class MessageQueue {
@@ -29,7 +29,7 @@ export class MessageQueue {
     type: 'error' | 'success' | 'warning' | 'info';
   }) {
     const messageId = Math.random();
-    const message = {
+    const message: QueueMessage = {
       id: messageId,
       timestamp: Date.now(),
       instance: ElMessage({
@@ -43,6 +43,7 @@ export class MessageQueue {
           this._messageQueue = this._messageQueue.filter(
             msg => msg.id !== messageId,
           );
+          message.instance = undefined;
         },
       }),
     };
@@ -50,16 +51,24 @@ export class MessageQueue {
     // Add to queue
     this._messageQueue.push(message);
 
+    // 页面休眠时，onClose 不会自动触发，因此需要手动触发
+    setTimeout(() => {
+      message.instance?.close();
+    }, this.MESSAGE_DURATION);
+
     if (this._messageQueue.length > this.MAX_MESSAGES) {
       // Close the oldest notification
-      this._messageQueue[0]?.instance.close();
+      const firstMessage = this._messageQueue[0];
+      if (firstMessage) {
+        firstMessage.instance?.close();
+      }
     }
   }
 
   clearMessages() {
     // Close all notifications
     this._messageQueue.forEach(msg => {
-      msg.instance.close();
+      msg.instance?.close();
     });
     this._messageQueue = [];
   }

@@ -47,6 +47,7 @@ export default defineConfig(({ mode }) => {
     ),
     '@tk-crawler/core': resolve(__dirname, '../../packages/core/src'),
     '@tk-crawler/styles': resolve(__dirname, '../../packages/styles'),
+    '@tk-crawler/assets': resolve(__dirname, '../../packages/assets'),
   };
 
   const envConfig = {

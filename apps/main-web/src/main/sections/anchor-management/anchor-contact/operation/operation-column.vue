@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { DisplayedAnchorItem } from '@tk-crawler/biz-shared';
 import type { TableColumnCtx } from 'element-plus';
+import { useIsWeb } from '@tk-crawler/view-shared';
 import { ElButton, ElTableColumn } from 'element-plus';
 import { useAnchorContact, type UseAnchorContactParams } from '../hooks';
 
@@ -14,12 +15,18 @@ interface ScopeType {
   $index: number;
 }
 
+const isWeb = useIsWeb();
+
 const { handleContactAnchor, handleCancelAnchorContact } =
   useAnchorContact(props);
 </script>
 
 <template>
-  <ElTableColumn label="操作" :min-width="140" fixed="right">
+  <ElTableColumn
+    label="操作"
+    :min-width="140"
+    :fixed="isWeb ? 'right' : undefined"
+  >
     <template #default="scope: ScopeType">
       <div class="operation-buttons">
         <ElButton

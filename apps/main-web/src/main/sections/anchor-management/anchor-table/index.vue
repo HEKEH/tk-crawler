@@ -3,7 +3,7 @@ import type {
   DisplayedAnchorItem,
   GetAnchorListOrderBy,
 } from '@tk-crawler/biz-shared';
-import { RefreshButton, useTableSort } from '@tk-crawler/view-shared';
+import { RefreshButton, useIsWeb, useTableSort } from '@tk-crawler/view-shared';
 import { ElButton, ElPagination, ElTable } from 'element-plus';
 import { computed, onActivated, ref } from 'vue';
 import { useGetAnchorList } from '../../../hooks';
@@ -26,6 +26,8 @@ import './styles.scss';
 defineOptions({
   name: 'TKAnchorTable',
 });
+
+const isWeb = useIsWeb();
 
 const globalStore = useGlobalStore();
 
@@ -144,6 +146,7 @@ onActivated(refetch);
       </div>
       <ElTable
         ref="tableRef"
+        :size="isWeb ? 'default' : 'small'"
         :data="data?.list"
         class="main-table"
         :default-sort="
@@ -168,7 +171,9 @@ onActivated(refetch);
           v-model:page-size="pageSize"
           size="small"
           background
-          layout="total, sizes, prev, pager, next"
+          :layout="
+            isWeb ? 'total, sizes, prev, pager, next' : 'prev, pager, next'
+          "
           :page-sizes="[10, 20, 50, 100]"
           :total="data?.total || 0"
           @size-change="handlePageSizeChange"

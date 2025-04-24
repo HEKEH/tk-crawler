@@ -1,13 +1,17 @@
 <script setup lang="ts">
 import type { Area } from '@tk-crawler/biz-shared';
 import type { FilterViewValues } from './filter';
-import { Search } from '@element-plus/icons-vue';
+import { Refresh, Search } from '@element-plus/icons-vue';
+import { DoubleDownIcon, DoubleUpIcon } from '@tk-crawler/assets';
+
 import { AREA_OPTIONS, TKGuildUserStatusList } from '@tk-crawler/biz-shared';
-import { AreaSelectSingle } from '@tk-crawler/view-shared';
+import { AreaSelectSingle, useIsMobile } from '@tk-crawler/view-shared';
+
 import { ElButton, ElIcon, ElInput, ElOption, ElSelect } from 'element-plus';
 import { debounce } from 'lodash';
 import { computed, ref, watch } from 'vue';
 import { getStatusText } from './utils';
+import '../../../styles/table-header-filter.scss';
 
 const props = defineProps<{
   modelValue: FilterViewValues;
@@ -53,11 +57,27 @@ const areaOptions = computed(() => {
   const areaSet = new Set(props.areas);
   return AREA_OPTIONS.filter(area => areaSet.has(area.value));
 });
+
+const isMobile = useIsMobile();
+
+const isExpanded = ref(false);
+function toggleExpand() {
+  isExpanded.value = !isExpanded.value;
+}
 </script>
 
 <template>
-  <div class="filter">
-    <div class="filter-items">
+  <div class="table-header-filter">
+    <div
+      class="filter-items"
+      :class="
+        !isMobile
+          ? undefined
+          : isExpanded
+            ? 'filter-items-expanded'
+            : 'filter-items-collapsed'
+      "
+    >
       <div class="filter-item">
         <label class="filter-label">搜索账号</label>
         <ElInput
@@ -98,51 +118,29 @@ const areaOptions = computed(() => {
           @change="handleFilterChange"
         />
       </div>
+      <div v-if="!isMobile" class="filter-item-buttons">
+        <ElButton type="default" size="small" @click="resetFilters">
+          <ElIcon style="margin-right: 0.25rem">
+            <Refresh />
+          </ElIcon>
+          搜索重置
+        </ElButton>
+      </div>
     </div>
-
-    <div class="buttons">
-      <ElButton text type="primary" size="small" @click="resetFilters">
+    <div v-if="isMobile" class="buttons">
+      <ElButton type="default" size="small" @click="resetFilters">
+        <ElIcon style="margin-right: 0.25rem">
+          <Refresh />
+        </ElIcon>
         搜索重置
+      </ElButton>
+      <ElButton type="default" size="small" @click="toggleExpand">
+        <ElIcon style="margin-right: 0.25rem">
+          <DoubleDownIcon v-if="!isExpanded" width="16" height="16" />
+          <DoubleUpIcon v-else width="16" height="16" />
+        </ElIcon>
+        {{ isExpanded ? '收起' : '展开' }}
       </ElButton>
     </div>
   </div>
 </template>
-
-<style scoped>
-.filter {
-  margin-bottom: 1rem;
-  display: flex;
-  align-items: center;
-  padding: 0 0.5rem;
-}
-
-.filter-item {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  width: 200px;
-}
-
-.filter-label {
-  font-size: 13px;
-  color: var(--el-text-color-regular);
-  white-space: nowrap;
-}
-
-.filter-items {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-}
-
-.buttons {
-  margin-left: 1.5rem;
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-
-  :global(.el-button) {
-    font-size: 13px;
-  }
-}
-</style>

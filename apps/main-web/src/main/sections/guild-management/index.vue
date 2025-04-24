@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ElMenu, ElMenuItem } from 'element-plus';
 import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { MenuSelect } from '../../components';
 import { useGlobalStore } from '../../utils';
 import TKGuildUserManage from './tk-guild-user-manage';
 
@@ -18,12 +18,12 @@ const globalStore = useGlobalStore();
 const hasPrivilege = computed(() => globalStore.userProfile.isAdmin);
 const MenuList = [
   {
-    type: MenuType.TK_GUILD_USER,
+    value: MenuType.TK_GUILD_USER,
     label: '查询账号管理',
   },
 ];
 const currentMenu = computed(() => {
-  return (route.params.subMenu || MenuList[0]?.type) as MenuType | undefined;
+  return (route.params.subMenu || MenuList[0]?.value) as MenuType | undefined;
 });
 
 function handleSelectMenu(key: string) {
@@ -35,22 +35,14 @@ function handleSelectMenu(key: string) {
 
 <template>
   <div v-if="hasPrivilege" class="container">
-    <div class="left-part">
-      <ElMenu
-        :default-active="currentMenu"
-        class="side-menus"
+    <div class="menu-part">
+      <MenuSelect
+        :menus="MenuList"
+        :value="currentMenu"
         @select="handleSelectMenu"
-      >
-        <ElMenuItem
-          v-for="menu in MenuList"
-          :key="menu.type"
-          :index="menu.type"
-        >
-          <span>{{ menu.label }}</span>
-        </ElMenuItem>
-      </ElMenu>
+      />
     </div>
-    <div class="right-part">
+    <div class="main-part">
       <KeepAlive>
         <TKGuildUserManage v-if="currentMenu === MenuType.TK_GUILD_USER" />
       </KeepAlive>
@@ -58,29 +50,35 @@ function handleSelectMenu(key: string) {
   </div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .container {
   position: relative;
   width: 100%;
   height: 100%;
   overflow: hidden;
   display: flex;
-  .left-part {
-    width: fit-content;
-    height: 100%;
-    overflow: hidden;
-    border-right: 1px solid var(--el-border-color);
+  @include mobile {
+    flex-direction: column;
   }
-  .right-part {
+  .menu-part {
+    overflow: hidden;
+    @include web {
+      height: 100%;
+      width: fit-content;
+      border-right: 1px solid var(--el-border-color);
+    }
+    @include mobile {
+      width: 100%;
+      padding: 0.5rem 1rem 0;
+      height: fit-content;
+    }
+  }
+  .main-part {
     flex: 1;
     height: 100%;
     overflow: hidden;
     display: flex;
     flex-direction: column;
-  }
-  .side-menus {
-    width: 100%;
-    border-right: unset;
   }
 }
 </style>

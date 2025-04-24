@@ -8,7 +8,7 @@ import {
   TIKTOK_URL,
 } from '@tk-crawler/biz-shared';
 import { formatDateTime, getColorFromName } from '@tk-crawler/shared';
-import { AreaTooltipIcon, CopyIcon } from '@tk-crawler/view-shared';
+import { AreaTooltipIcon, CopyIcon, useIsWeb } from '@tk-crawler/view-shared';
 import { ElLink, ElTableColumn, ElTag } from 'element-plus';
 
 defineOptions({
@@ -16,6 +16,8 @@ defineOptions({
 });
 
 defineProps<Props>();
+
+const isWeb = useIsWeb();
 
 interface Props {
   hiddenColumns?: string[];
@@ -32,15 +34,17 @@ interface ScopeType {
   <ElTableColumn
     v-if="!hiddenColumns?.includes('selection')"
     type="selection"
-    width="55"
+    width="30"
+    :fixed="!isWeb ? 'left' : undefined"
   />
   <!-- 基本信息 -->
   <ElTableColumn
     v-if="!hiddenColumns?.includes('display_id')"
     prop="display_id"
     label="主播ID"
-    width="160"
+    :width="isWeb ? 160 : 140"
     sortable="custom"
+    :fixed="!isWeb ? 'left' : undefined"
   >
     <template #default="scope: ScopeType">
       <div class="display-id-container">
@@ -60,7 +64,7 @@ interface ScopeType {
     v-if="!hiddenColumns?.includes('user_id')"
     prop="user_id"
     label="数字ID"
-    width="210"
+    :width="isWeb ? 210 : 160"
     sortable="custom"
   >
     <template #default="scope: ScopeType">

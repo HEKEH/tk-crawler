@@ -4,6 +4,7 @@ import type { FormInstance, FormItemRule } from 'element-plus';
 import { Lock, User } from '@element-plus/icons-vue';
 import { validatePassword } from '@tk-crawler/biz-shared';
 import { RESPONSE_CODE } from '@tk-crawler/shared';
+import { useIsWeb } from '@tk-crawler/view-shared';
 import {
   ElButton,
   ElCard,
@@ -76,6 +77,8 @@ async function handleLogin() {
     loading.value = false;
   }
 }
+
+const isWeb = useIsWeb();
 </script>
 
 <template>
@@ -96,7 +99,7 @@ async function handleLogin() {
         <ElFormItem prop="username">
           <ElInput
             v-model="loginForm.username"
-            size="large"
+            :size="isWeb ? 'large' : 'default'"
             placeholder="请输入用户名"
             :prefix-icon="User"
           />
@@ -106,7 +109,7 @@ async function handleLogin() {
         <ElFormItem prop="password">
           <ElInput
             v-model="loginForm.password"
-            size="large"
+            :size="isWeb ? 'large' : 'default'"
             type="password"
             placeholder="请输入密码"
             :prefix-icon="Lock"
@@ -124,7 +127,7 @@ async function handleLogin() {
         <ElFormItem>
           <ElButton
             type="primary"
-            size="large"
+            :size="isWeb ? 'large' : 'default'"
             :loading="loading"
             class="login-button"
             @click="handleLogin"
@@ -137,7 +140,7 @@ async function handleLogin() {
   </div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .login-container {
   display: flex;
   height: 100%;
@@ -150,11 +153,17 @@ async function handleLogin() {
   max-width: 400px;
   margin-top: 100px;
   border-radius: 10px;
+  @include mobile {
+    max-width: calc(100vw - 20px);
+  }
 }
 
 .login-title {
   text-align: center;
   margin: 0;
+  @include mobile {
+    font-size: 18px;
+  }
 }
 
 .login-button {

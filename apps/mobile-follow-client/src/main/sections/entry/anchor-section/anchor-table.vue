@@ -616,7 +616,7 @@ const columns = computed<Column<AnchorFrom87>[]>(() => [
   </div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .outer-container {
   position: relative;
   width: 100%;
@@ -681,9 +681,14 @@ const columns = computed<Column<AnchorFrom87>[]>(() => [
 .pagination-row {
   width: 100%;
   display: flex;
-  justify-content: flex-end;
   margin-top: 1rem;
   padding-right: 1rem;
+  @include mobile {
+    justify-content: center;
+  }
+  @include web {
+    justify-content: flex-end;
+  }
 }
 :deep(.group-container) {
   max-width: 100%;

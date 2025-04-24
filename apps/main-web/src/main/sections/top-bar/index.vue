@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useIsWeb } from '@tk-crawler/view-shared';
-import LeftMenus from './left-menus.vue';
+import Menus from './menus.vue';
 import RightPart from './right-part.vue';
 
 defineOptions({
@@ -13,10 +13,11 @@ const isWeb = useIsWeb();
   <div class="top-bar">
     <div class="top-bar-left">
       <img class="app-icon" src="/appicon.svg?url" alt="appicon" />
-      <LeftMenus v-if="isWeb" />
+      <Menus v-if="isWeb" />
     </div>
     <div class="top-bar-right">
       <RightPart />
+      <Menus v-if="!isWeb" />
     </div>
   </div>
 </template>
@@ -44,9 +45,20 @@ const isWeb = useIsWeb();
     align-items: center;
     gap: 2.5rem;
   }
+  .top-bar-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
   .app-icon {
-    height: 3rem;
-    width: auto;
+    @include web {
+      height: 3rem;
+      width: auto;
+    }
+    @include mobile {
+      height: 2rem;
+      width: auto;
+    }
   }
 }
 </style>

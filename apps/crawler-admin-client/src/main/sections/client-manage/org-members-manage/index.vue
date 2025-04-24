@@ -377,15 +377,20 @@ async function handleSubmitCreateOrEdit(data: Partial<OrgMemberItem>) {
   />
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .org-member-manage {
-  padding: 2rem 1rem;
   position: relative;
   height: fit-content;
   max-height: 100%;
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  @include web {
+    padding: 2rem 1rem;
+  }
+  @include mobile {
+    padding: 1rem;
+  }
   .header-row {
     margin-bottom: 1rem;
     display: flex;

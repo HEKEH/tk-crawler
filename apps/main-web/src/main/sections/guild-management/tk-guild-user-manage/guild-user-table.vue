@@ -27,6 +27,7 @@ import {
   CopyIcon,
   getPlatform,
   RefreshButton,
+  useIsWeb,
 } from '@tk-crawler/view-shared';
 import {
   ElButton,
@@ -69,6 +70,7 @@ interface ScopeType {
 }
 
 const globalStore = useGlobalStore();
+const isWeb = useIsWeb();
 
 const tableRef = ref<InstanceType<typeof ElTable>>();
 const pageNum = ref(1);
@@ -432,7 +434,7 @@ onActivated(refetch);
               </span>
             </template>
             <ElButton type="primary" size="small" @click="onAddItem">
-              添加查询账号
+              添加账号
               <!-- <ElIcon style="font-size: 14px; margin-left: 0.25rem">
                 <InfoFilled />
               </ElIcon> -->
@@ -456,6 +458,7 @@ onActivated(refetch);
       </div>
       <ElTable
         ref="tableRef"
+        :size="isWeb ? 'default' : 'small'"
         :data="data?.list"
         class="main-table"
         :default-sort="
@@ -467,9 +470,14 @@ onActivated(refetch);
         @sort-change="handleSortChange"
         @selection-change="handleSelectionChange"
       >
-        <ElTableColumn type="selection" width="55" />
-        <ElTableColumn prop="username" label="后台查询账号" min-width="200" />
-        <ElTableColumn label="启动/停止" min-width="120">
+        <ElTableColumn type="selection" width="30" />
+        <ElTableColumn
+          prop="username"
+          label="后台查询账号"
+          :fixed="isWeb ? undefined : 'left'"
+          :min-width="isWeb ? 200 : 140"
+        />
+        <ElTableColumn label="启动/停止" :min-width="isWeb ? 120 : 100">
           <template #default="scope: ScopeType">
             <ElButton
               class="start-or-stop-button"
@@ -495,7 +503,11 @@ onActivated(refetch);
             <StatusTag :status="scope.row.status" />
           </template>
         </ElTableColumn>
-        <ElTableColumn prop="password" label="后台查询密码" min-width="160">
+        <ElTableColumn
+          prop="password"
+          label="后台查询密码"
+          :min-width="isWeb ? 140 : 100"
+        >
           <template #default="scope: ScopeType">
             <VisiblePassword :password="scope.row.password" />
           </template>
@@ -504,7 +516,7 @@ onActivated(refetch);
           prop="area"
           label="分区"
           sortable="custom"
-          min-width="160"
+          :min-width="isWeb ? 140 : 100"
         >
           <template #default="scope: ScopeType">
             <div class="area-with-tooltip">
@@ -516,29 +528,29 @@ onActivated(refetch);
         <ElTableColumn
           prop="max_query_per_day"
           label="每天最大查询次数"
-          min-width="160"
+          :min-width="isWeb ? 160 : 140"
           sortable="custom"
         />
         <ElTableColumn
           prop="max_query_per_hour"
           label="每小时最大查询次数"
-          min-width="180"
+          :min-width="isWeb ? 180 : 150"
           sortable="custom"
         />
         <ElTableColumn
           prop="current_query_per_day"
           label="当天查询次数"
-          min-width="160"
+          :min-width="isWeb ? 160 : 120"
         />
         <ElTableColumn
           prop="current_query_per_hour"
           label="当前小时查询次数"
-          min-width="180"
+          :min-width="isWeb ? 180 : 140"
         />
         <ElTableColumn
           prop="created_at"
           label="创建时间"
-          min-width="205"
+          :min-width="isWeb ? 205 : 160"
           sortable="custom"
         >
           <template #default="scope: ScopeType">
@@ -563,7 +575,11 @@ onActivated(refetch);
             </div>
           </template>
         </ElTableColumn>
-        <ElTableColumn label="操作" min-width="140" fixed="right">
+        <ElTableColumn
+          label="操作"
+          min-width="140"
+          :fixed="isWeb ? 'right' : false"
+        >
           <template #default="scope: ScopeType">
             <div class="operation-buttons">
               <ElButton
@@ -590,7 +606,9 @@ onActivated(refetch);
           v-model:page-size="pageSize"
           size="small"
           background
-          layout="total, sizes, prev, pager, next"
+          :layout="
+            isWeb ? 'total, sizes, prev, pager, next' : 'prev, pager, next'
+          "
           :page-sizes="[10, 20, 50, 100]"
           :total="data?.total || 0"
           @size-change="handlePageSizeChange"
@@ -610,15 +628,20 @@ onActivated(refetch);
   </div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .tk-guild-user-table {
-  padding: 2rem 1rem;
   position: relative;
   height: fit-content;
   max-height: 100%;
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  @include mobile {
+    padding: 1rem;
+  }
+  @include web {
+    padding: 2rem 1rem;
+  }
   .filter-row {
     width: 100%;
     overflow: hidden;
@@ -656,9 +679,14 @@ onActivated(refetch);
   .pagination-row {
     width: 100%;
     display: flex;
-    justify-content: flex-end;
     margin-top: 1rem;
     padding-right: 1rem;
+    @include mobile {
+      justify-content: center;
+    }
+    @include web {
+      justify-content: flex-end;
+    }
   }
   .main-table {
     flex: 1;

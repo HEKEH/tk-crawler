@@ -2,6 +2,8 @@
 import type { OrgMemberChangePasswordRequest } from '@tk-crawler/biz-shared';
 import { SwitchButton } from '@element-plus/icons-vue';
 import { useQueryClient } from '@tanstack/vue-query';
+// import { useRouter } from 'vue-router';
+import { KeyIcon } from '@tk-crawler/assets';
 import { RESPONSE_CODE } from '@tk-crawler/shared';
 import {
   ElDivider,
@@ -13,8 +15,6 @@ import {
   ElMessageBox,
 } from 'element-plus';
 import { computed, ref } from 'vue';
-// import { useRouter } from 'vue-router';
-import Key from '../../../assets/icons/key.svg';
 import { Avatar } from '../../../components';
 import { changePassword } from '../../../requests';
 import { useGlobalStore } from '../../../utils';
@@ -69,7 +69,7 @@ async function handlePasswordChange(data: OrgMemberChangePasswordRequest) {
         <ElDivider />
         <ElDropdownMenu>
           <ElDropdownItem @click="passwordChangeDialogVisible = true">
-            <ElIcon><Key /></ElIcon>
+            <ElIcon><KeyIcon /></ElIcon>
             <span>修改密码</span>
           </ElDropdownItem>
           <ElDropdownItem @click="handleLogout">
@@ -107,6 +107,27 @@ async function handlePasswordChange(data: OrgMemberChangePasswordRequest) {
     margin: 12px 0;
     border-top: 1px solid var(--el-border-color-lighter);
   }
+  :global(.el-dropdown-menu__item) {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 0;
+    font-size: 14px;
+  }
+
+  :global(.el-dropdown-menu__item:hover) {
+    background-color: var(--el-dropdown-menuItem-hover-fill);
+    color: var(--el-color-primary);
+  }
+
+  :global(.el-dropdown-menu__item .el-icon) {
+    font-size: 16px;
+    margin-right: 4px;
+  }
+
+  :global(.el-divider) {
+    background-color: var(--el-border-color-lighter);
+  }
 }
 
 .dropdown-content {
@@ -131,27 +152,5 @@ async function handlePasswordChange(data: OrgMemberChangePasswordRequest) {
   color: var(--el-text-color-primary);
   line-height: 1.2;
   padding-left: 4px;
-}
-
-:global(.el-dropdown-menu__item) {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 0;
-  font-size: 14px;
-}
-
-:global(.el-dropdown-menu__item:hover) {
-  background-color: var(--el-dropdown-menuItem-hover-fill);
-  color: var(--el-color-primary);
-}
-
-:global(.el-dropdown-menu__item .el-icon) {
-  font-size: 16px;
-  margin-right: 4px;
-}
-
-:global(.el-divider) {
-  background-color: var(--el-border-color-lighter);
 }
 </style>

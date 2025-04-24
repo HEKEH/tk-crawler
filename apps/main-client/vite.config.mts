@@ -44,6 +44,7 @@ export default defineConfig(({ mode }) => {
       '../../packages/main-client-shared/src',
     ),
     '@tk-crawler/styles': resolve(__dirname, '../../packages/styles'),
+    '@tk-crawler/assets': resolve(__dirname, '../../packages/assets'),
     '@tk-crawler/tk-requests': resolve(
       __dirname,
       '../../packages/tk-requests/src',

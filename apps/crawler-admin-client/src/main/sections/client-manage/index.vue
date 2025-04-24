@@ -52,7 +52,7 @@ function onCloseTab(tabId: string | number) {
   </div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .org-and-user-manage {
   position: relative;
   width: 100%;
@@ -62,11 +62,11 @@ function onCloseTab(tabId: string | number) {
     width: 100%;
     border-top: unset;
   }
-  :global(.el-tab-pane) {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    overflow: hidden;
-  }
+}
+:global(.org-and-user-manage .el-tab-pane) {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
 }
 </style>

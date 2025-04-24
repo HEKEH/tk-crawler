@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ElMenu, ElMenuItem } from 'element-plus';
 import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { MenuSelect } from '../../components';
 import { useGlobalStore } from '../../utils';
 import AnchorContactTable from './anchor-contact';
 import AnchorTable from './anchor-table';
@@ -19,11 +19,11 @@ enum MenuType {
 const route = useRoute();
 const router = useRouter();
 const anchorTableMenu = {
-  type: MenuType.ANCHOR_TABLE,
+  value: MenuType.ANCHOR_TABLE,
   label: '主播列表',
 };
 const anchorContactMenu = {
-  type: MenuType.ANCHOR_CONTACT,
+  value: MenuType.ANCHOR_CONTACT,
   label: '主播建联',
 };
 const MenuList = computed(() =>
@@ -32,34 +32,26 @@ const MenuList = computed(() =>
     : [anchorContactMenu, anchorTableMenu],
 );
 const currentMenu = computed(() => {
-  return (route.params.subMenu || MenuList.value[0].type) as MenuType;
+  return (route.params.subMenu || MenuList.value[0].value) as MenuType;
 });
 
-function handleSelectMenu(key: string) {
+function handleSelectMenu(value: MenuType) {
   router.push({
-    path: `/anchor-management/${key as MenuType}`,
+    path: `/anchor-management/${value}`,
   });
 }
 </script>
 
 <template>
   <div class="container">
-    <div class="left-part">
-      <ElMenu
-        :default-active="currentMenu"
-        class="side-menus"
+    <div class="menu-part">
+      <MenuSelect
+        :menus="MenuList"
+        :value="currentMenu"
         @select="handleSelectMenu"
-      >
-        <ElMenuItem
-          v-for="menu in MenuList"
-          :key="menu.type"
-          :index="menu.type"
-        >
-          <span>{{ menu.label }}</span>
-        </ElMenuItem>
-      </ElMenu>
+      />
     </div>
-    <div class="right-part">
+    <div class="main-part">
       <KeepAlive>
         <AnchorTable v-if="currentMenu === MenuType.ANCHOR_TABLE" />
       </KeepAlive>
@@ -70,29 +62,35 @@ function handleSelectMenu(key: string) {
   </div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .container {
   position: relative;
   width: 100%;
   height: 100%;
   overflow: hidden;
   display: flex;
-  .left-part {
-    width: fit-content;
-    height: 100%;
-    overflow: hidden;
-    border-right: 1px solid var(--el-border-color);
+  @include mobile {
+    flex-direction: column;
   }
-  .right-part {
+  .menu-part {
+    overflow: hidden;
+    @include web {
+      height: 100%;
+      width: fit-content;
+      border-right: 1px solid var(--el-border-color);
+    }
+    @include mobile {
+      width: 100%;
+      padding: 0.5rem 1rem 0;
+      height: fit-content;
+    }
+  }
+  .main-part {
     flex: 1;
     height: 100%;
     overflow: hidden;
     display: flex;
     flex-direction: column;
-  }
-  .side-menus {
-    width: 100%;
-    border-right: unset;
   }
 }
 </style>

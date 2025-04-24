@@ -9,7 +9,11 @@ import type { TableColumnCtx } from 'element-plus';
 import type { FilterViewValues } from './filter';
 import { OrgMemberRole, OrgMemberStatus } from '@tk-crawler/biz-shared';
 import { formatDateTime, RESPONSE_CODE } from '@tk-crawler/shared';
-import { confirmAfterSeconds, RefreshButton } from '@tk-crawler/view-shared';
+import {
+  confirmAfterSeconds,
+  RefreshButton,
+  useIsWeb,
+} from '@tk-crawler/view-shared';
 import {
   ElButton,
   ElMessage,
@@ -43,6 +47,8 @@ interface ScopeType {
   column: TableColumnCtx<Omit<OrgMemberItem, 'password'>>;
   $index: number;
 }
+
+const isWeb = useIsWeb();
 
 const tableRef = ref<InstanceType<typeof ElTable>>();
 const globalStore = useGlobalStore();
@@ -243,6 +249,7 @@ async function handleSubmitCreateOrEdit(data: Partial<OrgMemberItem>) {
       </div>
       <ElTable
         ref="tableRef"
+        :size="!isWeb ? 'small' : undefined"
         :data="data?.list"
         class="main-table"
         :default-sort="
@@ -254,28 +261,29 @@ async function handleSubmitCreateOrEdit(data: Partial<OrgMemberItem>) {
         @sort-change="handleSortChange"
       >
         <ElTableColumn
-          fixed
+          fixed="left"
           prop="id"
           label="ID"
-          min-width="100"
+          :min-width="!isWeb ? 60 : 80"
           sortable="custom"
         />
         <ElTableColumn
           prop="username"
           label="登录名"
-          min-width="120"
+          :fixed="!isWeb ? 'left' : undefined"
+          :min-width="!isWeb ? 80 : 100"
           sortable="custom"
         />
         <ElTableColumn
           prop="display_name"
           label="显示名"
-          min-width="120"
+          :min-width="!isWeb ? 80 : 100"
           sortable="custom"
         />
         <ElTableColumn
           prop="email"
           label="邮箱"
-          min-width="120"
+          min-width="100"
           sortable="custom"
         >
           <template #default="scope: ScopeType">
@@ -285,7 +293,7 @@ async function handleSubmitCreateOrEdit(data: Partial<OrgMemberItem>) {
         <ElTableColumn
           prop="mobile"
           label="手机号"
-          min-width="120"
+          min-width="100"
           sortable="custom"
         >
           <template #default="scope: ScopeType">
@@ -355,9 +363,9 @@ async function handleSubmitCreateOrEdit(data: Partial<OrgMemberItem>) {
         </ElTableColumn>
         <ElTableColumn
           v-if="globalStore.userProfile.isAdmin"
-          fixed="right"
+          :fixed="isWeb ? 'right' : undefined"
           label="操作"
-          min-width="220"
+          min-width="160"
         >
           <template #default="scope: ScopeType">
             <div>
@@ -401,7 +409,9 @@ async function handleSubmitCreateOrEdit(data: Partial<OrgMemberItem>) {
           background
           :page-size="pageSize"
           :current-page="pageNum"
-          layout="total, sizes, prev, pager, next"
+          :layout="
+            isWeb ? 'total, sizes, prev, pager, next' : 'prev, pager, next'
+          "
           :total="data?.total"
           class="mt-4"
           @size-change="pageSize = $event"
@@ -419,15 +429,20 @@ async function handleSubmitCreateOrEdit(data: Partial<OrgMemberItem>) {
   />
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .org-member-manage {
-  padding: 2rem 1rem;
   position: relative;
   height: fit-content;
   max-height: 100%;
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  @include web {
+    padding: 2rem 1rem;
+  }
+  @include mobile {
+    padding: 1rem;
+  }
   .filter-row {
     width: 100%;
     overflow: hidden;
@@ -465,9 +480,14 @@ async function handleSubmitCreateOrEdit(data: Partial<OrgMemberItem>) {
   .pagination-row {
     width: 100%;
     display: flex;
-    justify-content: flex-end;
     margin-top: 1rem;
     padding-right: 1rem;
+    @include mobile {
+      justify-content: center;
+    }
+    @include web {
+      justify-content: flex-end;
+    }
   }
   .main-table {
     flex: 1;

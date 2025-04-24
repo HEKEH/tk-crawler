@@ -2,6 +2,7 @@
 import type { Area, Region } from '@tk-crawler/biz-shared';
 import type { FilterViewValues } from './filter';
 import { Refresh, Search } from '@element-plus/icons-vue';
+import { DoubleDownIcon, DoubleUpIcon } from '@tk-crawler/assets';
 import {
   AnchorRankLeague,
   AREA_NAME_MAP,
@@ -14,11 +15,13 @@ import {
   RangeDateSelect,
   RangeNumberInput,
   RangeSelect,
+  useIsMobile,
 } from '@tk-crawler/view-shared';
 import { ElButton, ElIcon, ElInput, ElOption, ElSelect } from 'element-plus';
 import { cloneDeep } from 'lodash';
 import { computed, ref, watch } from 'vue';
 import { OrgMemberSelectSingle } from '../../../components';
+import '../../../styles/table-header-filter.scss';
 
 const props = defineProps<{
   modelValue: FilterViewValues;
@@ -84,11 +87,26 @@ function handleSubmit() {
 function resetFilters() {
   emit('reset');
 }
+const isMobile = useIsMobile();
+
+const isExpanded = ref(false);
+function toggleExpand() {
+  isExpanded.value = !isExpanded.value;
+}
 </script>
 
 <template>
-  <div class="filter">
-    <div class="filter-items">
+  <div class="table-header-filter">
+    <div
+      class="filter-items"
+      :class="
+        !isMobile
+          ? undefined
+          : isExpanded
+            ? 'filter-items-expanded'
+            : 'filter-items-collapsed'
+      "
+    >
       <div v-if="!hiddenFilters?.includes('display_id')" class="filter-item">
         <label class="filter-label">主播ID</label>
         <ElInput v-model="filters.display_id" clearable size="small" />
@@ -106,6 +124,7 @@ function resetFilters() {
           show-not-assigned
           self-first
           size="small"
+          popper-class="custom-filter-select"
         />
       </div>
       <div v-if="!hiddenFilters?.includes('contacted_by')" class="filter-item">
@@ -117,6 +136,7 @@ function resetFilters() {
           show-not-contacted
           self-first
           size="small"
+          popper-class="custom-filter-select"
         />
       </div>
       <div
@@ -124,7 +144,11 @@ function resetFilters() {
         class="filter-item"
       >
         <label class="filter-label">建联状态</label>
-        <ElSelect v-model="filters.contacted_by" size="small">
+        <ElSelect
+          v-model="filters.contacted_by"
+          popper-class="custom-filter-select"
+          size="small"
+        >
           <ElOption label="全部" value="all" />
           <ElOption label="已建联" value="contacted" />
           <ElOption label="未建联" value="not_contacted" />
@@ -136,12 +160,17 @@ function resetFilters() {
           :model-value="filters.area"
           :options="areaOptions"
           size="small"
+          popper-class="custom-filter-select"
           @update:model-value="onAreaChange"
         />
       </div>
       <div v-if="!hiddenFilters?.includes('region')" class="filter-item">
         <label class="filter-label">国家或地区</label>
-        <ElSelect v-model="filters.region" size="small">
+        <ElSelect
+          v-model="filters.region"
+          size="small"
+          popper-class="custom-filter-select"
+        >
           <ElOption label="全部" value="all" />
           <ElOption
             v-for="region in regionOptions"
@@ -156,7 +185,11 @@ function resetFilters() {
         class="filter-item"
       >
         <label class="filter-label">可邀约</label>
-        <ElSelect v-model="filters.checked_result" size="small">
+        <ElSelect
+          v-model="filters.checked_result"
+          size="small"
+          popper-class="custom-filter-select"
+        >
           <ElOption label="全部" value="all" />
           <ElOption label="是" :value="true" />
           <ElOption label="否" :value="false" />
@@ -164,7 +197,11 @@ function resetFilters() {
       </div>
       <div v-if="!hiddenFilters?.includes('invite_type')" class="filter-item">
         <label class="filter-label">邀约方式</label>
-        <ElSelect v-model="filters.invite_type" size="small">
+        <ElSelect
+          v-model="filters.invite_type"
+          size="small"
+          popper-class="custom-filter-select"
+        >
           <ElOption label="全部" value="all" />
           <ElOption label="常规邀约" :value="CanUseInvitationType.Regular" />
           <ElOption label="金牌邀约" :value="CanUseInvitationType.Elite" />
@@ -175,7 +212,11 @@ function resetFilters() {
         class="filter-item"
       >
         <label class="filter-label">过滤带货</label>
-        <ElSelect v-model="filters.has_commerce_goods" size="small">
+        <ElSelect
+          v-model="filters.has_commerce_goods"
+          size="small"
+          popper-class="custom-filter-select"
+        >
           <ElOption label="全部" value="all" />
           <ElOption label="不含带货主播" :value="false" />
           <ElOption label="带货主播" :value="true" />
@@ -294,53 +335,18 @@ function resetFilters() {
         </ElIcon>
         搜索重置
       </ElButton>
+      <ElButton
+        v-if="isMobile"
+        type="default"
+        size="small"
+        @click="toggleExpand"
+      >
+        <ElIcon style="margin-right: 0.25rem">
+          <DoubleDownIcon v-if="!isExpanded" width="16" height="16" />
+          <DoubleUpIcon v-else width="16" height="16" />
+        </ElIcon>
+        {{ isExpanded ? '收起' : '展开' }}
+      </ElButton>
     </div>
   </div>
 </template>
-
-<style scoped>
-.filter {
-  /* margin-bottom: 1rem; */
-  /* display: flex; */
-  max-width: 100%;
-  /* align-items: center; */
-  padding: 0 0.5rem;
-}
-
-.filter-item {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  width: 200px;
-}
-
-.filter-range-item {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  width: 416px;
-}
-
-.filter-label {
-  font-size: 13px;
-  color: var(--el-text-color-regular);
-  white-space: nowrap;
-}
-
-.filter-items {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-  max-width: 100%;
-}
-
-.buttons {
-  display: flex;
-  align-items: center;
-  margin-top: 1rem;
-
-  :global(.el-button) {
-    font-size: 13px;
-  }
-}
-</style>

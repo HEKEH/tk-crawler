@@ -1,0 +1,82 @@
+.table-header-filter {
+  max-width: 100%;
+  @include mobile {
+    --filter-font-size: 12px;
+  }
+  @include web {
+    --filter-font-size: 13px;
+  }
+  .filter-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    @include web {
+      width: 200px;
+    }
+    @include mobile {
+      width: 100%;
+    }
+  }
+
+  .filter-range-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    @include web {
+      width: 416px;
+    }
+    @include mobile {
+      width: 100%;
+    }
+  }
+
+  .filter-label {
+    font-size: var(--filter-font-size);
+    color: var(--el-text-color-regular);
+    white-space: nowrap;
+    flex: 0 0 auto;
+    min-width: 36px;
+  }
+
+  .filter-items {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    max-width: 100%;
+    @include mobile {
+      padding: 0 0.5rem;
+      overflow-y: auto;
+      overflow-x: hidden;
+      &.filter-items-expanded {
+        max-height: 510px;
+      }
+      &.filter-items-collapsed {
+        max-height: 70px;
+      }
+    }
+  }
+
+  .buttons {
+    display: flex;
+    align-items: center;
+    @include web {
+      margin-top: 1rem;
+    }
+    @include mobile {
+      margin: 0.5rem 0.5rem 0 0.5rem;
+    }
+  }
+  .filter-item-buttons {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .el-button {
+    font-size: var(--filter-font-size);
+  }
+}
+.custom-filter-select .el-select-dropdown__item {
+  @include mobile {
+    font-size: 12px;
+  }
+}

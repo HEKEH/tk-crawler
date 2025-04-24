@@ -27,10 +27,11 @@ export const NoPrivilegeRouteRecord: CustomRouteRecord = {
 };
 
 export const SystemManagementRouteRecord: CustomRouteRecord = {
-  path: '/system-management',
+  path: '/system-management/:subMenu?',
   name: '系统管理',
   menu: Menu.SystemManagement,
   roles: [OrgMemberRole.admin],
+  jumpTo: '/system-management',
   component: () => import('../sections/system-management/index.vue'),
 };
 

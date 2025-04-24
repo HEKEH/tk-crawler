@@ -1,11 +1,16 @@
 .tk-anchor-user-table {
-  padding: 2rem 1rem;
   position: relative;
   height: fit-content;
   max-height: 100%;
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  @include web {
+    padding: 2rem 1rem;
+  }
+  @include mobile {
+    padding: 0.75rem;
+  }
   .filter-row {
     width: 100%;
     overflow: hidden;
@@ -43,9 +48,14 @@
   .pagination-row {
     width: 100%;
     display: flex;
-    justify-content: flex-end;
     margin-top: 1rem;
     padding-right: 1rem;
+    @include mobile {
+      justify-content: center;
+    }
+    @include web {
+      justify-content: flex-end;
+    }
   }
   .main-table {
     flex: 1;

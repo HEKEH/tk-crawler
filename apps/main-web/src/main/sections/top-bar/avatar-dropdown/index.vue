@@ -7,8 +7,10 @@ import {
   SwitchButton,
 } from '@element-plus/icons-vue';
 import { useQueryClient } from '@tanstack/vue-query';
+import { KeyIcon } from '@tk-crawler/assets';
 import { OrgMemberRole } from '@tk-crawler/biz-shared';
 import { RESPONSE_CODE } from '@tk-crawler/shared';
+import { useIsWeb } from '@tk-crawler/view-shared';
 import {
   ElDivider,
   ElDropdown,
@@ -21,7 +23,6 @@ import {
 } from 'element-plus';
 import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import Key from '../../../assets/icons/key.svg';
 import { Avatar } from '../../../components';
 import { MembershipStatus } from '../../../domain/user-profile';
 import { changePassword } from '../../../requests';
@@ -58,18 +59,19 @@ async function handlePasswordChange(data: OrgMemberChangePasswordRequest) {
     passwordChangeDialogVisible.value = false;
   }
 }
+const isWeb = useIsWeb();
 </script>
 
 <template>
   <ElDropdown trigger="hover" popper-class="avatar-dropdown-menu">
     <div class="avatar-wrapper">
-      <Avatar :size="32" />
+      <Avatar :size="isWeb ? 32 : 20" />
     </div>
 
     <template #dropdown>
       <div class="dropdown-content">
         <div class="user-info">
-          <Avatar :size="36" />
+          <Avatar :size="isWeb ? 36 : 24" />
           <div class="user-details">
             <div class="username">{{ userInfo.display_name }}</div>
             <div class="role">
@@ -139,7 +141,7 @@ async function handlePasswordChange(data: OrgMemberChangePasswordRequest) {
         <ElDivider />
         <ElDropdownMenu>
           <ElDropdownItem @click="passwordChangeDialogVisible = true">
-            <ElIcon><Key /></ElIcon>
+            <ElIcon><KeyIcon /></ElIcon>
             <span>修改密码</span>
           </ElDropdownItem>
           <ElDropdownItem @click="handleLogout">
@@ -157,7 +159,7 @@ async function handlePasswordChange(data: OrgMemberChangePasswordRequest) {
   />
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .avatar-wrapper {
   cursor: pointer;
   transition: all 0.3s ease;
@@ -170,93 +172,103 @@ async function handlePasswordChange(data: OrgMemberChangePasswordRequest) {
 }
 
 .avatar-dropdown-menu {
-  :global(.el-popper__arrow) {
-    display: none !important;
-  }
-  :global(.el-divider--horizontal) {
+  .el-divider--horizontal {
     margin: 12px 0;
     border-top: 1px solid var(--el-border-color-lighter);
   }
-}
+  .dropdown-content {
+    padding: 16px;
+    width: fit-content;
+    @include web {
+      --font-size: 14px;
+    }
+    @include mobile {
+      --font-size: 12px;
+    }
+  }
 
-.dropdown-content {
-  padding: 16px;
-  width: fit-content;
-}
+  .user-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 8px;
+  }
 
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 8px;
-}
+  .user-details {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
 
-.user-details {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
+  .username {
+    font-weight: 500;
+    color: var(--el-text-color-primary);
+    line-height: 1.2;
+    padding-left: 4px;
+    @include web {
+      font-size: 16px;
+    }
+    @include mobile {
+      font-size: 12px;
+    }
+  }
 
-.username {
-  font-size: 16px;
-  font-weight: 500;
-  color: var(--el-text-color-primary);
-  line-height: 1.2;
-  padding-left: 4px;
-}
+  .role {
+    color: var(--el-text-color-secondary);
+    line-height: 1;
+    @include web {
+      font-size: 13px;
+    }
+    @include mobile {
+      font-size: 12px;
+    }
+  }
 
-.role {
-  font-size: 13px;
-  color: var(--el-text-color-secondary);
-  line-height: 1;
-}
+  .quick-info {
+    padding: 4px 0;
+  }
 
-.quick-info {
-  padding: 4px 0;
-}
+  .info-item {
+    align-items: center;
+    color: var(--el-text-color-regular);
+    display: flex;
+    font-size: var(--font-size);
+    line-height: 22px;
+    list-style: none;
+    margin: 0;
+    outline: none;
+    padding: 5px 0;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+    gap: 8px;
+    :global(.el-icon) {
+      font-size: var(--font-size);
+      margin-right: 4px;
+    }
+  }
 
-.info-item {
-  align-items: center;
-  color: var(--el-text-color-regular);
-  display: flex;
-  font-size: var(--el-font-size-base);
-  line-height: 22px;
-  list-style: none;
-  margin: 0;
-  outline: none;
-  padding: 5px 16px;
-  white-space: nowrap;
-  transition: all 0.3s ease;
-  gap: 8px;
-  :global(.el-icon) {
-    font-size: 16px;
-    margin-right: 4px;
+  .info-item:hover {
+    color: var(--el-text-color-primary);
+  }
+
+  .el-divider {
+    background-color: var(--el-border-color-lighter);
   }
 }
 
-.info-item:hover {
-  color: var(--el-text-color-primary);
+:global(.avatar-dropdown-menu .el-popper__arrow) {
+  display: none !important;
 }
 
-:global(.el-dropdown-menu__item) {
+:global(.avatar-dropdown-menu .el-dropdown-menu__item) {
+  font-size: var(--font-size) !important;
   display: flex;
   align-items: center;
+  padding: 5px 0;
   gap: 8px;
-  padding: 10px 0;
-  font-size: 14px;
 }
-
-:global(.el-dropdown-menu__item:hover) {
+:global(.avatar-dropdown-menu .el-dropdown-menu__item:hover) {
   background-color: var(--el-dropdown-menuItem-hover-fill);
   color: var(--el-color-primary);
-}
-
-:global(.el-dropdown-menu__item .el-icon) {
-  font-size: 16px;
-  margin-right: 4px;
-}
-
-:global(.el-divider) {
-  background-color: var(--el-border-color-lighter);
 }
 </style>

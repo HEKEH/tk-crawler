@@ -1,6 +1,7 @@
 import type { Logger } from '@tk-crawler/shared';
 import { dialog } from 'electron';
 import { autoUpdater } from 'electron-updater';
+import { initProxy } from '../init-proxy';
 
 export class AutoUpdater {
   private _logger: Logger;
@@ -62,8 +63,25 @@ export class AutoUpdater {
             this._isInUpdatingProcess = false;
           });
       } else {
-        dialog.showErrorBox('更新出错', err.message);
-        this._isInUpdatingProcess = false;
+        this._logger.error('自动更新出错', err);
+        dialog
+          .showMessageBox({
+            type: 'error',
+            title: '自动更新功能出错',
+            message: `自动更新功能出错，如果是网络问题，则可能是因为开启了vpn，无法找到更新服务器，请关闭vpn后重试`,
+            detail: err.message,
+            buttons: ['重试', '忽略'],
+          })
+          .then(async result => {
+            if (result.response === 0) {
+              this._isInUpdatingProcess = false;
+              await initProxy();
+              this.checkForUpdates();
+            }
+          })
+          .finally(() => {
+            this._isInUpdatingProcess = false;
+          });
       }
     });
 
@@ -97,6 +115,10 @@ export class AutoUpdater {
     if (this._isInUpdatingProcess) {
       return;
     }
-    await autoUpdater.checkForUpdates();
+    try {
+      await autoUpdater.checkForUpdates();
+    } catch (error) {
+      this._logger.error('检查更新出错', error);
+    }
   }
 }

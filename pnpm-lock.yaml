@@ -565,6 +565,8 @@ importers:
         specifier: ^3.1.9
         version: 3.1.9
 
+  packages/assets: {}
+
   packages/biz-shared: {}
 
   packages/core:
@@ -622,6 +624,12 @@ importers:
       electron:
         specifier: ^35.1.5
         version: 35.1.5
+      get-system-proxy:
+        specifier: ^1.0.0
+        version: 1.0.0
+      global-agent:
+        specifier: ^3.0.0
+        version: 3.0.0
     devDependencies:
       electron-builder:
         specifier: ^26.0.12
@@ -6742,7 +6750,6 @@ packages:
 
   /get-system-proxy@1.0.0:
     resolution: {integrity: sha512-n6fXasEoNc+ecl59IZrQK4QqrF+DSHnXTOMVcyJVPTloTT8rNrdanyLa7tzc3y0vXJXKtk1zWb8jOczlZXJtPw==}
-    dev: true
 
   /get-tsconfig@4.10.0:
     resolution: {integrity: sha512-kGzZ3LWWQcGIAmg6iWvXn0ei6WDtV26wzHRMwDSzmAbcXrTEXxHy6IehI6/4eT6VRKyMP1eF1VqwrVUmE/LR7A==}

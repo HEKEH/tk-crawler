@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { setIntervalImmediate } from '@tk-crawler/shared';
 import { ElButton } from 'element-plus';
 import { onBeforeUnmount, ref } from 'vue';
 import {
@@ -7,7 +8,6 @@ import {
 } from '../main/constants';
 import MainView from './sections/main-view.vue';
 import 'element-plus/dist/index.css';
-import { setIntervalImmediate } from '@tk-crawler/shared';
 
 const status = ref(COLLECT_PAGE_HELP_STATUS.stateless);
 async function updateStatus() {

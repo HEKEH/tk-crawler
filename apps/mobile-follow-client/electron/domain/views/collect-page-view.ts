@@ -5,7 +5,7 @@ import type {
 import type { BaseWindow } from 'electron';
 import type { IView } from './types';
 import path from 'node:path';
-import { findElement } from '@tk-crawler/electron-utils/main';
+import { findElement, initProxy } from '@tk-crawler/electron-utils/main';
 import { RESPONSE_CODE } from '@tk-crawler/shared';
 import {
   COLLECT_PAGE_HELP_EVENTS,
@@ -241,6 +241,7 @@ export class CollectPageView implements IView {
     this._addEventHandler(
       COLLECT_PAGE_HELP_EVENTS.RETRY_OPEN_PAGE,
       async () => {
+        await initProxy();
         await this._reopenThirdPartyPageView();
       },
     );

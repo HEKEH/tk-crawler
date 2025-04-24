@@ -7,6 +7,7 @@ import {
   TOKEN_EVENTS,
 } from '@tk-crawler-admin-client/shared';
 import { getVerifyFp } from '@tk-crawler/biz-shared';
+import { initProxy } from '@tk-crawler/electron-utils/main';
 import {
   checkTiktokCookieValid,
   getMsTokenFromCookie,
@@ -107,7 +108,8 @@ export class Services {
         return IsCookieValidResultStatus.OTHER_ERROR;
       }
     });
-    this._addEventHandler(CUSTOM_EVENTS.OPEN_TIKTOK_LOGIN_PAGE, () => {
+    this._addEventHandler(CUSTOM_EVENTS.OPEN_TIKTOK_LOGIN_PAGE, async () => {
+      await initProxy();
       return this._viewManager.openTkLoginPage();
     });
     this._addEventHandler(CRAWL_EVENTS.START_LIVE_ANCHOR_CRAWL, () => {

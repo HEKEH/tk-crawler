@@ -1,6 +1,7 @@
 import type { BaseWindow } from 'electron';
 import type { IView } from './types';
 import path from 'node:path';
+import { initProxy } from '@tk-crawler/electron-utils/main';
 import {
   LOGIN_HELP_WIDTH,
   LOGIN_TIKTOK_HELP_EVENTS,
@@ -173,6 +174,7 @@ export class TKLoginView implements IView {
     this._addEventHandler(
       LOGIN_TIKTOK_HELP_EVENTS.RETRY_OPEN_PAGE,
       async () => {
+        await initProxy();
         await this._reopenTKPageView();
       },
     );

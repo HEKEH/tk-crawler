@@ -6,6 +6,7 @@ import {
   LOGIN_TIKTOK_HELP_EVENTS,
   LOGIN_TIKTOK_STATUS,
 } from '@tk-crawler-admin-client/shared';
+import { initProxy } from '@tk-crawler/electron-utils/main';
 import { ipcMain, WebContentsView } from 'electron';
 import { isDevelopment, RENDERER_DIST, VITE_DEV_SERVER_URL } from '../../env';
 import { logger } from '../../infra/logger';
@@ -256,6 +257,7 @@ export class TKLoginView implements IView {
     this._addEventHandler(
       LOGIN_TIKTOK_HELP_EVENTS.RETRY_OPEN_TIKTOK_LOGIN_PAGE,
       async () => {
+        await initProxy();
         await this._reopenTKPageView();
       },
     );

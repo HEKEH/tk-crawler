@@ -2,6 +2,7 @@ import type { BaseWindow } from 'electron';
 import path from 'node:path';
 import {
   clickElement,
+  initProxy,
   loadThirdPartyURL,
 } from '@tk-crawler/electron-utils/main';
 import { ipcMain, WebContentsView } from 'electron';
@@ -200,6 +201,7 @@ export class TKAutoFollowView {
     this._addEventHandler(
       TIKTOK_AUTO_FOLLOW_PAGE_EVENTS.RETRY_OPEN_PAGE,
       async () => {
+        await initProxy();
         await this._reopenTKPageView();
       },
     );

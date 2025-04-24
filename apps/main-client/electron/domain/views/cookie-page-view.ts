@@ -6,6 +6,7 @@ import { TIKTOK_LIVE_ADMIN_URL } from '@tk-crawler/biz-shared';
 import {
   catchRequestCookies,
   findElement,
+  initProxy,
   InputEventFunctionStr,
 } from '@tk-crawler/electron-utils/main';
 import {
@@ -281,6 +282,7 @@ export class CookiePageView implements IView {
     this._addEventHandler(
       GUILD_COOKIE_PAGE_HELP_EVENTS.RETRY_OPEN_PAGE,
       async () => {
+        await initProxy();
         await this._reopenThirdPartyPageView();
       },
     );

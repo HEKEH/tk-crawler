@@ -46,9 +46,9 @@ export default class GlobalStore {
       records = [LoginRouteRecord];
     } else {
       records = [
+        AnchorManagementRouteRecord,
         SystemManagementRouteRecord,
         GuildManagementRouteRecord,
-        AnchorManagementRouteRecord,
       ].filter(item => {
         return !item.roles || item.roles.includes(this.userProfile.role!);
       });

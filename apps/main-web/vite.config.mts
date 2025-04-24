@@ -68,6 +68,15 @@ export default defineConfig(({ mode }) => {
         ],
       }),
     ],
+    css: {
+      preprocessorOptions: {
+        scss: {
+          additionalData: `
+            @use "@tk-crawler/styles/mixins.scss" as *;
+          `,
+        },
+      },
+    },
     server: {
       port: 5002,
       strictPort: false,

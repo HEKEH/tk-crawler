@@ -114,6 +114,15 @@ export default defineConfig(({ mode }) => {
       }),
       (electron as any)(electronOptions),
     ],
+    css: {
+      preprocessorOptions: {
+        scss: {
+          additionalData: `
+            @use "@tk-crawler/styles/mixins.scss" as *;
+          `,
+        },
+      },
+    },
     build: {
       minify: isProduction,
       outDir: 'dist',

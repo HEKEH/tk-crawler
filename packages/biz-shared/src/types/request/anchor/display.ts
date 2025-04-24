@@ -24,6 +24,7 @@ export interface GetAnchorListFilter {
   last_diamonds?: RangeFilter;
   highest_diamonds?: RangeFilter;
   checked_at?: RangeFilter<Date>;
+  crawled_at?: RangeFilter<Date>;
   assign_to?: string | 'not_assigned' | 'assigned';
   contacted_by?: string | 'not_contacted' | 'contacted';
   // TODO 主播来源 多账号风险
@@ -33,6 +34,7 @@ export type AnchorListWhereInput = Prisma.AnchorInviteCheckWhereInput;
 
 export type GetAnchorListOrderBy =
   | { checked_at: SortOrder }
+  | { crawled_at: SortOrder }
   | { display_id: SortOrder }
   | { user_id: SortOrder }
   | { follower_count: SortOrder }

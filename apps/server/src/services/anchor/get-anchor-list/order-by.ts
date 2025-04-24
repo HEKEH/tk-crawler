@@ -10,11 +10,17 @@ export function transformAnchorListOrderBy(
   if (!orderBy || Object.keys(orderBy).length === 0) {
     // 默认时间倒序
     return {
-      checked_at: 'desc',
+      anchor: {
+        updated_at: 'desc',
+      },
     };
   }
   const result: AnchorInviteCheckOrderByInput = {};
-  if ('checked_at' in orderBy && orderBy.checked_at) {
+  if ('crawled_at' in orderBy && orderBy.crawled_at) {
+    result.anchor = {
+      updated_at: orderBy.crawled_at,
+    };
+  } else if ('checked_at' in orderBy && orderBy.checked_at) {
     result.checked_at = orderBy.checked_at;
   } else if ('checked_result' in orderBy && orderBy.checked_result) {
     result.checked_result = orderBy.checked_result;

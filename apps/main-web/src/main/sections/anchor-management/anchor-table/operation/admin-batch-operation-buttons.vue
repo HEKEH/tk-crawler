@@ -5,13 +5,14 @@ import type {
   GetAnchorListResponseData,
 } from '@tk-crawler/biz-shared';
 import { RESPONSE_CODE } from '@tk-crawler/shared';
-import { ClearMessage, confirmAfterSeconds } from '@tk-crawler/view-shared';
+import { confirmAfterSeconds } from '@tk-crawler/view-shared';
 import { ElButton, ElMessage } from 'element-plus';
 import { h, reactive } from 'vue';
 import { clearAnchorCheck } from '../../../../requests';
 import { useGlobalStore } from '../../../../utils';
 import AssignTaskFormDialog from '../assign-task-form-dialog.vue';
 import { useTaskAssign, type UseTaskAssignParams } from '../hooks';
+import ClearMessage from './clear-message.vue';
 
 const props = defineProps<{
   queryFilter: GetAnchorListFilter | undefined;
@@ -32,7 +33,7 @@ const {
 
 async function handleClearAnchorCheck() {
   const state = reactive({
-    clearType: 'all' as 'all' | 'filtered',
+    clearType: 'notContacted' as 'all' | 'filtered' | 'notContacted',
   });
 
   try {
@@ -41,7 +42,7 @@ async function handleClearAnchorCheck() {
         value: state.clearType,
         filteredRowsTotal: props.data?.total || 0,
         onUpdate: val => {
-          state.clearType = val as 'all' | 'filtered';
+          state.clearType = val as 'all' | 'filtered' | 'notContacted';
         },
       }),
       2,
@@ -52,8 +53,19 @@ async function handleClearAnchorCheck() {
       },
     );
 
+    let filter: GetAnchorListFilter | undefined;
+    if (state.clearType === 'all') {
+      filter = undefined;
+    } else if (state.clearType === 'filtered') {
+      filter = props.queryFilter;
+    } else {
+      filter = {
+        contacted_by: 'notContacted',
+      };
+    }
+
     const resp = await clearAnchorCheck(globalStore.token, {
-      filter: state.clearType === 'all' ? undefined : props.queryFilter,
+      filter,
     });
 
     if (resp.status_code !== RESPONSE_CODE.SUCCESS) {

@@ -27,6 +27,7 @@ export function transformAnchorListFilterValues(
 
     checked_result,
     checked_at,
+    crawled_at,
     area,
     invite_type,
     assign_to,
@@ -86,8 +87,8 @@ export function transformAnchorListFilterValues(
   if (highest_diamonds !== undefined) {
     anchorFilter.highest_diamonds = highest_diamonds;
   }
-  if (Object.keys(anchorFilter).length > 0) {
-    filter.anchor = anchorFilter;
+  if (crawled_at !== undefined) {
+    anchorFilter.updated_at = crawled_at;
   }
 
   if (checked_result !== undefined) {
@@ -125,6 +126,10 @@ export function transformAnchorListFilterValues(
 
   if (invite_type !== undefined) {
     filter.invite_type = invite_type;
+  }
+
+  if (Object.keys(anchorFilter).length > 0) {
+    filter.anchor = anchorFilter;
   }
 
   return filter;

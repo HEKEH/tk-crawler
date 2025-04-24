@@ -204,7 +204,7 @@ async function handleBatchDelete() {
 
 async function handleClearData() {
   const state = reactive({
-    clearType: 'all' as 'all' | 'filtered',
+    clearType: 'filtered' as 'all' | 'filtered',
   });
 
   try {

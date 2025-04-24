@@ -25,7 +25,8 @@ export interface FilterViewValues {
   last_diamonds: RangeViewFilter;
   highest_diamonds: RangeViewFilter;
   audience_count: RangeViewFilter;
-  checked_at: RangeViewFilter<Date>;
+  crawled_at: RangeViewFilter<Date>;
+  // checked_at: RangeViewFilter<Date>;
   assign_to?: string | 'all' | 'not_assigned' | 'assigned';
   contacted_by?: string | 'all' | 'not_contacted' | 'contacted';
 }
@@ -65,8 +66,11 @@ export function transformFilterViewValuesToFilterValues(
     audience_count: transformRangeViewFilterToRangeFilter(
       filterViewValues.audience_count,
     ),
-    checked_at: transformRangeViewFilterToRangeFilter(
-      filterViewValues.checked_at,
+    // checked_at: transformRangeViewFilterToRangeFilter(
+    //   filterViewValues.checked_at,
+    // ),
+    crawled_at: transformRangeViewFilterToRangeFilter(
+      filterViewValues.crawled_at,
     ),
     tag: filterViewValues.tag,
     assign_to: transValue(filterViewValues.assign_to),
@@ -85,7 +89,8 @@ export function getCommonDefaultFilterViewValues(): FilterViewValues {
     last_diamonds: [undefined, undefined],
     highest_diamonds: [undefined, undefined],
     audience_count: [undefined, undefined],
-    checked_at: [undefined, undefined],
+    // checked_at: [undefined, undefined],
+    crawled_at: [undefined, undefined],
     checked_result: true,
   };
 }

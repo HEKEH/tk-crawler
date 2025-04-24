@@ -107,6 +107,7 @@ export async function getAnchorList(
       updated_at: item.updated_at,
       area: item.area as Area,
       checked_at: item.checked_at,
+      crawled_at: item.anchor.updated_at,
       checked_by: item.checked_by ? item.checked_by.toString() : null,
       checked_result: item.checked_result === 1,
     };

@@ -3,18 +3,18 @@ import { ElRadio, ElRadioGroup } from 'element-plus';
 import { ref } from 'vue';
 
 interface Props {
-  value: 'all' | 'filtered';
+  value: 'all' | 'filtered' | 'notContacted';
   filteredRowsTotal: number;
 }
 
 const props = defineProps<Props>();
 const emit = defineEmits<{
-  (e: 'update', type: 'all' | 'filtered'): void;
+  (e: 'update', type: 'all' | 'filtered' | 'notContacted'): void;
 }>();
 
-const clearType = ref<'all' | 'filtered'>(props.value);
+const clearType = ref<'all' | 'filtered' | 'notContacted'>(props.value);
 
-function handleUpdate(val: 'all' | 'filtered') {
+function handleUpdate(val: 'all' | 'filtered' | 'notContacted') {
   clearType.value = val;
   emit('update', val);
 }
@@ -29,6 +29,9 @@ function handleUpdate(val: 'all' | 'filtered') {
       class="radio-group"
       @update:model-value="handleUpdate as any"
     >
+      <ElRadio value="notContacted" class="radio-item">
+        清空未建联的主播
+      </ElRadio>
       <ElRadio value="filtered" class="radio-item">
         {{ `清空筛选结果（共 ${filteredRowsTotal} 条记录）` }}
       </ElRadio>

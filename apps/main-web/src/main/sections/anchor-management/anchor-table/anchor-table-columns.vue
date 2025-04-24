@@ -274,18 +274,30 @@ interface ScopeType {
     sortable="custom"
   />
 
-  <!-- 时间信息 -->
   <ElTableColumn
+    v-if="!hiddenColumns?.includes('crawled_at')"
+    prop="crawled_at"
+    label="最新时间"
+    min-width="200"
+    sortable="custom"
+  >
+    <template #default="scope: ScopeType">
+      {{ formatDateTime(scope.row.crawled_at) }}
+    </template>
+  </ElTableColumn>
+
+  <!-- 时间信息 -->
+  <!-- <ElTableColumn
     v-if="!hiddenColumns?.includes('checked_at')"
     prop="checked_at"
-    label="最新时间"
+    label="校验时间"
     min-width="192"
     sortable="custom"
   >
     <template #default="scope: ScopeType">
       {{ formatDateTime(scope.row.checked_at) }}
     </template>
-  </ElTableColumn>
+  </ElTableColumn> -->
 </template>
 
 <style scoped>

@@ -251,7 +251,7 @@ function resetFilters() {
           :precision="0"
         />
       </div>
-      <div
+      <!-- <div
         v-if="!hiddenFilters?.includes('checked_at')"
         class="filter-range-item"
       >
@@ -259,7 +259,22 @@ function resetFilters() {
         <RangeDateSelect
           v-model="filters.checked_at"
           size="small"
-          type="date"
+          type="datetime"
+          start-placeholder="从"
+          end-placeholder="到"
+          clearable
+        />
+      </div>
+    </div> -->
+      <div
+        v-if="!hiddenFilters?.includes('crawled_at')"
+        class="filter-range-item"
+      >
+        <label class="filter-label">最新时间</label>
+        <RangeDateSelect
+          v-model="filters.crawled_at"
+          size="small"
+          type="datetime"
           start-placeholder="从"
           end-placeholder="到"
           clearable

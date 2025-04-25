@@ -52,7 +52,7 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
-  messageQueue.clearMessages();
+  messageQueue.destroy();
   electronRenderListeners.off(CRAWL_EVENTS.ANCHOR_CRAWLED, handleAnchorCrawled);
 });
 

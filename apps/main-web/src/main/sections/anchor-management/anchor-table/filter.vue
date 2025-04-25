@@ -107,26 +107,6 @@ function toggleExpand() {
             : 'filter-items-collapsed'
       "
     >
-      <div v-if="!hiddenFilters?.includes('display_id')" class="filter-item">
-        <label class="filter-label">主播ID</label>
-        <ElInput v-model="filters.display_id" clearable size="small" />
-      </div>
-      <div v-if="!hiddenFilters?.includes('user_id')" class="filter-item">
-        <label class="filter-label">数字ID</label>
-        <ElInput v-model="filters.user_id" clearable size="small" />
-      </div>
-      <div v-if="!hiddenFilters?.includes('assign_to')" class="filter-item">
-        <label class="filter-label">分配状态</label>
-        <OrgMemberSelectSingle
-          v-model="filters.assign_to"
-          show-all
-          show-assigned
-          show-not-assigned
-          self-first
-          size="small"
-          popper-class="custom-filter-select"
-        />
-      </div>
       <div v-if="!hiddenFilters?.includes('contacted_by')" class="filter-item">
         <label class="filter-label">建联状态</label>
         <OrgMemberSelectSingle
@@ -153,6 +133,18 @@ function toggleExpand() {
           <ElOption label="已建联" value="contacted" />
           <ElOption label="未建联" value="not_contacted" />
         </ElSelect>
+      </div>
+      <div v-if="!hiddenFilters?.includes('assign_to')" class="filter-item">
+        <label class="filter-label">分配状态</label>
+        <OrgMemberSelectSingle
+          v-model="filters.assign_to"
+          show-all
+          show-assigned
+          show-not-assigned
+          self-first
+          size="small"
+          popper-class="custom-filter-select"
+        />
       </div>
       <div v-if="!hiddenFilters?.includes('area')" class="filter-item">
         <label class="filter-label">主播分区</label>
@@ -320,6 +312,18 @@ function toggleExpand() {
           end-placeholder="到"
           clearable
         />
+      </div>
+      <div v-if="!hiddenFilters?.includes('display_id')" class="filter-item">
+        <label class="filter-label">主播ID</label>
+        <ElInput v-model="filters.display_id" clearable size="small" />
+      </div>
+      <div v-if="!hiddenFilters?.includes('user_id')" class="filter-item">
+        <label class="filter-label">数字ID</label>
+        <ElInput v-model="filters.user_id" clearable size="small" />
+      </div>
+      <div v-if="!hiddenFilters?.includes('room_id')" class="filter-item">
+        <label class="filter-label">直播间ID</label>
+        <ElInput v-model="filters.room_id" clearable size="small" />
       </div>
     </div>
     <div class="buttons">

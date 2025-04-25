@@ -109,7 +109,11 @@ const operationColumn = computed<CustomColumnConfig>(() => {
     after: 'display_id',
     renderColumn: () => {
       return (
-        <OperationColumn min-width={100} key="operation" refetch={refetch} />
+        <OperationColumn
+          min-width={isWeb.value ? 100 : 80}
+          key="operation"
+          refetch={refetch}
+        />
       );
     },
   };

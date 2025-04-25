@@ -24,6 +24,7 @@ export function transformAnchorListFilterValues(
     current_diamonds,
     last_diamonds,
     highest_diamonds,
+    room_id,
 
     checked_result,
     checked_at,
@@ -34,11 +35,11 @@ export function transformAnchorListFilterValues(
     contacted_by,
   } = filterValues;
   const anchorFilter: AnchorListWhereInput['anchor'] = {};
-  if (user_id) {
-    anchorFilter.user_id = BigInt(user_id);
+  if (user_id?.trim()) {
+    anchorFilter.user_id = BigInt(user_id.trim());
   }
-  if (display_id) {
-    anchorFilter.display_id = display_id;
+  if (display_id?.trim()) {
+    anchorFilter.display_id = display_id.trim();
   }
   if (invite_type !== undefined) {
     filter.invite_type = invite_type;
@@ -89,6 +90,9 @@ export function transformAnchorListFilterValues(
   }
   if (crawled_at !== undefined) {
     anchorFilter.updated_at = crawled_at;
+  }
+  if (room_id?.trim()) {
+    anchorFilter.room_id = BigInt(room_id.trim());
   }
 
   if (checked_result !== undefined) {

@@ -4,6 +4,7 @@ import type { TableColumnCtx } from 'element-plus';
 import { ElButton, ElTableColumn } from 'element-plus';
 import { useGlobalStore } from '../../../../utils';
 import { type UseTaskAssignParams, useTaskClaim } from '../hooks';
+import { useIsWeb } from '@tk-crawler/view-shared';
 
 const props = defineProps<{
   refetch: UseTaskAssignParams['refetch'];
@@ -18,10 +19,12 @@ interface ScopeType {
 const globalStore = useGlobalStore();
 
 const { handleClaimTask, handleCancelClaimTask } = useTaskClaim(props);
+
+const isWeb = useIsWeb();
 </script>
 
 <template>
-  <ElTableColumn v-bind="$attrs" label="操作" :min-width="140">
+  <ElTableColumn v-bind="$attrs" label="操作" :min-width="isWeb ? 130 : 110">
     <template #default="scope: ScopeType">
       <div class="operation-buttons">
         <ElButton

@@ -47,7 +47,7 @@ const defaultFilterViewValues = computed<FilterViewValues>(() => {
     ...commonDefaultFilterViewValues,
     area: globalStore.userProfile.orgInfo?.areas?.[0],
     assign_to: 'all',
-    contacted_by: 'all',
+    contacted_by: 'not_contacted',
   };
 });
 

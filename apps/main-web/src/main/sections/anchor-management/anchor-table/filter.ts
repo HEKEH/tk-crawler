@@ -29,6 +29,7 @@ export interface FilterViewValues {
   // checked_at: RangeViewFilter<Date>;
   assign_to?: string | 'all' | 'not_assigned' | 'assigned';
   contacted_by?: string | 'all' | 'not_contacted' | 'contacted';
+  room_id?: string;
 }
 
 export function transformFilterViewValuesToFilterValues(
@@ -75,6 +76,7 @@ export function transformFilterViewValuesToFilterValues(
     tag: filterViewValues.tag,
     assign_to: transValue(filterViewValues.assign_to),
     contacted_by: transValue(filterViewValues.contacted_by),
+    room_id: filterViewValues.room_id,
   };
 }
 

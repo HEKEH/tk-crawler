@@ -11,6 +11,7 @@ import {
   ElTableColumn,
 } from 'element-plus';
 import { useAnchorContact, type UseAnchorContactParams } from '../hooks';
+import { ref } from 'vue';
 
 const props = defineProps<{
   refetch: UseAnchorContactParams['refetch'];
@@ -25,6 +26,8 @@ interface ScopeType {
 const { handleContactAnchor, handleCancelAnchorContact } =
   useAnchorContact(props);
 
+const hasOpenedTK = ref(false);
+
 async function onFollowAnchor(anchor: DisplayedAnchorItem) {
   const platform = getPlatform();
   if (platform !== 'Android' && platform !== 'iOS') {
@@ -32,6 +35,18 @@ async function onFollowAnchor(anchor: DisplayedAnchorItem) {
       await ElMessageBox.alert('关注操作需要在手机端进行！');
     } catch {}
     return;
+  }
+  if (!hasOpenedTK.value) {
+    try {
+      await await ElMessageBox.confirm('请确保手机已安装TK，再进行下一步操作', {
+        confirmButtonText: '继续',
+        cancelButtonText: '取消',
+        type: 'warning',
+      });
+    } catch {
+      return;
+    }
+    hasOpenedTK.value = true;
   }
   const scheme = `snssdk1180://user/profile/${anchor.user_id}?refer=web&gd_label=click_wap_download_follow&type=need_follow&needlaunchlog=1`;
   try {
@@ -57,7 +72,7 @@ async function onFollowAnchor(anchor: DisplayedAnchorItem) {
           <ElIcon>
             <StarFilled />
           </ElIcon>
-          关注
+          建联
         </ElButton>
         <ElButton
           v-else-if="scope.row.contacted_user"

@@ -25,14 +25,14 @@
       }
     }
   }
-  .user-id-container {
+  .number-id-container {
     display: flex;
     align-items: center;
     justify-content: space-between;
     column-gap: 0.5rem;
     max-width: 100%;
     overflow: hidden;
-    .user-id-text {
+    .number-id-text {
       flex: 0 1 auto;
       overflow: hidden;
       text-overflow: ellipsis;

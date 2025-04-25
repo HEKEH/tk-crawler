@@ -27,6 +27,7 @@ export interface GetAnchorListFilter {
   crawled_at?: RangeFilter<Date>;
   assign_to?: string | 'not_assigned' | 'assigned';
   contacted_by?: string | 'not_contacted' | 'contacted';
+  room_id?: string;
   // TODO 主播来源 多账号风险
 }
 

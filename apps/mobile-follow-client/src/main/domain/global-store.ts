@@ -118,7 +118,7 @@ export default class GlobalStore {
   }
 
   clear() {
-    this._messageQueue.clearMessages();
+    this._messageQueue.destroy();
     this._removeEventListeners();
   }
 }

@@ -32,7 +32,7 @@ async function retryCheckNetwork() {
 
 onBeforeUnmount(() => {
   // cookieOutdatedSubscription.unsubscribe();
-  globalStore.clear();
+  globalStore.destroy();
 });
 onErrorCaptured(e => {
   ElNotification.error({

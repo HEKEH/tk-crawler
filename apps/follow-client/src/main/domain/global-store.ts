@@ -105,8 +105,8 @@ export default class GlobalStore {
     await window.ipcRenderer.invoke(CUSTOM_EVENTS.SWITCH_TIKTOK_ACCOUNT);
   }
 
-  clear() {
-    this._messageQueue.clearMessages();
+  destroy() {
+    this._messageQueue.destroy();
     this._removeEventListeners();
   }
 }

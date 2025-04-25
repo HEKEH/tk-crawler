@@ -53,7 +53,7 @@ electronRenderListeners.on(
 );
 
 onBeforeUnmount(() => {
-  messageQueue.clearMessages();
+  messageQueue.destroy();
   electronRenderListeners.off(
     GUILD_COOKIE_PAGE_HELP_EVENTS.REQUEST_ERROR,
     handleRequestError,

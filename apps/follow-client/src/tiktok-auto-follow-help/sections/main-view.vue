@@ -74,7 +74,7 @@ ElectronRenderListeners.getInstance().on(
 );
 
 onBeforeUnmount(() => {
-  messageQueue.clearMessages();
+  messageQueue.destroy();
   ElectronRenderListeners.getInstance().off(
     TIKTOK_AUTO_FOLLOW_PAGE_EVENTS.AUTO_FOLLOWED_RESULT,
     onUserFollowResultMessage,

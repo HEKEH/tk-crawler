@@ -51,7 +51,7 @@ electronRenderListeners.on(
   onAnchorListFetched,
 );
 onBeforeUnmount(() => {
-  messageQueue.clearMessages();
+  messageQueue.destroy();
   electronRenderListeners.off(
     COLLECT_PAGE_HELP_EVENTS.ANCHOR_LIST_FETCHED,
     onAnchorListFetched,

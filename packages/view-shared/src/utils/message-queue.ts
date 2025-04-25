@@ -8,6 +8,8 @@ interface QueueMessage {
 }
 
 export class MessageQueue {
+  private _isPageActive = true;
+
   private _messageQueue: QueueMessage[] = [];
   private readonly MAX_MESSAGES: number;
   private readonly MESSAGE_DURATION: number;
@@ -22,13 +24,52 @@ export class MessageQueue {
     this.MAX_MESSAGES = props?.maxMessages ?? 10;
     this.MESSAGE_DURATION = props?.messageDuration ?? 5000;
     this.MESSAGE_OFFSET = props?.messageOffset ?? 30;
+    this._setupEventListeners();
   }
+
+  private _setupEventListeners() {
+    // 页面可见性变化
+    document.addEventListener('visibilitychange', this._handleVisibilityChange);
+
+    // 页面冻结/恢复（包括休眠）
+    document.addEventListener('freeze', this._handleFreeze);
+    document.addEventListener('resume', this._handleResume);
+
+    // 窗口焦点变化
+    window.addEventListener('blur', this._handleBlur);
+    window.addEventListener('focus', this._handleFocus);
+
+    // 页面卸载前清理
+    window.addEventListener('beforeunload', this._cleanupListeners);
+  }
+
+  private _handleVisibilityChange = () => {
+    this._isPageActive = document.visibilityState === 'visible';
+  };
+
+  private _handleFreeze = () => {
+    this._isPageActive = false;
+    this._clearMessages();
+  };
+
+  private _handleResume = () => {
+    this._isPageActive = true;
+  };
+
+  private _handleBlur = () => {
+    this._isPageActive = false;
+    this._clearMessages();
+  };
+
+  private _handleFocus = () => {
+    this._isPageActive = true;
+  };
 
   showMessage(data: {
     message: string;
     type: 'error' | 'success' | 'warning' | 'info';
   }) {
-    if (document.visibilityState === 'hidden') {
+    if (!this._isPageActive) {
       return;
     }
     const messageId = Math.random();
@@ -54,11 +95,6 @@ export class MessageQueue {
     // Add to queue
     this._messageQueue.push(message);
 
-    // 页面休眠时，onClose 不会自动触发，因此需要手动触发
-    setTimeout(() => {
-      message.instance?.close();
-    }, this.MESSAGE_DURATION);
-
     if (this._messageQueue.length > this.MAX_MESSAGES) {
       // Close the oldest notification
       const firstMessage = this._messageQueue[0];
@@ -68,11 +104,29 @@ export class MessageQueue {
     }
   }
 
-  clearMessages() {
-    // Close all notifications
+  private _cleanupListeners = () => {
+    // 移除所有事件监听
+    document.removeEventListener(
+      'visibilitychange',
+      this._handleVisibilityChange,
+    );
+    document.removeEventListener('freeze', this._handleFreeze);
+    document.removeEventListener('resume', this._handleResume);
+    window.removeEventListener('blur', this._handleBlur);
+    window.removeEventListener('focus', this._handleFocus);
+    window.removeEventListener('beforeunload', this._cleanupListeners);
+  };
+
+  private _clearMessages() {
     this._messageQueue.forEach(msg => {
       msg.instance?.close();
     });
     this._messageQueue = [];
+  }
+
+  destroy() {
+    this._cleanupListeners();
+    // Close all notifications
+    this._clearMessages();
   }
 }

@@ -15,7 +15,7 @@
     "package.json"
   ],
   "scripts": {
-    "build": "rm -rf dist && rollup --config rollup.config.mjs",
+    "build": "cross-env NODE_ENV=production rimraf dist && rollup --config rollup.config.mjs",
     "lint": "eslint",
     "preinstall": "npx only-allow pnpm"
   },

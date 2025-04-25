@@ -10,6 +10,7 @@ import { CUSTOM_EVENTS } from '../constants';
 import {
   checkTiktokCookieValid,
   openTiktokLoginPage,
+  recheckTiktokCookieValid,
   startLiveAnchorCrawl,
   stopLiveAnchorCrawl,
 } from '../requests';
@@ -72,6 +73,12 @@ export default class CrawlerManage {
   async checkTiktokCookieValid() {
     this._isCookieChecked = false;
     this._tiktokCookieValidStatus = await checkTiktokCookieValid();
+    this._isCookieChecked = true;
+  }
+
+  async recheckTiktokCookieValid() {
+    this._isCookieChecked = false;
+    this._tiktokCookieValidStatus = await recheckTiktokCookieValid();
     this._isCookieChecked = true;
   }
 

@@ -4,3 +4,7 @@ import { CUSTOM_EVENTS } from '../../constants';
 export function checkTiktokCookieValid(): Promise<IsCookieValidResult> {
   return window.ipcRenderer.invoke(CUSTOM_EVENTS.CHECK_COOKIE_VALIDITY);
 }
+
+export function recheckTiktokCookieValid(): Promise<IsCookieValidResult> {
+  return window.ipcRenderer.invoke(CUSTOM_EVENTS.RECHECK_COOKIE_VALIDITY);
+}

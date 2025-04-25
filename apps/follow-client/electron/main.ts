@@ -26,6 +26,10 @@ async function main() {
   );
   await app.whenReady();
   await initProxy();
+  let proxyInterval: NodeJS.Timeout | undefined = setInterval(
+    initProxy,
+    1000 * 60 * 2, // 2分钟检查一次代理
+  );
   const globalManager = GlobalManager.getInstance();
   await globalManager.start();
 
@@ -44,8 +48,14 @@ async function main() {
   // explicitly with Cmd + Q.
   app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
-      globalManager.destroy();
       app.quit();
+    }
+  });
+  app.on('will-quit', () => {
+    globalManager.destroy();
+    if (proxyInterval) {
+      clearInterval(proxyInterval);
+      proxyInterval = undefined;
     }
   });
 }

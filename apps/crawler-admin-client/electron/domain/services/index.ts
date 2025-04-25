@@ -86,7 +86,7 @@ export class Services {
 
   init() {
     syncTiktokCookie();
-    this._addEventHandler(CUSTOM_EVENTS.CHECK_COOKIE_VALIDITY, async () => {
+    const checkTiktokCookieValidHandler = async () => {
       try {
         const isCookieValid = await checkTiktokCookieValid({
           tokens: {
@@ -107,6 +107,13 @@ export class Services {
         }
         return IsCookieValidResultStatus.OTHER_ERROR;
       }
+    };
+    this._addEventHandler(CUSTOM_EVENTS.CHECK_COOKIE_VALIDITY, () => {
+      return checkTiktokCookieValidHandler();
+    });
+    this._addEventHandler(CUSTOM_EVENTS.RECHECK_COOKIE_VALIDITY, async () => {
+      await initProxy();
+      return checkTiktokCookieValidHandler();
     });
     this._addEventHandler(CUSTOM_EVENTS.OPEN_TIKTOK_LOGIN_PAGE, async () => {
       await initProxy();

@@ -30,7 +30,7 @@ async function loginTiktok() {
 }
 
 async function retryCheckCookieValid() {
-  await crawlerManage.value.checkTiktokCookieValid();
+  await crawlerManage.value.recheckTiktokCookieValid();
 }
 
 const messageQueue = new MessageQueue({

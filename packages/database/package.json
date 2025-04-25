@@ -20,7 +20,7 @@
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "postinstall": "pnpm prisma:generate",
-    "build": "rm -rf dist && rollup --config rollup.config.mjs",
+    "build": "cross-env NODE_ENV=production rimraf dist && rollup --config rollup.config.mjs",
     "redis:docker-start:dev": "cross-env ts-node $npm_package_config_tsNodeConfig ./scripts/docker/redis/start.ts development",
     "redis:docker-start:prod": "cross-env ts-node $npm_package_config_tsNodeConfig ./scripts/docker/redis/start.ts production",
     "mysql:docker-start:dev": "cross-env ts-node $npm_package_config_tsNodeConfig ./scripts/docker/mysql/start.ts development",

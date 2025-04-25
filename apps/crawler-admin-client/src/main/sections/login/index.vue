@@ -154,6 +154,7 @@ const isWeb = useIsWeb();
   margin-top: 100px;
   border-radius: 10px;
   @include mobile {
+    width: 300px;
     max-width: calc(100vw - 20px);
   }
 }

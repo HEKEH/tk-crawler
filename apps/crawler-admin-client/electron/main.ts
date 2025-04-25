@@ -21,6 +21,11 @@ import { logger } from './infra/logger';
 // const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 async function main() {
+  const gotTheLock = app.requestSingleInstanceLock();
+  if (!gotTheLock) {
+    app.quit();
+    return;
+  }
   setCoreLogger(logger);
   setTkRequestsLogger(logger);
   setElectronLang('en-US');

@@ -3,12 +3,13 @@ import type {
   DisplayedAnchorItem,
   GetAnchorListOrderBy,
 } from '@tk-crawler/biz-shared';
+import type { CustomColumnConfig } from './anchor-table-columns';
 import { RefreshButton, useIsWeb, useTableSort } from '@tk-crawler/view-shared';
 import { ElButton, ElPagination, ElTable } from 'element-plus';
 import { computed, onActivated, ref } from 'vue';
 import { useGetAnchorList } from '../../../hooks';
 import { useGlobalStore } from '../../../utils/vue';
-import TKAnchorTableColumns from './anchor-table-columns.vue';
+import TKAnchorTableColumns from './anchor-table-columns';
 import {
   type FilterViewValues,
   getCommonDefaultFilterViewValues,
@@ -103,6 +104,46 @@ const selectedRows = ref<DisplayedAnchorItem[]>([]);
 function handleSelectionChange(rows: DisplayedAnchorItem[]) {
   selectedRows.value = rows;
 }
+
+const operationColumn = computed<CustomColumnConfig>(() => {
+  const isAdmin = globalStore.userProfile.isAdmin;
+  if (isAdmin) {
+    return {
+      key: 'admin-operation',
+      after: isWeb.value ? undefined : 'display_id',
+      renderColumn: () => {
+        return (
+          <AdminOperationColumn
+            key="admin-operation"
+            refetch={refetch}
+            {...{
+              fixed: isWeb.value ? 'right' : undefined,
+            }}
+          />
+        );
+      },
+    };
+  }
+  return {
+    key: 'member-operation',
+    after: isWeb.value ? undefined : 'display_id',
+    renderColumn: () => {
+      return (
+        <MemberOperationColumn
+          key="member-operation"
+          refetch={refetch}
+          {...{
+            fixed: isWeb.value ? 'right' : undefined,
+          }}
+        />
+      );
+    },
+  };
+});
+
+const customColumns = computed<CustomColumnConfig[]>(() => {
+  return [operationColumn.value];
+});
 // const hasSelectedRows = computed(() => selectedRows.value.length > 0);
 
 onActivated(refetch);
@@ -158,12 +199,7 @@ onActivated(refetch);
         @sort-change="handleSortChange"
         @selection-change="handleSelectionChange"
       >
-        <TKAnchorTableColumns />
-        <AdminOperationColumn
-          v-if="globalStore.userProfile.isAdmin"
-          :refetch="refetch"
-        />
-        <MemberOperationColumn v-else :refetch="refetch" />
+        <TKAnchorTableColumns :custom-columns="customColumns" />
       </ElTable>
       <div class="pagination-row">
         <ElPagination

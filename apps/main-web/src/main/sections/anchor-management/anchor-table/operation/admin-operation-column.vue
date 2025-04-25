@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { DisplayedAnchorItem } from '@tk-crawler/biz-shared';
 import type { TableColumnCtx } from 'element-plus';
-import { useIsWeb } from '@tk-crawler/view-shared';
 import { ElButton, ElTableColumn } from 'element-plus';
 import AssignTaskFormDialog from '../assign-task-form-dialog.vue';
 import { useTaskAssign, type UseTaskAssignParams } from '../hooks';
@@ -16,8 +15,6 @@ interface ScopeType {
   $index: number;
 }
 
-const isWeb = useIsWeb();
-
 const {
   assignTaskDialogVisible,
   taskAnchors,
@@ -29,11 +26,7 @@ const {
 </script>
 
 <template>
-  <ElTableColumn
-    label="操作"
-    :min-width="180"
-    :fixed="isWeb ? 'right' : undefined"
-  >
+  <ElTableColumn v-bind="$attrs" label="操作" :min-width="180">
     <template #default="scope: ScopeType">
       <div class="operation-buttons">
         <ElButton

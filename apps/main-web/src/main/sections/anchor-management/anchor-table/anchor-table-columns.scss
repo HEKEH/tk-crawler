@@ -1,0 +1,51 @@
+.tk-anchor-user-table {
+  .area-with-tooltip {
+    display: flex;
+    align-items: center;
+    column-gap: 6px;
+  }
+  .display-id-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 100%;
+    column-gap: 0.5rem;
+    overflow: hidden;
+    .display-id-link {
+      flex: 0 1 auto;
+      overflow: hidden;
+      color: var(--el-color-primary-dark-2);
+      .el-link__inner {
+        display: inline-block;
+        width: 100%;
+        font-weight: 400;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
+  }
+  .user-id-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    column-gap: 0.5rem;
+    max-width: 100%;
+    overflow: hidden;
+    .user-id-text {
+      flex: 0 1 auto;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+  .org-user-tag {
+    width: 100%;
+    .el-tag__content {
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+}

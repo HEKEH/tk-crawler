@@ -19,15 +19,27 @@ export function getRequestErrorType(error: any) {
   return RequestErrorType.NORMAL_REQUEST_ERROR;
 }
 
-export function tiktokRequestErrorHandler<T>(
-  requestPromise: Promise<T>,
-  messageCenter: MessageCenter,
-) {
-  return requestPromise.catch(error => {
-    messageCenter.emit(
-      TKRequestMessage.REQUEST_ERROR,
-      getRequestErrorType(error),
-    );
-    throw error;
-  });
+export function tiktokRequestErrorHandler<
+  T extends {
+    status_code?: number;
+    message?: string;
+  },
+>(requestPromise: Promise<T>, messageCenter: MessageCenter) {
+  return requestPromise
+    .then(result => {
+      if ('status_code' in result && result.status_code !== 0) {
+        messageCenter.emit(
+          TKRequestMessage.REQUEST_ERROR,
+          RequestErrorType.NORMAL_REQUEST_ERROR,
+        );
+      }
+      return result;
+    })
+    .catch(error => {
+      messageCenter.emit(
+        TKRequestMessage.REQUEST_ERROR,
+        getRequestErrorType(error),
+      );
+      throw error;
+    });
 }

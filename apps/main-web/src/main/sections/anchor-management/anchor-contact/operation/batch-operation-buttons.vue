@@ -9,31 +9,30 @@ const props = defineProps<{
   selectedRows: DisplayedAnchorItem[];
 }>();
 
-const { handleBatchContactAnchor, handleBatchCancelAnchorContact } =
-  useAnchorContact(props);
-const anchorsNotContactedSelected = computed(() =>
-  props.selectedRows.filter(item => !item.contacted_user),
-);
+const { handleBatchCancelAnchorContact } = useAnchorContact(props);
+// const anchorsNotContactedSelected = computed(() =>
+//   props.selectedRows.filter(item => !item.contacted_user),
+// );
 const anchorsContactedSelected = computed(() =>
   props.selectedRows.filter(item => item.contacted_user),
 );
 </script>
 
 <template>
-  <ElButton
+  <!-- <ElButton
     type="primary"
     size="small"
     :disabled="!anchorsNotContactedSelected.length"
     @click="handleBatchContactAnchor(anchorsNotContactedSelected)"
   >
     批量完成建联
-  </ElButton>
+  </ElButton> -->
   <ElButton
     :disabled="!anchorsContactedSelected.length"
     type="danger"
     size="small"
     @click="handleBatchCancelAnchorContact(anchorsContactedSelected)"
   >
-    批量重置
+    批量重置建联状态
   </ElButton>
 </template>

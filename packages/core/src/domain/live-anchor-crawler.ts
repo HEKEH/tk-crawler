@@ -118,7 +118,7 @@ export class LiveAnchorCrawler {
   private async _updateChannelSubTags(scene: DRAWER_TABS_SCENE) {
     try {
       const queryId = this._queryId;
-      const { data } = await tiktokRequestErrorHandler(
+      const result = await tiktokRequestErrorHandler(
         getDrawerTabs({
           region: 'all',
           tokens: this._queryTokens,
@@ -130,7 +130,7 @@ export class LiveAnchorCrawler {
       if (outdated) {
         return;
       }
-      if (data) {
+      if (result.data) {
         const updateMap = (channelId: ChannelId, subTab: DrawerSubTab) => {
           const findItem = this._channelSubTagsMap[channelId]!.find(
             item => item.tag === subTab.tab_type,
@@ -144,7 +144,7 @@ export class LiveAnchorCrawler {
             findItem.weight = subTab.viewer_count; // 更新权重
           }
         };
-        for (const tab of data) {
+        for (const tab of result.data) {
           if (tab.tab_type === 'gaming' || tab.tab_type === 'lifestyle') {
             // gaming对应1111006
             const channelId =
@@ -171,6 +171,13 @@ export class LiveAnchorCrawler {
             }
           }
         }
+      } else if (result.message) {
+        getLogger().error(
+          '[updateChannelSubTags] business error',
+          result.message,
+        );
+      } else {
+        getLogger().error('[updateChannelSubTags] unknown error', result);
       }
     } catch (error) {
       getLogger().error('[updateChannelSubTags] error', error);
@@ -242,6 +249,10 @@ export class LiveAnchorCrawler {
         }
         await this._anchorPool.addAnchors(anchorInfos);
         this._continuousErrors = [];
+      } else if (feed.message) {
+        getLogger().error('[feed] business error', feed.message);
+      } else {
+        getLogger().error('[feed] unknown error', feed);
       }
     } catch (error) {
       getLogger().error('[feed] error', error);

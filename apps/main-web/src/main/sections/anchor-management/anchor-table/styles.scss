@@ -19,7 +19,12 @@
   .header-row {
     margin-bottom: 1rem;
     display: flex;
-    justify-content: space-between;
+    @include web {
+      justify-content: space-between;
+    }
+    @include mobile {
+      justify-content: flex-start;
+    }
     .left-part {
       display: flex;
       align-items: center;
@@ -34,7 +39,6 @@
   .header-row-icon {
     cursor: pointer;
     font-size: 18px;
-    margin-left: 0.5rem;
     &:hover {
       color: var(--el-color-primary);
     }
@@ -49,7 +53,6 @@
     width: 100%;
     display: flex;
     margin-top: 1rem;
-    padding-right: 1rem;
     @include mobile {
       justify-content: center;
     }

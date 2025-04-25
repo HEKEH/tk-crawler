@@ -13,11 +13,9 @@ const emit = defineEmits<{
 
 <template>
   <ElButton v-bind="props" @click="emit('click')">
+    <ElIcon>
+      <RefreshRight />
+    </ElIcon>
     刷新
-    <template #icon>
-      <ElIcon>
-        <RefreshRight />
-      </ElIcon>
-    </template>
   </ElButton>
 </template>

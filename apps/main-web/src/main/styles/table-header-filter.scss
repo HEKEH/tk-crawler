@@ -46,6 +46,9 @@
     @include mobile {
       padding: 0 0.5rem;
       overflow-y: auto;
+      &::-webkit-scrollbar {
+        display: none;
+      }
       overflow-x: hidden;
       &.filter-items-expanded {
         max-height: 510px;

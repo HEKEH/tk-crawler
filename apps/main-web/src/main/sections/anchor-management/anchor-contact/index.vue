@@ -3,12 +3,13 @@ import type {
   DisplayedAnchorItem,
   GetAnchorListOrderBy,
 } from '@tk-crawler/biz-shared';
-import { RefreshButton, useTableSort } from '@tk-crawler/view-shared';
+import type { CustomColumnConfig } from '../anchor-table/anchor-table-columns';
+import { RefreshButton, useIsWeb, useTableSort } from '@tk-crawler/view-shared';
 import { ElButton, ElPagination, ElTable } from 'element-plus';
 import { computed, onActivated, ref } from 'vue';
 import { useGetAnchorList } from '../../../hooks';
 import { useGlobalStore } from '../../../utils/vue';
-import TKAnchorTableColumns from '../anchor-table/anchor-table-columns.vue';
+import TKAnchorTableColumns from '../anchor-table/anchor-table-columns';
 import {
   type FilterViewValues,
   getCommonDefaultFilterViewValues,
@@ -21,6 +22,8 @@ import '../anchor-table/styles.scss';
 defineOptions({
   name: 'TKAnchorContactTable',
 });
+
+const isWeb = useIsWeb();
 
 const globalStore = useGlobalStore();
 
@@ -99,6 +102,23 @@ const selectedRows = ref<DisplayedAnchorItem[]>([]);
 function handleSelectionChange(rows: DisplayedAnchorItem[]) {
   selectedRows.value = rows;
 }
+
+const operationColumn = computed<CustomColumnConfig>(() => {
+  return {
+    key: 'operation',
+    after: 'display_id',
+    renderColumn: () => {
+      return (
+        <OperationColumn min-width={100} key="operation" refetch={refetch} />
+      );
+    },
+  };
+});
+
+const customColumns = computed<CustomColumnConfig[]>(() => {
+  return [operationColumn.value];
+});
+
 // const hasSelectedRows = computed(() => selectedRows.value.length > 0);
 
 onActivated(refetch);
@@ -134,6 +154,7 @@ onActivated(refetch);
       </div>
       <ElTable
         ref="tableRef"
+        :size="isWeb ? 'default' : 'small'"
         :data="data?.list"
         class="main-table"
         :default-sort="
@@ -145,8 +166,7 @@ onActivated(refetch);
         @sort-change="handleSortChange"
         @selection-change="handleSelectionChange"
       >
-        <TKAnchorTableColumns />
-        <OperationColumn :refetch="refetch" />
+        <TKAnchorTableColumns :custom-columns="customColumns" />
       </ElTable>
       <div class="pagination-row">
         <ElPagination
@@ -154,7 +174,9 @@ onActivated(refetch);
           v-model:page-size="pageSize"
           size="small"
           background
-          layout="total, sizes, prev, pager, next"
+          :layout="
+            isWeb ? 'total, sizes, prev, pager, next' : 'prev, pager, next'
+          "
           :page-sizes="[10, 20, 50, 100]"
           :total="data?.total || 0"
           @size-change="handlePageSizeChange"

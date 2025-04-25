@@ -27,7 +27,11 @@ export function useAnchorContact(params: UseAnchorContactParams) {
       return;
     }
     await params.refetch();
-    ElMessage.success('操作成功');
+    if (taskAnchors.length === 1) {
+      ElMessage.success(`已将「${taskAnchors[0].display_id}」设为已建联`);
+    } else {
+      ElMessage.success('操作成功');
+    }
   }
 
   async function handleCancelAnchorContact(taskAnchors: DisplayedAnchorItem[]) {

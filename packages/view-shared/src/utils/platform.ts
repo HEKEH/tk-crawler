@@ -1,4 +1,4 @@
-type Platform = 'Mac' | 'Windows' | 'Linux' | 'Android' | 'iOS' | 'unknown';
+type Platform = 'Mac' | 'Windows' | 'Android' | 'iOS' | 'unknown';
 type MobileDeviceType = 'Android' | 'iOS' | undefined;
 
 export function getMobileDeviceType(): MobileDeviceType {
@@ -29,9 +29,6 @@ export function getPlatform(): Platform {
   }
   if (userAgent.includes('Windows')) {
     return 'Windows';
-  }
-  if (userAgent.includes('Linux')) {
-    return 'Linux';
   }
   const mobileDeviceType = getMobileDeviceType();
   if (mobileDeviceType) {

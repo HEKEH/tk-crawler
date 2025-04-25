@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { StarFilled } from '@element-plus/icons-vue';
 import type { DisplayedAnchorItem } from '@tk-crawler/biz-shared';
-import { getPlatform, openSchema } from '@tk-crawler/view-shared';
+import { getPlatform, openScheme } from '@tk-crawler/view-shared';
 import type { TableColumnCtx } from 'element-plus';
 import {
   ElButton,
@@ -33,9 +33,9 @@ async function onFollowAnchor(anchor: DisplayedAnchorItem) {
     } catch {}
     return;
   }
-  const schema = `snssdk1180://user/profile/${anchor.user_id}?refer=web&gd_label=click_wap_download_follow&type=need_follow&needlaunchlog=1`;
+  const scheme = `snssdk1180://user/profile/${anchor.user_id}?refer=web&gd_label=click_wap_download_follow&type=need_follow&needlaunchlog=1`;
   try {
-    await openSchema(schema);
+    await openScheme(scheme);
   } catch {
     ElMessage.error('打开链接失败');
     return;

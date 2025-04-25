@@ -1,4 +1,5 @@
-export function openSchema(schema: string, timeout = 2000) {
+/** 这个方法只要scheme格式正确，其实没什么用 */
+export function openScheme(scheme: string, timeout = 2000) {
   return new Promise<void>((resolve, reject) => {
     const handleVisibility = () => {
       if (document.hidden) {
@@ -8,7 +9,7 @@ export function openSchema(schema: string, timeout = 2000) {
     };
 
     document.addEventListener('visibilitychange', handleVisibility);
-    window.open(schema, '_blank');
+    window.open(scheme);
 
     // 超时处理
     setTimeout(() => {

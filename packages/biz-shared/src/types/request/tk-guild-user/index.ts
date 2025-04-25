@@ -79,7 +79,7 @@ export interface GetTKGuildUserDetailRequest {
 
 export interface GetTKGuildUserDetailResponse {
   status_code: RESPONSE_CODE;
-  data?: TKGuildUser;
+  data?: Omit<TKGuildUser, 'cookie'>;
   message?: string;
 }
 

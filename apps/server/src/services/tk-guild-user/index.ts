@@ -51,6 +51,9 @@ export async function getTKGuildUserList(
       skip: (data.page_num - 1) * data.page_size,
       take: data.page_size,
       orderBy: _orderBy,
+      omit: {
+        cookie: true,
+      },
     }),
     mysqlClient.prismaClient.liveAdminUser.count({
       where: filter,
@@ -91,6 +94,9 @@ export async function getTKGuildUserDetail(
     where: {
       id: BigInt(data.id),
       org_id: BigInt(data.org_id),
+    },
+    omit: {
+      cookie: true,
     },
   });
 

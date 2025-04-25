@@ -63,9 +63,11 @@ defineOptions({
   name: 'TKGuildUserTable',
 });
 
+type TKGuildUserRow = GetTKGuildUserListResponseData['list'][number];
+
 interface ScopeType {
-  row: TKGuildUser;
-  column: TableColumnCtx<TKGuildUser>;
+  row: TKGuildUserRow;
+  column: TableColumnCtx<TKGuildUserRow>;
   $index: number;
 }
 
@@ -162,7 +164,7 @@ async function refresh() {
 }
 
 // 删除用户
-async function deleteUser(user: TKGuildUser) {
+async function deleteUser(user: TKGuildUserRow) {
   try {
     await ElMessageBox.confirm(`确定要删除用户 ${user.username} 吗？`, {
       type: 'warning',
@@ -251,7 +253,7 @@ function onAddItem() {
   formMode.value = 'create';
   formDialogVisible.value = true;
 }
-function onEditItem(item: TKGuildUser) {
+function onEditItem(item: TKGuildUserRow) {
   formData.value = item;
   formMode.value = 'edit';
   formDialogVisible.value = true;
@@ -308,7 +310,7 @@ function getStartOrStopType(status: TKGuildUserStatus): 'stop' | 'start' {
   return 'start';
 }
 
-async function onStartOrStop(item: TKGuildUser) {
+async function onStartOrStop(item: TKGuildUserRow) {
   const type = getStartOrStopType(item.status);
   if (type === 'stop') {
     try {
@@ -567,14 +569,14 @@ onActivated(refetch);
             {{ formatDateTime(scope.row.updated_at) }}
           </template>
         </ElTableColumn>
-        <ElTableColumn prop="cookie" label="Cookie" min-width="200">
+        <!-- <ElTableColumn prop="cookie" label="Cookie" min-width="200">
           <template #default="scope: ScopeType">
             <div v-if="scope.row.cookie" class="cookie">
               <span class="cookie-text">{{ scope.row.cookie }}</span>
               <CopyIcon tooltip="复制Cookie" :copy-content="scope.row.cookie" />
             </div>
           </template>
-        </ElTableColumn>
+        </ElTableColumn> -->
         <ElTableColumn
           label="操作"
           min-width="140"

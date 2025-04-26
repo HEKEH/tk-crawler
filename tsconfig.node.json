@@ -19,6 +19,7 @@
     "apps/mobile-follow-client/electron/**/*",
     "apps/mobile-follow-client/shared/**/*",
     "apps/main-client/electron/**/*",
+    "apps/data-scripts/**/*",
     "packages/core/**/*",
     "packages/main-client-shared/**/*",
     "packages/shared/**/*",

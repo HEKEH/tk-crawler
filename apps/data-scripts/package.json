@@ -1,0 +1,40 @@
+{
+  "name": "@tk-crawler/data-scripts",
+  "version": "0.0.1",
+  "exports": {
+    ".": {
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "ecosystem.config.js",
+    "package.json",
+    "public"
+  ],
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development dotenv -e ../../.env.development nodemon",
+    "build": "cross-env NODE_ENV=production rimraf dist && rollup --config rollup.config.mjs",
+    "start": "cross-env NODE_ENV=production dotenv -e ${GLOBAL_DOTENV_CONFIG_PATH:-../../.env.production} node dist/index.js",
+    "start:dev": "cross-env NODE_ENV=development dotenv -e ${GLOBAL_DOTENV_CONFIG_PATH:-../../.env.development} node dist/index.js",
+    "lint": "eslint",
+    "preinstall": "npx only-allow pnpm"
+  },
+  "dependencies": {
+    "@tk-crawler/database": "workspace:*",
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.4.7",
+    "dotenv-cli": "^7.4.2",
+    "uuid": "^11.0.3"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^3.0.0",
+    "@types/uuid": "^10.0.0",
+    "axios": "^1.7.9",
+    "bcryptjs": "^3.0.2",
+    "dayjs": "^1.11.13",
+    "lodash": "^4.17.21",
+    "log4js": "^6.9.1",
+    "nodemon": "^3.1.9"
+  }
+}

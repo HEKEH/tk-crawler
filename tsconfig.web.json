@@ -21,6 +21,7 @@
     "apps/follow-client/electron/**",
     "apps/mobile-follow-client/electron/**",
     "apps/main-client/electron/**",
+    "apps/data-scripts/**",
     "packages/core/**",
     "packages/play/**",
     "packages/script-tools/**",

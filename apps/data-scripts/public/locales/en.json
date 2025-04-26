@@ -1,0 +1,14 @@
+{
+  "Username can't be empty": "Username can't be empty",
+  "Password can't be empty": "Password can't be empty",
+  "User doesn't exist": "User doesn't exist",
+  "Incorrect password": "Incorrect password",
+  "Username is already registered": "Username is already registered",
+  "Username contains unsupported characters or exceeds the length limit": "Username contains unsupported characters or exceeds the length limit",
+  "Token can't be empty": "Token can't be empty",
+  "Illegal token": "Illegal token",
+  "Token expires": "Token expires",
+  "Illegal login": "Illegal login",
+  "An unexpected error occurred": "An unexpected error occurred",
+  "Success": "Success"
+}

@@ -257,6 +257,49 @@ importers:
         specifier: ^2.0.26
         version: 2.2.8(typescript@5.5.4)
 
+  apps/data-scripts:
+    dependencies:
+      '@tk-crawler/database':
+        specifier: workspace:*
+        version: link:../../packages/database
+      cross-env:
+        specifier: ^7.0.3
+        version: 7.0.3
+      dotenv:
+        specifier: ^16.4.7
+        version: 16.4.7
+      dotenv-cli:
+        specifier: ^7.4.2
+        version: 7.4.4
+      uuid:
+        specifier: ^11.0.3
+        version: 11.1.0
+    devDependencies:
+      '@types/bcryptjs':
+        specifier: ^3.0.0
+        version: 3.0.0
+      '@types/uuid':
+        specifier: ^10.0.0
+        version: 10.0.0
+      axios:
+        specifier: ^1.7.9
+        version: 1.8.3
+      bcryptjs:
+        specifier: ^3.0.2
+        version: 3.0.2
+      dayjs:
+        specifier: ^1.11.13
+        version: 1.11.13
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
+      log4js:
+        specifier: ^6.9.1
+        version: 6.9.1
+      nodemon:
+        specifier: ^3.1.9
+        version: 3.1.9
+
   apps/follow-client:
     devDependencies:
       '@tk-crawler/plugins':

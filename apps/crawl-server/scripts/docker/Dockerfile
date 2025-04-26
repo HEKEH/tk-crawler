@@ -43,7 +43,7 @@ RUN echo "Builder Success 🎉"
 
 # Second stage: Production stage
 FROM node:20.11.1-slim AS production
-RUN apt-get update -y && apt-get install -y openssl
+RUN apt-get update -y && apt-get install -y --no-install-recommends openssl procps && rm -rf /var/lib/apt/lists/*
 ENV TZ="Asia/Shanghai"
 
 # Copy only necessary files from the builder stage
@@ -53,4 +53,4 @@ WORKDIR /app/@tk-crawler/crawl-server
 
 EXPOSE ${PORT}
 
-CMD ["npm", "run", "start"]
+CMD ["npm", "run", "prod:start"]

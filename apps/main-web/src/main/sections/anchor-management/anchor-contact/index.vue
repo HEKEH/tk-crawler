@@ -67,7 +67,7 @@ const queryFilter = computed(() => {
   };
 });
 
-const { data, isLoading, isError, error, refetch } = useGetAnchorList(
+const { data, isLoading, refetch } = useGetAnchorList(
   {
     pageNum,
     pageSize,
@@ -130,63 +130,61 @@ onActivated(refetch);
 
 <template>
   <div v-loading="isLoading || isRefreshing" class="tk-anchor-user-table">
-    <div v-if="isError" class="error-msg">
+    <!-- <div v-if="isError" class="error-msg">
       {{ error?.message }}
+    </div> -->
+    <div class="filter-row">
+      <TKAnchorFilter
+        :hidden-filters="['assign_to', 'checked_result', 'contacted_by']"
+        :model-value="filters"
+        :areas="globalStore.userProfile.orgInfo?.areas ?? []"
+        @submit="handleFilterSubmit"
+        @reset="handleFilterReset"
+      />
     </div>
-    <template v-if="!isError">
-      <div class="filter-row">
-        <TKAnchorFilter
-          :hidden-filters="['assign_to', 'checked_result', 'contacted_by']"
-          :model-value="filters"
-          :areas="globalStore.userProfile.orgInfo?.areas ?? []"
-          @submit="handleFilterSubmit"
-          @reset="handleFilterReset"
+    <div class="header-row">
+      <div class="left-part"></div>
+      <div class="right-part">
+        <BatchOperationButtons
+          :refetch="refetch"
+          :selected-rows="selectedRows"
         />
+        <ElButton type="default" size="small" @click="resetSort">
+          重置排序
+        </ElButton>
+        <RefreshButton @click="refresh" />
       </div>
-      <div class="header-row">
-        <div class="left-part"></div>
-        <div class="right-part">
-          <BatchOperationButtons
-            :refetch="refetch"
-            :selected-rows="selectedRows"
-          />
-          <ElButton type="default" size="small" @click="resetSort">
-            重置排序
-          </ElButton>
-          <RefreshButton @click="refresh" />
-        </div>
-      </div>
-      <ElTable
-        ref="tableRef"
-        :size="isWeb ? 'default' : 'small'"
-        :data="data?.list"
-        class="main-table"
-        :default-sort="
-          sortField && sortOrder
-            ? { prop: sortField, order: sortOrder }
-            : undefined
+    </div>
+    <ElTable
+      ref="tableRef"
+      :size="isWeb ? 'default' : 'small'"
+      :data="data?.list"
+      class="main-table"
+      :default-sort="
+        sortField && sortOrder
+          ? { prop: sortField, order: sortOrder }
+          : undefined
+      "
+      row-key="id"
+      @sort-change="handleSortChange"
+      @selection-change="handleSelectionChange"
+    >
+      <TKAnchorTableColumns :custom-columns="customColumns" />
+    </ElTable>
+    <div class="pagination-row">
+      <ElPagination
+        v-model:current-page="pageNum"
+        v-model:page-size="pageSize"
+        size="small"
+        background
+        :layout="
+          isWeb ? 'total, sizes, prev, pager, next' : 'prev, pager, next'
         "
-        row-key="id"
-        @sort-change="handleSortChange"
-        @selection-change="handleSelectionChange"
-      >
-        <TKAnchorTableColumns :custom-columns="customColumns" />
-      </ElTable>
-      <div class="pagination-row">
-        <ElPagination
-          v-model:current-page="pageNum"
-          v-model:page-size="pageSize"
-          size="small"
-          background
-          :layout="
-            isWeb ? 'total, sizes, prev, pager, next' : 'prev, pager, next'
-          "
-          :page-sizes="[10, 20, 50, 100]"
-          :total="data?.total || 0"
-          @size-change="handlePageSizeChange"
-          @current-change="handlePageNumChange"
-        />
-      </div>
-    </template>
+        :page-sizes="[10, 20, 50, 100]"
+        :total="data?.total || 0"
+        @size-change="handlePageSizeChange"
+        @current-change="handlePageNumChange"
+      />
+    </div>
   </div>
 </template>

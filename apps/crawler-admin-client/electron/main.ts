@@ -21,10 +21,13 @@ import { logger } from './infra/logger';
 // const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 async function main() {
-  const gotTheLock = app.requestSingleInstanceLock();
-  if (!gotTheLock) {
-    app.quit();
-    return;
+  if (process.env.NODE_ENV === 'production') {
+    const gotTheLock = app.requestSingleInstanceLock();
+    if (!gotTheLock) {
+      logger.error('App quit by requestSingleInstanceLock');
+      app.quit();
+      return;
+    }
   }
   setCoreLogger(logger);
   setTkRequestsLogger(logger);

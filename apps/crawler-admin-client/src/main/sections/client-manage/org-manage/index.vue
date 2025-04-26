@@ -238,202 +238,198 @@ function onManageOrgMembers(org: OrganizationItem) {
 
 <template>
   <div v-loading="isLoading || isRefreshing" class="org-manage">
-    <div v-if="isError" class="org-manage-error">
+    <!-- <div v-if="isError" class="org-manage-error">
       {{ error?.message }}
-    </div>
-    <template v-if="!isError">
-      <div class="header-row">
-        <div class="left-part">
-          <ElButton size="small" type="primary" @click="onAddItem">
-            添加机构
-          </ElButton>
-        </div>
-        <div class="right-part">
-          <ElButton type="default" size="small" @click="resetSort">
-            重置排序
-          </ElButton>
-          <RefreshButton @click="refresh" />
-        </div>
+    </div> -->
+    <div class="header-row">
+      <div class="left-part">
+        <ElButton size="small" type="primary" @click="onAddItem">
+          添加机构
+        </ElButton>
       </div>
-      <ElTable
-        ref="tableRef"
-        :data="data?.list"
-        class="main-table"
-        :default-sort="
-          sortField && sortOrder
-            ? { prop: sortField, order: sortOrder }
-            : undefined
-        "
-        row-key="id"
-        @sort-change="handleSortChange"
+      <div class="right-part">
+        <ElButton type="default" size="small" @click="resetSort">
+          重置排序
+        </ElButton>
+        <RefreshButton @click="refresh" />
+      </div>
+    </div>
+    <ElTable
+      ref="tableRef"
+      :data="data?.list"
+      class="main-table"
+      :default-sort="
+        sortField && sortOrder
+          ? { prop: sortField, order: sortOrder }
+          : undefined
+      "
+      row-key="id"
+      @sort-change="handleSortChange"
+    >
+      <ElTableColumn fixed prop="id" label="机构ID" min-width="100" />
+      <ElTableColumn fixed prop="name" label="机构名称" min-width="100" />
+      <ElTableColumn prop="status" label="状态" min-width="100">
+        <template #default="scope: ScopeType">
+          <ElTag
+            :type="
+              scope.row.status === OrganizationStatus.normal
+                ? 'success'
+                : 'danger'
+            "
+          >
+            {{
+              scope.row.status === OrganizationStatus.normal ? '正常' : '禁用'
+            }}
+          </ElTag>
+        </template>
+      </ElTableColumn>
+      <ElTableColumn
+        prop="membership_start_at"
+        label="会员开始时间"
+        min-width="180"
+        sortable="custom"
       >
-        <ElTableColumn fixed prop="id" label="机构ID" min-width="100" />
-        <ElTableColumn fixed prop="name" label="机构名称" min-width="100" />
-        <ElTableColumn prop="status" label="状态" min-width="100">
-          <template #default="scope: ScopeType">
+        <template #default="scope: ScopeType">
+          {{ formatDateTime(scope.row.membership_start_at) }}
+        </template>
+      </ElTableColumn>
+      <ElTableColumn
+        prop="membership_expire_at"
+        label="会员到期时间"
+        min-width="180"
+        sortable="custom"
+      >
+        <template #default="scope: ScopeType">
+          {{ formatDateTime(scope.row.membership_expire_at) }}
+        </template>
+      </ElTableColumn>
+      <ElTableColumn
+        prop="if_membership_valid"
+        label="会员是否有效"
+        min-width="120"
+      >
+        <template #default="scope: ScopeType">
+          <ElTag :type="scope.row.if_membership_valid ? 'success' : 'danger'">
+            {{ scope.row.if_membership_valid ? '是' : '否' }}
+          </ElTag>
+        </template>
+      </ElTableColumn>
+      <ElTableColumn prop="areas" label="分区" min-width="160">
+        <template #default="scope: ScopeType">
+          <div class="area-tag">
             <ElTag
+              v-for="area in (scope.row as OrganizationItem).areas"
+              :key="area"
+              type="success"
+              class="area-tag-item"
+            >
+              {{ AREA_NAME_MAP[area] }}
+              <AreaTooltipIcon :area="area" />
+            </ElTag>
+          </div>
+        </template>
+      </ElTableColumn>
+      <ElTableColumn
+        sortable="custom"
+        prop="user_count"
+        label="用户数量"
+        min-width="120"
+      />
+      <ElTableColumn
+        sortable="custom"
+        prop="mobile_device_limit"
+        label="设备数量上限"
+        min-width="140"
+      />
+      <ElTableColumn
+        prop="created_at"
+        label="创建时间"
+        min-width="180"
+        sortable="custom"
+      >
+        <template #default="scope: ScopeType">
+          {{ formatDateTime(scope.row.created_at) }}
+        </template>
+      </ElTableColumn>
+      <ElTableColumn
+        prop="updated_at"
+        label="更新时间"
+        min-width="180"
+        sortable="custom"
+      >
+        <template #default="scope: ScopeType">
+          {{ formatDateTime(scope.row.updated_at) }}
+        </template>
+      </ElTableColumn>
+      <ElTableColumn prop="remark" label="备注" min-width="100" />
+      <ElTableColumn fixed="right" label="操作" min-width="220">
+        <template #default="scope: ScopeType">
+          <div class="action-row">
+            <ElButton
+              link
+              type="primary"
+              size="small"
+              @click.prevent="onEditItem(scope.row)"
+            >
+              编辑
+            </ElButton>
+            <ElButton
+              link
               :type="
                 scope.row.status === OrganizationStatus.normal
-                  ? 'success'
-                  : 'danger'
+                  ? 'danger'
+                  : 'primary'
               "
+              size="small"
+              @click.prevent="toggleDisableItem(scope.row)"
             >
               {{
-                scope.row.status === OrganizationStatus.normal ? '正常' : '禁用'
+                scope.row.status === OrganizationStatus.normal ? '禁用' : '启用'
               }}
-            </ElTag>
-          </template>
-        </ElTableColumn>
-        <ElTableColumn
-          prop="membership_start_at"
-          label="会员开始时间"
-          min-width="180"
-          sortable="custom"
-        >
-          <template #default="scope: ScopeType">
-            {{ formatDateTime(scope.row.membership_start_at) }}
-          </template>
-        </ElTableColumn>
-        <ElTableColumn
-          prop="membership_expire_at"
-          label="会员到期时间"
-          min-width="180"
-          sortable="custom"
-        >
-          <template #default="scope: ScopeType">
-            {{ formatDateTime(scope.row.membership_expire_at) }}
-          </template>
-        </ElTableColumn>
-        <ElTableColumn
-          prop="if_membership_valid"
-          label="会员是否有效"
-          min-width="120"
-        >
-          <template #default="scope: ScopeType">
-            <ElTag :type="scope.row.if_membership_valid ? 'success' : 'danger'">
-              {{ scope.row.if_membership_valid ? '是' : '否' }}
-            </ElTag>
-          </template>
-        </ElTableColumn>
-        <ElTableColumn prop="areas" label="分区" min-width="160">
-          <template #default="scope: ScopeType">
-            <div class="area-tag">
-              <ElTag
-                v-for="area in (scope.row as OrganizationItem).areas"
-                :key="area"
-                type="success"
-                class="area-tag-item"
-              >
-                {{ AREA_NAME_MAP[area] }}
-                <AreaTooltipIcon :area="area" />
-              </ElTag>
-            </div>
-          </template>
-        </ElTableColumn>
-        <ElTableColumn
-          sortable="custom"
-          prop="user_count"
-          label="用户数量"
-          min-width="120"
-        />
-        <ElTableColumn
-          sortable="custom"
-          prop="mobile_device_limit"
-          label="设备数量上限"
-          min-width="140"
-        />
-        <ElTableColumn
-          prop="created_at"
-          label="创建时间"
-          min-width="180"
-          sortable="custom"
-        >
-          <template #default="scope: ScopeType">
-            {{ formatDateTime(scope.row.created_at) }}
-          </template>
-        </ElTableColumn>
-        <ElTableColumn
-          prop="updated_at"
-          label="更新时间"
-          min-width="180"
-          sortable="custom"
-        >
-          <template #default="scope: ScopeType">
-            {{ formatDateTime(scope.row.updated_at) }}
-          </template>
-        </ElTableColumn>
-        <ElTableColumn prop="remark" label="备注" min-width="100" />
-        <ElTableColumn fixed="right" label="操作" min-width="220">
-          <template #default="scope: ScopeType">
-            <div class="action-row">
-              <ElButton
-                link
-                type="primary"
-                size="small"
-                @click.prevent="onEditItem(scope.row)"
-              >
-                编辑
-              </ElButton>
-              <ElButton
-                link
-                :type="
-                  scope.row.status === OrganizationStatus.normal
-                    ? 'danger'
-                    : 'primary'
-                "
-                size="small"
-                @click.prevent="toggleDisableItem(scope.row)"
-              >
-                {{
-                  scope.row.status === OrganizationStatus.normal
-                    ? '禁用'
-                    : '启用'
-                }}
-              </ElButton>
-              <ElButton
-                link
-                type="danger"
-                size="small"
-                @click.prevent="deleteOrganization(scope.row)"
-              >
-                删除机构
-              </ElButton>
-            </div>
-            <div class="action-row">
-              <ElButton
-                link
-                type="primary"
-                size="small"
-                @click.prevent="onManageOrgMembers(scope.row)"
-              >
-                管理成员
-              </ElButton>
-              <ElButton
-                link
-                type="primary"
-                size="small"
-                @click.prevent="openUpdateOrgMembershipDialog(scope.row)"
-              >
-                新增或延长会员
-              </ElButton>
-            </div>
-          </template>
-        </ElTableColumn>
-      </ElTable>
-      <div class="pagination-row">
-        <ElPagination
-          size="small"
-          background
-          :page-size="pageSize"
-          :current-page="pageNum"
-          layout="total, sizes, prev, pager, next"
-          :total="data?.total"
-          class="mt-4"
-          @size-change="pageSize = $event"
-          @current-change="pageNum = $event"
-        />
-      </div>
-    </template>
+            </ElButton>
+            <ElButton
+              link
+              type="danger"
+              size="small"
+              @click.prevent="deleteOrganization(scope.row)"
+            >
+              删除机构
+            </ElButton>
+          </div>
+          <div class="action-row">
+            <ElButton
+              link
+              type="primary"
+              size="small"
+              @click.prevent="onManageOrgMembers(scope.row)"
+            >
+              管理成员
+            </ElButton>
+            <ElButton
+              link
+              type="primary"
+              size="small"
+              @click.prevent="openUpdateOrgMembershipDialog(scope.row)"
+            >
+              新增或延长会员
+            </ElButton>
+          </div>
+        </template>
+      </ElTableColumn>
+    </ElTable>
+    <div class="pagination-row">
+      <ElPagination
+        size="small"
+        background
+        :page-size="pageSize"
+        :current-page="pageNum"
+        layout="total, sizes, prev, pager, next"
+        :total="data?.total"
+        class="mt-4"
+        @size-change="pageSize = $event"
+        @current-change="pageNum = $event"
+      />
+    </div>
   </div>
   <OrgFormDialog
     :visible="formDialogVisible"

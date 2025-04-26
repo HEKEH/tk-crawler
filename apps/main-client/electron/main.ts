@@ -24,6 +24,14 @@ import { logger } from './infra/logger';
 // const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 async function main() {
+  if (process.env.NODE_ENV === 'production') {
+    const gotTheLock = app.requestSingleInstanceLock();
+    if (!gotTheLock) {
+      logger.error('App quit by requestSingleInstanceLock');
+      app.quit();
+      return;
+    }
+  }
   setTkRequestsLogger(logger);
   setElectronLang('en-US');
   const autoUpdater = new AutoUpdater(

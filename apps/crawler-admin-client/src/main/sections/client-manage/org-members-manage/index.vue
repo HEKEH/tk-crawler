@@ -223,150 +223,142 @@ async function handleSubmitCreateOrEdit(data: Partial<OrgMemberItem>) {
 
 <template>
   <div v-loading="isLoading || isRefreshing" class="org-member-manage">
-    <div v-if="isError" class="org-member-manage-error">
+    <!-- <div v-if="isError" class="org-member-manage-error">
       {{ error?.message }}
-    </div>
-    <template v-if="!isError">
-      <div class="header-row">
-        <div class="left-part">
-          <ElButton size="small" type="primary" @click="onAddItem">
-            添加机构成员
-          </ElButton>
-        </div>
-        <div class="right-part">
-          <ElButton type="default" size="small" @click="resetSort">
-            重置排序
-          </ElButton>
-          <RefreshButton @click="refresh" />
-        </div>
+    </div> -->
+    <div class="header-row">
+      <div class="left-part">
+        <ElButton size="small" type="primary" @click="onAddItem">
+          添加机构成员
+        </ElButton>
       </div>
-      <ElTable
-        ref="tableRef"
-        :data="data?.list"
-        class="main-table"
-        :default-sort="
-          sortField && sortOrder
-            ? { prop: sortField, order: sortOrder }
-            : undefined
-        "
-        row-key="id"
-        @sort-change="handleSortChange"
+      <div class="right-part">
+        <ElButton type="default" size="small" @click="resetSort">
+          重置排序
+        </ElButton>
+        <RefreshButton @click="refresh" />
+      </div>
+    </div>
+    <ElTable
+      ref="tableRef"
+      :data="data?.list"
+      class="main-table"
+      :default-sort="
+        sortField && sortOrder
+          ? { prop: sortField, order: sortOrder }
+          : undefined
+      "
+      row-key="id"
+      @sort-change="handleSortChange"
+    >
+      <ElTableColumn fixed prop="id" label="ID" min-width="100" />
+      <ElTableColumn prop="username" label="登录名" min-width="120" />
+      <ElTableColumn prop="display_name" label="显示名" min-width="120" />
+      <ElTableColumn prop="email" label="邮箱" min-width="120">
+        <template #default="scope: ScopeType">
+          {{ scope.row.email || '-' }}
+        </template>
+      </ElTableColumn>
+      <ElTableColumn prop="mobile" label="手机号" min-width="120">
+        <template #default="scope: ScopeType">
+          {{ scope.row.mobile || '-' }}
+        </template>
+      </ElTableColumn>
+      <ElTableColumn prop="role_id" label="角色" min-width="100">
+        <template #default="scope: ScopeType">
+          <ElTag
+            size="small"
+            :type="
+              scope.row.role_id === OrgMemberRole.admin ? 'primary' : 'info'
+            "
+          >
+            {{
+              scope.row.role_id === OrgMemberRole.admin ? '管理员' : '普通用户'
+            }}
+          </ElTag>
+        </template>
+      </ElTableColumn>
+      <ElTableColumn prop="status" label="状态" min-width="100">
+        <template #default="scope: ScopeType">
+          <ElTag
+            :type="
+              scope.row.status === OrgMemberStatus.normal ? 'success' : 'danger'
+            "
+          >
+            {{ scope.row.status === OrgMemberStatus.normal ? '正常' : '禁用' }}
+          </ElTag>
+        </template>
+      </ElTableColumn>
+      <ElTableColumn
+        prop="created_at"
+        label="创建时间"
+        min-width="180"
+        sortable="custom"
       >
-        <ElTableColumn fixed prop="id" label="ID" min-width="100" />
-        <ElTableColumn prop="username" label="登录名" min-width="120" />
-        <ElTableColumn prop="display_name" label="显示名" min-width="120" />
-        <ElTableColumn prop="email" label="邮箱" min-width="120">
-          <template #default="scope: ScopeType">
-            {{ scope.row.email || '-' }}
-          </template>
-        </ElTableColumn>
-        <ElTableColumn prop="mobile" label="手机号" min-width="120">
-          <template #default="scope: ScopeType">
-            {{ scope.row.mobile || '-' }}
-          </template>
-        </ElTableColumn>
-        <ElTableColumn prop="role_id" label="角色" min-width="100">
-          <template #default="scope: ScopeType">
-            <ElTag
+        <template #default="scope: ScopeType">
+          {{ formatDateTime(scope.row.created_at) }}
+        </template>
+      </ElTableColumn>
+      <ElTableColumn
+        prop="updated_at"
+        label="更新时间"
+        min-width="180"
+        sortable="custom"
+      >
+        <template #default="scope: ScopeType">
+          {{ formatDateTime(scope.row.updated_at) }}
+        </template>
+      </ElTableColumn>
+      <ElTableColumn fixed="right" label="操作" min-width="220">
+        <template #default="scope: ScopeType">
+          <div>
+            <ElButton
+              link
+              type="primary"
               size="small"
-              :type="
-                scope.row.role_id === OrgMemberRole.admin ? 'primary' : 'info'
-              "
+              @click.prevent="onEditItem(scope.row)"
             >
-              {{
-                scope.row.role_id === OrgMemberRole.admin
-                  ? '管理员'
-                  : '普通用户'
-              }}
-            </ElTag>
-          </template>
-        </ElTableColumn>
-        <ElTableColumn prop="status" label="状态" min-width="100">
-          <template #default="scope: ScopeType">
-            <ElTag
+              编辑
+            </ElButton>
+            <ElButton
+              link
               :type="
                 scope.row.status === OrgMemberStatus.normal
-                  ? 'success'
-                  : 'danger'
+                  ? 'danger'
+                  : 'primary'
               "
+              size="small"
+              @click.prevent="toggleDisableItem(scope.row)"
             >
               {{
-                scope.row.status === OrgMemberStatus.normal ? '正常' : '禁用'
+                scope.row.status === OrgMemberStatus.normal ? '禁用' : '启用'
               }}
-            </ElTag>
-          </template>
-        </ElTableColumn>
-        <ElTableColumn
-          prop="created_at"
-          label="创建时间"
-          min-width="180"
-          sortable="custom"
-        >
-          <template #default="scope: ScopeType">
-            {{ formatDateTime(scope.row.created_at) }}
-          </template>
-        </ElTableColumn>
-        <ElTableColumn
-          prop="updated_at"
-          label="更新时间"
-          min-width="180"
-          sortable="custom"
-        >
-          <template #default="scope: ScopeType">
-            {{ formatDateTime(scope.row.updated_at) }}
-          </template>
-        </ElTableColumn>
-        <ElTableColumn fixed="right" label="操作" min-width="220">
-          <template #default="scope: ScopeType">
-            <div>
-              <ElButton
-                link
-                type="primary"
-                size="small"
-                @click.prevent="onEditItem(scope.row)"
-              >
-                编辑
-              </ElButton>
-              <ElButton
-                link
-                :type="
-                  scope.row.status === OrgMemberStatus.normal
-                    ? 'danger'
-                    : 'primary'
-                "
-                size="small"
-                @click.prevent="toggleDisableItem(scope.row)"
-              >
-                {{
-                  scope.row.status === OrgMemberStatus.normal ? '禁用' : '启用'
-                }}
-              </ElButton>
-              <ElButton
-                link
-                type="danger"
-                size="small"
-                @click.prevent="deleteItem(scope.row)"
-              >
-                删除
-              </ElButton>
-            </div>
-          </template>
-        </ElTableColumn>
-      </ElTable>
-      <div class="pagination-row">
-        <ElPagination
-          size="small"
-          background
-          :page-size="pageSize"
-          :current-page="pageNum"
-          layout="total, sizes, prev, pager, next"
-          :total="data?.total"
-          class="mt-4"
-          @size-change="pageSize = $event"
-          @current-change="pageNum = $event"
-        />
-      </div>
-    </template>
+            </ElButton>
+            <ElButton
+              link
+              type="danger"
+              size="small"
+              @click.prevent="deleteItem(scope.row)"
+            >
+              删除
+            </ElButton>
+          </div>
+        </template>
+      </ElTableColumn>
+    </ElTable>
+    <div class="pagination-row">
+      <ElPagination
+        size="small"
+        background
+        :page-size="pageSize"
+        :current-page="pageNum"
+        layout="total, sizes, prev, pager, next"
+        :total="data?.total"
+        class="mt-4"
+        @size-change="pageSize = $event"
+        @current-change="pageNum = $event"
+      />
+    </div>
   </div>
   <FormDialog
     :visible="formDialogVisible"

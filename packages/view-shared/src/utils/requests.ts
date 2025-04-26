@@ -22,17 +22,28 @@ export async function commonRequest<
   hideErrorNotify,
   ...requestParams
 }: CommonRequestParams<RequestParams>): Promise<ResponseData> {
-  const data = await sharedCommonRequest<ResponseData>(requestParams);
-  if (data.status_code !== RESPONSE_CODE.SUCCESS) {
+  try {
+    const data = await sharedCommonRequest<ResponseData>(requestParams);
+    if (data.status_code !== RESPONSE_CODE.SUCCESS) {
+      if (!hideErrorNotify) {
+        ElNotification.error({
+          title: '请求失败',
+          message: data.message,
+        });
+      }
+      if (data.status_code === RESPONSE_CODE.TOKEN_INVALID) {
+        onTokenInvalid?.();
+        TokenInvalidSubject.next();
+      }
+    }
+    return data;
+  } catch (error) {
     if (!hideErrorNotify) {
       ElNotification.error({
-        message: data.message,
+        title: '请求失败',
+        message: (error as any)?.message,
       });
     }
-    if (data.status_code === RESPONSE_CODE.TOKEN_INVALID) {
-      onTokenInvalid?.();
-      TokenInvalidSubject.next();
-    }
+    throw error;
   }
-  return data;
 }

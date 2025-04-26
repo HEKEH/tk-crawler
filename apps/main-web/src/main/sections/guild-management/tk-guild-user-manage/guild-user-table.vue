@@ -403,173 +403,172 @@ onActivated(refetch);
 
 <template>
   <div v-loading="isLoading || isRefreshing" class="tk-guild-user-table">
-    <div v-if="isError" class="error-msg">
+    <!-- <div v-if="isError" class="error-msg">
       {{ error?.message }}
+    </div> -->
+    <div class="filter-row">
+      <TKGuildUserFilter
+        :model-value="filters"
+        :areas="globalStore.userProfile.orgInfo?.areas ?? []"
+        @change="handleFilterChange"
+        @reset="handleFilterReset"
+      />
     </div>
-    <template v-if="!isError">
-      <div class="filter-row">
-        <TKGuildUserFilter
-          :model-value="filters"
-          :areas="globalStore.userProfile.orgInfo?.areas ?? []"
-          @change="handleFilterChange"
-          @reset="handleFilterReset"
-        />
-      </div>
-      <div class="header-row">
-        <div class="left-part">
-          <ElTooltip
-            popper-style="max-width: 320px;"
-            placement="top"
-            effect="dark"
-          >
-            <template #content>
-              <span>
-                请添加
-                <ElLink
-                  type="primary"
-                  style="vertical-align: baseline"
-                  :href="TIKTOK_LIVE_ADMIN_URL"
-                  target="_blank"
-                  >{{ TIKTOK_LIVE_ADMIN_URL }}</ElLink
-                >
-                网站的账号。添加查询账号越多，查询速度越快
-              </span>
-            </template>
-            <ElButton type="primary" size="small" @click="onAddItem">
-              添加账号
-              <!-- <ElIcon style="font-size: 14px; margin-left: 0.25rem">
+    <div class="header-row">
+      <div class="left-part">
+        <ElTooltip
+          popper-style="max-width: 320px;"
+          placement="top"
+          effect="dark"
+        >
+          <template #content>
+            <span>
+              请添加
+              <ElLink
+                type="primary"
+                style="vertical-align: baseline"
+                :href="TIKTOK_LIVE_ADMIN_URL"
+                target="_blank"
+                >{{ TIKTOK_LIVE_ADMIN_URL }}</ElLink
+              >
+              网站的账号。添加查询账号越多，查询速度越快
+            </span>
+          </template>
+          <ElButton type="primary" size="small" @click="onAddItem">
+            添加账号
+            <!-- <ElIcon style="font-size: 14px; margin-left: 0.25rem">
                 <InfoFilled />
               </ElIcon> -->
-            </ElButton>
-          </ElTooltip>
-        </div>
-        <div class="right-part">
-          <ElButton
-            :disabled="!hasSelectedRows"
-            type="danger"
-            size="small"
-            @click="handleBatchDelete"
-          >
-            批量删除
           </ElButton>
-          <ElButton type="default" size="small" @click="resetSort">
-            重置排序
-          </ElButton>
-          <RefreshButton @click="refresh" />
-        </div>
+        </ElTooltip>
       </div>
-      <ElTable
-        ref="tableRef"
-        :size="isWeb ? 'default' : 'small'"
-        :data="data?.list"
-        class="main-table"
-        :default-sort="
-          sortField && sortOrder
-            ? { prop: sortField, order: sortOrder }
-            : undefined
-        "
-        row-key="id"
-        @sort-change="handleSortChange"
-        @selection-change="handleSelectionChange"
+      <div class="right-part">
+        <ElButton
+          :disabled="!hasSelectedRows"
+          type="danger"
+          size="small"
+          @click="handleBatchDelete"
+        >
+          批量删除
+        </ElButton>
+        <ElButton type="default" size="small" @click="resetSort">
+          重置排序
+        </ElButton>
+        <RefreshButton @click="refresh" />
+      </div>
+    </div>
+    <ElTable
+      ref="tableRef"
+      :size="isWeb ? 'default' : 'small'"
+      :data="data?.list"
+      class="main-table"
+      :default-sort="
+        sortField && sortOrder
+          ? { prop: sortField, order: sortOrder }
+          : undefined
+      "
+      row-key="id"
+      @sort-change="handleSortChange"
+      @selection-change="handleSelectionChange"
+    >
+      <ElTableColumn type="selection" width="30" />
+      <ElTableColumn
+        prop="username"
+        label="后台查询账号"
+        :fixed="isWeb ? undefined : 'left'"
+        :min-width="isWeb ? 200 : 140"
+      />
+      <ElTableColumn label="启动/停止" :min-width="isWeb ? 120 : 100">
+        <template #default="scope: ScopeType">
+          <ElButton
+            class="start-or-stop-button"
+            size="small"
+            :type="
+              getStartOrStopType(scope.row.status) === 'stop'
+                ? 'danger'
+                : 'success'
+            "
+            @click="onStartOrStop(scope.row)"
+          >
+            {{ getStartOrStopButtonText(scope.row.status) }}
+          </ElButton>
+        </template>
+      </ElTableColumn>
+      <ElTableColumn
+        prop="status"
+        label="状态"
+        min-width="120"
+        sortable="custom"
       >
-        <ElTableColumn type="selection" width="30" />
-        <ElTableColumn
-          prop="username"
-          label="后台查询账号"
-          :fixed="isWeb ? undefined : 'left'"
-          :min-width="isWeb ? 200 : 140"
-        />
-        <ElTableColumn label="启动/停止" :min-width="isWeb ? 120 : 100">
-          <template #default="scope: ScopeType">
-            <ElButton
-              class="start-or-stop-button"
-              size="small"
-              :type="
-                getStartOrStopType(scope.row.status) === 'stop'
-                  ? 'danger'
-                  : 'success'
-              "
-              @click="onStartOrStop(scope.row)"
-            >
-              {{ getStartOrStopButtonText(scope.row.status) }}
-            </ElButton>
-          </template>
-        </ElTableColumn>
-        <ElTableColumn
-          prop="status"
-          label="状态"
-          min-width="120"
-          sortable="custom"
-        >
-          <template #default="scope: ScopeType">
-            <StatusTag :status="scope.row.status" />
-          </template>
-        </ElTableColumn>
-        <ElTableColumn
-          prop="password"
-          label="后台查询密码"
-          :min-width="isWeb ? 140 : 100"
-        >
-          <template #default="scope: ScopeType">
-            <VisiblePassword :password="scope.row.password" />
-          </template>
-        </ElTableColumn>
-        <ElTableColumn
-          prop="area"
-          label="分区"
-          sortable="custom"
-          :min-width="isWeb ? 140 : 100"
-        >
-          <template #default="scope: ScopeType">
-            <div class="area-with-tooltip">
-              {{ AREA_NAME_MAP[scope.row.area as Area] || '-' }}
-              <AreaTooltipIcon :area="scope.row.area as Area" />
-            </div>
-          </template>
-        </ElTableColumn>
-        <ElTableColumn
-          prop="max_query_per_day"
-          label="每天最大查询次数"
-          :min-width="isWeb ? 160 : 140"
-          sortable="custom"
-        />
-        <ElTableColumn
-          prop="max_query_per_hour"
-          label="每小时最大查询次数"
-          :min-width="isWeb ? 180 : 150"
-          sortable="custom"
-        />
-        <ElTableColumn
-          prop="current_query_per_day"
-          label="当天查询次数"
-          :min-width="isWeb ? 160 : 120"
-        />
-        <ElTableColumn
-          prop="current_query_per_hour"
-          label="当前小时查询次数"
-          :min-width="isWeb ? 180 : 140"
-        />
-        <ElTableColumn
-          prop="created_at"
-          label="创建时间"
-          :min-width="isWeb ? 205 : 160"
-          sortable="custom"
-        >
-          <template #default="scope: ScopeType">
-            {{ formatDateTime(scope.row.created_at) }}
-          </template>
-        </ElTableColumn>
-        <ElTableColumn
-          prop="updated_at"
-          label="更新时间"
-          min-width="205"
-          sortable="custom"
-        >
-          <template #default="scope: ScopeType">
-            {{ formatDateTime(scope.row.updated_at) }}
-          </template>
-        </ElTableColumn>
-        <!-- <ElTableColumn prop="cookie" label="Cookie" min-width="200">
+        <template #default="scope: ScopeType">
+          <StatusTag :status="scope.row.status" />
+        </template>
+      </ElTableColumn>
+      <ElTableColumn
+        prop="password"
+        label="后台查询密码"
+        :min-width="isWeb ? 140 : 100"
+      >
+        <template #default="scope: ScopeType">
+          <VisiblePassword :password="scope.row.password" />
+        </template>
+      </ElTableColumn>
+      <ElTableColumn
+        prop="area"
+        label="分区"
+        sortable="custom"
+        :min-width="isWeb ? 140 : 100"
+      >
+        <template #default="scope: ScopeType">
+          <div class="area-with-tooltip">
+            {{ AREA_NAME_MAP[scope.row.area as Area] || '-' }}
+            <AreaTooltipIcon :area="scope.row.area as Area" />
+          </div>
+        </template>
+      </ElTableColumn>
+      <ElTableColumn
+        prop="max_query_per_day"
+        label="每天最大查询次数"
+        :min-width="isWeb ? 160 : 140"
+        sortable="custom"
+      />
+      <ElTableColumn
+        prop="max_query_per_hour"
+        label="每小时最大查询次数"
+        :min-width="isWeb ? 180 : 150"
+        sortable="custom"
+      />
+      <ElTableColumn
+        prop="current_query_per_day"
+        label="当天查询次数"
+        :min-width="isWeb ? 160 : 120"
+      />
+      <ElTableColumn
+        prop="current_query_per_hour"
+        label="当前小时查询次数"
+        :min-width="isWeb ? 180 : 140"
+      />
+      <ElTableColumn
+        prop="created_at"
+        label="创建时间"
+        :min-width="isWeb ? 205 : 160"
+        sortable="custom"
+      >
+        <template #default="scope: ScopeType">
+          {{ formatDateTime(scope.row.created_at) }}
+        </template>
+      </ElTableColumn>
+      <ElTableColumn
+        prop="updated_at"
+        label="更新时间"
+        min-width="205"
+        sortable="custom"
+      >
+        <template #default="scope: ScopeType">
+          {{ formatDateTime(scope.row.updated_at) }}
+        </template>
+      </ElTableColumn>
+      <!-- <ElTableColumn prop="cookie" label="Cookie" min-width="200">
           <template #default="scope: ScopeType">
             <div v-if="scope.row.cookie" class="cookie">
               <span class="cookie-text">{{ scope.row.cookie }}</span>
@@ -577,56 +576,51 @@ onActivated(refetch);
             </div>
           </template>
         </ElTableColumn> -->
-        <ElTableColumn
-          label="操作"
-          min-width="140"
-          :fixed="isWeb ? 'right' : false"
-        >
-          <template #default="scope: ScopeType">
-            <div class="operation-buttons">
-              <ElButton
-                size="small"
-                type="primary"
-                @click="onEditItem(scope.row)"
-              >
-                编辑
-              </ElButton>
-              <ElButton
-                size="small"
-                type="danger"
-                @click="deleteUser(scope.row)"
-              >
-                删除
-              </ElButton>
-            </div>
-          </template>
-        </ElTableColumn>
-      </ElTable>
-      <div class="pagination-row">
-        <ElPagination
-          v-model:current-page="pageNum"
-          v-model:page-size="pageSize"
-          size="small"
-          background
-          :layout="
-            isWeb ? 'total, sizes, prev, pager, next' : 'prev, pager, next'
-          "
-          :page-sizes="[10, 20, 50, 100]"
-          :total="data?.total || 0"
-          @size-change="handlePageSizeChange"
-          @current-change="handlePageNumChange"
-        />
-      </div>
-
-      <!-- 创建用户对话框 -->
-      <FormDialog
-        :visible="formDialogVisible"
-        :mode="formMode"
-        :initial-data="formData"
-        :submit="handleSubmitCreateOrEdit"
-        @close="onCloseFormDialog"
+      <ElTableColumn
+        label="操作"
+        min-width="140"
+        :fixed="isWeb ? 'right' : false"
+      >
+        <template #default="scope: ScopeType">
+          <div class="operation-buttons">
+            <ElButton
+              size="small"
+              type="primary"
+              @click="onEditItem(scope.row)"
+            >
+              编辑
+            </ElButton>
+            <ElButton size="small" type="danger" @click="deleteUser(scope.row)">
+              删除
+            </ElButton>
+          </div>
+        </template>
+      </ElTableColumn>
+    </ElTable>
+    <div class="pagination-row">
+      <ElPagination
+        v-model:current-page="pageNum"
+        v-model:page-size="pageSize"
+        size="small"
+        background
+        :layout="
+          isWeb ? 'total, sizes, prev, pager, next' : 'prev, pager, next'
+        "
+        :page-sizes="[10, 20, 50, 100]"
+        :total="data?.total || 0"
+        @size-change="handlePageSizeChange"
+        @current-change="handlePageNumChange"
       />
-    </template>
+    </div>
+
+    <!-- 创建用户对话框 -->
+    <FormDialog
+      :visible="formDialogVisible"
+      :mode="formMode"
+      :initial-data="formData"
+      :submit="handleSubmitCreateOrEdit"
+      @close="onCloseFormDialog"
+    />
   </div>
 </template>
 

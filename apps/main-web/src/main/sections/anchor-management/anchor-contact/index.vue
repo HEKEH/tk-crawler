@@ -110,7 +110,7 @@ const operationColumn = computed<CustomColumnConfig>(() => {
     renderColumn: () => {
       return (
         <OperationColumn
-          min-width={isWeb.value ? 100 : 80}
+          min-width={isWeb.value ? 160 : 150}
           key="operation"
           refetch={refetch}
         />

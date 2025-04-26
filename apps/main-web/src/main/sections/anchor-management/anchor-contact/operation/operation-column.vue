@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { StarFilled } from '@element-plus/icons-vue';
 import type { DisplayedAnchorItem } from '@tk-crawler/biz-shared';
-import { getPlatform, openScheme } from '@tk-crawler/view-shared';
 import type { TableColumnCtx } from 'element-plus';
+import { StarFilled } from '@element-plus/icons-vue';
+import { getPlatform, openScheme } from '@tk-crawler/view-shared';
 import {
   ElButton,
   ElIcon,
@@ -10,9 +10,9 @@ import {
   ElMessageBox,
   ElTableColumn,
 } from 'element-plus';
-import { useAnchorContact, type UseAnchorContactParams } from '../hooks';
-import { localStorageStore } from '../../../../utils';
 import { ref } from 'vue';
+import { localStorageStore } from '../../../../utils';
+import { useAnchorContact, type UseAnchorContactParams } from '../hooks';
 
 const props = defineProps<{
   refetch: UseAnchorContactParams['refetch'];
@@ -31,15 +31,15 @@ const hasNotifiedTKInstall = ref(
   localStorageStore.getItem('has_notified_TK_install') === '1',
 );
 
-async function onFollowAnchor(anchor: DisplayedAnchorItem) {
+async function gotoTKPage(anchor: DisplayedAnchorItem): Promise<boolean> {
   const platform = getPlatform();
   if (platform !== 'Android' && platform !== 'iOS') {
     try {
-      await ElMessageBox.alert('关注操作需要在手机端进行！', {
+      await ElMessageBox.alert('该操作需要在手机端进行！', {
         type: 'warning',
       });
     } catch {}
-    return;
+    return false;
   }
   if (!hasNotifiedTKInstall.value) {
     try {
@@ -49,7 +49,7 @@ async function onFollowAnchor(anchor: DisplayedAnchorItem) {
         type: 'warning',
       });
     } catch {
-      return;
+      return false;
     }
     hasNotifiedTKInstall.value = true;
     localStorageStore.setItem('has_notified_TK_install', '1');
@@ -59,9 +59,16 @@ async function onFollowAnchor(anchor: DisplayedAnchorItem) {
     await openScheme(scheme);
   } catch {
     ElMessage.error('打开链接失败');
-    return;
+    return false;
   }
-  await handleContactAnchor([anchor]);
+  return true;
+}
+
+async function onContactAnchor(anchor: DisplayedAnchorItem) {
+  const isSuccess = await gotoTKPage(anchor);
+  if (isSuccess) {
+    await handleContactAnchor([anchor]);
+  }
 }
 </script>
 
@@ -71,9 +78,10 @@ async function onFollowAnchor(anchor: DisplayedAnchorItem) {
       <div class="operation-buttons">
         <ElButton
           v-if="scope.row.assigned_user && !scope.row.contacted_user"
+          class="contact-anchor-button"
           size="small"
           type="primary"
-          @click="onFollowAnchor(scope.row)"
+          @click="onContactAnchor(scope.row)"
         >
           <ElIcon>
             <StarFilled />
@@ -88,7 +96,16 @@ async function onFollowAnchor(anchor: DisplayedAnchorItem) {
         >
           重置建联
         </ElButton>
+        <ElButton size="small" type="primary" @click="gotoTKPage(scope.row)">
+          跳转
+        </ElButton>
       </div>
     </template>
   </ElTableColumn>
 </template>
+
+<style scoped>
+.contact-anchor-button {
+  background-color: var(--el-color-primary-dark-2);
+}
+</style>

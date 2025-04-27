@@ -250,10 +250,6 @@ const isWeb = useIsWeb();
   .info-item:hover {
     color: var(--el-text-color-primary);
   }
-
-  .el-divider {
-    background-color: var(--el-border-color-lighter);
-  }
 }
 
 :global(.avatar-dropdown-menu .el-popper__arrow) {

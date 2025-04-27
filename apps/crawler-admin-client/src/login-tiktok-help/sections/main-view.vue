@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { LOGIN_TIKTOK_HELP_EVENTS } from '@tk-crawler-admin-client/shared';
-import { ElButton, ElInput } from 'element-plus';
+import { copyToClipboard } from '@tk-crawler/view-shared';
+import { ElButton, ElInput, ElMessage } from 'element-plus';
 import { ref } from 'vue';
 
 defineOptions({
@@ -11,6 +12,21 @@ const cookie = ref<string>('');
 
 function onLoginSuccess() {
   window.ipcRenderer.invoke(LOGIN_TIKTOK_HELP_EVENTS.LOGIN_SUCCESS);
+}
+
+function onBackHome() {
+  window.ipcRenderer.invoke(LOGIN_TIKTOK_HELP_EVENTS.BACK_HOME);
+}
+
+async function onCopyCookie() {
+  const cookie = await window.ipcRenderer.invoke(
+    LOGIN_TIKTOK_HELP_EVENTS.GET_COOKIE,
+  );
+  if (cookie) {
+    await copyToClipboard(cookie);
+  } else {
+    ElMessage.warning('未获取到已保存的Cookie');
+  }
 }
 
 function onSubmitCookie() {
@@ -24,9 +40,13 @@ function onSubmitCookie() {
 
 <template>
   <div class="main-view-container">
+    <div class="header">
+      <ElButton type="text" @click="onBackHome">回到主页</ElButton>
+    </div>
     <div class="block">
-      <div class="description">请在完成登录后点击下方按钮</div>
+      <div class="description">请在完成登录后点击已成功按钮</div>
       <ElButton type="primary" @click="onLoginSuccess">已登录成功</ElButton>
+      <ElButton @click="onCopyCookie">复制当前Cookie</ElButton>
     </div>
     <div class="block">
       <div class="description">
@@ -60,8 +80,15 @@ function onSubmitCookie() {
   display: flex;
   flex-direction: column;
   align-items: center;
-  row-gap: 30px;
   border-right: 1px dashed var(--el-color-primary);
+}
+.header {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+  padding-left: 10px;
+  margin-bottom: 10px;
 }
 .description {
   font-size: 14px;
@@ -71,5 +98,6 @@ function onSubmitCookie() {
   flex-direction: column;
   align-items: center;
   row-gap: 10px;
+  margin-bottom: 30px;
 }
 </style>

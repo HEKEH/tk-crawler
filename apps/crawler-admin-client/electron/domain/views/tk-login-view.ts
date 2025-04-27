@@ -10,11 +10,13 @@ import { initProxy } from '@tk-crawler/electron-utils/main';
 import { ipcMain, WebContentsView } from 'electron';
 import { isDevelopment, RENDERER_DIST, VITE_DEV_SERVER_URL } from '../../env';
 import { logger } from '../../infra/logger';
+import { transformCookieString } from '../services/cookie';
 
 const TK_LOGIN_PAGE_URL = 'https://www.tiktok.com/login';
 
 export interface TkLoginViewContext {
   submitCookies: (cookies: [string, string][] | string) => Promise<void>;
+  openMainView: () => void;
 }
 
 export class TKLoginView implements IView {
@@ -270,6 +272,15 @@ export class TKLoginView implements IView {
         await this._context.submitCookies(cookies);
       },
     );
+    this._addEventHandler(LOGIN_TIKTOK_HELP_EVENTS.BACK_HOME, () => {
+      this._context.openMainView();
+    });
+    this._addEventHandler(LOGIN_TIKTOK_HELP_EVENTS.GET_COOKIE, async () => {
+      const cookies = await this._getCookies();
+      return transformCookieString(
+        cookies.map(cookie => [cookie.name, cookie.value]),
+      );
+    });
   }
 
   private _removeEventHandlers() {

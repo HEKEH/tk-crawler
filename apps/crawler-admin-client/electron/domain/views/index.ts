@@ -91,6 +91,12 @@ export class ViewsManager {
     await this._changeView(this._tkLoginView!);
   }
 
+  openMainView() {
+    if (this._mainView) {
+      this._changeView(this._mainView);
+    }
+  }
+
   private _clearSubscriptions() {
     this._subscriptions.forEach(subscription => {
       subscription.unsubscribe();

@@ -124,10 +124,6 @@ async function handlePasswordChange(data: OrgMemberChangePasswordRequest) {
     font-size: 16px;
     margin-right: 4px;
   }
-
-  :global(.el-divider) {
-    background-color: var(--el-border-color-lighter);
-  }
 }
 
 .dropdown-content {

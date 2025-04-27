@@ -5,7 +5,8 @@ import { getTiktokCookiePath } from '../../constants';
 import { logger } from '../../infra/logger';
 
 /** 把 cookie 同步到core */
-export function syncTiktokCookie() {
+
+export function getTiktokCookie() {
   const cookiePath = getTiktokCookiePath();
   if (!existsSync(cookiePath)) {
     return;
@@ -21,7 +22,21 @@ export function syncTiktokCookie() {
   } else {
     cookieString = cookie;
   }
+  return cookieString;
+}
+
+export function syncTiktokCookie() {
+  const cookieString = getTiktokCookie();
+  if (!cookieString) {
+    return;
+  }
   setTiktokCookie(cookieString);
+}
+
+export function transformCookieString(cookies: [string, string][] | string) {
+  return typeof cookies === 'string'
+    ? cookies
+    : cookies.map(([key, value]) => `${key}=${value}`).join('; ');
 }
 
 export function saveTiktokCookie(cookies: [string, string][] | string) {
@@ -34,10 +49,7 @@ export function saveTiktokCookie(cookies: [string, string][] | string) {
     if (!existsSync(dir)) {
       mkdirSync(dir, { recursive: true });
     }
-    const cookieString =
-      typeof cookies === 'string'
-        ? cookies
-        : cookies.map(([key, value]) => `${key}=${value}`).join('; ');
+    const cookieString = transformCookieString(cookies);
     writeFileSync(cookiePath, cookieString);
     setTiktokCookie(cookieString);
   } catch (error) {

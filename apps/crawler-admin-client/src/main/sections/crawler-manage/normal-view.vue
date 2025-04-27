@@ -1,10 +1,21 @@
 <script setup lang="ts">
 import type { Area } from '@tk-crawler/biz-shared';
-import { InfoFilled } from '@element-plus/icons-vue';
+import {
+  InfoFilled,
+  Setting,
+  Switch,
+  SwitchButton,
+} from '@element-plus/icons-vue';
 import { CrawlStatus } from '@tk-crawler/biz-shared';
 import { setIntervalImmediate } from '@tk-crawler/shared';
 import { AreaSelectSingle } from '@tk-crawler/view-shared';
-import { ElIcon, ElTooltip } from 'element-plus';
+import {
+  ElDropdown,
+  ElDropdownItem,
+  ElDropdownMenu,
+  ElIcon,
+  ElTooltip,
+} from 'element-plus';
 import { computed, onBeforeUnmount, ref } from 'vue';
 import { CRAWL_EVENTS } from '../../constants';
 import { useGlobalStore } from '../../utils';
@@ -43,10 +54,40 @@ const crawlAreaInterval = setIntervalImmediate(async () => {
 onBeforeUnmount(() => {
   clearInterval(crawlAreaInterval);
 });
+
+async function handleSwitchTKAccount() {
+  await crawlerManage.value.loginTiktok();
+}
 </script>
 
 <template>
   <div class="normal-view">
+    <div class="normal-view-header">
+      <div class="normal-view-header-left"></div>
+      <div class="normal-view-header-right">
+        <ElDropdown
+          trigger="hover"
+          popper-class="crawler-setting-dropdown-menu"
+        >
+          <ElIcon :size="24" class="setting-icon"><Setting /></ElIcon>
+
+          <template #dropdown>
+            <div class="dropdown-content">
+              <ElDropdownMenu>
+                <ElDropdownItem @click="handleSwitchTKAccount">
+                  <ElIcon><Switch /></ElIcon>
+                  <span>切换TK账号</span>
+                </ElDropdownItem>
+                <!-- <ElDropdownItem @click="handleTKAccountLogout">
+                  <ElIcon><SwitchButton /></ElIcon>
+                  <span>退出TK账号</span>
+                </ElDropdownItem> -->
+              </ElDropdownMenu>
+            </div>
+          </template>
+        </ElDropdown>
+      </div>
+    </div>
     <div class="area-select-container">
       <div class="area-select-label">
         优先地区设置
@@ -101,62 +142,103 @@ onBeforeUnmount(() => {
 
   width: 100%;
   height: 100%;
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: var(--spacing-md);
-}
+  .normal-view-header {
+    position: relative;
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    .normal-view-header-right {
+      padding-right: var(--spacing-md);
+      display: flex;
+      .setting-icon {
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+      }
 
-.area-select-container {
-  display: flex;
-  align-items: center;
-  margin-bottom: var(--spacing-md);
-  gap: var(--spacing-sm);
-}
+      .setting-icon:hover {
+        transform: scale(1.2);
+      }
+    }
+  }
 
-.area-select-label {
-  display: flex;
-  align-items: center;
-  width: fit-content;
-  font-size: var(--font-size-sm);
-  color: var(--el-text-color-regular);
-  white-space: nowrap;
-  justify-content: flex-end;
-  gap: var(--spacing-xs);
-}
+  .area-select-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+    gap: var(--spacing-sm);
+  }
 
-.area-select-label-tooltip-icon {
-  cursor: help;
-  font-size: var(--font-size-sm);
-  color: var(--el-text-color-secondary);
-  transition: color 0.2s ease;
-}
+  .area-select-label {
+    display: flex;
+    align-items: center;
+    width: fit-content;
+    font-size: var(--font-size-sm);
+    color: var(--el-text-color-regular);
+    white-space: nowrap;
+    justify-content: flex-end;
+    gap: var(--spacing-xs);
+  }
 
-.area-select-label-tooltip-icon:hover {
-  color: var(--el-text-color-primary);
-}
+  .area-select-label-tooltip-icon {
+    cursor: help;
+    font-size: var(--font-size-sm);
+    color: var(--el-text-color-secondary);
+    transition: color 0.2s ease;
+  }
 
-.area-select {
-  width: var(--select-width);
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-}
+  .area-select-label-tooltip-icon:hover {
+    color: var(--el-text-color-primary);
+  }
 
-.normal-view-description {
-  margin-bottom: var(--spacing-sm);
-  font-size: var(--font-size-base);
-  color: var(--el-text-color-regular);
-  text-align: center;
-}
+  .area-select {
+    width: var(--select-width);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+  }
 
-.suspended-status {
-  margin-top: var(--spacing-xl);
-  font-size: var(--font-size-base);
-  color: var(--el-color-danger);
-  text-align: center;
-  max-width: calc(var(--select-width) + var(--label-width));
-  line-height: 1.5;
+  .normal-view-description {
+    margin-bottom: var(--spacing-sm);
+    font-size: var(--font-size-base);
+    color: var(--el-text-color-regular);
+    text-align: center;
+  }
+
+  .suspended-status {
+    margin-top: var(--spacing-xl);
+    font-size: var(--font-size-base);
+    color: var(--el-color-danger);
+    text-align: center;
+    max-width: calc(var(--select-width) + var(--label-width));
+    line-height: 1.5;
+  }
+}
+.crawler-setting-dropdown-menu {
+  :global(.el-popper__arrow) {
+    display: none !important;
+  }
+  :global(.el-dropdown-menu__item) {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+  }
+
+  :global(.el-dropdown-menu__item:hover) {
+    background-color: var(--el-dropdown-menuItem-hover-fill);
+    color: var(--el-color-primary);
+  }
+
+  :global(.el-dropdown-menu__item .el-icon) {
+    font-size: 16px;
+    margin-right: 4px;
+  }
 }
 .crawl-area-select-popper {
   :global(.el-select-dropdown) {

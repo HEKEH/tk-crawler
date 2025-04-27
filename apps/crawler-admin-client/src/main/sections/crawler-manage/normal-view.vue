@@ -130,6 +130,12 @@ async function handleClearTKCookie() {
     <div class="normal-view-header">
       <div class="normal-view-header-left"></div>
       <div class="normal-view-header-right">
+        <div v-if="crawlerManage.account">
+          TK账号:
+          <span class="tk-account-name">{{
+            crawlerManage.account?.username
+          }}</span>
+        </div>
         <ElDropdown
           trigger="hover"
           popper-class="crawler-setting-dropdown-menu"
@@ -231,9 +237,20 @@ async function handleClearTKCookie() {
     display: flex;
     width: 100%;
     justify-content: space-between;
+    margin-bottom: var(--spacing-xs);
     .normal-view-header-right {
       padding-right: var(--spacing-md);
       display: flex;
+      column-gap: var(--spacing-xs);
+      .tk-account-name {
+        font-weight: 600;
+        font-size: 17px;
+        transition: all 0.3s ease;
+        &:hover {
+          font-size: 18px;
+          color: var(--el-color-primary);
+        }
+      }
       .setting-icon {
         cursor: pointer;
         transition: all 0.3s ease;

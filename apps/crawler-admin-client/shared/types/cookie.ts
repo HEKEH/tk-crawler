@@ -1,3 +1,5 @@
+import type { TkAccount } from '@tk-crawler/biz-shared';
+
 export enum IsCookieValidResultStatus {
   SUCCESS = 'success',
   FAILED = 'failed',
@@ -6,4 +8,7 @@ export enum IsCookieValidResultStatus {
   OTHER_ERROR = 'other_error',
 }
 
-export type IsCookieValidResult = IsCookieValidResultStatus;
+export interface IsCookieValidResult {
+  status: IsCookieValidResultStatus;
+  data?: TkAccount;
+}

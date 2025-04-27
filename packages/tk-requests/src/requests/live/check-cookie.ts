@@ -1,3 +1,4 @@
+import type { TkAccount } from '@tk-crawler/biz-shared';
 import type { TikTokQueryTokens } from './types';
 import { TIKTOK_URL } from '@tk-crawler/biz-shared';
 import { getUrl } from '@tk-crawler/shared';
@@ -14,10 +15,15 @@ export async function checkTiktokCookieValid({
   tokens,
 }: {
   tokens: TikTokQueryTokens;
-}) {
+}): Promise<{
+  success: boolean;
+  data?: TkAccount;
+}> {
   const cookie = getTiktokCookie();
   if (!cookie) {
-    return false;
+    return {
+      success: false,
+    };
   }
   const { headers: regionHeaders, params: regionParams } =
     getTiktokRegionParams('all');
@@ -34,6 +40,7 @@ export async function checkTiktokCookieValid({
   const xBogus = getXBogus(url);
   const response = await commonGetRequest<{
     message: string;
+    data: TkAccount;
   }>({
     url: `${url}&X-Bogus=${xBogus}`,
     headers: {
@@ -44,5 +51,8 @@ export async function checkTiktokCookieValid({
     shouldCheckResponse: false,
     shouldUpdateMsToken: false,
   });
-  return response.message === 'success';
+  return {
+    success: response.message === 'success',
+    data: response.data,
+  };
 }

@@ -1,6 +1,4 @@
-import type {
-  SimpleCrawlStatistics,
-} from '@tk-crawler/biz-shared';
+import type { SimpleCrawlStatistics, TkAccount } from '@tk-crawler/biz-shared';
 import {
   CRAWL_EVENTS,
   IsCookieValidResultStatus,
@@ -26,6 +24,8 @@ export default class CrawlerManage {
   private _tiktokCookieValidStatus: IsCookieValidResultStatus =
     IsCookieValidResultStatus.FAILED;
 
+  private _account: TkAccount | undefined;
+
   private _crawlStatus: CrawlStatus = CrawlStatus.STOPPED;
 
   private _crawlStatusInterval: NodeJS.Timeout | null = null;
@@ -35,6 +35,10 @@ export default class CrawlerManage {
     crawlStartTime: undefined,
     feedNumber: 0,
   };
+
+  get account() {
+    return this._account;
+  }
 
   get isCookieChecked() {
     return this._isCookieChecked;
@@ -79,6 +83,14 @@ export default class CrawlerManage {
     ElectronRenderListeners.getInstance().on(event, listener);
   }
 
+  private _setTiktokCookieValidStatus(
+    status: IsCookieValidResultStatus,
+    data?: TkAccount,
+  ) {
+    this._tiktokCookieValidStatus = status;
+    this._account = data;
+  }
+
   private _addEventListeners() {
     this._addEventListener(CUSTOM_EVENTS.TIKTOK_COOKIE_UPDATED, async () => {
       await this.checkTiktokCookieValid();
@@ -87,7 +99,7 @@ export default class CrawlerManage {
       ElNotification.error({
         message: 'Tiktok cookie已过期，请重新登录',
       });
-      this._tiktokCookieValidStatus = IsCookieValidResultStatus.FAILED;
+      this._setTiktokCookieValidStatus(IsCookieValidResultStatus.FAILED);
     });
   }
 
@@ -100,13 +112,15 @@ export default class CrawlerManage {
 
   async checkTiktokCookieValid() {
     this._isCookieChecked = false;
-    this._tiktokCookieValidStatus = await checkTiktokCookieValid();
+    const result = await checkTiktokCookieValid();
+    this._setTiktokCookieValidStatus(result.status, result.data);
     this._isCookieChecked = true;
   }
 
   async recheckTiktokCookieValid() {
     this._isCookieChecked = false;
-    this._tiktokCookieValidStatus = await recheckTiktokCookieValid();
+    const result = await recheckTiktokCookieValid();
+    this._setTiktokCookieValidStatus(result.status, result.data);
     this._isCookieChecked = true;
   }
 

@@ -9,4 +9,5 @@ export * from './region';
 export * from './request';
 export * from './settings';
 export * from './statistics';
+export * from './tk-account';
 export * from './tk-guild-user';

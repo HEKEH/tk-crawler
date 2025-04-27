@@ -1,3 +1,5 @@
+import type {
+  IsCookieValidResult } from '@tk-crawler-admin-client/shared';
 import type { CommonResult, MessageCenter } from '@tk-crawler/shared';
 import type { Crawler } from '../crawler';
 import type { ViewsManager } from '../views';
@@ -91,28 +93,43 @@ export class Services {
 
   init() {
     syncTiktokCookie();
-    const checkTiktokCookieValidHandler = async () => {
-      try {
-        const isCookieValid = await checkTiktokCookieValid({
-          tokens: {
-            verifyFp: getVerifyFp(),
-            msToken: getMsTokenFromCookie(),
-          },
-        });
-        return isCookieValid
-          ? IsCookieValidResultStatus.SUCCESS
-          : IsCookieValidResultStatus.FAILED;
-      } catch (error) {
-        logger.error('Failed to check Tiktok cookie validity', error);
-        if ((error as any).code === 'ECONNRESET') {
-          return IsCookieValidResultStatus.ECONNRESET;
+    const checkTiktokCookieValidHandler =
+      async (): Promise<IsCookieValidResult> => {
+        try {
+          const response = await checkTiktokCookieValid({
+            tokens: {
+              verifyFp: getVerifyFp(),
+              msToken: getMsTokenFromCookie(),
+            },
+          });
+          const isCookieValid = response.success;
+          logger.info('checkTiktokCookieValidHandler', response);
+          return {
+            status: isCookieValid
+              ? IsCookieValidResultStatus.SUCCESS
+              : IsCookieValidResultStatus.FAILED,
+            data: response.data,
+          };
+        } catch (error) {
+          logger.error('Failed to check Tiktok cookie validity', error);
+          if ((error as any).code === 'ECONNRESET') {
+            return {
+              status: IsCookieValidResultStatus.ECONNRESET,
+              data: undefined,
+            };
+          }
+          if ((error as any).code === 'ETIMEDOUT') {
+            return {
+              status: IsCookieValidResultStatus.TIMEOUT,
+              data: undefined,
+            };
+          }
+          return {
+            status: IsCookieValidResultStatus.OTHER_ERROR,
+            data: undefined,
+          };
         }
-        if ((error as any).code === 'ETIMEDOUT') {
-          return IsCookieValidResultStatus.TIMEOUT;
-        }
-        return IsCookieValidResultStatus.OTHER_ERROR;
-      }
-    };
+      };
     this._addEventHandler(CUSTOM_EVENTS.CHECK_COOKIE_VALIDITY, () => {
       return checkTiktokCookieValidHandler();
     });

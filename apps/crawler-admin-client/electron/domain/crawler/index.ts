@@ -27,6 +27,10 @@ export class Crawler {
     return CrawlStatus.STOPPED;
   }
 
+  get simpleCrawlStatistics() {
+    return this._liveAnchorCrawler.simpleCrawlStatistics;
+  }
+
   constructor(props: { messageCenter: MessageCenter }) {
     this._messageCenter = props.messageCenter;
     this._liveAnchorCrawler = new LiveAnchorCrawler({

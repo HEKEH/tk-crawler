@@ -1,3 +1,4 @@
+import type { AnchorCrawledMessage } from '@tk-crawler/biz-shared';
 import {
   CRAWL_EVENTS,
   IsCookieValidResultStatus,
@@ -27,8 +28,36 @@ export default class CrawlerManage {
 
   private _crawlStatusInterval: NodeJS.Timeout | null = null;
 
+  private _simpleCrawlStatistics: AnchorCrawledMessage['statistics'] = {
+    anchorUpdateTimes: 0,
+    crawlStartTime: undefined,
+  };
+
   get isCookieChecked() {
     return this._isCookieChecked;
+  }
+
+  get simpleCrawlStatistics() {
+    return this._simpleCrawlStatistics;
+  }
+
+  setSimpleCrawlStatistics(statistics: AnchorCrawledMessage['statistics']) {
+    this._simpleCrawlStatistics = statistics;
+  }
+
+  async initSimpleCrawlStatistics() {
+    const simpleCrawlStatistics = await window.ipcRenderer.invoke(
+      CRAWL_EVENTS.GET_SIMPLE_CRAWL_STATISTICS,
+    );
+    console.log('simpleCrawlStatistics', simpleCrawlStatistics);
+    this._simpleCrawlStatistics = simpleCrawlStatistics;
+  }
+
+  clearSimpleCrawlStatistics() {
+    this._simpleCrawlStatistics = {
+      anchorUpdateTimes: 0,
+      crawlStartTime: undefined,
+    };
   }
 
   get crawlStatus() {
@@ -121,6 +150,7 @@ export default class CrawlerManage {
     if (!result.success) {
       throw new Error(result.message);
     }
+    this.clearSimpleCrawlStatistics();
   }
 
   async destroy() {

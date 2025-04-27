@@ -45,6 +45,8 @@ class StopCrawlError extends Error {
 
 /** 当前主播的集合 */
 export class AnchorPool {
+  private _crawlStartTime: Date | undefined;
+  private _anchorUpdateTimes: number = 0;
   // private _region: Region[] | 'all' = 'all';
 
   private _taskQueue: FrequencyLimitTaskQueue = new FrequencyLimitTaskQueue({
@@ -68,9 +70,18 @@ export class AnchorPool {
     this._messageCenter.emit(TKRequestMessage.TIKTOK_COOKIE_OUTDATED);
   }
 
+  get simpleCrawlStatistics(): AnchorCrawledMessage['statistics'] {
+    return {
+      anchorUpdateTimes: this._anchorUpdateTimes,
+      crawlStartTime: this._crawlStartTime,
+    };
+  }
+
   start() {
     this._stopped = false;
     this._taskQueue.resume();
+    this._crawlStartTime = new Date();
+    this._anchorUpdateTimes = 0;
   }
 
   stop() {
@@ -81,6 +92,11 @@ export class AnchorPool {
   suspend() {
     this._stopped = true;
     this._taskQueue.pause();
+  }
+
+  resume() {
+    this._stopped = false;
+    this._taskQueue.resume();
   }
 
   private _shouldUpdateAnchors(anchorIds: string[]) {
@@ -111,7 +127,14 @@ export class AnchorPool {
     getLogger().info(
       `[SaveAnchor] Anchor info save success: ${anchor.display_id}`,
     );
-    const data: AnchorCrawledMessage = { anchor };
+    this._anchorUpdateTimes++;
+    const data: AnchorCrawledMessage = {
+      anchor,
+      statistics: {
+        anchorUpdateTimes: this._anchorUpdateTimes,
+        crawlStartTime: this._crawlStartTime,
+      },
+    };
     this._messageCenter.emit(TKRequestMessage.ANCHOR_CRAWLED, data);
   }
 

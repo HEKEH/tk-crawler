@@ -8,4 +8,8 @@ export enum TKRequestMessage {
 
 export interface AnchorCrawledMessage {
   anchor: CollectedAnchorInfo;
+  statistics: {
+    anchorUpdateTimes: number;
+    crawlStartTime: Date | undefined;
+  };
 }

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Area } from '@tk-crawler/biz-shared';
+import type { Ref } from 'vue';
 import {
   CopyDocument,
   InfoFilled,
@@ -8,7 +9,7 @@ import {
   SwitchButton,
 } from '@element-plus/icons-vue';
 import { CrawlStatus } from '@tk-crawler/biz-shared';
-import { setIntervalImmediate } from '@tk-crawler/shared';
+import { formatDuration, setIntervalImmediate } from '@tk-crawler/shared';
 import { AreaSelectSingle, copyToClipboard } from '@tk-crawler/view-shared';
 import {
   ElDropdown,
@@ -16,6 +17,7 @@ import {
   ElDropdownMenu,
   ElIcon,
   ElMessage,
+  ElNotification,
   ElTooltip,
 } from 'element-plus';
 import { computed, onBeforeUnmount, ref } from 'vue';
@@ -31,11 +33,53 @@ const globalStore = useGlobalStore();
 
 const crawlerManage = computed(() => globalStore.crawlerManage);
 
+crawlerManage.value.initSimpleCrawlStatistics();
+
+const statistics: Ref<
+  | {
+      duration: number;
+      anchorUpdateTimes: number;
+    }
+  | undefined
+> = ref(undefined);
+function updateStatistics() {
+  const crawlStartTime =
+    crawlerManage.value.simpleCrawlStatistics.crawlStartTime;
+  if (!crawlStartTime) {
+    statistics.value = undefined;
+    return;
+  }
+  const duration = new Date().getTime() - new Date(crawlStartTime).getTime();
+  statistics.value = {
+    duration,
+    anchorUpdateTimes:
+      crawlerManage.value.simpleCrawlStatistics.anchorUpdateTimes,
+  };
+}
+
+let statisticsInterval: NodeJS.Timeout | null = setIntervalImmediate(
+  updateStatistics,
+  1000,
+);
+
+function clearStatistics() {
+  if (statisticsInterval) {
+    clearInterval(statisticsInterval);
+    statisticsInterval = null;
+  }
+  statistics.value = undefined;
+  crawlerManage.value.clearSimpleCrawlStatistics();
+}
+
 async function start() {
+  if (!statisticsInterval) {
+    statisticsInterval = setIntervalImmediate(updateStatistics, 1000);
+  }
   await crawlerManage.value.start();
 }
 async function stop() {
   await crawlerManage.value.stop();
+  clearStatistics();
 }
 const crawlArea = ref<Area | 'all'>('all');
 
@@ -71,8 +115,9 @@ async function handleCopyCookie() {
 }
 
 async function handleClearTKCookie() {
+  await stop();
   await window.ipcRenderer.invoke(CRAWL_EVENTS.CLEAR_TIKTOK_COOKIE);
-  ElMessage.success('TK Cookie已清除');
+  ElNotification.success('TK Cookie已清除');
   await crawlerManage.value.checkTiktokCookieValid();
 }
 </script>
@@ -141,6 +186,16 @@ async function handleClearTKCookie() {
       @start="start"
       @stop="stop"
     />
+    <div v-if="statistics" class="crawl-statistics">
+      <div>
+        <span>已采集</span>
+        <span>{{ statistics.anchorUpdateTimes }}个主播</span>
+      </div>
+      <div>
+        <span>用时</span>
+        <span>{{ formatDuration(statistics.duration) }}</span>
+      </div>
+    </div>
     <div
       v-if="crawlerManage.crawlStatus === CrawlStatus.SUSPENDED"
       class="suspended-status"
@@ -238,6 +293,12 @@ async function handleClearTKCookie() {
     text-align: center;
     max-width: calc(var(--select-width) + var(--label-width));
     line-height: 1.5;
+  }
+  .crawl-statistics {
+    margin-top: var(--spacing-sm);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
   }
 }
 .crawler-setting-dropdown-menu {

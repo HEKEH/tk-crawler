@@ -89,6 +89,10 @@ export class LiveAnchorCrawler {
     return this._crawlArea;
   }
 
+  get simpleCrawlStatistics() {
+    return this._anchorPool.simpleCrawlStatistics;
+  }
+
   setCrawlArea(crawlArea: Area | 'all') {
     this._crawlArea = crawlArea;
   }
@@ -272,7 +276,7 @@ export class LiveAnchorCrawler {
     this._anchorPool.suspend();
     this._suspendedTimeout = setTimeout(() => {
       this._isSuspended = false;
-      this._anchorPool.start();
+      this._anchorPool.resume();
     }, CRAWL_SUSPEND_TIMEOUT);
   }
 

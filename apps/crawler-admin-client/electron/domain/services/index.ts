@@ -151,6 +151,9 @@ export class Services {
       saveToken(token),
     );
     this._addEventHandler(TOKEN_EVENTS.REMOVE_TOKEN, removeToken);
+    this._addEventHandler(CRAWL_EVENTS.GET_SIMPLE_CRAWL_STATISTICS, () => {
+      return this._crawler.simpleCrawlStatistics;
+    });
   }
 
   destroy() {

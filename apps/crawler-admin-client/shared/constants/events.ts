@@ -26,4 +26,5 @@ export const CRAWL_EVENTS = {
   GET_TK_COOKIE: 'get-tk-cookie',
   SET_TK_COOKIE: 'set-tk-cookie',
   CLEAR_TIKTOK_COOKIE: 'clear-tiktok-cookie',
+  GET_SIMPLE_CRAWL_STATISTICS: 'get-simple-crawl-statistics',
 };

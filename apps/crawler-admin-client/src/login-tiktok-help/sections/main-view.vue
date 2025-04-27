@@ -45,8 +45,12 @@ function onSubmitCookie() {
     </div>
     <div class="block">
       <div class="description">请在完成登录后点击已成功按钮</div>
-      <ElButton type="primary" @click="onLoginSuccess">已登录成功</ElButton>
-      <ElButton @click="onCopyCookie">复制当前Cookie</ElButton>
+      <div>
+        <ElButton type="primary" @click="onLoginSuccess">已登录成功</ElButton>
+      </div>
+      <div>
+        <ElButton @click="onCopyCookie">复制当前Cookie</ElButton>
+      </div>
     </div>
     <div class="block">
       <div class="description">

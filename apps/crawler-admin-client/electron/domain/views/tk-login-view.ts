@@ -188,8 +188,20 @@ export class TKLoginView implements IView {
       this._tkPageView.webContents.setUserAgent(
         'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
       );
-      // 加载目标网页
-      await this._tkPageView.webContents.loadURL(TK_LOGIN_PAGE_URL);
+
+      const maxRetries = 3; // 最多重试3次
+      let retryCount = 0;
+      while (retryCount < maxRetries) {
+        try {
+          await this._tkPageView.webContents.loadURL(TK_LOGIN_PAGE_URL);
+          break;
+        } catch (error) {
+          retryCount++;
+          if (retryCount >= maxRetries) {
+            throw error;
+          }
+        }
+      }
       if (currentOpenTurnId !== this._openTurnId) {
         // 已过时
         return;

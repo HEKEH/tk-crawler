@@ -39,22 +39,36 @@ const messageQueue = new MessageQueue({
 });
 
 function handleAnchorCrawled(_: IpcRendererEvent, data: AnchorCrawledMessage) {
-  crawlerManage.value.setSimpleCrawlStatistics(data.statistics);
   messageQueue.showMessage({
-    message: `抓取到主播「${data.anchor.display_id}」(${REGION_LABEL_MAP[data.anchor.region] || data.anchor.region})`,
+    message: `更新有效主播「${data.anchor.display_id}」(${REGION_LABEL_MAP[data.anchor.region] || data.anchor.region})`,
     type: 'success',
   });
 }
 
+// function handleAnchorsCrawledNumber(_: IpcRendererEvent, data: number) {
+//   messageQueue.showMessage({
+//     message: `爬取到 ${data} 个主播`,
+//     type: 'success',
+//   });
+// }
+
 const electronRenderListeners = ElectronRenderListeners.getInstance();
 
 onMounted(() => {
-  electronRenderListeners.on(CRAWL_EVENTS.ANCHOR_CRAWLED, handleAnchorCrawled);
+  electronRenderListeners.on(CRAWL_EVENTS.ANCHOR_UPDATED, handleAnchorCrawled);
+  // electronRenderListeners.on(
+  //   CRAWL_EVENTS.ANCHORS_CRAWLED_NUMBER,
+  //   handleAnchorsCrawledNumber,
+  // );
 });
 
 onBeforeUnmount(() => {
   messageQueue.destroy();
-  electronRenderListeners.off(CRAWL_EVENTS.ANCHOR_CRAWLED, handleAnchorCrawled);
+  electronRenderListeners.off(CRAWL_EVENTS.ANCHOR_UPDATED, handleAnchorCrawled);
+  // electronRenderListeners.off(
+  //   CRAWL_EVENTS.ANCHORS_CRAWLED_NUMBER,
+  //   handleAnchorsCrawledNumber,
+  // );
 });
 
 function handleCrawlRequestError(

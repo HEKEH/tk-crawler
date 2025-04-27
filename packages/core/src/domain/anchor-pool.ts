@@ -1,5 +1,4 @@
 import type {
-  AnchorCrawledMessage,
   AnchorRankLeague,
   CollectedAnchorInfo,
 } from '@tk-crawler/biz-shared';
@@ -45,8 +44,6 @@ class StopCrawlError extends Error {
 
 /** 当前主播的集合 */
 export class AnchorPool {
-  private _crawlStartTime: Date | undefined;
-  private _anchorUpdateTimes: number = 0;
   // private _region: Region[] | 'all' = 'all';
 
   private _taskQueue: FrequencyLimitTaskQueue = new FrequencyLimitTaskQueue({
@@ -61,8 +58,14 @@ export class AnchorPool {
 
   private _messageCenter: MessageCenter;
 
-  constructor(props: { messageCenter: MessageCenter }) {
+  private _onAnchorUpdated: (anchor: CollectedAnchorInfo) => void;
+
+  constructor(props: {
+    messageCenter: MessageCenter;
+    onAnchorUpdated: (anchor: CollectedAnchorInfo) => void;
+  }) {
     this._messageCenter = props.messageCenter;
+    this._onAnchorUpdated = props.onAnchorUpdated;
   }
 
   private _onCookieOutdated() {
@@ -70,18 +73,9 @@ export class AnchorPool {
     this._messageCenter.emit(TKRequestMessage.TIKTOK_COOKIE_OUTDATED);
   }
 
-  get simpleCrawlStatistics(): AnchorCrawledMessage['statistics'] {
-    return {
-      anchorUpdateTimes: this._anchorUpdateTimes,
-      crawlStartTime: this._crawlStartTime,
-    };
-  }
-
   start() {
     this._stopped = false;
     this._taskQueue.resume();
-    this._crawlStartTime = new Date();
-    this._anchorUpdateTimes = 0;
   }
 
   stop() {
@@ -127,15 +121,10 @@ export class AnchorPool {
     getLogger().info(
       `[SaveAnchor] Anchor info save success: ${anchor.display_id}`,
     );
-    this._anchorUpdateTimes++;
-    const data: AnchorCrawledMessage = {
+    this._messageCenter.emit(TKRequestMessage.ANCHOR_UPDATED, {
       anchor,
-      statistics: {
-        anchorUpdateTimes: this._anchorUpdateTimes,
-        crawlStartTime: this._crawlStartTime,
-      },
-    };
-    this._messageCenter.emit(TKRequestMessage.ANCHOR_CRAWLED, data);
+    });
+    this._onAnchorUpdated(anchor);
   }
 
   async addAnchors(anchors: RawAnchorParam[]) {

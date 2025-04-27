@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import type { Area } from '@tk-crawler/biz-shared';
+import type {
+  AnchorCrawledMessage,
+  Area,
+  SimpleCrawlStatistics,
+} from '@tk-crawler/biz-shared';
 import type { Ref } from 'vue';
 import {
   CopyDocument,
@@ -33,16 +37,14 @@ const globalStore = useGlobalStore();
 
 const crawlerManage = computed(() => globalStore.crawlerManage);
 
-crawlerManage.value.initSimpleCrawlStatistics();
-
 const statistics: Ref<
-  | {
+  | ({
       duration: number;
-      anchorUpdateTimes: number;
-    }
+    } & Pick<SimpleCrawlStatistics, 'anchorUpdateTimes' | 'feedNumber'>)
   | undefined
 > = ref(undefined);
-function updateStatistics() {
+async function updateStatistics() {
+  await crawlerManage.value.updateSimpleCrawlStatistics();
   const crawlStartTime =
     crawlerManage.value.simpleCrawlStatistics.crawlStartTime;
   if (!crawlStartTime) {
@@ -54,6 +56,7 @@ function updateStatistics() {
     duration,
     anchorUpdateTimes:
       crawlerManage.value.simpleCrawlStatistics.anchorUpdateTimes,
+    feedNumber: crawlerManage.value.simpleCrawlStatistics.feedNumber,
   };
 }
 
@@ -188,12 +191,13 @@ async function handleClearTKCookie() {
     />
     <div v-if="statistics" class="crawl-statistics">
       <div>
-        <span>已采集</span>
-        <span>{{ statistics.anchorUpdateTimes }}个主播</span>
+        <span>抓取 feed {{ statistics.feedNumber }} 次</span>
       </div>
       <div>
-        <span>用时</span>
-        <span>{{ formatDuration(statistics.duration) }}</span>
+        <span>更新 {{ statistics.anchorUpdateTimes }} 名主播</span>
+      </div>
+      <div>
+        <span>用时 {{ formatDuration(statistics.duration) }}</span>
       </div>
     </div>
     <div

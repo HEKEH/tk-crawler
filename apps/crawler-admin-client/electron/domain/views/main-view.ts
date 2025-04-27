@@ -51,11 +51,20 @@ export class MainView implements IView {
         },
       ),
       this._messageCenter.addListener(
-        TKRequestMessage.ANCHOR_CRAWLED,
+        TKRequestMessage.ANCHOR_UPDATED,
         (data: AnchorCrawledMessage) => {
-          this._view?.webContents.send(CRAWL_EVENTS.ANCHOR_CRAWLED, data);
+          this._view?.webContents.send(CRAWL_EVENTS.ANCHOR_UPDATED, data);
         },
       ),
+      // this._messageCenter.addListener(
+      //   TKRequestMessage.ANCHORS_CRAWLED_NUMBER,
+      //   (data: number) => {
+      //     this._view?.webContents.send(
+      //       CRAWL_EVENTS.ANCHORS_CRAWLED_NUMBER,
+      //       data,
+      //     );
+      //   },
+      // ),
     );
   }
 

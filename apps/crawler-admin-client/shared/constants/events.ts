@@ -19,7 +19,8 @@ export const TOKEN_EVENTS = {
 export const CRAWL_EVENTS = {
   START_LIVE_ANCHOR_CRAWL: 'start-live-anchor-crawl',
   STOP_LIVE_ANCHOR_CRAWL: 'stop-live-anchor-crawl',
-  ANCHOR_CRAWLED: 'anchor-crawled',
+  ANCHOR_UPDATED: 'anchor-updated',
+  ANCHORS_CRAWLED_NUMBER: 'anchors-crawled-number',
   GET_CRAWL_STATUS: 'get-crawl-status',
   GET_CRAWL_AREA: 'get-crawl-area',
   SET_CRAWL_AREA: 'set-crawl-area',

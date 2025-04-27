@@ -1,4 +1,4 @@
-import type { Area } from '@tk-crawler/biz-shared';
+import type { Area, SimpleCrawlStatistics } from '@tk-crawler/biz-shared';
 import type { MessageCenter } from '@tk-crawler/shared';
 import type {
   ChannelSubTagMap,
@@ -40,6 +40,11 @@ const CONTINUOUS_ERRORS_THRESHOLD = 5;
 /** 爬虫逻辑 */
 export class LiveAnchorCrawler {
   private _crawlArea: Area | 'all' = 'all';
+
+  private _crawlStartTime: Date | undefined;
+  private _anchorUpdateTimes: number = 0;
+
+  private _feedNumber = 0;
   private _intervals: {
     [key in
       | 'updateTokensInterval'
@@ -89,8 +94,12 @@ export class LiveAnchorCrawler {
     return this._crawlArea;
   }
 
-  get simpleCrawlStatistics() {
-    return this._anchorPool.simpleCrawlStatistics;
+  get simpleCrawlStatistics(): SimpleCrawlStatistics {
+    return {
+      anchorUpdateTimes: this._anchorUpdateTimes,
+      crawlStartTime: this._crawlStartTime,
+      feedNumber: this._feedNumber,
+    };
   }
 
   setCrawlArea(crawlArea: Area | 'all') {
@@ -105,6 +114,9 @@ export class LiveAnchorCrawler {
     this._messageCenter = props.messageCenter;
     this._anchorPool = new AnchorPool({
       messageCenter: this._messageCenter,
+      onAnchorUpdated: _ => {
+        this._onAnchorUpdated();
+      },
     });
     this._onCookieOutdatedSubscription = this._messageCenter.addListener(
       TKRequestMessage.TIKTOK_COOKIE_OUTDATED,
@@ -112,6 +124,10 @@ export class LiveAnchorCrawler {
         this.stop();
       },
     );
+  }
+
+  private _onAnchorUpdated() {
+    this._anchorUpdateTimes++;
   }
 
   private _updateTokens() {
@@ -222,6 +238,7 @@ export class LiveAnchorCrawler {
         return;
       }
       if (feed.data) {
+        this._feedNumber++;
         const anchorInfos: RawAnchorParam[] = [];
         for (const item of feed.data) {
           const anchor = item.data?.owner;
@@ -307,6 +324,11 @@ export class LiveAnchorCrawler {
     getLogger().info('start live anchor crawler');
     this._isRunning = true;
     this._queryId = Math.random();
+
+    this._crawlStartTime = new Date();
+    this._anchorUpdateTimes = 0;
+    this._feedNumber = 0;
+
     await this._run();
   }
 
@@ -326,6 +348,10 @@ export class LiveAnchorCrawler {
     });
     this._crawlIntervalRunner.stop();
     this._anchorPool.stop();
+
+    this._crawlStartTime = undefined;
+    this._anchorUpdateTimes = 0;
+    this._feedNumber = 0;
   }
 
   clear() {

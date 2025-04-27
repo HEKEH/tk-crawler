@@ -75,7 +75,7 @@ export class AutoUpdater {
           .then(async result => {
             if (result.response === 0) {
               this._isInUpdatingProcess = false;
-              await initProxy();
+              await initProxy(this._logger);
               this.checkForUpdates();
             }
           })

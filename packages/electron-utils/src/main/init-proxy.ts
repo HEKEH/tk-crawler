@@ -1,10 +1,12 @@
+import type { Logger } from '@tk-crawler/shared';
+
 import process from 'node:process';
 
 import { get as getSystemProxy } from 'get-system-proxy';
-
 import { bootstrap } from 'global-agent';
 
-export async function initProxy() {
+export async function initProxy(logger?: Logger) {
+  logger?.info('initProxy');
   const proxy = await getSystemProxy();
   if (proxy) {
     const proxyUrl = `${proxy.type}://${proxy.host}:${proxy.port}`;

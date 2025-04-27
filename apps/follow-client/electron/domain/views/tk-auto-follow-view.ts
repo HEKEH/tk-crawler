@@ -201,7 +201,7 @@ export class TKAutoFollowView {
     this._addEventHandler(
       TIKTOK_AUTO_FOLLOW_PAGE_EVENTS.RETRY_OPEN_PAGE,
       async () => {
-        await initProxy();
+        await initProxy(logger);
         await this._reopenTKPageView();
       },
     );

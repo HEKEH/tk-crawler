@@ -112,11 +112,11 @@ export class Services {
       return checkTiktokCookieValidHandler();
     });
     this._addEventHandler(CUSTOM_EVENTS.RECHECK_COOKIE_VALIDITY, async () => {
-      await initProxy();
+      await initProxy(logger);
       return checkTiktokCookieValidHandler();
     });
     this._addEventHandler(CUSTOM_EVENTS.OPEN_TIKTOK_LOGIN_PAGE, async () => {
-      await initProxy();
+      await initProxy(logger);
       return this._viewManager.openTkLoginPage();
     });
     this._addEventHandler(CRAWL_EVENTS.START_LIVE_ANCHOR_CRAWL, () => {

@@ -257,7 +257,7 @@ export class TKLoginView implements IView {
     this._addEventHandler(
       LOGIN_TIKTOK_HELP_EVENTS.RETRY_OPEN_TIKTOK_LOGIN_PAGE,
       async () => {
-        await initProxy();
+        await initProxy(logger);
         await this._reopenTKPageView();
       },
     );

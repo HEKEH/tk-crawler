@@ -37,9 +37,9 @@ async function main() {
     getAppInstallUrl(PRODUCT_NAME, PUBLISH_URL),
   );
   await app.whenReady();
-  await initProxy();
+  await initProxy(logger);
   let proxyInterval: NodeJS.Timeout | undefined = setInterval(
-    initProxy,
+    () => initProxy(logger),
     1000 * 60 * 2, // 2分钟检查一次代理
   );
   const globalManager = GlobalManager.getInstance();
@@ -48,6 +48,9 @@ async function main() {
   autoUpdater.checkForUpdates();
 
   app.on('activate', async () => {
+    logger.info('activate');
+    await initProxy(logger);
+    setTimeout(() => initProxy(logger), 1000 * 30); // 保险起见，30秒后再检查一次
     // On OS X it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
     if (BaseWindow.getAllWindows().length === 0) {
@@ -59,11 +62,13 @@ async function main() {
   // for applications and their menu bar to stay active until the user quits
   // explicitly with Cmd + Q.
   app.on('window-all-closed', () => {
+    logger.info('window-all-closed');
     if (process.platform !== 'darwin') {
       app.quit();
     }
   });
   app.on('will-quit', () => {
+    logger.info('will-quit');
     globalManager.destroy();
     if (proxyInterval) {
       clearInterval(proxyInterval);

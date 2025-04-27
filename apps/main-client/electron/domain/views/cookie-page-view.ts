@@ -282,7 +282,7 @@ export class CookiePageView implements IView {
     this._addEventHandler(
       GUILD_COOKIE_PAGE_HELP_EVENTS.RETRY_OPEN_PAGE,
       async () => {
-        await initProxy();
+        await initProxy(logger);
         await this._reopenThirdPartyPageView();
       },
     );

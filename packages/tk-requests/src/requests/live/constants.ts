@@ -41,7 +41,7 @@ export const CHANNEL_IDS = Object.values(ChannelId).filter(
   value => typeof value === 'number',
 ) as ChannelId[];
 
-const BASE_DEVICE_ID = '7451966978395973866';
+const BASE_DEVICE_ID = '7451956968395973866';
 const BASE_HISTORY_LEN = getRandomArrayElement([2, 3, 4, 5]);
 
 const COMMON_TIKTOK_QUERY = {
@@ -72,10 +72,16 @@ const COMMON_TIKTOK_QUERY = {
   user_is_login: 'false',
 };
 
+function getRandomDeviceId() {
+  return (
+    BigInt(BASE_DEVICE_ID) + BigInt(Math.ceil(Math.random() * 100000000))
+  ).toString();
+}
+
 let queryCount = 0;
 let currentDynamicQuery = {
   ...COMMON_TIKTOK_QUERY,
-  device_id: BASE_DEVICE_ID,
+  device_id: getRandomDeviceId(),
   history_len: BASE_HISTORY_LEN,
 };
 
@@ -83,9 +89,7 @@ export function getDynamicCommonTiktokQuery() {
   queryCount++;
   if (queryCount > 1000) {
     queryCount = 0;
-    const deviceId = (
-      BigInt(BASE_DEVICE_ID) + BigInt(Math.ceil(Math.random() * 1000000))
-    ).toString();
+    const deviceId = getRandomDeviceId();
     let historyLen = currentDynamicQuery.history_len + 1;
     if (historyLen > 12) {
       historyLen = getRandomArrayElement([2, 3, 4, 5]);

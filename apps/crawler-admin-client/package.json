@@ -1,6 +1,6 @@
 {
   "name": "tk-crawler-admin-client",
-  "version": "0.0.14",
+  "version": "0.0.16",
   "description": "TK Live Crawler Admin Client",
   "author": "Will Ho",
   "main": "dist-electron/main.js",
@@ -12,7 +12,7 @@
   "scripts": {
     "dev": "vite",
     "check-production-env": "node -e \"if(!require('fs').existsSync('../../.env.production')){console.error('.env.production file not found');process.exit(1)}\"",
-    "build": "npm run check-production-env && vue-tsc && vite build && electron-builder --config electron-builder.ts",
+    "build": "echo $npm_package_version && npm run check-production-env && vue-tsc && vite build && electron-builder --config electron-builder.ts",
     "preview": "vite preview"
   },
   "dependencies": {

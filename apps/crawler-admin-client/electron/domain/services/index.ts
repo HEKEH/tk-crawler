@@ -15,7 +15,12 @@ import {
 import { ipcMain } from 'electron';
 import { CUSTOM_EVENTS } from '../../constants';
 import { logger } from '../../infra/logger';
-import { clearTiktokCookie, syncTiktokCookie } from './cookie';
+import {
+  clearTiktokCookie,
+  getTiktokCookie,
+  saveTiktokCookie,
+  syncTiktokCookie,
+} from './cookie';
 import { getToken, removeToken, saveToken } from './token';
 
 export class Services {
@@ -134,7 +139,13 @@ export class Services {
     this._addEventHandler(CRAWL_EVENTS.SET_CRAWL_AREA, (_, crawlArea) => {
       this._crawler.setCrawlArea(crawlArea);
     });
-    this._addEventHandler(CUSTOM_EVENTS.CLEAR_TIKTOK_COOKIE, clearTiktokCookie);
+    this._addEventHandler(CRAWL_EVENTS.GET_TK_COOKIE, () => {
+      return getTiktokCookie();
+    });
+    this._addEventHandler(CRAWL_EVENTS.SET_TK_COOKIE, (_, cookie) => {
+      return saveTiktokCookie(cookie);
+    });
+    this._addEventHandler(CRAWL_EVENTS.CLEAR_TIKTOK_COOKIE, clearTiktokCookie);
     this._addEventHandler(TOKEN_EVENTS.GET_TOKEN, getToken);
     this._addEventHandler(TOKEN_EVENTS.SET_TOKEN, (_, token) =>
       saveToken(token),

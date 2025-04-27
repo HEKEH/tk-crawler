@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Area } from '@tk-crawler/biz-shared';
 import {
+  CopyDocument,
   InfoFilled,
   Setting,
   Switch,
@@ -8,12 +9,13 @@ import {
 } from '@element-plus/icons-vue';
 import { CrawlStatus } from '@tk-crawler/biz-shared';
 import { setIntervalImmediate } from '@tk-crawler/shared';
-import { AreaSelectSingle } from '@tk-crawler/view-shared';
+import { AreaSelectSingle, copyToClipboard } from '@tk-crawler/view-shared';
 import {
   ElDropdown,
   ElDropdownItem,
   ElDropdownMenu,
   ElIcon,
+  ElMessage,
   ElTooltip,
 } from 'element-plus';
 import { computed, onBeforeUnmount, ref } from 'vue';
@@ -58,6 +60,21 @@ onBeforeUnmount(() => {
 async function handleSwitchTKAccount() {
   await crawlerManage.value.loginTiktok();
 }
+
+async function handleCopyCookie() {
+  const cookie = await window.ipcRenderer.invoke(CRAWL_EVENTS.GET_TK_COOKIE);
+  if (cookie) {
+    await copyToClipboard(cookie);
+  } else {
+    ElMessage.warning('未获取到已保存的Cookie');
+  }
+}
+
+async function handleClearTKCookie() {
+  await window.ipcRenderer.invoke(CRAWL_EVENTS.CLEAR_TIKTOK_COOKIE);
+  ElMessage.success('TK Cookie已清除');
+  await crawlerManage.value.checkTiktokCookieValid();
+}
 </script>
 
 <template>
@@ -78,10 +95,14 @@ async function handleSwitchTKAccount() {
                   <ElIcon><Switch /></ElIcon>
                   <span>切换TK账号</span>
                 </ElDropdownItem>
-                <!-- <ElDropdownItem @click="handleTKAccountLogout">
+                <ElDropdownItem @click="handleCopyCookie">
+                  <ElIcon><CopyDocument /></ElIcon>
+                  <span>复制TK Cookie</span>
+                </ElDropdownItem>
+                <ElDropdownItem @click="handleClearTKCookie">
                   <ElIcon><SwitchButton /></ElIcon>
-                  <span>退出TK账号</span>
-                </ElDropdownItem> -->
+                  <span>清除TK Cookie</span>
+                </ElDropdownItem>
               </ElDropdownMenu>
             </div>
           </template>

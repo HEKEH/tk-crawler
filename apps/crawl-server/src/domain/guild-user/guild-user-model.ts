@@ -137,13 +137,15 @@ export class GuildUserModel {
   }
 
   private async _updateGuildUserStatus(status: TKGuildUserStatus) {
-    this._status = status;
-    logger.info(
-      `[guild-user] update status: ${this.id} ${this._username} ${status}`,
-    );
-    await updateGuildUserStatus({
+    this._status = await updateGuildUserStatus({
       id: this.id,
       status,
+    });
+    logger.info(`[guild-user] update status:`, {
+      id: this.id,
+      username: this._username,
+      updateStatus: status,
+      currentStatus: this._status,
     });
   }
 

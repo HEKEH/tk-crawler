@@ -22,7 +22,7 @@ export class OrganizationModel implements GuildUserCollectionContext {
     return this.id;
   }
 
-  get name() {
+  get orgName() {
     return this._name;
   }
 

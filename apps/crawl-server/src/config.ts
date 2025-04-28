@@ -1,4 +1,3 @@
-import type { TAlgorithm } from 'jwt-simple';
 import process from 'node:process';
 import { logger } from './infra/logger';
 
@@ -31,9 +30,9 @@ if (
 
 const defaultLanguage = env.DEFAULT_LANGUAGE;
 
-const jwtSecret = env.JWT_SECRET;
-if (!jwtSecret) {
-  logger.error('JWT_SECRET is required');
+const guildUserWarningLimit = env.GUILD_USER_WARNING_LIMIT;
+if (!guildUserWarningLimit) {
+  logger.error('GUILD_USER_WARNING_LIMIT is required');
   process.exit(1);
 }
 
@@ -46,14 +45,7 @@ const config = {
   redisPort: Number.parseInt(redisPort, 10),
   redisPassword,
   redisUsername,
-
-  /** jwt salt */
-  jwtSecret,
-  jwtAlgorithm: (env.JWT_ALGORITHM || 'HS256') as TAlgorithm,
-  // token expires time, ms
-  jwtTokenExpiresTime: env.JWT_TOKEN_EXPIRES_TIME
-    ? Number.parseInt(env.JWT_TOKEN_EXPIRES_TIME, 10)
-    : 1000 * 60 * 60 * 24 * 30, // 30 days
+  guildUserWarningLimit: Number.parseInt(guildUserWarningLimit, 10),
 };
 
 export default config;

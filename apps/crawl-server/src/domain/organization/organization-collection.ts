@@ -46,7 +46,7 @@ export class OrganizationCollection {
       areaOrganizationsMap: Object.fromEntries(
         Object.entries(this._areaOrganizationsMap).map(([area, orgs]) => [
           area,
-          orgs.map(org => org.name),
+          orgs.map(org => ({ orgId: org.id, orgName: org.orgName })),
         ]),
       ),
     });

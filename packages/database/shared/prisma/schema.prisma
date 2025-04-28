@@ -65,6 +65,7 @@ model LiveAdminUser {
   updated_at          DateTime            @updatedAt @db.DateTime(3)
   faction_id          Int?                @db.UnsignedInt
   area                String?             @db.VarChar(6)
+  warning_count       Int                 @default(0) @db.UnsignedTinyInt
   organization        Organization        @relation(fields: [org_id], references: [id], onDelete: Cascade)
   checkedInviteChecks AnchorInviteCheck[]
 

@@ -16,6 +16,7 @@ import { GuildUserModel } from './guild-user-model';
 export interface GuildUserCollectionContext {
   readonly areas: Area[];
   readonly orgId: string;
+  readonly orgName: string;
   readonly isValid: boolean;
 }
 
@@ -324,7 +325,10 @@ export class GuildUserCollection {
 
   private async _intervalCheck() {
     this._checkTimer = setTimeout(async () => {
-      logger.info(`[guild-user] check: ${this._context.orgId}`);
+      logger.info(`[guild-user] check:`, {
+        orgId: this._context.orgId,
+        orgName: this._context.orgName,
+      });
       this._intervalCheck();
       await this._batchCheckAnchors();
     }, this.checkInterval);

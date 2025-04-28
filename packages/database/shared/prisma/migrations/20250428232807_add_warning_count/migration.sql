@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `LiveAdminUser` ADD COLUMN `warning_count` TINYINT UNSIGNED NOT NULL DEFAULT 0;

@@ -42,7 +42,7 @@ export class OrganizationCollection {
       },
       {} as Partial<Record<Area, OrganizationModel[]>>,
     );
-    logger.trace(`update area organizations map:`, {
+    logger.trace(`[update area organizations map]`, {
       areaOrganizationsMap: Object.fromEntries(
         Object.entries(this._areaOrganizationsMap).map(([area, orgs]) => [
           area,
@@ -54,7 +54,7 @@ export class OrganizationCollection {
 
   async init() {
     const { list: rawOrganizations } = await getAvailableOrganizationList();
-    logger.info(`init organization list:`, {
+    logger.info(`[init organization list]`, {
       data: beautifyJsonStringify(rawOrganizations),
     });
     this._organizations = rawOrganizations.map(
@@ -100,7 +100,7 @@ export class OrganizationCollection {
 
   async update() {
     const { list: rawOrganizations } = await getAvailableOrganizationList();
-    logger.info(`update organization list:`, {
+    logger.info(`[update organization list]`, {
       data: beautifyJsonStringify(rawOrganizations),
     });
     const oldOrgMap = this._organizations.reduce(
@@ -122,7 +122,7 @@ export class OrganizationCollection {
       }),
     );
     this._organizations = newOrgList;
-    logger.info(`New organization list:`, {
+    logger.info(`[update organization list]`, {
       length: this._organizations.length,
     });
     this._updateAreaOrganizationsMap();
@@ -223,7 +223,7 @@ export class OrganizationCollection {
 
   private async _handleGuildUserMessage(message: BroadcastGuildUserMessage) {
     const { data } = message;
-    logger.info(`handle guild user message:`, {
+    logger.info(`[handle guild user message]`, {
       data: beautifyJsonStringify(data),
     });
     if (data) {

@@ -9,7 +9,6 @@ import type {
 } from '@tk-crawler/biz-shared';
 import assert from 'node:assert';
 import { mysqlClient } from '@tk-crawler/database';
-import { logger } from '../../../infra/logger';
 import { transformAnchorListFilterValues } from './filter';
 import { transformAnchorListOrderBy } from './order-by';
 
@@ -122,8 +121,6 @@ export async function getAnchorList(
     list,
     total,
   };
-
-  logger.info('[Get Anchor List] success', { length: result.list?.length });
 
   return result;
 }

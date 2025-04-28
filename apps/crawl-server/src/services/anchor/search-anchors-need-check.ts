@@ -17,9 +17,10 @@ export async function searchAnchorsNeedCheck(data: {
   area: Area;
   take?: number;
 }): Promise<BroadcastAnchorMessageData[]> {
-  logger.info(
-    `[search-anchors-need-check] search anchors need check: ${data.org_id} ${data.area}`,
-  );
+  logger.info(`[search-anchors-need-check] search anchors need check:`, {
+    org_id: data.org_id,
+    area: data.area,
+  });
   const regions = getRegionsByArea(data.area);
   const result = await mysqlClient.prismaClient.anchor.findMany({
     orderBy: {

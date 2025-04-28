@@ -11,12 +11,13 @@ export default class SystemController {
   static async login(ctx: Context, next: Next) {
     const data = ctx.getRequestData<SystemUserLoginRequest>();
     ctx.body = await systemUserLogin(data);
+    logger.info(`[logId: ${ctx.logId}][System User Login]`);
     await next();
   }
 
   static async loginByToken(ctx: Context, next: Next) {
-    logger.info('[System User Login By Token]');
     ctx.body = ctx.systemUserInfo!;
+    logger.info(`[System User Login By Token] ${ctx.logId}`);
     await next();
   }
 

@@ -5,14 +5,12 @@ import type {
 import { mysqlClient } from '@tk-crawler/database';
 import { simpleDecrypt } from '@tk-crawler/shared';
 import config from '../../config';
-import { logger } from '../../infra/logger';
 import { BusinessError, hashPassword, verifyPassword } from '../../utils';
 
 export async function changeOrgUserPassword(
   data: OrgMemberChangePasswordRequest,
   user: OrgMemberItem,
 ): Promise<void> {
-  logger.info('[Change Password]', data);
   const old_password = simpleDecrypt(
     data.old_password,
     config.simplePasswordKey,

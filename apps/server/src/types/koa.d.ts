@@ -1,5 +1,5 @@
 import type { OrgMemberUserInfoWithOrgInfo } from '@tk-crawler/biz-shared';
-import type { I18N_LANGUAGE } from '@tk-crawler/shared';
+import type { I18N_LANGUAGE, Logger } from '@tk-crawler/shared';
 import type { TOptions } from 'i18next';
 
 interface CustomContext {
@@ -7,6 +7,8 @@ interface CustomContext {
   getRequestData: <T = any>() => T;
   readonly lng: I18N_LANGUAGE | undefined;
   t: (key: string, options?: TOptions) => string;
+
+  logger: Logger;
 
   readonly clientInfo?: OrgMemberUserInfoWithOrgInfo;
   readonly systemUserInfo?: SystemUserInfo;

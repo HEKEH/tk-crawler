@@ -2,7 +2,6 @@ import type { Context, Next } from 'koa';
 import { AssertionError } from 'node:assert';
 import { LOG_ID_HEADER_KEY } from '@tk-crawler/biz-shared';
 import { RESPONSE_CODE } from '@tk-crawler/shared';
-import { logger } from '../infra/logger';
 import { BusinessError, TokenInvalidError } from '../utils';
 
 export async function requestWrapMiddleware(ctx: Context, next: Next) {
@@ -15,7 +14,7 @@ export async function requestWrapMiddleware(ctx: Context, next: Next) {
     if (ctx.request.method === 'POST') {
       logData.body = ctx.request.body;
     }
-    logger.info(`[logId: ${ctx.logId}] [Request]`, logData);
+    ctx.logger.info(`[Request]`, logData);
     await next();
     if (ctx.status === 200) {
       const body = ctx.body;
@@ -23,8 +22,10 @@ export async function requestWrapMiddleware(ctx: Context, next: Next) {
         status_code: RESPONSE_CODE.SUCCESS,
         data: body,
       };
+      ctx.logger.info(`[Response]`, ctx.body);
+    } else {
+      ctx.logger.error(`[Response]`, ctx.body);
     }
-    logger.info(`[logId: ${ctx.logId}] [Response]`, ctx.body);
   } catch (error) {
     if (error instanceof TokenInvalidError) {
       ctx.status = 200;
@@ -32,7 +33,7 @@ export async function requestWrapMiddleware(ctx: Context, next: Next) {
         status_code: RESPONSE_CODE.TOKEN_INVALID,
         message: ctx.t(error.message),
       };
-      logger.error(`[logId: ${ctx.logId}] [Token Invalid Error]`, error);
+      ctx.logger.error(`[Token Invalid Error]`, error);
       return;
     }
     if (error instanceof AssertionError || error instanceof BusinessError) {
@@ -41,7 +42,7 @@ export async function requestWrapMiddleware(ctx: Context, next: Next) {
         status_code: RESPONSE_CODE.BIZ_ERROR,
         message: ctx.t(error.message),
       };
-      logger.error(`[logId: ${ctx.logId}] [Business Error]`, error);
+      ctx.logger.error(`[Business Error]`, error);
       return;
     }
     ctx.status = 500;
@@ -50,7 +51,7 @@ export async function requestWrapMiddleware(ctx: Context, next: Next) {
       message: ctx.t('An unexpected error occurred'),
     };
     // Log the actual error for debugging purposes
-    logger.error(`[logId: ${ctx.logId}] [Internal Error]`, error);
+    ctx.logger.error(`[Internal Error]`, error);
   } finally {
     // add logId to response header
     ctx.set(LOG_ID_HEADER_KEY, ctx.logId);

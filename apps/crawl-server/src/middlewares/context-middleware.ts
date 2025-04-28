@@ -4,6 +4,7 @@ import { ACCEPT_LANGUAGES, I18N_LANGUAGE } from '@tk-crawler/shared';
 import { v4 as uuid } from 'uuid';
 import config from '../config';
 import i18n from '../i18n';
+import { logger } from '../infra/logger';
 
 export async function addContextPropsMiddleware(ctx: Context, next: Next) {
   const logId = ctx.request.header[LOG_ID_HEADER_KEY] || uuid();
@@ -40,6 +41,28 @@ export async function addContextPropsMiddleware(ctx: Context, next: Next) {
         }
       }
       return I18N_LANGUAGE.ZH_CN;
+    },
+  });
+  const ctxLogger = {
+    info: (message: any, ...args: any[]) => {
+      logger.info(`[logId: ${ctx.logId}]`, message, ...args);
+    },
+    error: (message: any, ...args: any[]) => {
+      logger.error(`[logId: ${ctx.logId}]`, message, ...args);
+    },
+    trace: (message: any, ...args: any[]) => {
+      logger.trace(`[logId: ${ctx.logId}]`, message, ...args);
+    },
+    warn: (message: any, ...args: any[]) => {
+      logger.warn(`[logId: ${ctx.logId}]`, message, ...args);
+    },
+    debug: (message: any, ...args: any[]) => {
+      logger.debug(`[logId: ${ctx.logId}]`, message, ...args);
+    },
+  };
+  Object.defineProperty(ctx, 'logger', {
+    get() {
+      return ctxLogger;
     },
   });
   ctx.t = function (key, options) {

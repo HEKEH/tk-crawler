@@ -317,7 +317,7 @@ function toggleExpand() {
         v-if="!hiddenFilters?.includes('checked_at')"
         class="filter-range-item"
       >
-        <label class="filter-label">校验时间</label>
+        <label class="filter-label">邀约检测时间</label>
         <RangeDateSelect
           v-model="filters.checked_at"
           size="small"

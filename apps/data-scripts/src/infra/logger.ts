@@ -83,8 +83,8 @@ class Logger {
 
   private _getLogDirectory(): string {
     return process.env.NODE_ENV === 'production'
-      ? path.join(process.cwd(), 'dev-logs')
-      : path.join(process.cwd(), 'prod-logs');
+      ? path.join(process.cwd(), 'prod-logs')
+      : path.join(process.cwd(), 'dev-logs');
   }
 
   public static getInstance(): Logger {

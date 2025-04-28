@@ -17,7 +17,7 @@ class App {
     logger.info('App is running');
     try {
       const { success, end } = await this._crawler.run();
-      logger.info('Crawler run result', success, end);
+      logger.info('Crawler run result', { success, end });
       if (!success) {
         logger.error('Crawler run failed');
       }

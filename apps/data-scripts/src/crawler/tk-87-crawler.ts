@@ -103,11 +103,17 @@ export class TK87Crawler implements Crawler {
             this._pageNum * this._pageSize > response.data.total,
         };
       }
-      logger.error('[data crawled error]', this._pageNum, response.data);
+      logger.error('[data crawled error]', {
+        page_num: this._pageNum,
+        error: response.data,
+      });
       return { data: response.data.rows ?? [], end: false };
     } catch (error) {
       this._errorCount++;
-      logger.error('[data crawled error]', this._pageNum, error);
+      logger.error('[data crawled error]', {
+        page_num: this._pageNum,
+        error,
+      });
       return {
         data: [],
         end: false,
@@ -148,7 +154,7 @@ export class TK87Crawler implements Crawler {
             item.tag_title &&
               ['Shopping', '购物', '美容与时尚'].includes(item.tag_title),
           ),
-          tag: null,
+          tag: item.tag_title,
           last_diamonds: item.last_day_diamond_val || null,
           highest_diamonds: item.his_max_diamond_val,
           created_at: item.create_time,

@@ -37,8 +37,8 @@ export class GuildUserModel {
   private _currentQueryPerHour: number = 0;
   private _currentQueryPerDay: number = 0;
 
-  private _hasSystemError: boolean = false;
-  private _systemErrorTimer: NodeJS.Timeout | null = null;
+  private _hasRequestError: boolean = false;
+  private _systemRequestTimer: NodeJS.Timeout | null = null;
 
   private _keepAliveTimer: NodeJS.Timeout | null = null;
 
@@ -69,7 +69,7 @@ export class GuildUserModel {
 
   get isValid() {
     return Boolean(
-      !this._hasSystemError &&
+      !this._hasRequestError &&
         this._area &&
         VALID_GUILD_USER_STATUS_LIST.includes(this._status) &&
         this._cookie &&
@@ -138,7 +138,7 @@ export class GuildUserModel {
 
   private async _updateGuildUserStatus(status: TKGuildUserStatus) {
     this._status = status;
-    logger.trace(
+    logger.info(
       `[guild-user] update status: ${this.id} ${this._username} ${status}`,
     );
     await updateGuildUserStatus({
@@ -147,13 +147,13 @@ export class GuildUserModel {
     });
   }
 
-  private _encounterSystemError() {
-    this._hasSystemError = true;
-    this._systemErrorTimer = setTimeout(
+  private _encounterRequestError(stopMinutes: number = 5) {
+    this._hasRequestError = true;
+    this._systemRequestTimer = setTimeout(
       () => {
-        this._hasSystemError = false; // 5 分钟之后恢复
+        this._hasRequestError = false; // 5 分钟之后恢复
       },
-      1000 * 60 * 5,
+      1000 * 60 * stopMinutes,
     );
   }
 
@@ -214,31 +214,38 @@ export class GuildUserModel {
     try {
       result = await batchCheckAnchors(queryParams);
       await this._recordQueryByGuildUserCount();
-      logger.info(
-        `[guild-user] batchCheckAnchors result: ${beautifyJsonStringify(result)}`,
-      );
     } catch (e) {
       logger.error(
         `[guild-user] check anchors error: ${this.id} ${this._username}`,
         e,
       );
       // 系统错误直接退出
-      this._encounterSystemError();
+      this._encounterRequestError();
       return {
         success: false,
       };
     }
     if (result.status_code !== 0) {
+      logger.error(
+        `[guild-user] check anchors business error: ${this.id} ${this._username}`,
+        beautifyJsonStringify(result),
+      );
       const status =
         result.BaseResp?.StatusCode === 4030004
           ? TKGuildUserStatus.COOKIE_EXPIRED
-          : TKGuildUserStatus.ERROR;
+          : TKGuildUserStatus.WARNING; // TODO: 需要优化，根据code来判断到到底是error还是warning，目前暂时都认为是warning
+      if (status === TKGuildUserStatus.WARNING) {
+        this._encounterRequestError(); // 暂停一阵
+      }
       await this._updateGuildUserStatus(status);
 
       return {
         success: false,
       };
     }
+    logger.info(
+      `[guild-user] batchCheckAnchors result: ${beautifyJsonStringify(result)}`,
+    );
     if (this._status !== TKGuildUserStatus.RUNNING) {
       await this._updateGuildUserStatus(TKGuildUserStatus.RUNNING);
     }
@@ -262,7 +269,7 @@ export class GuildUserModel {
         `[guild-user] batch update anchor invite check error: ${this.id} ${this._username}`,
         e,
       );
-      this._encounterSystemError();
+      this._encounterRequestError();
       return {
         success: false,
       };
@@ -307,9 +314,9 @@ export class GuildUserModel {
   }
 
   async destroy() {
-    if (this._systemErrorTimer) {
-      clearTimeout(this._systemErrorTimer);
-      this._systemErrorTimer = null;
+    if (this._systemRequestTimer) {
+      clearTimeout(this._systemRequestTimer);
+      this._systemRequestTimer = null;
     }
     if (this._keepAliveTimer) {
       clearTimeout(this._keepAliveTimer);

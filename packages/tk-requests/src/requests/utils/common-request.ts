@@ -37,12 +37,12 @@ export async function commonGetRequest<
         }
         // logger.debug('[response] success:', data);
       } else {
-        logger.error('[response] business error:', data);
+        logger.error('[response] business error:', url, data);
       }
     }
     return data;
   } catch (error) {
-    logger.error('[response] system error:', error);
+    logger.error('[response] system error:', url, error);
     throw error;
   }
 }
@@ -91,12 +91,12 @@ export async function commonPostRequest<
         }
         // logger.debug('[response] success:', data);
       } else {
-        logger.error('[response] business error:', data);
+        logger.error('[response] business error:', url, data);
       }
     }
     return data;
   } catch (error) {
-    logger.error('[response] system error:', error);
+    logger.error('[response] system error:', url, error);
     throw error;
   }
 }

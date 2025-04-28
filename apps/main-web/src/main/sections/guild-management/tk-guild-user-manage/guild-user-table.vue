@@ -94,7 +94,7 @@ function handleFilterReset() {
   pageNum.value = 1; // 重置页码
 }
 
-const { data, isLoading, isError, error, refetch } = useQuery<
+const { data, isLoading, refetch } = useQuery<
   GetTKGuildUserListResponseData | undefined
 >({
   queryKey: [

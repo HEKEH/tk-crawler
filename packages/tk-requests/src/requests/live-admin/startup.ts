@@ -38,11 +38,11 @@ export async function startup(cookie: string, logger: Logger) {
     if (data && data.BaseResp.StatusCode === 0) {
       logger.debug('[response] success:', data);
     } else {
-      logger.error('[response] business error:', data);
+      logger.error('[response] startup business error:', data);
     }
     return data;
   } catch (error) {
-    logger.error('[response] system error:', error);
+    logger.error('[response] startup system error:', error);
     throw error;
   }
 }

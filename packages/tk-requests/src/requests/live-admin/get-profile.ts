@@ -45,11 +45,11 @@ export async function getProfile(
     if (data && data.status_code === 0) {
       logger.debug('[response] success:', data);
     } else {
-      logger.error('[response] business error:', data);
+      logger.error('[response] get profile business error:', url, data);
     }
     return data;
   } catch (error) {
-    logger.error('[response] system error:', error);
+    logger.error('[response] system error:', url, error);
     throw error;
   }
 }

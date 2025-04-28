@@ -38,4 +38,8 @@ export interface AnchorFrom87 {
 export type AnchorFrom87RawData = Omit<
   AnchorFrom87,
   'created_at' | 'updated_at' | 'has_grouped' | 'id' | 'org_id'
->;
+> & {
+  create_time: string;
+  update_time: string | null;
+  live_room_count: number;
+};

@@ -1,8 +1,10 @@
 import type { Crawler } from './crawler';
+import process from 'node:process';
 import {
   mysqlClient,
   setLogger as setDatabaseLogger,
 } from '@tk-crawler/database';
+import config from './config';
 import { TK87Crawler } from './crawler';
 import { logger } from './infra/logger';
 
@@ -13,11 +15,18 @@ class App {
 
   async run() {
     logger.info('App is running');
-    const result = await this._crawler.run();
-    logger.info('Crawler run result', result);
-    if (!result) {
-      logger.error('Crawler run failed');
-      await this.close();
+    try {
+      const { success, end } = await this._crawler.run();
+      logger.info('Crawler run result', success, end);
+      if (!success) {
+        logger.error('Crawler run failed');
+      }
+      if (end) {
+        logger.info('Crawler run end');
+        await this.close();
+      }
+    } catch (error) {
+      logger.error('App run error', error);
     }
   }
 
@@ -32,14 +41,15 @@ class App {
     logger.info('App is starting');
     while (!this._isClosed) {
       await this.run();
-      await new Promise(resolve => setTimeout(resolve, 900));
+      await new Promise(resolve => setTimeout(resolve, config.crawlInterval));
     }
   }
 
   async close() {
-    await mysqlClient.disconnect();
     logger.info('App is closing');
+    await mysqlClient.disconnect();
     this._isClosed = true;
+    process.exit(0);
   }
 }
 

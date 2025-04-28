@@ -68,7 +68,8 @@ export async function updateAnchor(data: UpdateAnchorRequest) {
     rank_league = ${rank_league},
     has_commerce_goods = ${has_commerce_goods},
     tag = ${tag},
-    updated_at = CURRENT_TIMESTAMP(3)
+    updated_at = CURRENT_TIMESTAMP(3),
+    third_party_id = null
 `;
   await mysqlClient.prismaClient.$executeRaw(sql);
   const message: BroadcastAnchorMessage = {

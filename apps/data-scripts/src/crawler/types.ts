@@ -1,3 +1,6 @@
 export interface Crawler {
-  run: () => Promise<boolean>;
+  run: () => Promise<{
+    success: boolean;
+    end: boolean;
+  }>;
 }

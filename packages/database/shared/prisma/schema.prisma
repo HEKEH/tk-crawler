@@ -29,7 +29,7 @@ model SystemAdminUser {
 model Anchor {
   user_id            BigInt              @id @db.UnsignedBigInt
   display_id         String              @unique @db.VarChar(24)
-  room_id            BigInt              @db.UnsignedBigInt
+  room_id            BigInt              @default(0) @db.UnsignedBigInt
   region             String              @db.Char(2)
   follower_count     Int                 @db.UnsignedInt
   audience_count     Int?                @db.UnsignedInt

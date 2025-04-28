@@ -13,10 +13,10 @@
     "public"
   ],
   "scripts": {
-    "dev": "cross-env NODE_ENV=development dotenv -e ../../.env.development nodemon",
+    "dev": "cross-env NODE_ENV=development dotenv -e ../../.env.development -e ./.env.local nodemon",
     "build": "cross-env NODE_ENV=production rimraf dist && rollup --config rollup.config.mjs",
-    "start": "cross-env NODE_ENV=production dotenv -e ${GLOBAL_DOTENV_CONFIG_PATH:-../../.env.production} node dist/index.js",
-    "start:dev": "cross-env NODE_ENV=development dotenv -e ${GLOBAL_DOTENV_CONFIG_PATH:-../../.env.development} node dist/index.js",
+    "start": "cross-env NODE_ENV=production dotenv -e ${GLOBAL_DOTENV_CONFIG_PATH:-../../.env.production} -e ./.env.local node dist/index.js",
+    "start:dev": "cross-env NODE_ENV=development dotenv -e ${GLOBAL_DOTENV_CONFIG_PATH:-../../.env.development} -e ./.env.local node dist/index.js",
     "lint": "eslint",
     "preinstall": "npx only-allow pnpm"
   },

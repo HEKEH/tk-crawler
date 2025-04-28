@@ -3,8 +3,7 @@
     "src",
     "public",
     "nodemon.json",
-    "package.json",
-    "../../packages/*/src/**/*"
+    "package.json"
   ],
   "ext": "ts,json",
   "exec": "ts-node --project ../../tsconfig.node.json --files -r tsconfig-paths/register src/index.ts"

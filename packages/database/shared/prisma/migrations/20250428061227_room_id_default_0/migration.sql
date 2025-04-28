@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `Anchor` MODIFY `room_id` BIGINT UNSIGNED NOT NULL DEFAULT 0;

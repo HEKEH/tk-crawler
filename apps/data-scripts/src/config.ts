@@ -1,9 +1,9 @@
 import process from 'node:process';
 
-const CrawlRegion = process.env.CRAWL_REGION;
+const CrawlRegions = process.env.CRAWL_REGIONS?.trim()?.split(',');
 
-if (!CrawlRegion) {
-  throw new Error('CRAWL_REGION is not set');
+if (!CrawlRegions?.length) {
+  throw new Error('CRAWL_REGIONS is not set');
 }
 
 const ScriptCrawlInterval = process.env.SCRIPT_CRAWL_INTERVAL;
@@ -22,7 +22,7 @@ const startPage = process.env.CRAWL_START_PAGE;
 const pageSize = process.env.CRAWL_PAGE_SIZE;
 
 const config = {
-  crawlRegion: CrawlRegion,
+  crawlRegions: CrawlRegions,
   crawlInterval: Number(ScriptCrawlInterval),
   tk87Cookie: TK87Cookie,
   pageSize: Number(pageSize || 200),

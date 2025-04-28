@@ -39,7 +39,6 @@ const BASE_PARAMS = {
   popup_invitation_type: '',
   share_status: '',
   guanzhu_status: 'all',
-  selectAreaIds: globalConfig.crawlRegion,
   selectCountryCodes: '',
   gl_tag_title: '',
   'params[min_follower_count]': '0',
@@ -57,8 +56,11 @@ const BASE_PARAMS = {
 };
 
 export class TK87Crawler implements Crawler {
+  private _crawlRegions = globalConfig.crawlRegions;
   private _pageSize = globalConfig.pageSize;
   private _pageNum = globalConfig.startPage;
+
+  private _currentRegionIndex = 0;
 
   private _errorCount = 0;
 
@@ -66,8 +68,14 @@ export class TK87Crawler implements Crawler {
     data: AnchorFrom87RawData[];
     end: boolean;
   }> {
+    if (this._currentRegionIndex >= this._crawlRegions.length) {
+      return { data: [], end: true };
+    }
+    const region = this._crawlRegions[this._currentRegionIndex];
+    logger.info('[crawl region]', { region, page_num: this._pageNum });
     const data = {
       ...BASE_PARAMS,
+      selectAreaIds: region,
       pageSize: this._pageSize.toString(),
       pageNum: this._pageNum.toString(),
       orderByColumn: 'account',
@@ -94,11 +102,20 @@ export class TK87Crawler implements Crawler {
           total: response.data.total,
         });
         logger.trace(response.data.rows);
+        let end = false;
+        if (
+          response.data.rows?.length === 0 ||
+          this._pageNum * this._pageSize > response.data.total
+        ) {
+          this._currentRegionIndex++;
+          this._pageNum = globalConfig.startPage;
+          if (this._currentRegionIndex >= this._crawlRegions.length) {
+            end = true;
+          }
+        }
         return {
           data: response.data.rows ?? [],
-          end:
-            response.data.rows?.length === 0 ||
-            this._pageNum * this._pageSize > response.data.total,
+          end,
         };
       }
       logger.error('[data crawled error]', {

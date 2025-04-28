@@ -313,6 +313,20 @@ function toggleExpand() {
           clearable
         />
       </div>
+      <div
+        v-if="!hiddenFilters?.includes('checked_at')"
+        class="filter-range-item"
+      >
+        <label class="filter-label">校验时间</label>
+        <RangeDateSelect
+          v-model="filters.checked_at"
+          size="small"
+          type="datetime"
+          start-placeholder="从"
+          end-placeholder="到"
+          clearable
+        />
+      </div>
       <div v-if="!hiddenFilters?.includes('display_id')" class="filter-item">
         <label class="filter-label">主播ID</label>
         <ElInput v-model="filters.display_id" clearable size="small" />

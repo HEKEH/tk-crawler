@@ -48,4 +48,10 @@
       white-space: nowrap;
     }
   }
+  .column-header-label {
+    .el-icon {
+      margin-left: 4px;
+      vertical-align: baseline;
+    }
+  }
 }

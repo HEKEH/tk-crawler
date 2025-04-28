@@ -29,3 +29,5 @@ export const VALID_GUILD_USER_STATUS_LIST = [
   TKGuildUserStatus.WAITING,
   TKGuildUserStatus.WARNING,
 ];
+
+export const ANCHOR_CHECK_OUTDATE_DAYS = 7;

@@ -1,6 +1,7 @@
 import type { Area, DisplayedAnchorItem, Region } from '@tk-crawler/biz-shared';
 import type { TableColumnCtx } from 'element-plus';
 import type { JSX } from 'vue/jsx-runtime';
+import { InfoFilled } from '@element-plus/icons-vue';
 import {
   AREA_NAME_MAP,
   CanUseInvitationType,
@@ -9,7 +10,7 @@ import {
 } from '@tk-crawler/biz-shared';
 import { formatDateTime, getColorFromName } from '@tk-crawler/shared';
 import { AreaTooltipIcon, CopyIcon, useIsWeb } from '@tk-crawler/view-shared';
-import { ElLink, ElTableColumn, ElTag } from 'element-plus';
+import { ElIcon, ElLink, ElTableColumn, ElTag, ElTooltip } from 'element-plus';
 import { computed, defineComponent, type PropType } from 'vue';
 import './anchor-table-columns.scss';
 
@@ -255,11 +256,53 @@ export default defineComponent({
         {
           key: 'crawled_at',
           props: {
-            label: '最新时间',
+            label: (
+              <span class="column-header-label">
+                最新时间
+                <ElTooltip
+                  placement="top"
+                  v-slots={{
+                    content: () => <div>爬虫最新采集主播直播间信息的时间</div>,
+                  }}
+                >
+                  <ElIcon>
+                    <InfoFilled />
+                  </ElIcon>
+                </ElTooltip>
+              </span>
+            ),
             'min-width': isWeb.value ? 200 : 180,
             sortable: 'custom',
           },
           render: scope => formatDateTime(scope.row.crawled_at),
+        },
+        {
+          key: 'checked_at',
+          props: {
+            label: (
+              <span class="column-header-label">
+                邀约检测时间
+                <ElTooltip
+                  placement="top"
+                  v-slots={{
+                    content: () => (
+                      <>
+                        <div>使用TK公会账号检测主播可邀约状态的时间</div>
+                        <div>注：7天内不会重复检测（账号检测次数有限）</div>
+                      </>
+                    ),
+                  }}
+                >
+                  <ElIcon>
+                    <InfoFilled />
+                  </ElIcon>
+                </ElTooltip>
+              </span>
+            ),
+            'min-width': isWeb.value ? 200 : 180,
+            sortable: 'custom',
+          },
+          render: scope => formatDateTime(scope.row.checked_at),
         },
         {
           key: 'user_id',

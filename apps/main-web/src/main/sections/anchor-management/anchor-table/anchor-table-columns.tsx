@@ -284,7 +284,11 @@ export default defineComponent({
           },
           render: scope => (
             <div class="number-id-container">
-              <span class="number-id-text">{scope.row.room_id}</span>
+              <span class="number-id-text">
+                {scope.row.room_id && scope.row.room_id !== '0'
+                  ? scope.row.room_id
+                  : '-'}
+              </span>
               <CopyIcon
                 tooltip="复制直播间ID"
                 copyContent={scope.row.room_id}

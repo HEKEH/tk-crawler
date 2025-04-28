@@ -54,12 +54,10 @@ const BASE_PARAMS = {
   'params[max_live_room_count]': '',
   'params[beginTime]': '',
   'params[endTime]': '',
-  pageSize: '200',
-  pageNum: '1',
 };
 
 export class TK87Crawler implements Crawler {
-  private _pageSize = 200;
+  private _pageSize = globalConfig.pageSize;
   private _pageNum = globalConfig.startPage;
 
   private _errorCount = 0;

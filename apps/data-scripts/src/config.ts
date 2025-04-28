@@ -19,11 +19,13 @@ if (!TK87Cookie) {
 }
 
 const startPage = process.env.CRAWL_START_PAGE;
+const pageSize = process.env.CRAWL_PAGE_SIZE;
 
 const config = {
   crawlRegion: CrawlRegion,
   crawlInterval: Number(ScriptCrawlInterval),
   tk87Cookie: TK87Cookie,
+  pageSize: Number(pageSize || 200),
   startPage: Number(startPage || 1),
 };
 

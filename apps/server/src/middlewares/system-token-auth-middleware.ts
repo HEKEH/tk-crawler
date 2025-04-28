@@ -13,8 +13,13 @@ export function systemTokenAuthMiddleware(options?: {
       ctx.getRequestData<{ [SYSTEM_TOKEN_HEADER_KEY]: string }>()[
         SYSTEM_TOKEN_HEADER_KEY
       ];
-    logger.trace('[systemTokenAuthMiddleware token]', token);
+    logger.trace('[systemTokenAuthMiddleware token]', ctx.logId, token);
     const systemUserInfo = await getSystemUserInfoByToken(token, options);
+    logger.info(
+      '[systemTokenAuthMiddleware systemUserInfo]',
+      ctx.logId,
+      systemUserInfo,
+    );
     Object.defineProperty(ctx, 'systemUserInfo', {
       get() {
         return systemUserInfo;

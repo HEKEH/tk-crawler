@@ -202,6 +202,15 @@ export class CookiePageView implements IView {
       this._setStatus(GUILD_COOKIE_PAGE_HELP_STATUS.opened);
       this._catchBatchCheckAnchorRequestCookies();
       await this._refreshRunningStatus();
+      let tryRemainCount = 40;
+      while (
+        this._runningStatus === GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS.unknown &&
+        tryRemainCount > 0
+      ) {
+        await sleep(100);
+        await this._refreshRunningStatus();
+        tryRemainCount--;
+      }
 
       if (
         this._runningStatus === GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS.not_login
@@ -471,7 +480,7 @@ export class CookiePageView implements IView {
         await sleep(1000);
       }
     }
-    await sleep(2000);
+    // await sleep(2000);
     if (isActivateSuccess) {
       this._finishActivate();
     }
@@ -514,6 +523,7 @@ export class CookiePageView implements IView {
       return;
     }
     try {
+      await initProxy(logger); // 保险一点
       const response = await startTKGuildUserAccount(
         {
           user_id: this._guildUser!.id,
@@ -522,6 +532,10 @@ export class CookiePageView implements IView {
         token,
       );
       if (response.status_code !== RESPONSE_CODE.SUCCESS) {
+        logger.error(
+          '[cookie-page-view] startTKGuildUserAccount business error:',
+          response,
+        );
         this._helpView?.webContents.send(
           GUILD_COOKIE_PAGE_HELP_EVENTS.REQUEST_ERROR,
           `保存失败: ${response.message}`,
@@ -530,6 +544,7 @@ export class CookiePageView implements IView {
         this._backToMainView();
       }
     } catch (error) {
+      logger.error('[cookie-page-view] startTKGuildUserAccount error:', error);
       this._helpView?.webContents.send(
         GUILD_COOKIE_PAGE_HELP_EVENTS.REQUEST_ERROR,
         `保存失败: ${(error as any).message}`,

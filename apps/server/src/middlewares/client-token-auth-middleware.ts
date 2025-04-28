@@ -13,8 +13,13 @@ export function clientTokenAuthMiddleware(options?: {
       ctx.getRequestData<{ [CLIENT_TOKEN_HEADER_KEY]: string }>()[
         CLIENT_TOKEN_HEADER_KEY
       ];
-    logger.trace('[clientTokenAuthMiddleware token]', token);
+    logger.trace('[clientTokenAuthMiddleware token]', ctx.logId, token);
     const clientInfo = await getOrgMemberInfoByToken(token, options);
+    logger.info(
+      '[clientTokenAuthMiddleware clientInfo]',
+      ctx.logId,
+      clientInfo,
+    );
     Object.defineProperty(ctx, 'clientInfo', {
       get() {
         return clientInfo;

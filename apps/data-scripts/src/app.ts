@@ -32,7 +32,7 @@ class App {
     logger.info('App is starting');
     while (!this._isClosed) {
       await this.run();
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise(resolve => setTimeout(resolve, 900));
     }
   }
 

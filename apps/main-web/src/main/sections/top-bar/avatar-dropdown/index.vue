@@ -130,11 +130,11 @@ const isWeb = useIsWeb();
           </div>
           <div class="info-item">
             <ElIcon><Message /></ElIcon>
-            <span>{{ userInfo.email || '未绑定' }}</span>
+            <span>{{ userInfo.email || '-' }}</span>
           </div>
           <div class="info-item">
             <ElIcon><Phone /></ElIcon>
-            <span>{{ userInfo.mobile || '未绑定' }}</span>
+            <span>{{ userInfo.mobile || '-' }}</span>
           </div>
         </div>
 

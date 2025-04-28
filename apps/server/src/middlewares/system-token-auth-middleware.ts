@@ -15,11 +15,10 @@ export function systemTokenAuthMiddleware(options?: {
       ];
     logger.trace('[systemTokenAuthMiddleware token]', ctx.logId, token);
     const systemUserInfo = await getSystemUserInfoByToken(token, options);
-    logger.info(
-      '[systemTokenAuthMiddleware systemUserInfo]',
-      ctx.logId,
-      systemUserInfo,
-    );
+    logger.info('[systemTokenAuthMiddleware systemUserInfo]', ctx.logId, {
+      user_id: systemUserInfo.user_info.id,
+      username: systemUserInfo.user_info.username,
+    });
     Object.defineProperty(ctx, 'systemUserInfo', {
       get() {
         return systemUserInfo;

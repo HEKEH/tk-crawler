@@ -123,7 +123,7 @@ export class OrganizationCollection {
     );
     this._organizations = newOrgList;
     logger.info(`New organization list:`, {
-      data: this._organizations.map(org => org.name),
+      length: this._organizations.length,
     });
     this._updateAreaOrganizationsMap();
     await Promise.all(Object.values(oldOrgMap).map(org => org.destroy()));

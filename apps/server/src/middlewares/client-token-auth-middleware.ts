@@ -15,11 +15,12 @@ export function clientTokenAuthMiddleware(options?: {
       ];
     logger.trace('[clientTokenAuthMiddleware token]', ctx.logId, token);
     const clientInfo = await getOrgMemberInfoByToken(token, options);
-    logger.info(
-      '[clientTokenAuthMiddleware clientInfo]',
-      ctx.logId,
-      clientInfo,
-    );
+    logger.info('[clientTokenAuthMiddleware clientInfo]', ctx.logId, {
+      user_id: clientInfo.user_info.id,
+      username: clientInfo.user_info.username,
+      org_id: clientInfo.org_info.id,
+      org_name: clientInfo.org_info.name,
+    });
     Object.defineProperty(ctx, 'clientInfo', {
       get() {
         return clientInfo;

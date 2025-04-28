@@ -9,7 +9,6 @@ import type {
 } from '@tk-crawler/biz-shared';
 import assert from 'node:assert';
 import { mysqlClient } from '@tk-crawler/database';
-import { beautifyJsonStringify } from '@tk-crawler/shared';
 import { logger } from '../../../infra/logger';
 import { transformAnchorListFilterValues } from './filter';
 import { transformAnchorListOrderBy } from './order-by';
@@ -17,7 +16,6 @@ import { transformAnchorListOrderBy } from './order-by';
 export async function getAnchorList(
   request: GetAnchorListRequest & { org_id: string },
 ): Promise<GetAnchorListResponseData> {
-  logger.info('[Get Anchor List]', beautifyJsonStringify({ request }));
   assert(request.org_id, '机构ID不能为空');
   assert(request.page_num, '页码不能为空');
   assert(request.page_size, '每页数量不能为空');
@@ -125,7 +123,7 @@ export async function getAnchorList(
     total,
   };
 
-  logger.info('[Get Anchor List] success', beautifyJsonStringify({ result }));
+  logger.info('[Get Anchor List] success', { length: result.list?.length });
 
   return result;
 }

@@ -9,6 +9,9 @@ import { changeOrgUserPassword, orgMemberLogin } from '../services';
 export default class AuthController {
   static async orgMemberLogin(ctx: Context, next: Next) {
     const data = ctx.getRequestData<OrgMemberLoginRequest>();
+    ctx.logger.trace('[Org Member Login]', {
+      username: data.username,
+    });
     const resp = await orgMemberLogin(data);
     ctx.logger.info('[Org Member Login]', resp);
     ctx.body = resp;

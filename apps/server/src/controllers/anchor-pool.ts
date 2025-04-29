@@ -35,6 +35,7 @@ export default class AnchorPoolController {
 
   static async updateAnchor(ctx: Context, next: Next) {
     const data = ctx.getRequestData<UpdateAnchorRequest>();
+    ctx.logger.trace('[UpdateAnchor]', { data });
     await updateAnchor(data);
     ctx.body = ctx.t('Success');
     await next();

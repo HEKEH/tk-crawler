@@ -4,10 +4,8 @@ import {
   type UpdateAnchorRequest,
 } from '@tk-crawler/biz-shared';
 import { mysqlClient, Prisma, redisMessageBus } from '@tk-crawler/database';
-import { logger } from '../../infra/logger';
 
 export async function updateAnchor(data: UpdateAnchorRequest) {
-  logger.info('[UpdateAnchor]', { data });
   // 因为查询较为复杂，所以使用原生sql
   const {
     user_id,

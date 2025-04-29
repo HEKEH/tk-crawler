@@ -27,7 +27,16 @@ export default class TKGuildUserController {
       ...data,
       org_id: org_info.id,
     };
-    ctx.body = await getTKGuildUserList(requestWithOrgId);
+    ctx.logger.info('[Get TK Guild User List] Request', {
+      requestWithOrgId,
+    });
+    const resp = await getTKGuildUserList(requestWithOrgId);
+    ctx.logger.info('[Get TK Guild User List] Response', {
+      length: resp.list.length,
+      total: resp.total,
+    });
+    ctx.logger.trace('[Get TK Guild User List] Response Detailed', resp);
+    ctx.body = resp;
     await next();
   }
 

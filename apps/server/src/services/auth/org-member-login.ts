@@ -10,7 +10,6 @@ import { simpleDecrypt } from '@tk-crawler/shared';
 import dayjs from 'dayjs';
 import { omit } from 'lodash';
 import config from '../../config';
-import { logger } from '../../infra/logger';
 import { BusinessError, generateToken, verifyPassword } from '../../utils';
 
 export async function getOrgMemberInfoByLogin(
@@ -75,7 +74,6 @@ export async function orgMemberLogin(
     ..._request,
     username: _request.username?.trim(),
   };
-  logger.info('[Org Member Login]', request);
   assert(request.username, '用户名不能为空');
   assert(request.password, '密码不能为空');
   const user = await getOrgMemberInfoByLogin(request);

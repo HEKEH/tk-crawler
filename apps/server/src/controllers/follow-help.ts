@@ -54,12 +54,18 @@ export default class FollowHelpController {
   // 主播相关接口
   static async getAnchorFrom87List(ctx: Context, next: Next) {
     const data = ctx.getRequestData<GetAnchorFrom87ListRequest>();
+    ctx.logger.info('[Get Anchor From 87 List]', { data });
     ctx.body = await getAnchorFrom87List(data);
     await next();
   }
 
   static async createOrUpdateAnchorFrom87(ctx: Context, next: Next) {
     const data = ctx.getRequestData<CreateOrUpdateAnchorFrom87Request>();
+    ctx.logger.info('[Create Or Update Anchor From 87]', {
+      dataLength: data.list.length,
+      orgId: data.org_id,
+      addNewAnchorsToGroup: data.add_new_anchors_to_group,
+    });
     ctx.body = await createOrUpdateAnchorFrom87(data);
     await next();
   }

@@ -1,6 +1,5 @@
 import type { Context, Next } from 'koa';
 import { CLIENT_TOKEN_HEADER_KEY } from '@tk-crawler/biz-shared';
-import { logger } from '../infra/logger';
 import { getOrgMemberInfoByToken } from '../services/auth/get-org-member-info-by-token';
 
 /** Token authentication */
@@ -13,9 +12,9 @@ export function clientTokenAuthMiddleware(options?: {
       ctx.getRequestData<{ [CLIENT_TOKEN_HEADER_KEY]: string }>()[
         CLIENT_TOKEN_HEADER_KEY
       ];
-    logger.trace('[clientTokenAuthMiddleware token]', ctx.logId, token);
+    ctx.logger.trace('[clientTokenAuthMiddleware token]', token);
     const clientInfo = await getOrgMemberInfoByToken(token, options);
-    logger.info('[clientTokenAuthMiddleware clientInfo]', ctx.logId, {
+    ctx.logger.info('[clientTokenAuthMiddleware clientInfo]', {
       user_id: clientInfo.user_info.id,
       username: clientInfo.user_info.username,
       org_id: clientInfo.org_info.id,

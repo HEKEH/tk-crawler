@@ -4,20 +4,21 @@ import type {
   SystemUserLoginRequest,
 } from '@tk-crawler/biz-shared';
 import type { Context, Next } from 'koa';
-import { logger } from '../infra/logger';
 import { changeSystemUserPassword, systemUserLogin } from '../services';
 
 export default class SystemController {
   static async login(ctx: Context, next: Next) {
     const data = ctx.getRequestData<SystemUserLoginRequest>();
-    ctx.body = await systemUserLogin(data);
-    logger.info(`[logId: ${ctx.logId}][System User Login]`);
+    const resp = await systemUserLogin(data);
+    ctx.logger.info(`[System User Login]`, resp);
+    ctx.body = resp;
     await next();
   }
 
   static async loginByToken(ctx: Context, next: Next) {
-    ctx.body = ctx.systemUserInfo!;
-    logger.info(`[System User Login By Token] ${ctx.logId}`);
+    const resp = ctx.systemUserInfo!;
+    ctx.logger.info(`[System User Login By Token]`, resp);
+    ctx.body = resp;
     await next();
   }
 

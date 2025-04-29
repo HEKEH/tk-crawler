@@ -16,7 +16,6 @@ import { transformAnchorFilterValuesToFilterValues } from './filter';
 export async function getAnchorFrom87List(
   data: GetAnchorFrom87ListRequest,
 ): Promise<GetAnchorFrom87ListResponseData> {
-  logger.info('[Get Anchor From 87 List]', { data });
   assert(data.org_id, '机构id不能为空');
   const orderBy = isEmpty(data.order_by)
     ? {
@@ -74,11 +73,6 @@ export async function createOrUpdateAnchorFrom87(
   request: CreateOrUpdateAnchorFrom87Request,
 ): Promise<{ created_count: number; updated_count: number }> {
   const _data = request.list;
-  logger.info('[Create Or Update Anchor From 87]', {
-    dataLength: _data.length,
-    orgId: request.org_id,
-    addNewAnchorsToGroup: request.add_new_anchors_to_group,
-  });
 
   assert(request.org_id, '机构id不能为空');
   const orgId = BigInt(request.org_id);

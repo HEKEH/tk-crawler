@@ -1,6 +1,5 @@
 import type { Context, Next } from 'koa';
 import { SYSTEM_TOKEN_HEADER_KEY } from '@tk-crawler/biz-shared';
-import { logger } from '../infra/logger';
 import { getSystemUserInfoByToken } from '../services';
 
 /** Token authentication */
@@ -13,9 +12,9 @@ export function systemTokenAuthMiddleware(options?: {
       ctx.getRequestData<{ [SYSTEM_TOKEN_HEADER_KEY]: string }>()[
         SYSTEM_TOKEN_HEADER_KEY
       ];
-    logger.trace('[systemTokenAuthMiddleware token]', ctx.logId, token);
+    ctx.logger.trace('[systemTokenAuthMiddleware token]', token);
     const systemUserInfo = await getSystemUserInfoByToken(token, options);
-    logger.info('[systemTokenAuthMiddleware systemUserInfo]', ctx.logId, {
+    ctx.logger.info('[systemTokenAuthMiddleware systemUserInfo]', {
       user_id: systemUserInfo.user_info.id,
       username: systemUserInfo.user_info.username,
     });

@@ -20,7 +20,6 @@ import {
 import { mysqlClient, redisMessageBus } from '@tk-crawler/database';
 import { getAnchorCheckCount } from '@tk-crawler/server-shared';
 import {
-  beautifyJsonStringify,
   isEmpty,
   simpleDecrypt,
   transObjectValuesToString,
@@ -36,8 +35,6 @@ export async function getTKGuildUserList(
     org_id: string;
   },
 ): Promise<GetTKGuildUserListResponseData> {
-  logger.info('[Get TK Guild User List]', { data });
-
   const _orderBy = isEmpty(data.order_by)
     ? {
         id: 'asc' as const,
@@ -67,13 +64,6 @@ export async function getTKGuildUserList(
       guild_user_id: user.id.toString(),
     })),
     logger,
-  );
-
-  logger.info(
-    `[getTKGuildUserList] response: ${beautifyJsonStringify({
-      queryCountList,
-      total,
-    })}`,
   );
 
   return {

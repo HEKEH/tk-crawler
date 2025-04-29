@@ -178,9 +178,10 @@ onActivated(refetch);
         size="small"
         background
         :layout="
-          isWeb ? 'total, sizes, prev, pager, next' : 'prev, pager, next'
+          isWeb ? 'total, sizes, prev, pager, next' : 'total, prev, pager, next'
         "
         :page-sizes="[10, 20, 50, 100]"
+        :pager-count="isWeb ? 7 : 5"
         :total="data?.total || 0"
         @size-change="handlePageSizeChange"
         @current-change="handlePageNumChange"

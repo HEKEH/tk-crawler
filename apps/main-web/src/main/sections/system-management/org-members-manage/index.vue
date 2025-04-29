@@ -403,9 +403,10 @@ async function handleSubmitCreateOrEdit(data: Partial<OrgMemberItem>) {
         :page-size="pageSize"
         :current-page="pageNum"
         :layout="
-          isWeb ? 'total, sizes, prev, pager, next' : 'prev, pager, next'
+          isWeb ? 'total, sizes, prev, pager, next' : 'total, prev, pager, next'
         "
         :total="data?.total"
+        :pager-count="isWeb ? 7 : 5"
         class="mt-4"
         @size-change="pageSize = $event"
         @current-change="pageNum = $event"

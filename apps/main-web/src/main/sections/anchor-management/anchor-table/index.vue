@@ -10,6 +10,7 @@ import { computed, onActivated, ref } from 'vue';
 import { useGetAnchorList } from '../../../hooks';
 import { useGlobalStore } from '../../../utils/vue';
 import TKAnchorTableColumns from './anchor-table-columns';
+import ExportButton from './export-button/index.vue';
 import {
   type FilterViewValues,
   getCommonDefaultFilterViewValues,
@@ -178,10 +179,11 @@ onActivated(refetch);
           :refetch="refetch"
           :selected-rows="selectedRows"
         />
-        <ElButton type="default" size="small" @click="resetSort">
+        <ElButton v-if="isWeb" type="default" size="small" @click="resetSort">
           重置排序
         </ElButton>
-        <RefreshButton @click="refresh" />
+        <RefreshButton v-if="isWeb" @click="refresh" />
+        <ExportButton :query-filter="queryFilter" filename="主播列表" />
       </div>
     </div>
     <ElTable

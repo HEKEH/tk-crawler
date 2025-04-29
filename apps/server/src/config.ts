@@ -63,6 +63,7 @@ const config = {
 
   /** 简单加密密码 */
   simplePasswordKey,
+  enableDataDownload: env.ENABLE_DATA_DOWNLOAD === '1',
 };
 
 export default config;

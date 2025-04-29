@@ -12,13 +12,18 @@ import { mysqlClient } from '@tk-crawler/database';
 import { transformAnchorListFilterValues } from './filter';
 import { transformAnchorListOrderBy } from './order-by';
 
+const PAGE_SIZE_LIMIT = 200;
+
 export async function getAnchorList(
   request: GetAnchorListRequest & { org_id: string },
 ): Promise<GetAnchorListResponseData> {
   assert(request.org_id, '机构ID不能为空');
   assert(request.page_num, '页码不能为空');
   assert(request.page_size, '每页数量不能为空');
-  assert(request.page_size <= 1000, '每页数量不能超过1000');
+  assert(
+    request.page_size <= PAGE_SIZE_LIMIT,
+    `每页数量不能超过${PAGE_SIZE_LIMIT}`,
+  );
 
   const {
     page_num,
@@ -124,3 +129,5 @@ export async function getAnchorList(
 
   return result;
 }
+
+export * from './get-anchor-list-for-download';

@@ -328,11 +328,11 @@ function toggleExpand() {
         />
       </div>
       <div v-if="!hiddenFilters?.includes('display_id')" class="filter-item">
-        <label class="filter-label">主播ID</label>
+        <label class="filter-label">主播展示ID</label>
         <ElInput v-model="filters.display_id" clearable size="small" />
       </div>
       <div v-if="!hiddenFilters?.includes('user_id')" class="filter-item">
-        <label class="filter-label">数字ID</label>
+        <label class="filter-label">主播ID</label>
         <ElInput v-model="filters.user_id" clearable size="small" />
       </div>
       <div v-if="!hiddenFilters?.includes('room_id')" class="filter-item">

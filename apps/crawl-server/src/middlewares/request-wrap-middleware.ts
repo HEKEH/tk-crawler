@@ -18,11 +18,13 @@ export async function requestWrapMiddleware(ctx: Context, next: Next) {
     await next();
     if (ctx.status === 200) {
       const body = ctx.body;
-      ctx.body = {
+      const responseBody = {
         status_code: RESPONSE_CODE.SUCCESS,
         data: body,
       };
-      ctx.logger.info(`[Response]`, ctx.body);
+      ctx.logger.info(`[Response] success`);
+      ctx.logger.trace(`[Response]`, responseBody);
+      ctx.body = responseBody;
     } else {
       ctx.logger.error(`[Response]`, ctx.body);
     }

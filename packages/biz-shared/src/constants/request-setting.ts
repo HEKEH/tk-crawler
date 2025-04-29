@@ -1,0 +1,1 @@
+export const ANCHORS_DOWNLOAD_SIZE_LIMIT = 100000;

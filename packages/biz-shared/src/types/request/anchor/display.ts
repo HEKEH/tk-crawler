@@ -90,3 +90,22 @@ export interface ClearAnchorCheckResponse {
   data?: ClearAnchorCheckResponseData;
   message?: string;
 }
+
+export interface GetAnchorListForDownloadRequest {
+  filter?: GetAnchorListFilter;
+  number?: number;
+  order_by?: GetAnchorListOrderBy;
+}
+
+export interface GetAnchorListForDownloadResponseData {
+  list: {
+    user_id: string;
+    display_id: string;
+  }[];
+}
+
+export interface GetAnchorListForDownloadResponse {
+  status_code: RESPONSE_CODE;
+  data?: GetAnchorListForDownloadResponseData;
+  message?: string;
+}

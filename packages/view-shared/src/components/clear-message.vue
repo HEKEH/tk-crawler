@@ -22,7 +22,7 @@ function handleUpdate(val: 'all' | 'filtered') {
 
 <template>
   <div class="clear-message">
-    <p class="dialog-title mb-4">请选择要清空的数据范围：</p>
+    <p class="dialog-title">请选择要清空的数据范围：</p>
 
     <ElRadioGroup
       :model-value="clearType"

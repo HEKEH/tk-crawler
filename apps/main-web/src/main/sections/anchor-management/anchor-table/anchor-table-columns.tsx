@@ -56,7 +56,7 @@ export default defineComponent({
         {
           key: 'display_id',
           props: {
-            label: '主播ID',
+            label: '主播展示ID',
             width: isWeb.value ? 160 : 140,
             sortable: 'custom',
             fixed: !isWeb.value ? 'left' : undefined,
@@ -72,7 +72,7 @@ export default defineComponent({
                 {scope.row.display_id}
               </ElLink>
               <CopyIcon
-                tooltip="复制主播ID"
+                tooltip="复制主播展示ID"
                 copyContent={scope.row.display_id}
               />
             </div>
@@ -131,14 +131,14 @@ export default defineComponent({
         {
           key: 'user_id',
           props: {
-            label: '数字ID',
+            label: '主播ID',
             'min-width': isWeb.value ? 210 : 160,
             sortable: 'custom',
           },
           render: scope => (
             <div class="number-id-container">
               <span class="number-id-text">{scope.row.user_id}</span>
-              <CopyIcon tooltip="复制数字ID" copyContent={scope.row.user_id} />
+              <CopyIcon tooltip="复制主播ID" copyContent={scope.row.user_id} />
             </div>
           ),
         },

@@ -89,6 +89,7 @@ export async function startLiveAdminAccount(
     cookie,
     faction_id,
     area,
+    warning_count: 0,
   };
   await mysqlClient.prismaClient.liveAdminUser.update({
     where: {
@@ -135,7 +136,10 @@ export async function stopLiveAdminAccount(
     throw new BusinessError('用户已停止');
   }
 
-  const updateData = { status: TKGuildUserStatus.STOPPED };
+  const updateData = {
+    status: TKGuildUserStatus.STOPPED,
+    warning_count: 0,
+  };
 
   await mysqlClient.prismaClient.liveAdminUser.update({
     where: {

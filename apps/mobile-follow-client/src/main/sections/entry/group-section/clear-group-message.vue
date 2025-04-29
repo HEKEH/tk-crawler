@@ -33,7 +33,7 @@ function handleClearScopeChange(val: state['clearScope']) {
 
 <template>
   <div class="clear-message">
-    <p class="dialog-title mb-4">请选择清空范围：</p>
+    <p class="dialog-title">请选择清空范围：</p>
 
     <div class="radio-groups">
       <ElRadioGroup

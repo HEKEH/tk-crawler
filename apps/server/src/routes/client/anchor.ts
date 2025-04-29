@@ -14,6 +14,10 @@ anchorRouter.use(clientTokenAuthMiddleware(), checkHasMembershipAndValid);
 
 anchorRouter.post('/list', AnchorController.getAnchorList);
 anchorRouter.post(
+  '/list-for-download',
+  AnchorController.getAnchorListForDownload,
+);
+anchorRouter.post(
   '/clear-check',
   checkIsAdminClientMiddleware,
   AnchorController.clearAnchorCheck,

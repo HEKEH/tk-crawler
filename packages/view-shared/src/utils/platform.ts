@@ -1,4 +1,4 @@
-type Platform = 'Mac' | 'Windows' | 'Android' | 'iOS' | 'unknown';
+type Platform = 'Mac' | 'Windows' | 'Android' | 'iOS' | 'Linux' | 'unknown';
 type MobileDeviceType = 'Android' | 'iOS' | undefined;
 
 export function getMobileDeviceType(): MobileDeviceType {
@@ -34,7 +34,15 @@ export function getPlatform(): Platform {
   if (mobileDeviceType) {
     return mobileDeviceType;
   }
+  if (userAgent.includes('Linux')) {
+    return 'Linux';
+  }
   throw new Error('Unknown platform');
+}
+
+export function isDesktopPlatform(): boolean {
+  const platform = getPlatform();
+  return platform === 'Mac' || platform === 'Windows';
 }
 
 export function isMobilePlatform(): boolean {

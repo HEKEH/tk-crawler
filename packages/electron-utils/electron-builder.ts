@@ -7,9 +7,10 @@ import type { Configuration } from 'electron-builder';
 export function getElectronBuilderConfig(props: {
   appId: string;
   productName: string;
+  protocolName: string;
   publishUrl: string;
 }) {
-  const { appId, productName, publishUrl } = props;
+  const { appId, productName, protocolName, publishUrl } = props;
   const config: Configuration = {
     appId,
     asar: true,
@@ -18,6 +19,10 @@ export function getElectronBuilderConfig(props: {
       output: 'release/${version}',
     },
     files: ['dist', 'dist-electron'],
+    protocols: {
+      name: protocolName,
+      schemes: [appId],
+    },
     publish: [
       {
         provider: 'generic',
@@ -28,12 +33,26 @@ export function getElectronBuilderConfig(props: {
       target: ['dmg', 'zip'],
       icon: 'build/icons/icon.icns',
       artifactName: '${productName}-Mac-Installer.${ext}',
+      extendInfo: {
+        CFBundleURLTypes: [
+          {
+            CFBundleURLSchemes: [appId],
+            CFBundleURLName: protocolName,
+          },
+        ],
+      },
     },
     win: {
       target: [
         {
           target: 'nsis',
           arch: ['x64'],
+        },
+      ],
+      protocols: [
+        {
+          name: protocolName,
+          schemes: [appId],
         },
       ],
       icon: 'build/icons/icon.ico',

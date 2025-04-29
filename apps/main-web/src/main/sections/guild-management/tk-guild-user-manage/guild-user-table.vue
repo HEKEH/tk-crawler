@@ -18,6 +18,7 @@ import {
 } from '@tk-crawler/biz-shared';
 import {
   CUSTOM_EVENTS,
+  MAIN_APP_ID,
   MAIN_APP_PRODUCT_NAME,
   MAIN_APP_PUBLISH_URL,
 } from '@tk-crawler/main-client-shared';
@@ -26,6 +27,7 @@ import {
   AreaTooltipIcon,
   CopyIcon,
   getPlatform,
+  isDesktopPlatform,
   RefreshButton,
   useIsWeb,
 } from '@tk-crawler/view-shared';
@@ -333,6 +335,10 @@ async function onStartOrStop(item: TKGuildUserRow) {
     ElMessage.success('成功停止');
   } else {
     if (!isInElectronApp()) {
+      if (!isDesktopPlatform()) {
+        ElMessage.warning('手机端无法支持此操作，请在桌面客户端中尝试');
+        return;
+      }
       try {
         const platform = getPlatform();
         await ElMessageBox({
@@ -383,8 +389,9 @@ async function onStartOrStop(item: TKGuildUserRow) {
             </div>
           ),
           type: 'warning',
-          confirmButtonText: '确定',
+          confirmButtonText: '尝试打开客户端',
         });
+        window.open(`${MAIN_APP_ID}://`);
       } catch {}
       return;
     }

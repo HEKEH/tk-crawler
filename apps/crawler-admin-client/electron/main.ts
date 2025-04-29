@@ -13,6 +13,7 @@ import {
 } from '@tk-crawler-admin-client/shared';
 import {
   AutoUpdater,
+  bindShowWindowEvents,
   getAppInstallUrl,
   initProxy,
   setElectronLang,
@@ -36,6 +37,8 @@ async function main() {
       // windows上设置为默认协议客户端
       app.setAsDefaultProtocolClient(APP_ID);
     }
+
+    bindShowWindowEvents(logger);
   }
   setCoreLogger(logger);
   setTkRequestsLogger(logger);

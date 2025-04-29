@@ -6,6 +6,7 @@ import process from 'node:process';
 // import { createRequire } from 'node:module'
 import {
   AutoUpdater,
+  bindShowWindowEvents,
   getAppInstallUrl,
   initProxy,
   setElectronLang,
@@ -34,6 +35,8 @@ async function main() {
       // windows上设置为默认协议客户端
       app.setAsDefaultProtocolClient(APP_ID);
     }
+
+    bindShowWindowEvents(logger);
   }
   setElectronLang('en-US');
   const autoUpdater = new AutoUpdater(

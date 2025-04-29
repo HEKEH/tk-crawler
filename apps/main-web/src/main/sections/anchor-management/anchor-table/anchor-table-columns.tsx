@@ -129,6 +129,20 @@ export default defineComponent({
             ),
         },
         {
+          key: 'user_id',
+          props: {
+            label: '数字ID',
+            'min-width': isWeb.value ? 210 : 160,
+            sortable: 'custom',
+          },
+          render: scope => (
+            <div class="number-id-container">
+              <span class="number-id-text">{scope.row.user_id}</span>
+              <CopyIcon tooltip="复制数字ID" copyContent={scope.row.user_id} />
+            </div>
+          ),
+        },
+        {
           key: 'area',
           props: {
             label: '主播分区',
@@ -303,20 +317,6 @@ export default defineComponent({
             sortable: 'custom',
           },
           render: scope => formatDateTime(scope.row.checked_at),
-        },
-        {
-          key: 'user_id',
-          props: {
-            label: '数字ID',
-            'min-width': isWeb.value ? 210 : 160,
-            sortable: 'custom',
-          },
-          render: scope => (
-            <div class="number-id-container">
-              <span class="number-id-text">{scope.row.user_id}</span>
-              <CopyIcon tooltip="复制数字ID" copyContent={scope.row.user_id} />
-            </div>
-          ),
         },
         {
           key: 'room_id',

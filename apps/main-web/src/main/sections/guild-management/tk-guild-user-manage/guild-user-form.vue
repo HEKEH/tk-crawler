@@ -26,7 +26,7 @@ const emit = defineEmits<{
 const MAX_QUERY_PER_HOUR = 60;
 const MAX_QUERY_PER_DAY = 300;
 
-const DEFAULT_MAX_QUERY_PER_HOUR = 50;
+const DEFAULT_MAX_QUERY_PER_HOUR = 20;
 const DEFAULT_MAX_QUERY_PER_DAY = 280;
 
 const formRef = ref<FormInstance>();

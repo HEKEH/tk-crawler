@@ -10,7 +10,11 @@ import {
   initProxy,
   setElectronLang,
 } from '@tk-crawler/electron-utils/main';
-import { PRODUCT_NAME, PUBLISH_URL } from '@tk-mobile-follow-client/shared';
+import {
+  APP_ID,
+  PRODUCT_NAME,
+  PUBLISH_URL,
+} from '@tk-mobile-follow-client/shared';
 import { app, BaseWindow } from 'electron';
 import { GlobalManager } from './domain';
 import { logger } from './infra/logger';
@@ -25,6 +29,10 @@ async function main() {
       logger.error('App quit by requestSingleInstanceLock');
       app.quit();
       return;
+    }
+    if (process.platform === 'win32') {
+      // windows上设置为默认协议客户端
+      app.setAsDefaultProtocolClient(APP_ID);
     }
   }
   setElectronLang('en-US');

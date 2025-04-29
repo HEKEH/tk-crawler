@@ -13,6 +13,7 @@ import {
   setElectronLang,
 } from '@tk-crawler/electron-utils/main';
 import {
+  MAIN_APP_ID,
   MAIN_APP_PRODUCT_NAME,
   MAIN_APP_PUBLISH_URL,
 } from '@tk-crawler/main-client-shared';
@@ -31,6 +32,11 @@ async function main() {
       logger.info('App quit by requestSingleInstanceLock');
       app.quit();
       return;
+    }
+
+    if (process.platform === 'win32') {
+      // windows上设置为默认协议客户端
+      app.setAsDefaultProtocolClient(MAIN_APP_ID);
     }
   }
   setTkRequestsLogger(logger);

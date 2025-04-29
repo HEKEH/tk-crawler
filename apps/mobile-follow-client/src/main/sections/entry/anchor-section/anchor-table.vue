@@ -640,7 +640,12 @@ const columns = computed<Column<AnchorFrom87>[]>(() => [
 .filter-row {
   width: 100%;
   overflow: hidden;
-  margin-bottom: 0.5rem;
+  @include mobile {
+    margin-bottom: 0.5rem;
+  }
+  @include web {
+    margin-bottom: 1rem;
+  }
 }
 
 .header-row {

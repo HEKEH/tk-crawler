@@ -390,7 +390,9 @@ async function handleSubmitCreateOrEdit(data: Partial<OrgMemberItem>) {
     .left-part {
       display: flex;
       align-items: center;
-      padding-left: 0.5rem;
+      @include mobile {
+        padding-left: 0.5rem;
+      }
     }
     .right-part {
       display: flex;

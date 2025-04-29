@@ -439,7 +439,12 @@ async function handleSubmitCreateOrEdit(data: Partial<OrgMemberItem>) {
   .filter-row {
     width: 100%;
     overflow: hidden;
-    margin-bottom: 0.5rem;
+    @include mobile {
+      margin-bottom: 0.5rem;
+    }
+    @include web {
+      margin-bottom: 1rem;
+    }
   }
   .header-row {
     margin-bottom: 1rem;
@@ -448,7 +453,9 @@ async function handleSubmitCreateOrEdit(data: Partial<OrgMemberItem>) {
     .left-part {
       display: flex;
       align-items: center;
-      padding-left: 0.5rem;
+      @include mobile {
+        padding-left: 0.5rem;
+      }
     }
     .right-part {
       display: flex;

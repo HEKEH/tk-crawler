@@ -59,7 +59,19 @@ async function handleExport() {
       return;
     }
 
-    downloadCSV(list, { filename: props.filename });
+    downloadCSV(list, {
+      filename: props.filename,
+      columns: [
+        {
+          key: 'user_id',
+          label: '主播ID',
+        },
+        {
+          key: 'display_id',
+          label: '主播展示ID',
+        },
+      ],
+    });
   } catch (error) {
     console.error(error);
   } finally {

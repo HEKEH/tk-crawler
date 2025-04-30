@@ -2,16 +2,28 @@ export function downloadCSV<
   T extends Record<string, string | number | boolean | undefined | null>,
 >(
   list: T[],
-  {
-    filename,
-    withTimeSuffix = true,
-  }: { filename: string; withTimeSuffix?: boolean },
+  options: {
+    filename: string;
+    withTimeSuffix?: boolean;
+    columns?: {
+      key: keyof T;
+      label: string;
+    }[];
+  },
 ) {
+  const { filename, withTimeSuffix = true } = options;
+  const columns =
+    options.columns ||
+    (Object.keys(list[0]) as (keyof T)[]).map(key => ({
+      key,
+      label: key,
+    }));
   // Convert list to CSV
-  const headers = Object.keys(list[0]) as (keyof (typeof list)[number])[];
+  const headers = columns.map(column => column.label);
+  const keys = columns.map(column => column.key);
   const csvContent = [
     headers.join(','),
-    ...list.map(row => headers.map(header => row[header] ?? '').join(',')),
+    ...list.map(row => keys.map(key => row[key] ?? '').join(',')),
   ].join('\n');
 
   // Create and trigger download

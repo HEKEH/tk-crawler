@@ -17,7 +17,7 @@ async function nextStep() {
   <div class="block">
     <div class="tip">系统正在使用您填写的用户密码尝试自动登录...</div>
     <div class="description">
-      如果遇到如下验证弹窗，则无法自动登录成功，需要您来手动操作。
+      如果遇到如下验证弹窗，则无法自动登录成功，需要您来手动选择两个相同图形来操作完成。
     </div>
     <ElImage src="images/live-admin-verify-popup.png" />
     <div class="description">

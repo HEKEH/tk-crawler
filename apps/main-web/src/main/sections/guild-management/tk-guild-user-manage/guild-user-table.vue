@@ -504,7 +504,7 @@ onActivated(refetch);
       <ElTableColumn
         prop="status"
         label="状态"
-        min-width="120"
+        min-width="128"
         sortable="custom"
       >
         <template #default="scope: ScopeType">

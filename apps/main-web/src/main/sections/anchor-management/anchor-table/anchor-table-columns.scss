@@ -49,9 +49,12 @@
     }
   }
   .column-header-label {
+    display: inline-flex;
+    align-items: center;
+    vertical-align: middle;
     .el-icon {
       margin-left: 4px;
-      vertical-align: baseline;
+      cursor: help;
     }
   }
 }

@@ -22,6 +22,9 @@ onBeforeUnmount(() => {
 function onRetry() {
   window.ipcRenderer.invoke(GUILD_COOKIE_PAGE_HELP_EVENTS.RETRY_OPEN_PAGE);
 }
+function onBackToMainView() {
+  window.ipcRenderer.invoke(GUILD_COOKIE_PAGE_HELP_EVENTS.BACK_TO_MAIN_VIEW);
+}
 </script>
 
 <template>
@@ -34,11 +37,17 @@ function onRetry() {
       <div class="tip-text">
         请求超时，请检查是否开启VPN，且VPN是否开启了全局代理
       </div>
-      <ElButton type="primary" @click="onRetry">点击重试</ElButton>
+      <div class="button-container">
+        <ElButton type="primary" @click="onRetry">点击重试</ElButton>
+        <ElButton @click="onBackToMainView">回到主页</ElButton>
+      </div>
     </template>
     <template v-else-if="status === GUILD_COOKIE_PAGE_HELP_STATUS.fail">
       <div class="tip-text">打开TK直播公会后台页失败，请检查网络</div>
-      <ElButton type="primary" @click="onRetry">点击重试</ElButton>
+      <div class="button-container">
+        <ElButton type="primary" @click="onRetry">点击重试</ElButton>
+        <ElButton @click="onBackToMainView">回到主页</ElButton>
+      </div>
     </template>
     <MainView v-else-if="status === GUILD_COOKIE_PAGE_HELP_STATUS.opened" />
   </div>
@@ -59,5 +68,8 @@ function onRetry() {
   color: var(--el-color-primary);
   font-size: 20px;
   font-weight: 500;
+}
+.button-container {
+  display: flex;
 }
 </style>

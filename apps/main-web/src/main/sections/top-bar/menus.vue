@@ -12,6 +12,9 @@ defineOptions({
 const globalStore = useGlobalStore();
 const router = useRouter();
 function handleClick(item: (typeof globalStore.menus)[number]) {
+  if (item.menu === globalStore.currentMenu) {
+    return;
+  }
   router.push(item.jumpTo ?? item.path);
 }
 const isWeb = useIsWebSize();
@@ -37,7 +40,6 @@ const drawerVisible = ref(false);
     <ElDrawer
       v-model="drawerVisible"
       append-to-body
-      :show-close="false"
       :size="180"
       class="menu-drawer"
     >
@@ -79,11 +81,7 @@ const drawerVisible = ref(false);
   }
 }
 .menu-drawer {
-  :global(.el-drawer__header) {
-    display: none;
-  }
   .menu-list {
-    padding: 20px 0;
     width: 100%;
     display: flex;
     flex-direction: column;

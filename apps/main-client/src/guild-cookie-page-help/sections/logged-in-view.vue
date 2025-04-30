@@ -14,7 +14,7 @@ function finish() {
   <div class="block">
     <div class="tip">正在尝试激活账号...</div>
     <div class="description">
-      激活过程中有可能遇到如下验证弹窗，此时需要您在页面手动操作来通过验证。
+      右侧页面如遇到如下验证弹窗，请选择两个相同的图形完成验证
     </div>
     <ElImage class="image" src="images/live-admin-verify-popup.png" />
     <div class="description">

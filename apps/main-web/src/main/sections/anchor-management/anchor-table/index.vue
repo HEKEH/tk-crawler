@@ -116,14 +116,14 @@ const operationColumn = computed<CustomColumnConfig>(() => {
   if (isAdmin) {
     return {
       key: 'admin-operation',
-      after: isWeb.value ? undefined : 'display_id',
+      after: 'display_id',
       renderColumn: () => {
         return (
           <AdminOperationColumn
             key="admin-operation"
             refetch={refetch}
             {...{
-              fixed: isWeb.value ? 'right' : undefined,
+              fixed: isWeb.value ? 'left' : undefined,
             }}
           />
         );

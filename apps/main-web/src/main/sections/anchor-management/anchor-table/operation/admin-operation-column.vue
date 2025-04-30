@@ -26,7 +26,7 @@ const {
 </script>
 
 <template>
-  <ElTableColumn v-bind="$attrs" label="操作" :min-width="180">
+  <ElTableColumn v-bind="$attrs" label="操作" :min-width="190">
     <template #default="scope: ScopeType">
       <div class="operation-buttons">
         <ElButton

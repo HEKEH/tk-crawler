@@ -54,7 +54,7 @@ export default defineComponent({
           props: {
             type: 'selection',
             width: 30,
-            fixed: !isWeb.value ? 'left' : undefined,
+            fixed: 'left',
           },
         },
         {
@@ -63,7 +63,7 @@ export default defineComponent({
             label: '主播展示ID',
             width: isWeb.value ? 160 : 140,
             sortable: 'custom',
-            fixed: !isWeb.value ? 'left' : undefined,
+            fixed: 'left',
           },
           render: scope => (
             <div class="display-id-container">

@@ -119,6 +119,9 @@ const operationColumn = computed<CustomColumnConfig>(() => {
           min-width={isWeb.value ? 160 : 150}
           key="operation"
           refetch={refetch}
+          {...{
+            fixed: isWeb.value ? 'left' : undefined,
+          }}
         />
       );
     },

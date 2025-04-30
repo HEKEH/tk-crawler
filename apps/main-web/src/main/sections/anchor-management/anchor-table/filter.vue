@@ -15,7 +15,7 @@ import {
   RangeDateSelect,
   RangeNumberInput,
   RangeSelect,
-  useIsMobile,
+  useIsMobileSize,
 } from '@tk-crawler/view-shared';
 import { ElButton, ElIcon, ElInput, ElOption, ElSelect } from 'element-plus';
 import { cloneDeep } from 'lodash';
@@ -87,7 +87,7 @@ function handleSubmit() {
 function resetFilters() {
   emit('reset');
 }
-const isMobile = useIsMobile();
+const isMobile = useIsMobileSize();
 
 const isExpanded = ref(false);
 function toggleExpand() {

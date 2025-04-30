@@ -10,7 +10,7 @@ import { useQueryClient } from '@tanstack/vue-query';
 import { KeyIcon } from '@tk-crawler/assets';
 import { OrgMemberRole } from '@tk-crawler/biz-shared';
 import { RESPONSE_CODE } from '@tk-crawler/shared';
-import { useIsWeb } from '@tk-crawler/view-shared';
+import { useIsWebSize } from '@tk-crawler/view-shared';
 import {
   ElDivider,
   ElDropdown,
@@ -59,7 +59,7 @@ async function handlePasswordChange(data: OrgMemberChangePasswordRequest) {
     passwordChangeDialogVisible.value = false;
   }
 }
-const isWeb = useIsWeb();
+const isWeb = useIsWebSize();
 </script>
 
 <template>

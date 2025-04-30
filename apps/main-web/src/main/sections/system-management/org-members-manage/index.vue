@@ -12,7 +12,7 @@ import { formatDateTime, RESPONSE_CODE } from '@tk-crawler/shared';
 import {
   confirmAfterSeconds,
   RefreshButton,
-  useIsWeb,
+  useIsWebSize,
 } from '@tk-crawler/view-shared';
 import {
   ElButton,
@@ -48,7 +48,7 @@ interface ScopeType {
   $index: number;
 }
 
-const isWeb = useIsWeb();
+const isWeb = useIsWebSize();
 
 const tableRef = ref<InstanceType<typeof ElTable>>();
 const globalStore = useGlobalStore();

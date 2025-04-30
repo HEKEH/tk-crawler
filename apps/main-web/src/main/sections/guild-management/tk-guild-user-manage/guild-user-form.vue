@@ -1,15 +1,19 @@
 <script setup lang="ts">
 import type { TKGuildUser } from '@tk-crawler/biz-shared';
+import { InfoFilled } from '@element-plus/icons-vue';
 import {
   ElButton,
   ElForm,
   ElFormItem,
+  ElIcon,
   ElInput,
   ElInputNumber,
+  ElTooltip,
   type FormInstance,
   type FormRules,
 } from 'element-plus';
 import { reactive, ref } from 'vue';
+import { useIsWebSize } from '@tk-crawler/view-shared';
 
 export type GuildUserFormValues = Pick<
   TKGuildUser,
@@ -65,8 +69,15 @@ const rules: FormRules = {
       },
     },
   ],
+  max_query_per_hour: [
+    { required: true, message: '请输入每小时查询次数' },
+    { type: 'number', message: '请输入数字' },
+  ],
+  max_query_per_day: [
+    { required: true, message: '请输入每天查询次数' },
+    { type: 'number', message: '请输入数字' },
+  ],
 };
-
 const isLoading = ref(false);
 
 async function handleSubmit() {
@@ -97,7 +108,7 @@ async function handleSubmit() {
 function handleCancel() {
   emit('cancel');
 }
-
+const isWebSize = useIsWebSize();
 // const globalStore = useGlobalStore();
 
 // const areaOptions = computed(() => {
@@ -109,9 +120,10 @@ function handleCancel() {
 <template>
   <ElForm
     ref="formRef"
+    :size="isWebSize ? 'default' : 'small'"
     :model="form"
     :rules="rules"
-    label-width="140px"
+    :label-width="isWebSize ? '150px' : '130px'"
     label-position="right"
   >
     <ElFormItem label="后台查询账号" prop="username">
@@ -127,20 +139,50 @@ function handleCancel() {
         :show-all="false"
       />
     </ElFormItem> -->
-    <ElFormItem label="每小时查询次数" prop="max_query_per_hour">
+    <ElFormItem prop="max_query_per_hour">
+      <template #label>
+        <div class="form-item-label">
+          每小时查询次数
+          <ElTooltip
+            placement="top"
+            :content="`每次验证 30 位主播的可邀约状态${form.max_query_per_hour ? `，每小时 ${form.max_query_per_hour} 次最多可验证 ${form.max_query_per_hour * 30} 位主播` : ''}`"
+          >
+            <ElIcon>
+              <InfoFilled />
+            </ElIcon>
+          </ElTooltip>
+        </div>
+      </template>
       <ElInputNumber
+        style="width: 100%"
         :model-value="form.max_query_per_hour ?? undefined"
         :min="1"
         :max="MAX_QUERY_PER_HOUR"
+        :precision="0"
         placeholder="请输入每小时查询次数"
         @update:model-value="form.max_query_per_hour = $event"
       />
     </ElFormItem>
     <ElFormItem label="每天查询次数" prop="max_query_per_day">
+      <template #label>
+        <div class="form-item-label">
+          每天查询次数
+          <ElTooltip
+            placement="top"
+            :content="`每次验证 30 位主播的可邀约状态${form.max_query_per_day ? `，每天 ${form.max_query_per_day} 次最多可验证 ${form.max_query_per_day * 30} 位主播` : ''}`"
+          >
+            <ElIcon>
+              <InfoFilled />
+            </ElIcon>
+          </ElTooltip>
+        </div>
+      </template>
       <ElInputNumber
+        style="width: 100%"
         :model-value="form.max_query_per_day ?? undefined"
         :min="1"
         :max="MAX_QUERY_PER_DAY"
+        :precision="0"
         placeholder="请输入每天查询次数"
         @update:model-value="form.max_query_per_day = $event"
       />
@@ -158,5 +200,10 @@ function handleCancel() {
 .el-form {
   width: 100%;
   margin: 0 auto;
+  .form-item-label {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
 }
 </style>

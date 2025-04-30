@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ANCHORS_DOWNLOAD_SIZE_LIMIT } from '@tk-crawler/biz-shared';
-import { useIsWeb } from '@tk-crawler/view-shared';
+import { useIsWebSize } from '@tk-crawler/view-shared';
 import { ElInputNumber } from 'element-plus';
 import { ref } from 'vue';
 
@@ -19,7 +19,7 @@ function handleUpdate(val: number | undefined | null) {
   count.value = val || undefined;
   emit('update', count.value);
 }
-const isWeb = useIsWeb();
+const isWeb = useIsWebSize();
 </script>
 
 <template>

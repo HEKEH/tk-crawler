@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { useIsWeb } from '@tk-crawler/view-shared';
+import { useIsWebSize } from '@tk-crawler/view-shared';
 import Menus from './menus.vue';
 import RightPart from './right-part.vue';
 
 defineOptions({
   name: 'TopBar',
 });
-const isWeb = useIsWeb();
+const isWeb = useIsWebSize();
 </script>
 
 <template>

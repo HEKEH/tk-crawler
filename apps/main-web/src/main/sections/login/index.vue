@@ -4,7 +4,7 @@ import type { FormInstance, FormItemRule } from 'element-plus';
 import { Lock, User } from '@element-plus/icons-vue';
 import { validatePassword } from '@tk-crawler/biz-shared';
 import { RESPONSE_CODE } from '@tk-crawler/shared';
-import { useIsWeb } from '@tk-crawler/view-shared';
+import { useIsWebSize } from '@tk-crawler/view-shared';
 import {
   ElButton,
   ElCard,
@@ -78,7 +78,7 @@ async function handleLogin() {
   }
 }
 
-const isWeb = useIsWeb();
+const isWeb = useIsWebSize();
 </script>
 
 <template>

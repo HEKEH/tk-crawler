@@ -4,7 +4,11 @@ import type {
   GetAnchorListOrderBy,
 } from '@tk-crawler/biz-shared';
 import type { CustomColumnConfig } from './anchor-table-columns';
-import { RefreshButton, useIsWeb, useTableSort } from '@tk-crawler/view-shared';
+import {
+  RefreshButton,
+  useIsWebSize,
+  useTableSort,
+} from '@tk-crawler/view-shared';
 import { ElButton, ElPagination, ElTable } from 'element-plus';
 import { computed, onActivated, ref } from 'vue';
 import config from '../../../config';
@@ -30,7 +34,7 @@ defineOptions({
   name: 'TKAnchorTable',
 });
 
-const isWeb = useIsWeb();
+const isWeb = useIsWebSize();
 
 const globalStore = useGlobalStore();
 

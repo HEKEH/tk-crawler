@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useIsWeb } from '@tk-crawler/view-shared';
+import { useIsWebSize } from '@tk-crawler/view-shared';
 import { ElMenu, ElMenuItem, ElOption, ElSelect } from 'element-plus';
 
 interface MenuSelectProps<T = any> {
@@ -22,7 +22,7 @@ const emit = defineEmits<{
 function handleSelectMenu(value: any) {
   emit('select', value);
 }
-const isWeb = useIsWeb();
+const isWeb = useIsWebSize();
 </script>
 
 <template>

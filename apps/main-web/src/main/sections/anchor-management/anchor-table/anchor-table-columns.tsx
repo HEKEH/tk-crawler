@@ -9,7 +9,11 @@ import {
   TIKTOK_URL,
 } from '@tk-crawler/biz-shared';
 import { formatDateTime, getColorFromName } from '@tk-crawler/shared';
-import { AreaTooltipIcon, CopyIcon, useIsWeb } from '@tk-crawler/view-shared';
+import {
+  AreaTooltipIcon,
+  CopyIcon,
+  useIsWebSize,
+} from '@tk-crawler/view-shared';
 import { ElIcon, ElLink, ElTableColumn, ElTag, ElTooltip } from 'element-plus';
 import { computed, defineComponent, type PropType } from 'vue';
 import './anchor-table-columns.scss';
@@ -41,7 +45,7 @@ export default defineComponent({
     customColumns: Array as PropType<CustomColumnConfig[]>,
   },
   setup(props) {
-    const isWeb = useIsWeb();
+    const isWeb = useIsWebSize();
 
     const baseColumns = computed<ColumnConfig[]>(() => {
       return [

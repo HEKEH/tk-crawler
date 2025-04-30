@@ -3,7 +3,7 @@ import type { FilterViewValues } from './filter';
 import { Refresh, Search } from '@element-plus/icons-vue';
 import { DoubleDownIcon, DoubleUpIcon } from '@tk-crawler/assets';
 import { OrgMemberRole, OrgMemberStatus } from '@tk-crawler/biz-shared';
-import { useIsMobile } from '@tk-crawler/view-shared';
+import { useIsMobileSize } from '@tk-crawler/view-shared';
 import { ElButton, ElIcon, ElInput, ElOption, ElSelect } from 'element-plus';
 import { debounce } from 'lodash';
 import { ref, watch } from 'vue';
@@ -45,7 +45,7 @@ function resetFilters() {
 
 const debounceHandleFilterChange = debounce(handleFilterChange, 500);
 
-const isMobile = useIsMobile();
+const isMobile = useIsMobileSize();
 
 const isExpanded = ref(false);
 function toggleExpand() {

@@ -4,7 +4,7 @@ import type { TableColumnCtx } from 'element-plus';
 import { ElButton, ElTableColumn } from 'element-plus';
 import { useGlobalStore } from '../../../../utils';
 import { type UseTaskAssignParams, useTaskClaim } from '../hooks';
-import { useIsWeb } from '@tk-crawler/view-shared';
+import { useIsWebSize } from '@tk-crawler/view-shared';
 
 const props = defineProps<{
   refetch: UseTaskAssignParams['refetch'];
@@ -20,7 +20,7 @@ const globalStore = useGlobalStore();
 
 const { handleClaimTask, handleCancelClaimTask } = useTaskClaim(props);
 
-const isWeb = useIsWeb();
+const isWeb = useIsWebSize();
 </script>
 
 <template>

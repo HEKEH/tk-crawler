@@ -5,7 +5,7 @@ import { Refresh, Search } from '@element-plus/icons-vue';
 import { DoubleDownIcon, DoubleUpIcon } from '@tk-crawler/assets';
 
 import { AREA_OPTIONS, TKGuildUserStatusList } from '@tk-crawler/biz-shared';
-import { AreaSelectSingle, useIsMobile } from '@tk-crawler/view-shared';
+import { AreaSelectSingle, useIsMobileSize } from '@tk-crawler/view-shared';
 
 import { ElButton, ElIcon, ElInput, ElOption, ElSelect } from 'element-plus';
 import { debounce } from 'lodash';
@@ -58,7 +58,7 @@ const areaOptions = computed(() => {
   return AREA_OPTIONS.filter(area => areaSet.has(area.value));
 });
 
-const isMobile = useIsMobile();
+const isMobile = useIsMobileSize();
 
 const isExpanded = ref(false);
 function toggleExpand() {

@@ -29,7 +29,7 @@ import {
   getPlatform,
   isDesktopPlatform,
   RefreshButton,
-  useIsWeb,
+  useIsWebSize,
 } from '@tk-crawler/view-shared';
 import {
   ElButton,
@@ -74,7 +74,7 @@ interface ScopeType {
 }
 
 const globalStore = useGlobalStore();
-const isWeb = useIsWeb();
+const isWeb = useIsWebSize();
 
 const tableRef = ref<InstanceType<typeof ElTable>>();
 const pageNum = ref(1);

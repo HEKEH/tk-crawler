@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { MenuIcon } from '@tk-crawler/assets';
-import { useIsWeb } from '@tk-crawler/view-shared';
+import { useIsWebSize } from '@tk-crawler/view-shared';
 import { ElDrawer, ElLink } from 'element-plus';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
@@ -14,7 +14,7 @@ const router = useRouter();
 function handleClick(item: (typeof globalStore.menus)[number]) {
   router.push(item.jumpTo ?? item.path);
 }
-const isWeb = useIsWeb();
+const isWeb = useIsWebSize();
 
 const drawerVisible = ref(false);
 </script>

@@ -1,8 +1,5 @@
-<script setup lang="tsx">
-import {
-  ANCHORS_DOWNLOAD_SIZE_LIMIT,
-  type GetAnchorListFilter,
-} from '@tk-crawler/biz-shared';
+<script setup lang="ts">
+import type { GetAnchorListFilter } from '@tk-crawler/biz-shared';
 import { RESPONSE_CODE } from '@tk-crawler/shared';
 import { downloadCSV } from '@tk-crawler/view-shared';
 import { ElButton, ElMessage, ElMessageBox } from 'element-plus';
@@ -29,11 +26,11 @@ async function handleExport() {
   try {
     try {
       await ElMessageBox({
-        title: '提示',
+        title: '导出提示',
         message: h(ExportDialogContent, {
           value: count.value,
           onUpdate: val => {
-            count.value = val as number | undefined;
+            count.value = val;
           },
         }),
         showCancelButton: true,

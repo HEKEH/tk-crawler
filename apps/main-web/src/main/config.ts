@@ -8,7 +8,7 @@ if (!simplePasswordKey) {
   throw new Error('CLIENT_SIMPLE_PASSWORD_KEY is required');
 }
 
-const enableDataDownload = import.meta.env.ENABLE_DATA_DOWNLOAD === '1';
+const enableDataDownload = import.meta.env.CLIENT_ENABLE_DATA_DOWNLOAD === '1';
 
 const config = {
   ownServerUrl,

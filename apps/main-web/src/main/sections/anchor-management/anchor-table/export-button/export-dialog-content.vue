@@ -25,15 +25,18 @@ const isWeb = useIsWeb();
 <template>
   <div class="container">
     <p class="dialog-title">
-      最大导出数量为
-      {{ ANCHORS_DOWNLOAD_SIZE_LIMIT }} 条，可能需要较长时间，是否继续？
+      您最多可以导出
+      {{ ANCHORS_DOWNLOAD_SIZE_LIMIT }}
+      条数据。如果数据量较大，导出过程可能需要几分钟时间，请耐心等待。您确定要继续吗？
     </p>
 
     <div class="input-container">
       <ElInputNumber
-        style="width: 100%"
+        style="width: 100%; max-width: 300px"
+        :precision="0"
+        :controls="false"
         :size="isWeb ? 'default' : 'small'"
-        placeholder="输入导出数量，如果不填则导出所有数据"
+        placeholder="请输入导出条数（留空则导出全部数据）"
         :model-value="count"
         :min="1"
         :max="ANCHORS_DOWNLOAD_SIZE_LIMIT"
@@ -50,11 +53,13 @@ const isWeb = useIsWeb();
 
 .dialog-title {
   font-size: 14px;
-  color: var(--el-text-color-primary);
-  margin-bottom: 4px;
+  color: var(--el-text-color-regular);
+  margin-bottom: 8px;
 }
 
 .input-container {
   width: 100%;
+  display: flex;
+  justify-content: center;
 }
 </style>

@@ -7,6 +7,7 @@ import type { CustomColumnConfig } from '../anchor-table/anchor-table-columns';
 import { RefreshButton, useIsWeb, useTableSort } from '@tk-crawler/view-shared';
 import { ElButton, ElPagination, ElTable } from 'element-plus';
 import { computed, onActivated, ref } from 'vue';
+import config from '../../../config';
 import { useGetAnchorList } from '../../../hooks';
 import { useGlobalStore } from '../../../utils/vue';
 import TKAnchorTableColumns from '../anchor-table/anchor-table-columns';
@@ -154,7 +155,11 @@ onActivated(refetch);
           重置排序
         </ElButton>
         <RefreshButton v-if="isWeb" @click="refresh" />
-        <ExportButton :query-filter="queryFilter" filename="主播建联" />
+        <ExportButton
+          v-if="config.enableDataDownload"
+          :query-filter="queryFilter"
+          filename="主播建联"
+        />
       </div>
     </div>
     <ElTable

@@ -20,7 +20,7 @@ function handleClose() {
   <ElDialog
     :model-value="visible"
     title="新增或延长会员"
-    width="650px"
+    width="400px"
     destroy-on-close
     @close="handleClose"
   >

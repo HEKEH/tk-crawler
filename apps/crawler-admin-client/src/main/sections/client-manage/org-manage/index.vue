@@ -64,7 +64,7 @@ const pageSize = ref(10);
 const sortField = ref<keyof OrganizationItem>();
 const sortOrder = ref<'ascending' | 'descending'>();
 
-const { data, isLoading, isError, error, refetch } = useQuery<
+const { data, isLoading, refetch } = useQuery<
   GetOrgListResponseData | undefined
 >({
   queryKey: ['orgs', pageNum, pageSize, sortField, sortOrder],

@@ -130,11 +130,17 @@ const isWeb = useIsWebSize();
           </div>
           <div class="info-item">
             <ElIcon><Message /></ElIcon>
-            <span>{{ userInfo.email || '-' }}</span>
+            <span v-if="userInfo.email">{{ userInfo.email }}</span>
+            <span style="color: var(--el-text-color-disabled)" v-else>
+              未绑定
+            </span>
           </div>
           <div class="info-item">
             <ElIcon><Phone /></ElIcon>
-            <span>{{ userInfo.mobile || '-' }}</span>
+            <span v-if="userInfo.mobile">{{ userInfo.mobile }}</span>
+            <span style="color: var(--el-text-color-disabled)" v-else>
+              未绑定
+            </span>
           </div>
         </div>
 

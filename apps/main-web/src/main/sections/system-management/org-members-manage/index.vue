@@ -378,6 +378,7 @@ async function handleSubmitCreateOrEdit(data: Partial<OrgMemberItem>) {
                   : 'primary'
               "
               size="small"
+              :disabled="scope.row.id === globalStore.userProfile.userId"
               @click.prevent="toggleDisableItem(scope.row)"
             >
               {{
@@ -388,6 +389,7 @@ async function handleSubmitCreateOrEdit(data: Partial<OrgMemberItem>) {
               link
               type="danger"
               size="small"
+              :disabled="scope.row.id === globalStore.userProfile.userId"
               @click.prevent="deleteItem(scope.row)"
             >
               删除

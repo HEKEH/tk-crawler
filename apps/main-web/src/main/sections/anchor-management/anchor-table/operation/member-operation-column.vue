@@ -37,7 +37,7 @@ const isWeb = useIsWebSize();
         </ElButton>
         <ElButton
           v-else-if="
-            scope.row.assigned_user.id === globalStore.userProfile.userInfo?.id
+            scope.row.assigned_user.id === globalStore.userProfile.userId
           "
           size="small"
           type="danger"

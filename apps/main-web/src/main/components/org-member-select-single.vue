@@ -99,7 +99,7 @@ const showOptions = computed<Option[]>(() => {
   if (props.showNotContacted) {
     options.push({ label: '未建联', value: 'not_contacted' });
   }
-  const selfId = globalStore.userProfile.userInfo?.id;
+  const selfId = globalStore.userProfile.userId;
   const membersOptions =
     orgMembers.value?.list.map(item => ({
       label: item.display_name,

@@ -62,7 +62,7 @@ export function useTaskClaim(params: UseTaskClaimParams) {
 
   async function handleBatchCancelClaim(anchors: DisplayedAnchorItem[]) {
     const taskAnchors = anchors.filter(
-      item => item.assigned_user?.id === globalStore.userProfile.userInfo?.id,
+      item => item.assigned_user?.id === globalStore.userProfile.userId,
     );
     try {
       await ElMessageBox.confirm(

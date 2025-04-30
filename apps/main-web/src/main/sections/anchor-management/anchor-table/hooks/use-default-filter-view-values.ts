@@ -25,7 +25,7 @@
 //     return computed<FilterViewValues>(() => {
 //       return {
 //         ...commonDefaultFilters.value,
-//         assign_to: globalStore.userProfile.userInfo?.id,
+//         assign_to: globalStore.userProfile.userId,
 //       };
 //     });
 //   }

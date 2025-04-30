@@ -16,6 +16,7 @@ import {
   type FormRules,
 } from 'element-plus';
 import { computed, reactive, ref } from 'vue';
+import { useGlobalStore } from '../../../utils';
 
 const props = defineProps<{
   mode: 'create' | 'edit';
@@ -26,6 +27,8 @@ const props = defineProps<{
 const emit = defineEmits<{
   cancel: [];
 }>();
+
+const globalStore = useGlobalStore();
 
 const formRef = ref<FormInstance>();
 
@@ -167,7 +170,11 @@ function handleCancel() {
     </ElFormItem>
 
     <ElFormItem label="角色" prop="role_id">
-      <ElSelect v-model="form.role_id" placeholder="请选择角色">
+      <ElSelect
+        v-model="form.role_id"
+        placeholder="请选择角色"
+        :disabled="props.initialData?.id === globalStore.userProfile.userId"
+      >
         <ElOption
           v-for="item in roleOptions"
           :key="item.value"
@@ -178,7 +185,11 @@ function handleCancel() {
     </ElFormItem>
 
     <ElFormItem label="状态" prop="status">
-      <ElSelect v-model="form.status" placeholder="请选择状态">
+      <ElSelect
+        v-model="form.status"
+        placeholder="请选择状态"
+        :disabled="props.initialData?.id === globalStore.userProfile.userId"
+      >
         <ElOption
           v-for="item in statusOptions"
           :key="item.value"

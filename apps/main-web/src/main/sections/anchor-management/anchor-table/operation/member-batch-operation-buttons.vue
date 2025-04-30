@@ -19,7 +19,7 @@ const anchorsAssignedToSelfSelected = computed(() =>
   props.selectedRows.filter(
     item =>
       item.assigned_user &&
-      item.assigned_user.id === globalStore.userProfile.userInfo?.id,
+      item.assigned_user.id === globalStore.userProfile.userId,
   ),
 );
 </script>

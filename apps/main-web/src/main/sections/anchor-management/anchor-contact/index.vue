@@ -69,7 +69,7 @@ const queryFilter = computed(() => {
   const filter = transformFilterViewValuesToFilterValues(filters.value);
   return {
     ...filter,
-    assign_to: globalStore.userProfile.userInfo?.id,
+    assign_to: globalStore.userProfile.userId,
   };
 });
 

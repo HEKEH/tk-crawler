@@ -23,6 +23,10 @@ export class UserProfile {
     this._orgInfo = null;
   }
 
+  get userId() {
+    return this._userInfo?.id;
+  }
+
   get hasLoggedIn() {
     return Boolean(this._userInfo);
   }

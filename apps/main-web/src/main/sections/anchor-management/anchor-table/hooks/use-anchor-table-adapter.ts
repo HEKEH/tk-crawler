@@ -26,7 +26,7 @@
 //     const queryFilter = computed(() => {
 //       return {
 //         ...transformFilterViewValuesToFilterValues(params.filters.value),
-//         assign_to: globalStore.userProfile.userInfo?.id,
+//         assign_to: globalStore.userProfile.userId,
 //       };
 //     });
 //     return {

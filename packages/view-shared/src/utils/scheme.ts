@@ -9,7 +9,7 @@ export function openScheme(scheme: string, timeout = 2000) {
     };
 
     document.addEventListener('visibilitychange', handleVisibility);
-    window.open(scheme);
+    window.open(scheme, '_blank');
 
     // 超时处理
     setTimeout(() => {

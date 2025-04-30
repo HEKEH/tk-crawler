@@ -270,53 +270,83 @@ export default defineComponent({
         {
           key: 'crawled_at',
           props: {
-            label: (
-              <span class="column-header-label">
-                最新时间
-                <ElTooltip
-                  placement="top"
-                  v-slots={{
-                    content: () => <div>爬虫最新采集主播直播间信息的时间</div>,
-                  }}
-                >
-                  <ElIcon>
-                    <InfoFilled />
-                  </ElIcon>
-                </ElTooltip>
-              </span>
-            ),
+            label: '最新时间',
             'min-width': isWeb.value ? 200 : 180,
             sortable: 'custom',
           },
           render: scope => formatDateTime(scope.row.crawled_at),
+          renderColumn: () => (
+            <ElTableColumn
+              prop="crawled_at"
+              label="最新时间"
+              min-width={isWeb.value ? 200 : 180}
+              sortable="custom"
+            >
+              {{
+                header: () => (
+                  <span class="column-header-label">
+                    最新时间
+                    <ElTooltip
+                      placement="top"
+                      v-slots={{
+                        content: () => (
+                          <div>爬虫最新采集主播直播间信息的时间</div>
+                        ),
+                      }}
+                    >
+                      <ElIcon>
+                        <InfoFilled />
+                      </ElIcon>
+                    </ElTooltip>
+                  </span>
+                ),
+                default: (scope: ScopeType) =>
+                  formatDateTime(scope.row.crawled_at),
+              }}
+            </ElTableColumn>
+          ),
         },
         {
           key: 'checked_at',
           props: {
-            label: (
-              <span class="column-header-label">
-                邀约检测时间
-                <ElTooltip
-                  placement="top"
-                  v-slots={{
-                    content: () => (
-                      <>
-                        <div>使用TK公会账号检测主播可邀约状态的时间</div>
-                        <div>注：7天内不会重复检测（账号检测次数有限）</div>
-                      </>
-                    ),
-                  }}
-                >
-                  <ElIcon>
-                    <InfoFilled />
-                  </ElIcon>
-                </ElTooltip>
-              </span>
-            ),
+            label: '邀约检测时间',
             'min-width': isWeb.value ? 200 : 180,
             sortable: 'custom',
           },
           render: scope => formatDateTime(scope.row.checked_at),
+          renderColumn: () => (
+            <ElTableColumn
+              prop="checked_at"
+              label="邀约检测时间"
+              min-width={isWeb.value ? 200 : 180}
+              sortable="custom"
+            >
+              {{
+                header: () => (
+                  <span class="column-header-label">
+                    邀约检测时间
+                    <ElTooltip
+                      placement="top"
+                      v-slots={{
+                        content: () => (
+                          <>
+                            <div>使用TK公会账号检测主播可邀约状态的时间</div>
+                            <div>注：7天内不会重复检测（账号检测次数有限）</div>
+                          </>
+                        ),
+                      }}
+                    >
+                      <ElIcon>
+                        <InfoFilled />
+                      </ElIcon>
+                    </ElTooltip>
+                  </span>
+                ),
+                default: (scope: ScopeType) =>
+                  formatDateTime(scope.row.checked_at),
+              }}
+            </ElTableColumn>
+          ),
         },
         {
           key: 'room_id',

@@ -119,14 +119,26 @@ export default class GlobalStore {
   }
 
   private async _loginByToken() {
-    const token = await getToken();
-    if (token) {
-      this._token = token;
-      const resp = await loginByToken(token);
-      if (resp.status_code === RESPONSE_CODE.SUCCESS) {
-        this._handleLoginSuccess(resp.data!);
+    try {
+      const token = await getToken();
+      if (token) {
+        this._token = token;
+        const resp = await loginByToken(token);
+        if (resp.status_code === RESPONSE_CODE.SUCCESS) {
+          this._handleLoginSuccess(resp.data!);
+          return;
+        }
+        this._gotoLoginPage();
       }
+    } catch (error) {
+      this._gotoLoginPage();
+      throw error;
     }
+  }
+
+  private _gotoLoginPage() {
+    this._userProfile.clear();
+    redirectToLogin();
   }
 
   async login(params: OrgMemberLoginRequest) {
@@ -143,6 +155,7 @@ export default class GlobalStore {
   async logout() {
     await removeToken();
     this._clear();
+    redirectToLogin();
   }
 
   async init() {
@@ -157,8 +170,7 @@ export default class GlobalStore {
       this._initializationState.initializeBegin();
       this._tokenInvalidSubscription = markRaw(
         TokenInvalidSubject.subscribe(() => {
-          this._clear();
-          redirectToLogin();
+          this._gotoLoginPage();
         }),
       );
       this._addEventListeners();

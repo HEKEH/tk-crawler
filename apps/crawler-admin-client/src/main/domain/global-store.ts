@@ -50,6 +50,14 @@ export default class GlobalStore {
     return this._userProfile;
   }
 
+  get isInitializing() {
+    return this._initializationState.isPending;
+  }
+
+  get hasInitializeError() {
+    return this._initializationState.hasInitializeError;
+  }
+
   get token() {
     return this._token;
   }
@@ -90,9 +98,9 @@ export default class GlobalStore {
           return;
         }
       }
-      this._gotoLoginPage();
+      this._userProfile.clear();
     } catch (error) {
-      this._gotoLoginPage();
+      this._userProfile.clear();
       throw error;
     }
   }
@@ -130,7 +138,7 @@ export default class GlobalStore {
       await this._loginByToken();
       this._initializationState.initializeComplete();
     } catch (error) {
-      this._initializationState.reset();
+      this._initializationState.initializeError(error as Error);
       throw error;
     }
   }

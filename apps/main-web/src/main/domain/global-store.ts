@@ -65,8 +65,16 @@ export default class GlobalStore {
     return this._userProfile;
   }
 
-  get isInitialized() {
-    return this._initializationState.isInitialized;
+  // get isInitialized() {
+  //   return this._initializationState.isInitialized;
+  // }
+
+  get isInitializing() {
+    return this._initializationState.isPending;
+  }
+
+  get hasInitializeError() {
+    return this._initializationState.hasInitializeError;
   }
 
   get token() {
@@ -119,21 +127,16 @@ export default class GlobalStore {
   }
 
   private async _loginByToken() {
-    try {
-      const token = await getToken();
-      if (token) {
-        this._token = token;
-        const resp = await loginByToken(token);
-        if (resp.status_code === RESPONSE_CODE.SUCCESS) {
-          this._handleLoginSuccess(resp.data!);
-          return;
-        }
-        this._gotoLoginPage();
+    const token = await getToken();
+    if (token) {
+      this._token = token;
+      const resp = await loginByToken(token);
+      if (resp.status_code === RESPONSE_CODE.SUCCESS) {
+        this._handleLoginSuccess(resp.data!);
+        return;
       }
-    } catch (error) {
-      this._gotoLoginPage();
-      throw error;
     }
+    this._userProfile.clear();
   }
 
   private _gotoLoginPage() {
@@ -177,7 +180,7 @@ export default class GlobalStore {
       await this._loginByToken();
       this._initializationState.initializeComplete();
     } catch (error) {
-      this._initializationState.reset();
+      this._initializationState.initializeError(error as Error);
       throw error;
     }
   }

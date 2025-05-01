@@ -7,11 +7,11 @@ import { commonRequest } from '@tk-crawler/view-shared';
 import { ElNotification } from 'element-plus';
 import config from '../../config';
 
-export function loginByToken(
+export async function loginByToken(
   token: string,
 ): Promise<SystemUserLoginByTokenResponse> {
   try {
-    return commonRequest<SystemUserLoginByTokenResponse>({
+    const resp = await commonRequest<SystemUserLoginByTokenResponse>({
       baseURL: config.ownServerUrl,
       method: 'post',
       path: '/system/login-by-token',
@@ -19,6 +19,7 @@ export function loginByToken(
         [SYSTEM_TOKEN_HEADER_KEY]: token,
       },
     });
+    return resp;
   } catch (error) {
     ElNotification.error({
       message: (error as Error)?.message,

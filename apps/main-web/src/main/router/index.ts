@@ -16,7 +16,9 @@ const routes: RouteRecordRaw[] = [
     component: LoginRouteRecord.component,
     beforeEnter: async (to, from, next) => {
       const globalStore = getGlobalStore();
-      await globalStore.init();
+      await globalStore.init().catch(() => {
+        // 错误不用处理，视图层会处理
+      });
       if (globalStore.userProfile.hasLoggedIn) {
         next('/');
         return;
@@ -44,7 +46,9 @@ const routes: RouteRecordRaw[] = [
     },
     beforeEnter: async (to, from, next) => {
       const globalStore = getGlobalStore();
-      await globalStore.init();
+      await globalStore.init().catch(() => {
+        // 错误不用处理，视图层会处理
+      });
       if (!globalStore.userProfile.hasLoggedIn) {
         next('/login');
         return;
@@ -59,11 +63,11 @@ const routes: RouteRecordRaw[] = [
       ...menu,
       beforeEnter: async (to, from, next) => {
         const globalStore = getGlobalStore();
-        globalStore.currentMenu = menu.menu ?? null;
         if (menu.roles && !menu.roles.includes(globalStore.userProfile.role!)) {
           next(NoPrivilegeRouteRecord.path);
           return;
         }
+        globalStore.currentMenu = menu.menu ?? null;
         next();
       },
     })),

@@ -8,6 +8,7 @@ import type { ElectronSimpleOptions } from 'vite-plugin-electron/simple';
 import { readFileSync } from 'node:fs';
 import path, { resolve } from 'node:path';
 import process from 'node:process';
+import tailwindcss from '@tailwindcss/vite';
 import { svgVueComponentPlugin } from '@tk-crawler/plugins';
 import vue from '@vitejs/plugin-vue';
 import vueJsx from '@vitejs/plugin-vue-jsx';
@@ -87,6 +88,7 @@ export default defineConfig(({ mode }) => {
       vue(),
       vueJsx() as PluginOption,
       svgVueComponentPlugin(),
+      tailwindcss(),
       cssInjectedByJsPlugin({
         styleId: 'follow-client-style',
         relativeCSSInjection: true, // for multiple format

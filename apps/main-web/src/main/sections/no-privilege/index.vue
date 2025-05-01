@@ -7,13 +7,13 @@ defineOptions({
 </script>
 
 <template>
-  <div class="container">
+  <div class="outer-container">
     <ElEmpty description="您没有权限访问此页面" />
   </div>
 </template>
 
 <style scoped>
-.container {
+.outer-container {
   position: relative;
   width: 100%;
   height: 100%;

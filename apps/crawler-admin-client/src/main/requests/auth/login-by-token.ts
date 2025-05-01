@@ -18,6 +18,7 @@ export async function loginByToken(
       headers: {
         [SYSTEM_TOKEN_HEADER_KEY]: token,
       },
+      hideErrorNotify: true,
     });
     return resp;
   } catch (error) {

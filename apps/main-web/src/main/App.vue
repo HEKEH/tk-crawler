@@ -14,16 +14,26 @@ import { computed, onBeforeUnmount, onErrorCaptured } from 'vue';
 import Homepage from './sections/homepage.vue';
 import { provideGlobalStore } from './utils';
 // import { CrawlerViewMessage } from './constants';
-import 'element-plus/dist/index.css';
 
 const globalStore: GlobalStore = provideGlobalStore();
 
 async function initialize() {
-  await globalStore.init().catch(() => {
+  try {
+    await globalStore.init();
+  } catch {
     // 不用处理
-  });
+  }
 }
 initialize();
+
+async function reload() {
+  try {
+    await globalStore.init();
+  } catch {
+    // 不用处理
+  }
+}
+
 const isLoading = computed(() => {
   return globalStore.isInitializing;
 });
@@ -55,11 +65,11 @@ onErrorCaptured(e => {
     <ElResult
       v-else-if="hasInitializeError"
       status="error"
-      title="系统初始化失败"
+      title="初始化失败"
       sub-title="请检查网络连接是否正常，或稍后重试"
     >
       <template #extra>
-        <ElButton type="primary" @click="initialize">
+        <ElButton type="primary" @click="reload">
           <ElIcon class="mr-1"><Refresh /></ElIcon>
           重新加载
         </ElButton>

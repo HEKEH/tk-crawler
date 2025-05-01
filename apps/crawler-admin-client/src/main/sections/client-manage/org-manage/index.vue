@@ -442,7 +442,6 @@ function onManageOrgMembers(org: OrganizationItem) {
         :current-page="pageNum"
         layout="total, sizes, prev, pager, next"
         :total="data?.total"
-        class="mt-4"
         @size-change="pageSize = $event"
         @current-change="pageNum = $event"
       />

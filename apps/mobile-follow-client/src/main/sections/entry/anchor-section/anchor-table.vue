@@ -595,7 +595,6 @@ const columns = computed<Column<AnchorFrom87>[]>(() => [
           layout="total, sizes, prev, pager, next"
           :page-sizes="[100, 200, 500, 1000]"
           :total="data?.total || 0"
-          class="mt-4"
           @size-change="handlePageSizeChange"
           @current-change="handlePageNumChange"
         />

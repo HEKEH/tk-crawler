@@ -129,14 +129,14 @@ const isWeb = useIsWebSize();
           <div class="info-item">
             <ElIcon><Message /></ElIcon>
             <span v-if="userInfo.email">{{ userInfo.email }}</span>
-            <span style="color: var(--el-text-color-disabled)" v-else>
+            <span v-else style="color: var(--el-text-color-disabled)">
               未绑定
             </span>
           </div>
           <div class="info-item">
             <ElIcon><Phone /></ElIcon>
             <span v-if="userInfo.mobile">{{ userInfo.mobile }}</span>
-            <span style="color: var(--el-text-color-disabled)" v-else>
+            <span v-else style="color: var(--el-text-color-disabled)">
               未绑定
             </span>
           </div>
@@ -245,7 +245,7 @@ const isWeb = useIsWebSize();
     white-space: nowrap;
     transition: all 0.3s ease;
     gap: 8px;
-    :global(.el-icon) {
+    .el-icon {
       font-size: var(--font-size);
       margin-right: 4px;
     }

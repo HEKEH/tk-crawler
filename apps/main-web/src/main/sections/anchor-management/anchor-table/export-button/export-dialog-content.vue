@@ -23,7 +23,7 @@ const isWeb = useIsWebSize();
 </script>
 
 <template>
-  <div class="container">
+  <div class="dialog-container">
     <p class="dialog-title">
       您最多可以导出
       {{ ANCHORS_DOWNLOAD_SIZE_LIMIT }}
@@ -47,7 +47,7 @@ const isWeb = useIsWebSize();
 </template>
 
 <style scoped>
-.container {
+.dialog-container {
   padding: 8px 0;
 }
 

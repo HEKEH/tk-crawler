@@ -127,16 +127,21 @@ export default class GlobalStore {
   }
 
   private async _loginByToken() {
-    const token = await getToken();
-    if (token) {
-      this._token = token;
-      const resp = await loginByToken(token);
-      if (resp.status_code === RESPONSE_CODE.SUCCESS) {
-        this._handleLoginSuccess(resp.data!);
-        return;
+    try {
+      const token = await getToken();
+      if (token) {
+        this._token = token;
+        const resp = await loginByToken(token);
+        if (resp.status_code === RESPONSE_CODE.SUCCESS) {
+          this._handleLoginSuccess(resp.data!);
+          return;
+        }
       }
+      this._userProfile.clear();
+    } catch (error) {
+      this._userProfile.clear();
+      throw error;
     }
-    this._userProfile.clear();
   }
 
   private _gotoLoginPage() {

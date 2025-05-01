@@ -8,6 +8,7 @@ import type { ElectronSimpleOptions } from 'vite-plugin-electron/simple';
 import { readFileSync } from 'node:fs';
 import path, { resolve } from 'node:path';
 import process from 'node:process';
+import tailwindcss from '@tailwindcss/vite';
 import vue from '@vitejs/plugin-vue';
 import vueJsx from '@vitejs/plugin-vue-jsx';
 import { defineConfig } from 'vite';
@@ -92,6 +93,7 @@ export default defineConfig(({ mode }) => {
     plugins: [
       vue(),
       vueJsx() as PluginOption,
+      tailwindcss(),
       cssInjectedByJsPlugin({
         styleId: 'main-client-style',
         relativeCSSInjection: true, // for multiple format

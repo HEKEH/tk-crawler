@@ -23,7 +23,6 @@ import {
 import { computed, onBeforeUnmount, ref } from 'vue';
 import { CRAWL_EVENTS } from '../../constants';
 import { useGlobalStore } from '../../utils';
-import { StatisticsPanel } from './statistics-panel';
 import ControlButtons from './control-buttons.vue';
 
 defineOptions({

@@ -43,7 +43,7 @@ function handleSelectMenu(value: MenuType) {
 </script>
 
 <template>
-  <div class="container">
+  <div class="outer-container">
     <div class="menu-part">
       <MenuSelect
         :menus="MenuList"
@@ -63,7 +63,7 @@ function handleSelectMenu(value: MenuType) {
 </template>
 
 <style lang="scss" scoped>
-.container {
+.outer-container {
   position: relative;
   width: 100%;
   height: 100%;

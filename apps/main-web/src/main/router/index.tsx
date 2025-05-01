@@ -9,6 +9,12 @@ import {
   SystemManagementRouteRecord,
 } from './route-records';
 
+const MainRouteRecords = [
+  SystemManagementRouteRecord,
+  GuildManagementRouteRecord,
+  AnchorManagementRouteRecord,
+];
+
 const routes: RouteRecordRaw[] = [
   {
     path: LoginRouteRecord.path,
@@ -16,9 +22,12 @@ const routes: RouteRecordRaw[] = [
     component: LoginRouteRecord.component,
     beforeEnter: async (to, from, next) => {
       const globalStore = getGlobalStore();
-      await globalStore.init().catch(() => {
-        // 错误不用处理，视图层会处理
-      });
+      try {
+        await globalStore.init();
+      } catch {
+        next();
+        return;
+      }
       if (globalStore.userProfile.hasLoggedIn) {
         next('/');
         return;
@@ -34,43 +43,54 @@ const routes: RouteRecordRaw[] = [
     component: NoPrivilegeRouteRecord.component,
   },
 
-  {
-    path: '/',
-    redirect: () => {
-      const globalStore = getGlobalStore();
-      const firstMenu = globalStore.menus[0];
-      if (firstMenu) {
-        return firstMenu.jumpTo ?? firstMenu.path;
-      }
-      return '';
-    },
+  ...(MainRouteRecords.map(menu => ({
+    ...menu,
     beforeEnter: async (to, from, next) => {
       const globalStore = getGlobalStore();
-      await globalStore.init().catch(() => {
-        // 错误不用处理，视图层会处理
-      });
+      try {
+        await globalStore.init();
+      } catch {
+        next();
+        return;
+      }
       if (!globalStore.userProfile.hasLoggedIn) {
         next('/login');
         return;
       }
+      if (menu.roles && !menu.roles.includes(globalStore.userProfile.role!)) {
+        next(NoPrivilegeRouteRecord.path);
+        return;
+      }
+      globalStore.currentMenu = menu.menu ?? null;
       next();
     },
-    children: [
-      SystemManagementRouteRecord,
-      GuildManagementRouteRecord,
-      AnchorManagementRouteRecord,
-    ].map(menu => ({
-      ...menu,
-      beforeEnter: async (to, from, next) => {
-        const globalStore = getGlobalStore();
-        if (menu.roles && !menu.roles.includes(globalStore.userProfile.role!)) {
-          next(NoPrivilegeRouteRecord.path);
-          return;
-        }
-        globalStore.currentMenu = menu.menu ?? null;
+  })) as RouteRecordRaw[]),
+
+  {
+    path: '/',
+    beforeEnter: async (to, from, next) => {
+      const globalStore = getGlobalStore();
+      try {
+        await globalStore.init();
+      } catch {
         next();
-      },
-    })),
+        return;
+      }
+      if (!globalStore.userProfile.hasLoggedIn) {
+        next('/login');
+        return;
+      }
+      const firstMenu = globalStore.menus[0];
+      if (
+        firstMenu &&
+        MainRouteRecords.some(item => item.name === firstMenu.name)
+      ) {
+        next(firstMenu.jumpTo ?? firstMenu.path);
+        return;
+      }
+      next();
+    },
+    component: <div />,
   },
 ];
 

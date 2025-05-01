@@ -19,6 +19,7 @@
     "tk-crack": "workspace:*"
   },
   "devDependencies": {
+    "@tailwindcss/vite": "^4.1.5",
     "@tanstack/vue-query": "^5.66.11",
     "@types/global-agent": "^2.1.3",
     "@types/lodash": "^4.17.13",
@@ -33,6 +34,7 @@
     "lodash": "^4.17.21",
     "log4js": "^6.9.1",
     "rxjs": "^7.8.1",
+    "tailwindcss": "^4.1.5",
     "vite-plugin-electron": "^0.29.0",
     "vite-plugin-electron-renderer": "^0.14.6",
     "vite-plugin-html": "^3.2.2",

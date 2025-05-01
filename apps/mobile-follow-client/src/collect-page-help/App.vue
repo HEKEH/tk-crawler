@@ -7,7 +7,6 @@ import {
   COLLECT_PAGE_HELP_STATUS,
 } from '../main/constants';
 import MainView from './sections/main-view.vue';
-import 'element-plus/dist/index.css';
 
 const status = ref(COLLECT_PAGE_HELP_STATUS.stateless);
 async function updateStatus() {
@@ -27,7 +26,7 @@ function onRetry() {
 <template>
   <div
     v-loading="status === COLLECT_PAGE_HELP_STATUS.loading"
-    class="container"
+    class="app-container"
     element-loading-text="加载中..."
   >
     <template v-if="status === COLLECT_PAGE_HELP_STATUS.timeout">
@@ -45,7 +44,7 @@ function onRetry() {
 </template>
 
 <style scoped>
-.container {
+.app-container {
   width: 100%;
   height: 100%;
   overflow: hidden;

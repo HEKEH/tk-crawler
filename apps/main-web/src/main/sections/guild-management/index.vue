@@ -34,7 +34,7 @@ function handleSelectMenu(key: string) {
 </script>
 
 <template>
-  <div v-if="hasPrivilege" class="container">
+  <div v-if="hasPrivilege" class="outer-container">
     <div class="menu-part">
       <MenuSelect
         :menus="MenuList"
@@ -51,7 +51,7 @@ function handleSelectMenu(key: string) {
 </template>
 
 <style lang="scss" scoped>
-.container {
+.outer-container {
   position: relative;
   width: 100%;
   height: 100%;

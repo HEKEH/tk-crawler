@@ -8,7 +8,6 @@ import Homepage from './sections/homepage.vue';
 import NetworkErrorView from './sections/network-error-view/index.vue';
 import { provideGlobalStore } from './utils/vue';
 // import { CrawlerViewMessage } from './constants';
-import 'element-plus/dist/index.css';
 
 const globalStore: GlobalStore = provideGlobalStore();
 

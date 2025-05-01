@@ -1,0 +1,9 @@
+@layer element, tailwind;
+@layer element {
+  @import 'element-plus/dist/index.css';
+}
+@layer tailwind {
+  @import 'tailwindcss/theme.css';
+  /* @import 'tailwindcss/preflight.css' layer(base); */
+  @import 'tailwindcss/utilities.css';
+}

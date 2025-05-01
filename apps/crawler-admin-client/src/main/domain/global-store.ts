@@ -88,8 +88,8 @@ export default class GlobalStore {
   }
 
   private async _loginByToken() {
-    const token = await getToken();
     try {
+      const token = await getToken();
       if (token) {
         this._token = token;
         const resp = await loginByToken(token);

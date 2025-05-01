@@ -416,7 +416,6 @@ async function handleCreateOrEdit(data: Partial<AnchorCommentTemplateGroup>) {
           background
           layout="total, sizes, prev, pager, next"
           :total="data?.total || 0"
-          class="mt-4"
           @size-change="handlePageSizeChange"
           @current-change="handlePageNumChange"
         />

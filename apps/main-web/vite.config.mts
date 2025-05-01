@@ -1,6 +1,7 @@
 import type { AliasOptions, PluginOption, UserConfig } from 'vite';
 import { readFileSync } from 'node:fs';
 import path, { resolve } from 'node:path';
+import tailwindcss from '@tailwindcss/vite';
 import { svgVueComponentPlugin } from '@tk-crawler/plugins';
 import vue from '@vitejs/plugin-vue';
 import vueJsx from '@vitejs/plugin-vue-jsx';
@@ -51,6 +52,7 @@ export default defineConfig(({ mode }) => {
       vue(),
       vueJsx() as PluginOption,
       svgVueComponentPlugin(),
+      tailwindcss(),
       cssInjectedByJsPlugin({
         styleId: 'main-web-style',
         relativeCSSInjection: true, // for multiple format

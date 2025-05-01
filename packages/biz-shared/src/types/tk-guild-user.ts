@@ -13,8 +13,8 @@ export interface TKGuildUser {
   current_query_per_day?: number;
   cookie: string | null;
   // is_cookie_valid: boolean | null;
-  created_at: Date;
-  updated_at: Date;
+  created_at: Date | string;
+  updated_at: Date | string;
   organization?: OrganizationItem;
   area: Area | null;
   faction_id: number | null;

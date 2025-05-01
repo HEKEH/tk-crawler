@@ -251,20 +251,52 @@ async function handleSubmitCreateOrEdit(data: Partial<OrgMemberItem>) {
       row-key="id"
       @sort-change="handleSortChange"
     >
-      <ElTableColumn fixed prop="id" label="ID" min-width="100" />
-      <ElTableColumn prop="username" label="登录名" min-width="120" />
-      <ElTableColumn prop="display_name" label="显示名" min-width="120" />
-      <ElTableColumn prop="email" label="邮箱" min-width="120">
+      <ElTableColumn
+        fixed
+        prop="id"
+        label="ID"
+        sortable="custom"
+        min-width="100"
+      />
+      <ElTableColumn
+        fixed
+        prop="username"
+        label="登录名"
+        sortable="custom"
+        min-width="120"
+      />
+      <ElTableColumn
+        prop="display_name"
+        label="显示名"
+        sortable="custom"
+        min-width="120"
+      />
+      <ElTableColumn
+        prop="email"
+        label="邮箱"
+        sortable="custom"
+        min-width="120"
+      >
         <template #default="scope: ScopeType">
           {{ scope.row.email || '-' }}
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="mobile" label="手机号" min-width="120">
+      <ElTableColumn
+        prop="mobile"
+        label="手机号"
+        sortable="custom"
+        min-width="120"
+      >
         <template #default="scope: ScopeType">
           {{ scope.row.mobile || '-' }}
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="role_id" label="角色" min-width="100">
+      <ElTableColumn
+        prop="role_id"
+        label="角色"
+        sortable="custom"
+        min-width="100"
+      >
         <template #default="scope: ScopeType">
           <ElTag
             size="small"
@@ -278,7 +310,12 @@ async function handleSubmitCreateOrEdit(data: Partial<OrgMemberItem>) {
           </ElTag>
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="status" label="状态" min-width="100">
+      <ElTableColumn
+        prop="status"
+        label="状态"
+        sortable="custom"
+        min-width="100"
+      >
         <template #default="scope: ScopeType">
           <ElTag
             :type="

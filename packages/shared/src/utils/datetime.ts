@@ -30,6 +30,20 @@ export function formatDateTime(
     );
 }
 
+export function formatTime(
+  value: string | number | Date | null | undefined,
+  config: {
+    timezone: string;
+  } = {
+    timezone: BrowserTimezone,
+  },
+) {
+  if (!value) {
+    return null;
+  }
+  return dayjs(value).tz(config.timezone).format('HH:mm:ss');
+}
+
 export const CommonDatePickerShortcuts = [
   {
     text: '30天后',

@@ -266,9 +266,26 @@ function onManageOrgMembers(org: OrganizationItem) {
       row-key="id"
       @sort-change="handleSortChange"
     >
-      <ElTableColumn fixed prop="id" label="机构ID" min-width="100" />
-      <ElTableColumn fixed prop="name" label="机构名称" min-width="100" />
-      <ElTableColumn prop="status" label="状态" min-width="100">
+      <ElTableColumn
+        fixed
+        prop="id"
+        label="机构ID"
+        min-width="100"
+        sortable="custom"
+      />
+      <ElTableColumn
+        fixed
+        prop="name"
+        label="机构名称"
+        min-width="120"
+        sortable="custom"
+      />
+      <ElTableColumn
+        prop="status"
+        label="状态"
+        min-width="100"
+        sortable="custom"
+      >
         <template #default="scope: ScopeType">
           <ElTag
             :type="

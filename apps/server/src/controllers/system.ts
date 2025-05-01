@@ -1,10 +1,15 @@
 import type {
   SystemAdminUser,
+  SystemCrawlStatisticsRequest,
   SystemUserChangePasswordRequest,
   SystemUserLoginRequest,
 } from '@tk-crawler/biz-shared';
 import type { Context, Next } from 'koa';
-import { changeSystemUserPassword, systemUserLogin } from '../services';
+import {
+  changeSystemUserPassword,
+  getCrawlStatistics,
+  systemUserLogin,
+} from '../services';
 
 export default class SystemController {
   static async login(ctx: Context, next: Next) {
@@ -31,6 +36,13 @@ export default class SystemController {
       },
     );
     ctx.body = ctx.t('Success');
+    await next();
+  }
+
+  static async getCrawlStatistics(ctx: Context, next: Next) {
+    const request = ctx.getRequestData<SystemCrawlStatisticsRequest>();
+    const resp = await getCrawlStatistics(request);
+    ctx.body = resp;
     await next();
   }
 }

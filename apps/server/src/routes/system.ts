@@ -18,4 +18,10 @@ systemRouter.post(
   SystemController.changePassword,
 );
 
+systemRouter.get(
+  '/crawl-statistics',
+  systemTokenAuthMiddleware(),
+  SystemController.getCrawlStatistics,
+);
+
 export default systemRouter;

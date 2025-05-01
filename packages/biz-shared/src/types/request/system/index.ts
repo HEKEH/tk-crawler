@@ -44,3 +44,28 @@ export interface SystemUserChangePasswordResponse {
   status_code: RESPONSE_CODE;
   message?: string;
 }
+
+export interface SystemCrawlStatisticsRequest {
+  force_refresh?: boolean;
+}
+
+export interface SystemCrawlStatisticsResponseData {
+  statistics: {
+    total_anchor_count: number;
+    /** 24小时内新建的 */
+    total_anchors_added_24h: number;
+    /** 24小时内爬的主播，包括新建和更新 */
+    total_anchors_crawled_24h: number;
+    /** 1小时内新建的 */
+    total_anchors_added_1h: number;
+    /** 1小时内爬的主播，包括新建和更新 */
+    total_anchors_crawled_1h: number;
+  };
+  query_at: Date;
+}
+
+export interface SystemCrawlStatisticsResponse {
+  status_code: RESPONSE_CODE;
+  data?: SystemCrawlStatisticsResponseData;
+  message?: string;
+}

@@ -1,9 +1,5 @@
 <script setup lang="ts">
-import type {
-  AnchorCrawledMessage,
-  Area,
-  SimpleCrawlStatistics,
-} from '@tk-crawler/biz-shared';
+import type { Area, SimpleCrawlStatistics } from '@tk-crawler/biz-shared';
 import type { Ref } from 'vue';
 import {
   CopyDocument,
@@ -27,6 +23,7 @@ import {
 import { computed, onBeforeUnmount, ref } from 'vue';
 import { CRAWL_EVENTS } from '../../constants';
 import { useGlobalStore } from '../../utils';
+import { StatisticsPanel } from './statistics-panel';
 import ControlButtons from './control-buttons.vue';
 
 defineOptions({
@@ -215,7 +212,7 @@ async function handleClearTKCookie() {
   </div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .normal-view {
   --spacing-xs: 0.5rem;
   --spacing-sm: 1rem;

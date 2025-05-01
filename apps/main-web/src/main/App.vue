@@ -19,7 +19,7 @@ import 'element-plus/dist/index.css';
 const globalStore: GlobalStore = provideGlobalStore();
 
 async function initialize() {
-  await globalStore.init().catch(_ => {
+  await globalStore.init().catch(() => {
     // 不用处理
   });
 }

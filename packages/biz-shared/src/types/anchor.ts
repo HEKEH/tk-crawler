@@ -55,9 +55,9 @@ export interface DisplayedAnchorItem
   id: string;
   last_diamonds: number | null;
   highest_diamonds: number;
-  created_at: Date;
-  updated_at: Date;
-  crawled_at: Date;
+  created_at: Date | string;
+  updated_at: Date | string;
+  crawled_at: Date | string;
   assigned_user?: Omit<OrgMemberItem, 'password'> | null;
   contacted_user?: Omit<OrgMemberItem, 'password'> | null;
 }

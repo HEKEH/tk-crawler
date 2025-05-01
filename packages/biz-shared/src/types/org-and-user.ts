@@ -23,9 +23,9 @@ export interface OrganizationItem {
   /** 备注 */
   remark: string | null;
   /** 创建时间 */
-  created_at: Date;
+  created_at: Date | string;
   /** 更新时间 */
-  updated_at: Date;
+  updated_at: Date | string;
   /** 用户数量 */
   user_count: number;
   /** 分区 */

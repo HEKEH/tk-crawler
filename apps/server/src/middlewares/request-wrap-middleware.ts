@@ -4,17 +4,36 @@ import { LOG_ID_HEADER_KEY } from '@tk-crawler/biz-shared';
 import { RESPONSE_CODE } from '@tk-crawler/shared';
 import { BusinessError, TokenInvalidError } from '../utils';
 
+interface ExcludeLogUrl {
+  path: string;
+  exact?: boolean;
+}
+const EXCLUDE_LOG_URLS: ExcludeLogUrl[] = [
+  {
+    path: '/anchor-pool/should-update-anchor',
+    exact: true,
+  },
+];
+
 export async function requestWrapMiddleware(ctx: Context, next: Next) {
   try {
-    const logData: any = {
-      method: ctx.request.method,
-      url: ctx.request.url,
-      headers: ctx.request.headers,
-    };
-    if (ctx.request.method === 'POST') {
-      logData.body = ctx.request.body;
+    const shouldLog = !EXCLUDE_LOG_URLS.some(it => {
+      if (it.exact) {
+        return it.path === ctx.request.url;
+      }
+      return ctx.request.url.includes(it.path);
+    });
+    if (shouldLog) {
+      const logData: any = {
+        method: ctx.request.method,
+        url: ctx.request.url,
+        headers: ctx.request.headers,
+      };
+      if (ctx.request.method === 'POST') {
+        logData.body = ctx.request.body;
+      }
+      ctx.logger.info(`[Request]`, logData);
     }
-    ctx.logger.info(`[Request]`, logData);
     await next();
     if (ctx.status === 200) {
       const body = ctx.body;
@@ -22,8 +41,10 @@ export async function requestWrapMiddleware(ctx: Context, next: Next) {
         status_code: RESPONSE_CODE.SUCCESS,
         data: body,
       };
-      ctx.logger.info(`[Response] success`);
-      ctx.logger.trace(`[Response]`, responseBody);
+      if (shouldLog) {
+        ctx.logger.info(`[Response] success`);
+        ctx.logger.trace(`[Response]`, responseBody);
+      }
       ctx.body = responseBody;
     } else {
       ctx.logger.error(`[Response]`, ctx.body);

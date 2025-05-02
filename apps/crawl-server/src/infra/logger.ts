@@ -69,11 +69,18 @@ class Logger {
       },
       categories: {
         default: {
-          appenders: [
-            'console', // 控制台显示所有日志
-            'daily', // daily文件记录所有日志
-            'errorFilter', // error文件只记录错误日志
-          ],
+          appenders:
+            env.NODE_ENV === 'production'
+              ? [
+                  // 生产环境不输出console日志，为了服务器的安全
+                  'daily',
+                  'errorFilter',
+                ]
+              : [
+                  'console',
+                  'daily', // daily文件记录所有日志
+                  'errorFilter', // error文件只记录错误日志
+                ],
           level: logLevel,
         },
       },

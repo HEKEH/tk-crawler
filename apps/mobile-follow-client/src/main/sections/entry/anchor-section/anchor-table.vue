@@ -11,6 +11,7 @@ import { useQuery } from '@tanstack/vue-query';
 import { formatDateTime, RESPONSE_CODE } from '@tk-crawler/shared';
 import {
   ClearMessage,
+  onKeepAliveActivated,
   RefreshButton,
   useTableMultiSelect,
 } from '@tk-crawler/view-shared';
@@ -27,7 +28,6 @@ import {
 import {
   computed,
   h,
-  onActivated,
   onBeforeUnmount,
   onMounted,
   reactive,
@@ -318,7 +318,7 @@ async function handleClearData() {
   } catch {}
 }
 
-onActivated(refetch);
+onKeepAliveActivated(refetch);
 
 const containerWidth = ref(800);
 const containerHeight = ref(600);

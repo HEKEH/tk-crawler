@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import { MenuSelect } from '@tk-crawler/view-shared';
 import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { MenuSelect } from '../../components';
 import { useGlobalStore } from '../../utils';
 import AnchorContactTable from './anchor-contact';
 import AnchorTable from './anchor-table';

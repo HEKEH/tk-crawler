@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import type { Area } from '@tk-crawler/biz-shared';
+import { onKeepAliveActivated } from '@tk-crawler/view-shared';
 import { ElOption, ElSelect } from 'element-plus';
 import { debounce } from 'lodash';
-import { computed, onActivated, ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useGetFollowGroupList } from '../hooks';
 
 defineOptions({
@@ -63,7 +64,7 @@ const { data, isLoading, refetch } = useGetFollowGroupList({
 const options = computed(() => {
   return data.value?.list ?? [];
 });
-onActivated(refetch);
+onKeepAliveActivated(refetch);
 </script>
 
 <template>

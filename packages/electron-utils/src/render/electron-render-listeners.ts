@@ -24,7 +24,7 @@ class ElectronRenderListeners {
   ) {
     if (!this._listeners.has(channel)) {
       this._listeners.set(channel, []);
-      window.ipcRenderer.on(
+      window.ipcRenderer?.on(
         channel,
         this._createChannelListenCallback(channel),
       );
@@ -44,7 +44,7 @@ class ElectronRenderListeners {
     listeners.splice(findIndex, 1);
 
     if (!listeners.length) {
-      window.ipcRenderer.removeAllListeners(channel);
+      window.ipcRenderer?.removeAllListeners(channel);
       this._listeners.delete(channel);
     }
   }

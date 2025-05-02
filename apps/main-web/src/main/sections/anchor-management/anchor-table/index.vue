@@ -5,12 +5,13 @@ import type {
 } from '@tk-crawler/biz-shared';
 import type { CustomColumnConfig } from './anchor-table-columns';
 import {
+  onKeepAliveActivated,
   RefreshButton,
   useIsWebSize,
   useTableSort,
 } from '@tk-crawler/view-shared';
 import { ElButton, ElPagination, ElTable } from 'element-plus';
-import { computed, onActivated, ref } from 'vue';
+import { computed, ref } from 'vue';
 import config from '../../../config';
 import { useGetAnchorList } from '../../../hooks';
 import { useGlobalStore } from '../../../utils/vue';
@@ -152,7 +153,7 @@ const customColumns = computed<CustomColumnConfig[]>(() => {
 });
 // const hasSelectedRows = computed(() => selectedRows.value.length > 0);
 
-onActivated(refetch);
+onKeepAliveActivated(refetch);
 </script>
 
 <template>

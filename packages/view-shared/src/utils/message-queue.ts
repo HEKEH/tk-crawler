@@ -49,7 +49,7 @@ export class MessageQueue {
 
   private _handleFreeze = () => {
     this._isPageActive = false;
-    this._clearMessages();
+    this.clearMessages();
   };
 
   private _handleResume = () => {
@@ -58,7 +58,7 @@ export class MessageQueue {
 
   private _handleBlur = () => {
     this._isPageActive = false;
-    this._clearMessages();
+    this.clearMessages();
   };
 
   private _handleFocus = () => {
@@ -117,7 +117,7 @@ export class MessageQueue {
     window.removeEventListener('beforeunload', this._cleanupListeners);
   };
 
-  private _clearMessages() {
+  clearMessages() {
     this._messageQueue.forEach(msg => {
       msg.instance?.close();
     });
@@ -127,6 +127,6 @@ export class MessageQueue {
   destroy() {
     this._cleanupListeners();
     // Close all notifications
-    this._clearMessages();
+    this.clearMessages();
   }
 }

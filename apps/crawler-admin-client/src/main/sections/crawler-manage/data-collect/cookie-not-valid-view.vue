@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ElButton, ElDialog, ElInput } from 'element-plus';
 import { ref } from 'vue';
-import { CRAWL_EVENTS } from '../../constants';
-import { useGlobalStore } from '../../utils';
+import { CRAWL_EVENTS } from '../../../constants';
+import { useGlobalStore } from '../../../utils';
 
 defineOptions({
   name: 'CookieNotValidView',

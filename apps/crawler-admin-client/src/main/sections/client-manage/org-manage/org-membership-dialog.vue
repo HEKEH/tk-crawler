@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useIsWebSize } from '@tk-crawler/view-shared';
 import { ElDialog, ElScrollbar } from 'element-plus';
 import OrgMembershipForm from './org-membership-form.vue';
 

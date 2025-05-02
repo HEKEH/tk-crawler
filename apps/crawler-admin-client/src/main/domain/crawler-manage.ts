@@ -22,7 +22,7 @@ export default class CrawlerManage {
   private _isInitialized: boolean = false;
 
   private _tiktokCookieValidStatus: IsCookieValidResultStatus =
-    IsCookieValidResultStatus.FAILED;
+    IsCookieValidResultStatus.STATELESS;
 
   private _account: TkAccount | undefined;
 
@@ -143,7 +143,9 @@ export default class CrawlerManage {
   }
 
   private async _refreshCrawlStatus() {
-    const ipcRenderer = markRaw(window.ipcRenderer);
+    const ipcRenderer = window.ipcRenderer
+      ? markRaw(window.ipcRenderer)
+      : undefined;
     if (ipcRenderer) {
       this._crawlStatus = await ipcRenderer.invoke(
         CRAWL_EVENTS.GET_CRAWL_STATUS,

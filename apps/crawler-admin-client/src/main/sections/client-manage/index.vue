@@ -69,4 +69,9 @@ function onCloseTab(tabId: string | number) {
   height: 100%;
   overflow: hidden;
 }
+:global(.org-and-user-manage .el-tabs__content) {
+  @include web {
+    padding: 1.5rem;
+  }
+}
 </style>

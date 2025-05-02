@@ -6,7 +6,7 @@ import type {
 } from '@tk-crawler/biz-shared';
 import type { TableColumnCtx } from 'element-plus';
 import { formatDateTime, RESPONSE_CODE } from '@tk-crawler/shared';
-import { RefreshButton } from '@tk-crawler/view-shared';
+import { onKeepAliveActivated, RefreshButton } from '@tk-crawler/view-shared';
 import {
   ElButton,
   ElMessage,
@@ -15,7 +15,7 @@ import {
   ElTable,
   ElTableColumn,
 } from 'element-plus';
-import { computed, onActivated, ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useGetFollowGroupList } from '../../../hooks';
 import {
   clearAnchorFollowGroup,
@@ -270,7 +270,7 @@ async function handleClearGroup() {
   } catch {}
 }
 
-onActivated(refetch);
+onKeepAliveActivated(refetch);
 
 const formDialogVisible = ref(false);
 const formData = ref<AnchorFollowGroupItem>();

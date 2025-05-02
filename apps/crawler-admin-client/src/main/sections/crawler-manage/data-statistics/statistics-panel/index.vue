@@ -1,11 +1,11 @@
 <script setup lang="ts">
+import type { SystemCrawlStatisticsResponseData } from '@tk-crawler/biz-shared';
 import { useQuery } from '@tanstack/vue-query';
-import { ElButton, ElTooltip } from 'element-plus';
-import { getCrawlStatistics } from '../../../requests/statistics';
-import { SystemCrawlStatisticsResponseData } from '@tk-crawler/biz-shared';
 import { formatTime, RESPONSE_CODE } from '@tk-crawler/shared';
-import { useGlobalStore } from '../../../utils';
+import { ElButton, ElTooltip } from 'element-plus';
 import { computed, onBeforeUnmount, ref } from 'vue';
+import { getCrawlStatistics } from '../../../../requests/statistics';
+import { useGlobalStore } from '../../../../utils';
 
 defineOptions({
   name: 'CrawlerStatisticsPanel',
@@ -20,7 +20,7 @@ const token = computed(() => globalStore.token);
 const { data, isFetching, isError, error, refetch } = useQuery<
   SystemCrawlStatisticsResponseData | undefined
 >({
-  queryKey: ['crawler-statistics', token, forceRefresh],
+  queryKey: ['crawler-statistics', token],
   retry: false,
   queryFn: async () => {
     const response = await getCrawlStatistics(
@@ -43,13 +43,12 @@ onBeforeUnmount(() => {
   clearInterval(refetchInterval);
 });
 
-const handleRefresh = () => {
+function handleRefresh() {
   forceRefresh.value = true;
   refetch();
-};
+}
 
 const indicators = computed(() => {
-  console.log('data.value', data.value);
   const { statistics } = data.value ?? {};
   return [
     {
@@ -81,103 +80,57 @@ const indicators = computed(() => {
 });
 
 const formattedLastUpdateTime = computed(() => {
-  if (!data.value?.query_at) return '';
+  if (!data.value?.query_at) {
+    return '';
+  }
   return formatTime(data.value.query_at);
 });
 </script>
 
 <template>
-  <div class="statistics-panel" v-loading="isFetching">
-    <div class="statistics-panel-header">
-      <h3>爬虫统计</h3>
-      <ElButton size="small" @click="handleRefresh" :loading="isFetching">
+  <div
+    v-loading="isFetching"
+    class="w-full md:w-[300px] max-w-full flex flex-col gap-2 md:gap-3 p-3 md:p-4 rounded-lg bg-gray-100 shadow-md"
+  >
+    <div class="flex justify-between items-center">
+      <h3 class="m-0 text-sm md:text-base text-gray-800">爬虫统计</h3>
+      <ElButton
+        size="small"
+        :loading="isFetching"
+        class="text-xs md:text-sm"
+        @click="handleRefresh"
+      >
         {{ isError ? '重试' : '强制刷新' }}
       </ElButton>
     </div>
 
-    <div class="last-update-time">
-      最后更新于 {{ formattedLastUpdateTime }} (每
-      {{ UpdateIntervalMinutes }} 分钟自动刷新一次)
+    <div class="text-xs text-gray-500">
+      最后更新于 {{ formattedLastUpdateTime }}
+      <span class="inline"
+        >(每 {{ UpdateIntervalMinutes }} 分钟自动刷新一次)</span
+      >
     </div>
 
     <div
-      class="statistics-panel-item"
       v-for="indicator in indicators"
       :key="indicator.label"
+      class="flex justify-between items-center p-2 md:p-3 bg-white rounded hover:bg-gray-100 transition-colors"
     >
-      <ElTooltip :content="indicator.tooltip" placement="top">
-        <span class="statistics-panel-item-label">{{ indicator.label }}</span>
+      <ElTooltip :content="indicator.tooltip" placement="top" class="flex-1">
+        <span class="text-xs md:text-sm text-gray-500 break-keep">{{
+          indicator.label
+        }}</span>
       </ElTooltip>
-      <span class="statistics-panel-item-value">{{ indicator.value }}</span>
+      <span class="text-sm md:text-base font-semibold text-gray-800 ml-2">{{
+        indicator.value
+      }}</span>
     </div>
 
-    <div v-if="isError" class="error-message">
+    <div
+      v-if="isError"
+      class="text-center text-xs md:text-sm text-[var(--el-color-danger)] p-2 bg-red-50 rounded"
+    >
       {{ error?.message || '加载失败，请重试' }}
     </div>
   </div>
 </template>
-
-<style scoped>
-.statistics-panel {
-  width: 300px;
-  max-width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 16px;
-  border-radius: 8px;
-  background-color: #f5f5f5;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.statistics-panel-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.statistics-panel-header h3 {
-  margin: 0;
-  font-size: 16px;
-  color: #333;
-}
-
-.last-update-time {
-  font-size: 12px;
-  color: #666;
-}
-
-.statistics-panel-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px;
-  background-color: white;
-  border-radius: 4px;
-  transition: background-color 0.2s;
-}
-
-.statistics-panel-item:hover {
-  background-color: #f0f0f0;
-}
-
-.statistics-panel-item-label {
-  color: #666;
-  font-size: 14px;
-}
-
-.statistics-panel-item-value {
-  font-weight: 600;
-  color: #333;
-  font-size: 16px;
-}
-
-.error-message {
-  color: var(--el-color-danger);
-  font-size: 14px;
-  text-align: center;
-  padding: 8px;
-  background-color: #fef0f0;
-  border-radius: 4px;
-}
-</style>

@@ -10,55 +10,16 @@ const isWeb = useIsWebSize();
 </script>
 
 <template>
-  <div class="top-bar">
-    <div class="top-bar-left">
-      <img class="app-icon" src="/appicon.svg?url" alt="appicon" />
+  <div
+    class="fixed top-0 left-0 w-full h-[var(--top-bar-height)] flex items-center justify-between border-b border-[var(--el-border-color)] px-8 md:px-12"
+  >
+    <div class="flex-1 flex items-center gap-x-10">
+      <img class="h-8 w-auto md:h-12" src="/appicon.svg?url" alt="appicon" />
       <Menus v-if="isWeb" />
     </div>
-    <div class="top-bar-right">
+    <div class="flex items-center gap-x-4">
       <RightPart />
       <Menus v-if="!isWeb" />
     </div>
   </div>
 </template>
-
-<style lang="scss" scoped>
-.top-bar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: var(--top-bar-height);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid var(--el-border-color);
-  @include web {
-    padding: 0 3rem;
-  }
-  @include mobile {
-    padding: 0 2rem;
-  }
-  .top-bar-left {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    gap: 2.5rem;
-  }
-  .top-bar-right {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-  }
-  .app-icon {
-    @include web {
-      height: 3rem;
-      width: auto;
-    }
-    @include mobile {
-      height: 2rem;
-      width: auto;
-    }
-  }
-}
-</style>

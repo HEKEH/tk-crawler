@@ -1,6 +1,7 @@
 import type { TkAccount } from '@tk-crawler/biz-shared';
 
 export enum IsCookieValidResultStatus {
+  STATELESS = 'stateless',
   SUCCESS = 'success',
   FAILED = 'failed',
   ECONNRESET = 'econnreset',

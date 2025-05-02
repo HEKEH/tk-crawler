@@ -10,7 +10,11 @@ import {
 } from '@element-plus/icons-vue';
 import { CrawlStatus } from '@tk-crawler/biz-shared';
 import { formatDuration, setIntervalImmediate } from '@tk-crawler/shared';
-import { AreaSelectSingle, copyToClipboard } from '@tk-crawler/view-shared';
+import {
+  AreaSelectSingle,
+  copyToClipboard,
+  useIsWebSize,
+} from '@tk-crawler/view-shared';
 import {
   ElDropdown,
   ElDropdownItem,
@@ -21,8 +25,9 @@ import {
   ElTooltip,
 } from 'element-plus';
 import { computed, onBeforeUnmount, ref } from 'vue';
-import { CRAWL_EVENTS } from '../../constants';
-import { useGlobalStore } from '../../utils';
+import { CRAWL_EVENTS } from '../../../constants';
+import { useGlobalStore } from '../../../utils';
+import { SidebarWidth } from '../constants';
 import ControlButtons from './control-buttons.vue';
 
 defineOptions({
@@ -119,6 +124,8 @@ async function handleClearTKCookie() {
   ElNotification.success('TK Cookie已清除');
   await crawlerManage.value.checkTiktokCookieValid();
 }
+
+const isWebSize = useIsWebSize();
 </script>
 
 <template>
@@ -136,7 +143,7 @@ async function handleClearTKCookie() {
           trigger="hover"
           popper-class="crawler-setting-dropdown-menu"
         >
-          <ElIcon :size="24" class="setting-icon"><Setting /></ElIcon>
+          <ElIcon class="setting-icon"><Setting /></ElIcon>
 
           <template #dropdown>
             <div class="dropdown-content">
@@ -159,75 +166,101 @@ async function handleClearTKCookie() {
         </ElDropdown>
       </div>
     </div>
-    <div class="area-select-container">
-      <div class="area-select-label">
-        优先地区设置
-        <ElTooltip placement="top">
-          <template #content>
-            <div>采集优先地区</div>
-            <div>• 建议与 VPN 地区配置保持一致。实测 VPN 对结果影响更大</div>
-            <div>
-              •
-              注：这个参数的作用是让TK优先推荐所选地区的主播，但并不限于这些地区
-            </div>
-          </template>
-          <ElIcon class="area-select-label-tooltip-icon">
-            <InfoFilled />
-          </ElIcon>
-        </ElTooltip>
+    <div class="normal-view-content">
+      <div class="area-select-container">
+        <div class="area-select-label">
+          优先地区设置
+          <ElTooltip placement="top">
+            <template #content>
+              <div>采集优先地区</div>
+              <div>• 建议与 VPN 地区配置保持一致。实测 VPN 对结果影响更大</div>
+              <div>
+                •
+                注：这个参数的作用是让TK优先推荐所选地区的主播，但并不限于这些地区
+              </div>
+            </template>
+            <ElIcon class="area-select-label-tooltip-icon">
+              <InfoFilled />
+            </ElIcon>
+          </ElTooltip>
+        </div>
+        <div class="area-select">
+          <AreaSelectSingle
+            :model-value="crawlArea"
+            :size="isWebSize ? 'default' : 'small'"
+            show-all
+            popper-class="crawl-area-select-popper"
+            @change="handleCrawlAreaChange"
+          />
+        </div>
       </div>
-      <div class="area-select">
-        <AreaSelectSingle
-          :model-value="crawlArea"
-          show-all
-          popper-class="crawl-area-select-popper"
-          @change="handleCrawlAreaChange"
-        />
+      <div class="normal-view-description">
+        TK 账号状态正常，可以继续采集数据
       </div>
-    </div>
-    <div class="normal-view-description">TK 账号状态正常，可以继续采集数据</div>
-    <ControlButtons
-      :is-crawling="crawlerManage.crawlStatus !== CrawlStatus.STOPPED"
-      @start="start"
-      @stop="stop"
-    />
-    <div v-if="statistics" class="crawl-statistics">
-      <div>
-        <span>抓取 feed {{ statistics.feedNumber }} 次</span>
+      <ControlButtons
+        :is-crawling="crawlerManage.crawlStatus !== CrawlStatus.STOPPED"
+        @start="start"
+        @stop="stop"
+      />
+      <div v-if="statistics" class="simple-crawl-statistics">
+        <div>
+          <span>抓取 feed {{ statistics.feedNumber }} 次</span>
+        </div>
+        <div>
+          <span>更新 {{ statistics.anchorUpdateTimes }} 名主播</span>
+        </div>
+        <div>
+          <span>用时 {{ formatDuration(statistics.duration) }}</span>
+        </div>
       </div>
-      <div>
-        <span>更新 {{ statistics.anchorUpdateTimes }} 名主播</span>
+      <div
+        v-if="crawlerManage.crawlStatus === CrawlStatus.SUSPENDED"
+        class="suspended-status"
+      >
+        由于连续出现请求错误，疑似触发了TK的反爬虫机制，或发生了网络问题，暂停采集，数分钟后将自动恢复
       </div>
-      <div>
-        <span>用时 {{ formatDuration(statistics.duration) }}</span>
-      </div>
-    </div>
-    <div
-      v-if="crawlerManage.crawlStatus === CrawlStatus.SUSPENDED"
-      class="suspended-status"
-    >
-      由于连续出现请求错误，疑似触发了TK的反爬虫机制，或发生了网络问题，暂停采集，数分钟后将自动恢复
     </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
 .normal-view {
-  --spacing-xs: 0.5rem;
-  --spacing-sm: 1rem;
-  --spacing-md: 1.5rem;
-  --spacing-lg: 2rem;
-  --spacing-xl: 3rem;
-  --font-size-base: 1rem;
-  --font-size-sm: 14px;
-  --select-width: 200px;
-
   width: 100%;
   height: 100%;
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  --select-width: 200px;
+  @include web {
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 1.5rem;
+    --spacing-xl: 3rem;
+    --font-size-base: 1rem;
+    --font-size-sm: 14px;
+    --icon-size: 22px;
+  }
+  @include mobile {
+    --spacing-xs: 6px;
+    --spacing-sm: 12px;
+    --spacing-md: 18px;
+    --spacing-xl: 36px;
+    --font-size-base: 14px;
+    --font-size-sm: 12px;
+    --icon-size: 18px;
+  }
+  .normal-view-content {
+    width: 100%;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    @include web {
+      padding-right: v-bind('`${SidebarWidth}px`');
+    }
+  }
   .normal-view-header {
     position: relative;
     display: flex;
@@ -235,15 +268,16 @@ async function handleClearTKCookie() {
     justify-content: space-between;
     margin-bottom: var(--spacing-xs);
     .normal-view-header-right {
+      font-size: var(--font-size-base);
       padding-right: var(--spacing-md);
       display: flex;
       column-gap: var(--spacing-xs);
+      align-items: center;
       .tk-account-name {
         font-weight: 600;
-        font-size: 17px;
         transition: all 0.3s ease;
         &:hover {
-          font-size: 18px;
+          font-size: calc(var(--font-size-base) + 1px);
           color: var(--el-color-primary);
         }
       }
@@ -252,6 +286,12 @@ async function handleClearTKCookie() {
         transition: all 0.3s ease;
         display: flex;
         align-items: center;
+        width: var(--icon-size);
+        height: var(--icon-size);
+        svg {
+          width: 100%;
+          height: 100%;
+        }
       }
 
       .setting-icon:hover {
@@ -309,41 +349,55 @@ async function handleClearTKCookie() {
     color: var(--el-color-danger);
     text-align: center;
     max-width: calc(var(--select-width) + var(--label-width));
-    line-height: 1.5;
+    line-height: 150%;
   }
-  .crawl-statistics {
+  .simple-crawl-statistics {
     margin-top: var(--spacing-sm);
     display: flex;
     align-items: center;
     gap: var(--spacing-sm);
   }
 }
+</style>
+
+<style lang="scss">
 .crawler-setting-dropdown-menu {
-  :global(.el-popper__arrow) {
+  @include web {
+    --spacing-xs: 0.5rem;
+    --font-size-base: 1rem;
+    --font-size-sm: 14px;
+  }
+  @include mobile {
+    --spacing-xs: 0.5rem;
+    --font-size-base: 14px;
+    --font-size-sm: 12px;
+  }
+  .el-popper__arrow {
     display: none !important;
   }
-  :global(.el-dropdown-menu__item) {
+
+  .el-dropdown-menu__item {
     display: flex;
     align-items: center;
-    gap: 8px;
-    font-size: 14px;
-  }
+    gap: var(--spacing-xs);
+    font-size: var(--font-size-sm);
 
-  :global(.el-dropdown-menu__item:hover) {
-    background-color: var(--el-dropdown-menuItem-hover-fill);
-    color: var(--el-color-primary);
-  }
+    &:hover {
+      background-color: var(--el-dropdown-menuItem-hover-fill);
+      color: var(--el-color-primary);
+    }
 
-  :global(.el-dropdown-menu__item .el-icon) {
-    font-size: 16px;
-    margin-right: 4px;
+    .el-icon {
+      font-size: var(--font-size-base);
+      margin-right: 0;
+    }
   }
 }
+
+// Select styles
 .crawl-area-select-popper {
-  :global(.el-select-dropdown) {
-    max-height: 210px !important;
-  }
-  :global(.el-select-dropdown .el-select-dropdown__wrap) {
+  .el-select-dropdown,
+  .el-select-dropdown .el-select-dropdown__wrap {
     max-height: 210px !important;
   }
 }

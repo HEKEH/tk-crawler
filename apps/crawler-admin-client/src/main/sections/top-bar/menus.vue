@@ -2,20 +2,40 @@
 import { MenuIcon } from '@tk-crawler/assets';
 import { useIsWebSize } from '@tk-crawler/view-shared';
 import { ElDrawer, ElLink } from 'element-plus';
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { computed, ref } from 'vue';
+import { Page } from '../../types';
 import { useGlobalStore } from '../../utils';
 
 defineOptions({
   name: 'Menus',
 });
 const globalStore = useGlobalStore();
-const router = useRouter();
-function handleClick(item: (typeof globalStore.menus)[number]) {
-  if (item.menu === globalStore.currentMenu) {
+
+const Menus = computed(() => {
+  if (globalStore.currentPage === Page.Login) {
+    return [
+      {
+        key: Page.Login,
+        name: '登录',
+      },
+    ];
+  }
+  return [
+    {
+      key: Page.Crawler,
+      name: '爬虫管理',
+    },
+    {
+      key: Page.Client,
+      name: '客户管理',
+    },
+  ];
+});
+function handleClick(item: { key: Page; name: string }) {
+  if (item.key === globalStore.currentPage) {
     return;
   }
-  router.push(item.jumpTo ?? item.path);
+  globalStore.setCurrentMenu(item.key);
 }
 const isWeb = useIsWebSize();
 
@@ -24,12 +44,12 @@ const drawerVisible = ref(false);
 
 <template>
   <div v-if="isWeb" class="h-full flex items-center gap-12">
-    <div v-for="item in globalStore.menus" :key="item.menu">
+    <div v-for="item in Menus" :key="item.key">
       <ElLink
         class="text-base hover:text-[var(--el-color-primary)]"
         :class="{
           'text-[var(--el-color-primary)]':
-            globalStore.currentMenu === item.menu,
+            globalStore.currentPage === item.key,
         }"
         :underline="false"
         @click="handleClick(item)"
@@ -46,12 +66,12 @@ const drawerVisible = ref(false);
     <ElDrawer v-model="drawerVisible" append-to-body :size="180">
       <div class="w-full flex flex-col items-center gap-4">
         <ElLink
-          v-for="item in globalStore.menus"
-          :key="item.menu"
+          v-for="item in Menus"
+          :key="item.key"
           class="text-base hover:text-[var(--el-color-primary)]"
           :class="{
             'text-[var(--el-color-primary)]':
-              globalStore.currentMenu === item.menu,
+              globalStore.currentPage === item.key,
           }"
           @click="handleClick(item)"
         >

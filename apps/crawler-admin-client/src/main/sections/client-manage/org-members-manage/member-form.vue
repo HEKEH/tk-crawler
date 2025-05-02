@@ -5,6 +5,7 @@ import {
   OrgMemberStatus,
   validatePassword,
 } from '@tk-crawler/biz-shared';
+import { useIsWebSize } from '@tk-crawler/view-shared';
 import {
   ElButton,
   ElForm,
@@ -26,6 +27,8 @@ const props = defineProps<{
 const emit = defineEmits<{
   cancel: [];
 }>();
+
+const isWeb = useIsWebSize();
 
 const formRef = ref<FormInstance>();
 
@@ -128,9 +131,10 @@ function handleCancel() {
 <template>
   <ElForm
     ref="formRef"
+    :size="isWeb ? 'default' : 'small'"
     :model="form"
     :rules="rules"
-    label-width="120px"
+    :label-width="isWeb ? '120px' : '80px'"
     label-position="right"
   >
     <ElFormItem label="登录名" prop="username">

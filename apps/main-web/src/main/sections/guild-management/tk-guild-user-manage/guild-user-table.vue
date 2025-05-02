@@ -25,9 +25,9 @@ import {
 import { formatDateTime, RESPONSE_CODE } from '@tk-crawler/shared';
 import {
   AreaTooltipIcon,
-  CopyIcon,
   getPlatform,
   isDesktopPlatform,
+  onKeepAliveActivated,
   RefreshButton,
   useIsWebSize,
 } from '@tk-crawler/view-shared';
@@ -41,7 +41,7 @@ import {
   ElTableColumn,
   ElTooltip,
 } from 'element-plus';
-import { computed, onActivated, ref, toRaw } from 'vue';
+import { computed, ref, toRaw } from 'vue';
 import { VisiblePassword } from '../../../components';
 import {
   createTKGuildUser,
@@ -405,7 +405,7 @@ async function onStartOrStop(item: TKGuildUserRow) {
   }
 }
 
-onActivated(refetch);
+onKeepAliveActivated(refetch);
 </script>
 
 <template>

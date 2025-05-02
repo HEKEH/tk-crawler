@@ -8,7 +8,11 @@ import type {
 import type { TableColumnCtx } from 'element-plus';
 import { useQuery } from '@tanstack/vue-query';
 import { formatDateTime, RESPONSE_CODE } from '@tk-crawler/shared';
-import { ClearMessage, RefreshButton } from '@tk-crawler/view-shared';
+import {
+  ClearMessage,
+  onKeepAliveActivated,
+  RefreshButton,
+} from '@tk-crawler/view-shared';
 import {
   ElButton,
   ElMessage,
@@ -17,7 +21,7 @@ import {
   ElTable,
   ElTableColumn,
 } from 'element-plus';
-import { computed, h, onActivated, reactive, ref } from 'vue';
+import { computed, h, reactive, ref } from 'vue';
 import {
   clearAnchorCommentTemplateGroup,
   createAnchorCommentTemplateGroup,
@@ -246,7 +250,7 @@ async function handleClearData() {
   } catch {}
 }
 
-onActivated(refetch);
+onKeepAliveActivated(refetch);
 
 const formDialogVisible = ref(false);
 const formData = ref<AnchorCommentTemplateGroup>();

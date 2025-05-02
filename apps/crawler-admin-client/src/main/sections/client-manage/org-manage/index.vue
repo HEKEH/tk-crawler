@@ -15,6 +15,7 @@ import {
   AreaTooltipIcon,
   confirmAfterSeconds,
   RefreshButton,
+  useIsWebSize,
 } from '@tk-crawler/view-shared';
 import {
   ElButton,
@@ -57,6 +58,7 @@ interface ScopeType {
 }
 
 const globalStore = useGlobalStore();
+const isWeb = useIsWebSize();
 
 const tableRef = ref<InstanceType<typeof ElTable>>();
 const pageNum = ref(1);
@@ -256,6 +258,7 @@ function onManageOrgMembers(org: OrganizationItem) {
     </div>
     <ElTable
       ref="tableRef"
+      :size="isWeb ? 'default' : 'small'"
       :data="data?.list"
       class="main-table"
       :default-sort="
@@ -269,21 +272,21 @@ function onManageOrgMembers(org: OrganizationItem) {
       <ElTableColumn
         fixed
         prop="id"
-        label="机构ID"
-        min-width="100"
+        label="ID"
+        :min-width="isWeb ? 100 : 60"
         sortable="custom"
       />
       <ElTableColumn
         fixed
         prop="name"
         label="机构名称"
-        min-width="120"
+        :min-width="isWeb ? 120 : 90"
         sortable="custom"
       />
       <ElTableColumn
         prop="status"
         label="状态"
-        min-width="100"
+        :min-width="isWeb ? 100 : 70"
         sortable="custom"
       >
         <template #default="scope: ScopeType">
@@ -303,7 +306,7 @@ function onManageOrgMembers(org: OrganizationItem) {
       <ElTableColumn
         prop="membership_start_at"
         label="会员开始时间"
-        min-width="180"
+        :min-width="isWeb ? 180 : 120"
         sortable="custom"
       >
         <template #default="scope: ScopeType">
@@ -313,7 +316,7 @@ function onManageOrgMembers(org: OrganizationItem) {
       <ElTableColumn
         prop="membership_expire_at"
         label="会员到期时间"
-        min-width="180"
+        :min-width="isWeb ? 180 : 120"
         sortable="custom"
       >
         <template #default="scope: ScopeType">
@@ -323,7 +326,7 @@ function onManageOrgMembers(org: OrganizationItem) {
       <ElTableColumn
         prop="if_membership_valid"
         label="会员是否有效"
-        min-width="120"
+        :min-width="isWeb ? 120 : 100"
       >
         <template #default="scope: ScopeType">
           <ElTag :type="scope.row.if_membership_valid ? 'success' : 'danger'">
@@ -331,7 +334,7 @@ function onManageOrgMembers(org: OrganizationItem) {
           </ElTag>
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="areas" label="分区" min-width="160">
+      <ElTableColumn prop="areas" label="分区" :min-width="isWeb ? 160 : 100">
         <template #default="scope: ScopeType">
           <div class="area-tag">
             <ElTag
@@ -350,18 +353,18 @@ function onManageOrgMembers(org: OrganizationItem) {
         sortable="custom"
         prop="user_count"
         label="用户数量"
-        min-width="120"
+        :min-width="isWeb ? 120 : 100"
       />
       <ElTableColumn
         sortable="custom"
         prop="mobile_device_limit"
         label="设备数量上限"
-        min-width="140"
+        :min-width="isWeb ? 140 : 120"
       />
       <ElTableColumn
         prop="created_at"
         label="创建时间"
-        min-width="180"
+        :min-width="isWeb ? 180 : 120"
         sortable="custom"
       >
         <template #default="scope: ScopeType">
@@ -371,15 +374,19 @@ function onManageOrgMembers(org: OrganizationItem) {
       <ElTableColumn
         prop="updated_at"
         label="更新时间"
-        min-width="180"
+        :min-width="isWeb ? 180 : 120"
         sortable="custom"
       >
         <template #default="scope: ScopeType">
           {{ formatDateTime(scope.row.updated_at) }}
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="remark" label="备注" min-width="100" />
-      <ElTableColumn fixed="right" label="操作" min-width="220">
+      <ElTableColumn prop="remark" label="备注" :min-width="isWeb ? 100 : 70" />
+      <ElTableColumn
+        :fixed="isWeb ? 'right' : undefined"
+        label="操作"
+        :min-width="isWeb ? 220 : 180"
+      >
         <template #default="scope: ScopeType">
           <div class="action-row">
             <ElButton
@@ -440,7 +447,10 @@ function onManageOrgMembers(org: OrganizationItem) {
         background
         :page-size="pageSize"
         :current-page="pageNum"
-        layout="total, sizes, prev, pager, next"
+        :layout="
+          isWeb ? 'total, sizes, prev, pager, next' : 'total, prev, pager, next'
+        "
+        :pager-count="isWeb ? 7 : 5"
         :total="data?.total"
         @size-change="pageSize = $event"
         @current-change="pageNum = $event"
@@ -462,15 +472,24 @@ function onManageOrgMembers(org: OrganizationItem) {
   />
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .org-manage {
-  padding: 2rem 1rem;
   position: relative;
   height: fit-content;
   max-height: 100%;
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  .filter-row {
+    width: 100%;
+    overflow: hidden;
+    @include mobile {
+      margin-bottom: 0.5rem;
+    }
+    @include web {
+      margin-bottom: 1rem;
+    }
+  }
   .header-row {
     margin-bottom: 1rem;
     display: flex;
@@ -508,6 +527,12 @@ function onManageOrgMembers(org: OrganizationItem) {
     justify-content: flex-end;
     margin-top: 1rem;
     padding-right: 1rem;
+    @include mobile {
+      justify-content: center;
+    }
+    @include web {
+      justify-content: flex-end;
+    }
   }
   .area-tag {
     display: flex;

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useIsWebSize } from '@tk-crawler/view-shared';
 import {
   ElButton,
   ElForm,
@@ -16,6 +17,8 @@ const props = defineProps<{
 const emit = defineEmits<{
   cancel: [];
 }>();
+
+const isWeb = useIsWebSize();
 
 const formRef = ref<FormInstance>();
 
@@ -60,9 +63,10 @@ function handleCancel() {
 <template>
   <ElForm
     ref="formRef"
+    :size="isWeb ? 'default' : 'small'"
     :model="form"
     :rules="rules"
-    label-width="120px"
+    :label-width="isWeb ? '120px' : '100px'"
     label-position="right"
   >
     <ElFormItem label="会员天数" prop="membership_days">

@@ -4,7 +4,7 @@ import {
   OrganizationStatus,
 } from '@tk-crawler/biz-shared';
 import { CommonDatePickerShortcuts, isArrayEqual } from '@tk-crawler/shared';
-import { AreaSelectMultiple } from '@tk-crawler/view-shared';
+import { AreaSelectMultiple, useIsWebSize } from '@tk-crawler/view-shared';
 import dayjs from 'dayjs';
 import {
   ElButton,
@@ -29,6 +29,8 @@ const props = defineProps<{
 const emit = defineEmits<{
   cancel: [];
 }>();
+
+const isWeb = useIsWebSize();
 
 const formRef = ref<FormInstance>();
 
@@ -148,14 +150,19 @@ function handleCancel() {
     ref="formRef"
     :model="form"
     :rules="rules"
-    label-width="120px"
+    :size="isWeb ? 'default' : 'small'"
+    :label-width="isWeb ? '120px' : '100px'"
     label-position="right"
   >
     <ElFormItem label="机构名称" prop="name">
       <ElInput v-model="form.name" placeholder="请输入机构名称" />
     </ElFormItem>
 
-    <ElFormItem label="会员时间" prop="membershipDates">
+    <ElFormItem
+      class="membership-dates-item"
+      label="会员时间"
+      prop="membershipDates"
+    >
       <ElDatePicker
         v-model="form.membership_start_at"
         type="datetime"
@@ -225,5 +232,19 @@ function handleCancel() {
 .el-form {
   max-width: 600px;
   margin: 0 auto;
+}
+</style>
+
+<style lang="scss">
+.membership-dates-item {
+  .el-form-item__content {
+    @include mobile {
+      flex-direction: column;
+      row-gap: 10px;
+      .el-input {
+        margin-right: 0 !important;
+      }
+    }
+  }
 }
 </style>

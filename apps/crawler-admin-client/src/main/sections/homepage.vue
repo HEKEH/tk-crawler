@@ -22,7 +22,9 @@ const currentPage = computed(() => {
     <TopBar />
     <div class="body">
       <Login v-if="currentPage === Page.Login" />
-      <CrawlerManage v-else-if="currentPage === Page.Crawler" />
+      <KeepAlive>
+        <CrawlerManage v-if="currentPage === Page.Crawler" />
+      </KeepAlive>
       <KeepAlive>
         <ClientManage v-if="currentPage === Page.Client" />
       </KeepAlive>

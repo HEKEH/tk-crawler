@@ -17,6 +17,7 @@ export async function getCrawlStatistics(
   request: SystemCrawlStatisticsRequest,
 ): Promise<SystemCrawlStatisticsResponseData> {
   const startTime = Date.now();
+  logger.info('[getCrawlStatistics] request', request);
 
   try {
     // // Check rate limit
@@ -37,15 +38,17 @@ export async function getCrawlStatistics(
     if (!request.force_refresh) {
       // Try to get from cache first
       const cachedStats = await redisClient.get(CACHE_KEY);
+      logger.info('[getCrawlStatistics] cachedStats');
       if (cachedStats) {
         logger.info('Cache hit for crawl statistics');
+        logger.trace({ cachedStats });
         return JSON.parse(cachedStats);
+      } else {
+        logger.info('Cache miss for crawl statistics, querying database');
       }
     } else {
       await redisClient.del(CACHE_KEY);
     }
-
-    logger.info('Cache miss for crawl statistics, querying database');
 
     const now = new Date();
     const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
@@ -64,20 +67,22 @@ export async function getCrawlStatistics(
       FROM Anchor
     `;
 
-    const result = stats[0];
+    const queryResult = stats[0];
 
     const queryEndTime = new Date();
-
-    // Cache the result
-    await redisClient.set(CACHE_KEY, JSON.stringify(result), CACHE_TTL);
 
     const duration = Date.now() - startTime;
     logger.info(`Crawl statistics query completed in ${duration}ms`);
 
-    return {
-      statistics: result,
+    const result = {
+      statistics: queryResult,
       query_at: queryEndTime,
     };
+
+    // Cache the result
+    await redisClient.set(CACHE_KEY, JSON.stringify(result), CACHE_TTL);
+
+    return result;
   } catch (error) {
     const duration = Date.now() - startTime;
     logger.error(`Error getting crawl statistics after ${duration}ms:`, error);

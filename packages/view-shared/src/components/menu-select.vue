@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useIsWebSize } from '@tk-crawler/view-shared';
 import { ElMenu, ElMenuItem, ElOption, ElSelect } from 'element-plus';
+import { useIsWebSize } from '../hooks';
 
 interface MenuSelectProps<T = any> {
   menus: {
@@ -29,7 +29,7 @@ const isWeb = useIsWebSize();
   <ElMenu
     v-if="isWeb"
     :default-active="value"
-    class="side-menus"
+    class="w-full border-r-0"
     @select="handleSelectMenu"
   >
     <ElMenuItem v-for="menu in menus" :key="menu.value" :index="menu.value">
@@ -38,7 +38,7 @@ const isWeb = useIsWebSize();
   </ElMenu>
   <ElSelect
     v-else
-    class="select-menus"
+    class="w-full"
     :model-value="value"
     @change="handleSelectMenu"
   >
@@ -50,13 +50,3 @@ const isWeb = useIsWebSize();
     />
   </ElSelect>
 </template>
-
-<style scoped>
-.side-menus {
-  width: 100%;
-  border-right: unset;
-}
-.select-menus {
-  width: 100%;
-}
-</style>

@@ -12,7 +12,7 @@ export function getCrawlStatistics(
 ) {
   return commonRequest<SystemCrawlStatisticsResponse>({
     baseURL: config.ownServerUrl,
-    method: 'get',
+    method: 'post',
     path: '/system/crawl-statistics',
     params,
     headers: {

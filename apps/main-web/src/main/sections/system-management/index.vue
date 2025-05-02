@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import { MenuSelect } from '@tk-crawler/view-shared';
 import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { MenuSelect } from '../../components';
 import OrgMembersManage from './org-members-manage/index.vue';
 
 defineOptions({

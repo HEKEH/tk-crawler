@@ -18,7 +18,7 @@ systemRouter.post(
   SystemController.changePassword,
 );
 
-systemRouter.get(
+systemRouter.post(
   '/crawl-statistics',
   systemTokenAuthMiddleware(),
   SystemController.getCrawlStatistics,

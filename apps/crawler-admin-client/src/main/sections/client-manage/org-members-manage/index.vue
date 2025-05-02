@@ -11,7 +11,11 @@ import type { TableColumnCtx } from 'element-plus';
 import { useQuery } from '@tanstack/vue-query';
 import { OrgMemberRole, OrgMemberStatus } from '@tk-crawler/biz-shared';
 import { formatDateTime, RESPONSE_CODE } from '@tk-crawler/shared';
-import { confirmAfterSeconds, RefreshButton } from '@tk-crawler/view-shared';
+import {
+  confirmAfterSeconds,
+  RefreshButton,
+  useIsWebSize,
+} from '@tk-crawler/view-shared';
 import {
   ElButton,
   ElMessage,
@@ -53,8 +57,9 @@ const pageSize = ref(10);
 const sortField = ref<keyof OrgMemberItem>();
 const sortOrder = ref<'ascending' | 'descending'>();
 const globalStore = useGlobalStore();
+const isWeb = useIsWebSize();
 
-const { data, isLoading, isError, error, refetch } = useQuery<
+const { data, isLoading, refetch } = useQuery<
   GetOrgMemberListResponseData | undefined
 >({
   queryKey: [
@@ -241,6 +246,7 @@ async function handleSubmitCreateOrEdit(data: Partial<OrgMemberItem>) {
     </div>
     <ElTable
       ref="tableRef"
+      :size="isWeb ? 'default' : 'small'"
       :data="data?.list"
       class="main-table"
       :default-sort="
@@ -256,26 +262,26 @@ async function handleSubmitCreateOrEdit(data: Partial<OrgMemberItem>) {
         prop="id"
         label="ID"
         sortable="custom"
-        min-width="100"
+        :min-width="isWeb ? 100 : 60"
       />
       <ElTableColumn
         fixed
         prop="username"
         label="登录名"
         sortable="custom"
-        min-width="120"
+        :min-width="isWeb ? 120 : 90"
       />
       <ElTableColumn
         prop="display_name"
         label="显示名"
         sortable="custom"
-        min-width="120"
+        :min-width="isWeb ? 120 : 90"
       />
       <ElTableColumn
         prop="email"
         label="邮箱"
         sortable="custom"
-        min-width="120"
+        :min-width="isWeb ? 120 : 100"
       >
         <template #default="scope: ScopeType">
           {{ scope.row.email || '-' }}
@@ -285,7 +291,7 @@ async function handleSubmitCreateOrEdit(data: Partial<OrgMemberItem>) {
         prop="mobile"
         label="手机号"
         sortable="custom"
-        min-width="120"
+        :min-width="isWeb ? 120 : 100"
       >
         <template #default="scope: ScopeType">
           {{ scope.row.mobile || '-' }}
@@ -295,7 +301,7 @@ async function handleSubmitCreateOrEdit(data: Partial<OrgMemberItem>) {
         prop="role_id"
         label="角色"
         sortable="custom"
-        min-width="100"
+        :min-width="isWeb ? 100 : 70"
       >
         <template #default="scope: ScopeType">
           <ElTag
@@ -314,10 +320,11 @@ async function handleSubmitCreateOrEdit(data: Partial<OrgMemberItem>) {
         prop="status"
         label="状态"
         sortable="custom"
-        min-width="100"
+        :min-width="isWeb ? 100 : 70"
       >
         <template #default="scope: ScopeType">
           <ElTag
+            size="small"
             :type="
               scope.row.status === OrgMemberStatus.normal ? 'success' : 'danger'
             "
@@ -329,7 +336,7 @@ async function handleSubmitCreateOrEdit(data: Partial<OrgMemberItem>) {
       <ElTableColumn
         prop="created_at"
         label="创建时间"
-        min-width="180"
+        :min-width="isWeb ? 180 : 120"
         sortable="custom"
       >
         <template #default="scope: ScopeType">
@@ -339,14 +346,18 @@ async function handleSubmitCreateOrEdit(data: Partial<OrgMemberItem>) {
       <ElTableColumn
         prop="updated_at"
         label="更新时间"
-        min-width="180"
+        :min-width="isWeb ? 180 : 120"
         sortable="custom"
       >
         <template #default="scope: ScopeType">
           {{ formatDateTime(scope.row.updated_at) }}
         </template>
       </ElTableColumn>
-      <ElTableColumn fixed="right" label="操作" min-width="220">
+      <ElTableColumn
+        :fixed="isWeb ? 'right' : undefined"
+        label="操作"
+        :min-width="isWeb ? 220 : 160"
+      >
         <template #default="scope: ScopeType">
           <div>
             <ElButton
@@ -389,7 +400,10 @@ async function handleSubmitCreateOrEdit(data: Partial<OrgMemberItem>) {
         background
         :page-size="pageSize"
         :current-page="pageNum"
-        layout="total, sizes, prev, pager, next"
+        :layout="
+          isWeb ? 'total, sizes, prev, pager, next' : 'total, prev, pager, next'
+        "
+        :pager-count="isWeb ? 7 : 5"
         :total="data?.total"
         @size-change="pageSize = $event"
         @current-change="pageNum = $event"
@@ -413,12 +427,6 @@ async function handleSubmitCreateOrEdit(data: Partial<OrgMemberItem>) {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  @include web {
-    padding: 2rem 1rem;
-  }
-  @include mobile {
-    padding: 1rem;
-  }
   .header-row {
     margin-bottom: 1rem;
     display: flex;
@@ -453,9 +461,14 @@ async function handleSubmitCreateOrEdit(data: Partial<OrgMemberItem>) {
   .pagination-row {
     width: 100%;
     display: flex;
-    justify-content: flex-end;
     margin-top: 1rem;
     padding-right: 1rem;
+    @include mobile {
+      justify-content: center;
+    }
+    @include web {
+      justify-content: flex-end;
+    }
   }
   .main-table {
     flex: 1;

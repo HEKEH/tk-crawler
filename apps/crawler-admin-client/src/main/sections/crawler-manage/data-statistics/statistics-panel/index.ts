@@ -1,3 +1,3 @@
 import StatisticsPanel from './index.vue';
 
-export { StatisticsPanel };
+export default StatisticsPanel;

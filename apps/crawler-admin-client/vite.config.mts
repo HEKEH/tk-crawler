@@ -9,6 +9,10 @@ import { readFileSync } from 'node:fs';
 import path, { resolve } from 'node:path';
 import process from 'node:process';
 import tailwindcss from '@tailwindcss/vite';
+import {
+  CommonPackageAlias,
+  CommonTerserOptions,
+} from '@tk-crawler/build-and-deploy';
 import { svgVueComponentPlugin } from '@tk-crawler/plugins';
 import vue from '@vitejs/plugin-vue';
 import vueJsx from '@vitejs/plugin-vue-jsx';
@@ -29,26 +33,7 @@ export default defineConfig(({ mode }) => {
   ];
   const alias: AliasOptions = {
     '@tk-crawler-admin-client/shared': resolve(__dirname, 'shared'),
-    '@tk-crawler/shared': resolve(__dirname, '../../packages/shared/src'),
-    '@tk-crawler/biz-shared': resolve(
-      __dirname,
-      '../../packages/biz-shared/src',
-    ),
-    '@tk-crawler/view-shared': resolve(
-      __dirname,
-      '../../packages/view-shared/src',
-    ),
-    '@tk-crawler/electron-utils': resolve(
-      __dirname,
-      '../../packages/electron-utils/src',
-    ),
-    '@tk-crawler/tk-requests': resolve(
-      __dirname,
-      '../../packages/tk-requests/src',
-    ),
-    '@tk-crawler/core': resolve(__dirname, '../../packages/core/src'),
-    '@tk-crawler/styles': resolve(__dirname, '../../packages/styles'),
-    '@tk-crawler/assets': resolve(__dirname, '../../packages/assets'),
+    ...CommonPackageAlias,
   };
 
   const envConfig = {
@@ -66,10 +51,12 @@ export default defineConfig(({ mode }) => {
           alias,
         },
         build: {
-          minify: isProduction,
+          minify: isProduction ? 'terser' : false,
           rollupOptions: {
             external,
           },
+          terserOptions: CommonTerserOptions,
+          sourcemap: false,
         },
         ...envConfig,
       } as InlineConfig,
@@ -127,7 +114,7 @@ export default defineConfig(({ mode }) => {
       },
     },
     build: {
-      minify: isProduction,
+      minify: isProduction ? 'terser' : false,
       outDir: 'dist',
       rollupOptions: {
         external,
@@ -139,6 +126,8 @@ export default defineConfig(({ mode }) => {
           ),
         },
       },
+      terserOptions: CommonTerserOptions,
+      sourcemap: false,
     },
     resolve: {
       alias,

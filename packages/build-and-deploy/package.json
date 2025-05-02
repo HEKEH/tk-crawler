@@ -1,0 +1,26 @@
+{
+  "name": "@tk-crawler/build-and-deploy",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "files": [
+    "dist",
+    "package.json"
+  ],
+  "scripts": {
+    "build": "cross-env NODE_ENV=production rimraf dist && rollup --config rollup.config.mjs",
+    "lint": "eslint",
+    "preinstall": "npx only-allow pnpm"
+  },
+  "peerDependencies": {},
+  "devDependencies": {
+    "vite": "^5.4.11"
+  }
+}

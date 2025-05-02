@@ -1,7 +1,11 @@
 import type { AliasOptions, PluginOption, UserConfig } from 'vite';
 import { readFileSync } from 'node:fs';
-import path, { resolve } from 'node:path';
+import path from 'node:path';
 import tailwindcss from '@tailwindcss/vite';
+import {
+  CommonPackageAlias,
+  CommonTerserOptions,
+} from '@tk-crawler/build-and-deploy';
 import { svgVueComponentPlugin } from '@tk-crawler/plugins';
 import vue from '@vitejs/plugin-vue';
 import vueJsx from '@vitejs/plugin-vue-jsx';
@@ -19,27 +23,7 @@ export default defineConfig(({ mode }) => {
     ...Object.keys(packageJSON.dependencies || {}),
     ...Object.keys(packageJSON.peerDependencies || {}),
   ];
-  const alias: AliasOptions = {
-    '@tk-crawler/shared': resolve(__dirname, '../../packages/shared/src'),
-    '@tk-crawler/biz-shared': resolve(
-      __dirname,
-      '../../packages/biz-shared/src',
-    ),
-    '@tk-crawler/main-client-shared': resolve(
-      __dirname,
-      '../../packages/main-client-shared/src',
-    ),
-    '@tk-crawler/electron-utils': resolve(
-      __dirname,
-      '../../packages/electron-utils/src',
-    ),
-    '@tk-crawler/view-shared': resolve(
-      __dirname,
-      '../../packages/view-shared/src',
-    ),
-    '@tk-crawler/styles': resolve(__dirname, '../../packages/styles'),
-    '@tk-crawler/assets': resolve(__dirname, '../../packages/assets'),
-  };
+  const alias: AliasOptions = CommonPackageAlias;
 
   const envConfig = {
     envDir: path.resolve(__dirname, '../..'), // 环境文件目录
@@ -87,7 +71,7 @@ export default defineConfig(({ mode }) => {
       open: true,
     },
     build: {
-      minify: isProduction,
+      minify: isProduction ? 'terser' : false,
       outDir: 'dist',
       rollupOptions: {
         external,
@@ -95,6 +79,9 @@ export default defineConfig(({ mode }) => {
           main: path.resolve(__dirname, 'index.html'),
         },
       },
+      terserOptions: CommonTerserOptions,
+      target: 'es2015',
+      sourcemap: false,
     },
     resolve: {
       alias,

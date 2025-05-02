@@ -33,7 +33,10 @@
       "@tk-crawler/script-tools": ["packages/script-tools/src/index.ts"],
       "@tk-crawler/tk-requests": ["packages/tk-requests/src/index.ts"],
       "@tk-crawler/server-shared": ["packages/server-shared/src/index.ts"],
-      "@tk-crawler/assets": ["packages/assets/index.ts"]
+      "@tk-crawler/assets": ["packages/assets/index.ts"],
+      "@tk-crawler/styles": ["packages/styles/index.ts"],
+      "@tk-crawler/plugins": ["packages/plugins/src/index.ts"],
+      "@tk-crawler/build-and-deploy": ["packages/build-and-deploy/src/index.ts"]
     },
     "resolveJsonModule": true,
     "types": [],

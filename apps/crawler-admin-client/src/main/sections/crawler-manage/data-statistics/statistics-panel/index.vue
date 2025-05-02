@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import type { SystemCrawlStatisticsResponseData } from '@tk-crawler/biz-shared';
+import { InfoFilled } from '@element-plus/icons-vue';
 import { useQuery } from '@tanstack/vue-query';
 import { formatTime, RESPONSE_CODE } from '@tk-crawler/shared';
-import { ElButton, ElTooltip } from 'element-plus';
+import { ElButton, ElIcon, ElTooltip } from 'element-plus';
 import { computed, onBeforeUnmount, ref } from 'vue';
 import { getCrawlStatistics } from '../../../../requests/statistics';
 import { useGlobalStore } from '../../../../utils';
@@ -94,21 +95,25 @@ const formattedLastUpdateTime = computed(() => {
   >
     <div class="flex justify-between items-center">
       <h3 class="m-0 text-sm md:text-base text-gray-800">爬虫统计</h3>
-      <ElButton
-        size="small"
-        :loading="isFetching"
-        class="text-xs md:text-sm"
-        @click="handleRefresh"
-      >
-        {{ isError ? '重试' : '强制刷新' }}
-      </ElButton>
+      <ElTooltip content="比较耗费资源，请谨慎使用" placement="top">
+        <ElButton
+          size="small"
+          :loading="isFetching"
+          class="text-xs md:text-sm"
+          @click="handleRefresh"
+        >
+          {{ isError ? '重试' : '强制刷新' }}
+
+          <ElIcon :size="12" class="ml-1 cursor-pointer"><InfoFilled /></ElIcon>
+        </ElButton>
+      </ElTooltip>
     </div>
 
     <div class="text-xs text-gray-500">
       最后更新于 {{ formattedLastUpdateTime }}
       <span class="inline"
-        >(每 {{ UpdateIntervalMinutes }} 分钟自动刷新一次)</span
-      >
+        >(每 {{ UpdateIntervalMinutes }} 分钟自动刷新一次)
+      </span>
     </div>
 
     <div

@@ -1,0 +1,33 @@
+{
+  "name": "@tk-crawler/secure",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "files": [
+    "dist",
+    "package.json"
+  ],
+  "scripts": {
+    "rollup:build": "cross-env NODE_ENV=production rimraf dist && rollup --config rollup.config.mjs",
+    "lint": "eslint",
+    "jsvmp": "cross-env node ./jsvmp/main/index.js ./dist-raw/index.js ./dist/index.js",
+    "preinstall": "npx only-allow pnpm",
+    "build": "cross-env rimraf dist && pnpm run rollup:build && mkdir -p dist && pnpm run jsvmp"
+  },
+  "peerDependencies": {},
+  "devDependencies": {
+    "@babel/generator": "^7.22.10",
+    "@babel/parser": "^7.22.10",
+    "@babel/template": "^7.22.5",
+    "@babel/traverse": "^7.22.10",
+    "@babel/types": "^7.22.10",
+    "figlet": "^1.6.0"
+  }
+}

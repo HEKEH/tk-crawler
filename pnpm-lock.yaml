@@ -755,6 +755,27 @@ importers:
 
   packages/script-tools: {}
 
+  packages/secure:
+    devDependencies:
+      '@babel/generator':
+        specifier: ^7.22.10
+        version: 7.26.10
+      '@babel/parser':
+        specifier: ^7.22.10
+        version: 7.26.10
+      '@babel/template':
+        specifier: ^7.22.5
+        version: 7.26.9
+      '@babel/traverse':
+        specifier: ^7.22.10
+        version: 7.26.10
+      '@babel/types':
+        specifier: ^7.22.10
+        version: 7.26.10
+      figlet:
+        specifier: ^1.6.0
+        version: 1.8.1
+
   packages/server-shared:
     dependencies:
       bcryptjs:
@@ -6803,6 +6824,12 @@ packages:
         optional: true
     dependencies:
       picomatch: 4.0.2
+    dev: true
+
+  /figlet@1.8.1:
+    resolution: {integrity: sha512-kEC3Sme+YvA8Hkibv0NR1oClGcWia0VB2fC1SlMy027cwe795Xx40Xiv/nw/iFAwQLupymWh+uhAAErn/7hwPg==}
+    engines: {node: '>= 0.4.0'}
+    hasBin: true
     dev: true
 
   /file-entry-cache@8.0.0:

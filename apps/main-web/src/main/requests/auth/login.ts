@@ -12,6 +12,7 @@ export function login(params: OrgMemberLoginRequest) {
     baseURL: config.ownServerUrl,
     method: 'post',
     path: '/auth/org-member-login',
+    secure: true,
     params: {
       ...params,
       password: simpleEncrypt(params.password, config.simplePasswordKey),

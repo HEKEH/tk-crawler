@@ -3,7 +3,10 @@ import {
   CLIENT_TOKEN_HEADER_KEY,
   LANGUAGE_HEADER_KEY,
   LOG_ID_HEADER_KEY,
+  NONCE_HEADER_KEY,
+  SECURITY_HEADER_KEY,
   SYSTEM_TOKEN_HEADER_KEY,
+  TIMESTAMP_HEADER_KEY,
 } from '@tk-crawler/biz-shared';
 
 export function corsMiddleware(allowOrigin: string) {
@@ -17,7 +20,7 @@ export function corsMiddleware(allowOrigin: string) {
     ctx.set('Access-Control-Max-Age', '1000');
     ctx.set(
       'Access-Control-Allow-Headers',
-      `Content-Type, Authorization, Accept, ${CLIENT_TOKEN_HEADER_KEY}, ${SYSTEM_TOKEN_HEADER_KEY}, ${LOG_ID_HEADER_KEY}, ${LANGUAGE_HEADER_KEY}`,
+      `Content-Type, Authorization, Accept, ${CLIENT_TOKEN_HEADER_KEY}, ${SYSTEM_TOKEN_HEADER_KEY}, ${LOG_ID_HEADER_KEY}, ${LANGUAGE_HEADER_KEY}, ${SECURITY_HEADER_KEY}, ${TIMESTAMP_HEADER_KEY}, ${NONCE_HEADER_KEY}`,
     );
 
     // handle OPTIONS request

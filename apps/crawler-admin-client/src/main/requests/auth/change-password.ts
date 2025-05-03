@@ -15,6 +15,7 @@ export function changePassword(
     baseURL: config.ownServerUrl,
     method: 'post',
     path: '/system/change-password',
+    secure: true,
     params: {
       old_password: simpleEncrypt(
         params.old_password,

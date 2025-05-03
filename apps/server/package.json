@@ -39,6 +39,7 @@
     "uuid": "^11.0.3"
   },
   "devDependencies": {
+    "@tk-crawler/secure": "workspace:*",
     "@types/bcryptjs": "^3.0.0",
     "@types/koa": "^2.15.0",
     "@types/koa-bodyparser": "^4.3.12",
@@ -47,6 +48,7 @@
     "@types/uuid": "^10.0.0",
     "axios": "^1.7.9",
     "bcryptjs": "^3.0.2",
+    "crypto-js": "^4.2.0",
     "dayjs": "^1.11.13",
     "i18next": "^23.16.0",
     "jwt-simple": "^0.5.6",

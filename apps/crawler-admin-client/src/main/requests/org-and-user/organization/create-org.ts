@@ -13,6 +13,7 @@ export function createOrg(
   return commonRequest<CreateOrgResponse>({
     baseURL: config.ownServerUrl,
     method: 'post',
+    secure: true,
     path: '/admin/org-and-user/create-org',
     params,
     headers: {

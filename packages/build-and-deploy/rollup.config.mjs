@@ -74,7 +74,7 @@ export default [
       file: 'dist/index.d.ts',
       format: 'es',
     },
-    externalFn,
+    external: externalFn,
     plugins: [dts(), removeFile('./dist/types')],
   },
 ];

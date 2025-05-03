@@ -1,3 +1,4 @@
+import { isRequestSecureMiddleware } from '@tk-crawler/server-shared';
 import Router from 'koa-router';
 import SystemController from '../controllers/system';
 import { systemTokenAuthMiddleware } from '../middlewares';
@@ -20,6 +21,7 @@ systemRouter.post(
 
 systemRouter.post(
   '/crawl-statistics',
+  isRequestSecureMiddleware(),
   systemTokenAuthMiddleware(),
   SystemController.getCrawlStatistics,
 );

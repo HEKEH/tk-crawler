@@ -15,6 +15,7 @@ export async function loginByToken(
       baseURL: config.ownServerUrl,
       method: 'post',
       path: '/system/login-by-token',
+      secure: true,
       headers: {
         [SYSTEM_TOKEN_HEADER_KEY]: token,
       },

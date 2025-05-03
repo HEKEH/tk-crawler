@@ -17,6 +17,7 @@ export function getAnchorList(params: GetAnchorListRequest, token: string) {
     baseURL: config.ownServerUrl,
     method: 'post',
     path: '/client/anchor/list',
+    secure: true,
     params,
     headers: {
       [CLIENT_TOKEN_HEADER_KEY]: token,
@@ -32,6 +33,7 @@ export function getAnchorListForDownload(
     baseURL: config.ownServerUrl,
     method: 'post',
     path: '/client/anchor/list-for-download',
+    secure: true,
     params,
     headers: {
       [CLIENT_TOKEN_HEADER_KEY]: token,

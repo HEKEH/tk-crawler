@@ -15,6 +15,7 @@ export function getCrawlStatistics(
     method: 'post',
     path: '/system/crawl-statistics',
     params,
+    secure: true,
     headers: {
       [SYSTEM_TOKEN_HEADER_KEY]: token,
     },

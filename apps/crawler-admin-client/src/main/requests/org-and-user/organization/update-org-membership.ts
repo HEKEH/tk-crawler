@@ -13,6 +13,7 @@ export function updateOrgMembership(
   return commonRequest<UpdateOrgMembershipResponse>({
     baseURL: config.ownServerUrl,
     method: 'post',
+    secure: true,
     path: '/admin/org-and-user/update-org-membership',
     params,
     headers: {

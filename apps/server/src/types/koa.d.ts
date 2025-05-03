@@ -1,4 +1,7 @@
-import type { OrgMemberUserInfoWithOrgInfo } from '@tk-crawler/biz-shared';
+import type {
+  OrgMemberUserInfoWithOrgInfo,
+  SystemUserInfo,
+} from '@tk-crawler/biz-shared';
 import type { I18N_LANGUAGE, Logger } from '@tk-crawler/shared';
 import type { TOptions } from 'i18next';
 
@@ -16,9 +19,9 @@ interface CustomContext {
 
 declare module 'koa' {
   function getRequestData<T = any>(): T;
-  export interface Context extends CustomContext {}
+  interface Context extends CustomContext {}
 }
 
 declare module 'koa-router' {
-  export interface IRouterParamContext extends CustomContext {}
+  interface IRouterParamContext extends CustomContext {}
 }

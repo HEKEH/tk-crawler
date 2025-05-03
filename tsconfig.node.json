@@ -27,6 +27,7 @@
     "packages/biz-shared/**/*",
     "packages/tk-requests/**/*",
     "packages/server-shared/**/*",
+    "packages/secure/**/*",
     "packages/play/**/*",
     "packages/build-and-deploy/**/*",
     "packages/script-tools/**/*",

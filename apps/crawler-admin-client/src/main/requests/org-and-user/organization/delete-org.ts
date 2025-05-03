@@ -13,6 +13,7 @@ export function deleteOrg(
   return commonRequest<DeleteOrgResponse>({
     baseURL: config.ownServerUrl,
     method: 'post',
+    secure: true,
     path: '/admin/org-and-user/delete-org',
     params,
     headers: {

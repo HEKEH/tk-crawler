@@ -11,6 +11,7 @@ export function login(params: SystemUserLoginRequest) {
   return commonRequest<SystemUserLoginResponse>({
     baseURL: config.ownServerUrl,
     method: 'post',
+    secure: true,
     path: '/system/login',
     params: {
       ...params,

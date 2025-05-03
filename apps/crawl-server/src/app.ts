@@ -1,10 +1,10 @@
 import http from 'node:http';
+import { corsMiddleware } from '@tk-crawler/server-shared';
 import Koa from 'koa';
 import bodyParser from 'koa-bodyparser';
 import config from './config';
 import {
   addContextPropsMiddleware,
-  corsMiddleware,
   requestWrapMiddleware,
 } from './middlewares';
 import router from './routes';

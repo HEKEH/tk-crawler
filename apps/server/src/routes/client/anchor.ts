@@ -1,3 +1,4 @@
+import { isRequestSecureMiddleware } from '@tk-crawler/server-shared';
 import Router from 'koa-router';
 import AnchorController from '../../controllers/client/anchor';
 import {
@@ -12,9 +13,14 @@ const anchorRouter = new Router({
 
 anchorRouter.use(clientTokenAuthMiddleware(), checkHasMembershipAndValid);
 
-anchorRouter.post('/list', AnchorController.getAnchorList);
+anchorRouter.post(
+  '/list',
+  isRequestSecureMiddleware(),
+  AnchorController.getAnchorList,
+);
 anchorRouter.post(
   '/list-for-download',
+  isRequestSecureMiddleware(),
   AnchorController.getAnchorListForDownload,
 );
 anchorRouter.post(

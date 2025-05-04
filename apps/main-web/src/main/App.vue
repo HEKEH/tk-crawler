@@ -11,6 +11,7 @@ import {
 import zhCn from 'element-plus/es/locale/lang/zh-cn';
 import { computed, onBeforeUnmount, onErrorCaptured } from 'vue';
 
+import { useRouter } from 'vue-router';
 import Homepage from './sections/homepage.vue';
 import { provideGlobalStore } from './utils';
 // import { CrawlerViewMessage } from './constants';
@@ -26,9 +27,12 @@ async function initialize() {
 }
 initialize();
 
+const router = useRouter();
+
 async function reload() {
   try {
     await globalStore.init();
+    router.go(0);
   } catch {
     // 不用处理
   }

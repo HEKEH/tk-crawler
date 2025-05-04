@@ -3,8 +3,8 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import tailwindcss from '@tailwindcss/vite';
 import {
-  CommonPackageAlias,
   CommonTerserOptions,
+  getCommonPackageAlias,
 } from '@tk-crawler/build-and-deploy';
 import { svgVueComponentPlugin } from '@tk-crawler/plugins';
 import vue from '@vitejs/plugin-vue';
@@ -23,7 +23,7 @@ export default defineConfig(({ mode }) => {
     ...Object.keys(packageJSON.dependencies || {}),
     ...Object.keys(packageJSON.peerDependencies || {}),
   ];
-  const alias: AliasOptions = CommonPackageAlias;
+  const alias: AliasOptions = getCommonPackageAlias(isProduction);
 
   const envConfig = {
     envDir: path.resolve(__dirname, '../..'), // 环境文件目录
@@ -81,7 +81,7 @@ export default defineConfig(({ mode }) => {
       },
       terserOptions: CommonTerserOptions,
       target: 'es2015',
-      sourcemap: false,
+      sourcemap: !isProduction,
     },
     resolve: {
       alias,

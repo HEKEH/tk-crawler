@@ -10,8 +10,8 @@ import path, { resolve } from 'node:path';
 import process from 'node:process';
 import tailwindcss from '@tailwindcss/vite';
 import {
-  CommonPackageAlias,
   CommonTerserOptions,
+  getCommonPackageAlias,
 } from '@tk-crawler/build-and-deploy';
 import { svgVueComponentPlugin } from '@tk-crawler/plugins';
 import vue from '@vitejs/plugin-vue';
@@ -33,7 +33,7 @@ export default defineConfig(({ mode }) => {
   ];
   const alias: AliasOptions = {
     '@tk-crawler-admin-client/shared': resolve(__dirname, 'shared'),
-    ...CommonPackageAlias,
+    ...getCommonPackageAlias(isProduction),
   };
 
   const envConfig = {

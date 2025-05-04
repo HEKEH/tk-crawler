@@ -10,8 +10,8 @@ import path from 'node:path';
 import process from 'node:process';
 import tailwindcss from '@tailwindcss/vite';
 import {
-  CommonPackageAlias,
   CommonTerserOptions,
+  getCommonPackageAlias,
 } from '@tk-crawler/build-and-deploy';
 import vue from '@vitejs/plugin-vue';
 import vueJsx from '@vitejs/plugin-vue-jsx';
@@ -30,7 +30,7 @@ export default defineConfig(({ mode }) => {
     ...Object.keys(packageJSON.dependencies || {}),
     ...Object.keys(packageJSON.peerDependencies || {}),
   ];
-  const alias: AliasOptions = CommonPackageAlias;
+  const alias: AliasOptions = getCommonPackageAlias(isProduction);
   const envConfig = {
     envDir: path.resolve(__dirname, '../..'), // 环境文件目录
     envPrefix: ['CLIENT_'], // 环境变量前缀

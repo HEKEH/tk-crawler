@@ -40,9 +40,19 @@ export async function searchAnchorsNeedCheck(data: {
       invite_checks: {
         none: {
           org_id: BigInt(data.org_id),
-          checked_at: {
-            gt: new Date(Date.now() - ANCHOR_CHECK_OUTDATE_TIME),
-          },
+          OR: [
+            {
+              contacted_by: {
+                // 已建联的不用再检查
+                not: null,
+              },
+            },
+            {
+              checked_at: {
+                gt: new Date(Date.now() - ANCHOR_CHECK_OUTDATE_TIME),
+              },
+            },
+          ],
         },
       },
     },

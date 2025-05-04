@@ -7,11 +7,7 @@ export function systemTokenAuthMiddleware(options?: {
   fetchPassword?: boolean;
 }) {
   return async (ctx: Context, next: Next) => {
-    const token =
-      ctx.request.headers[SYSTEM_TOKEN_HEADER_KEY] ||
-      ctx.getRequestData<{ [SYSTEM_TOKEN_HEADER_KEY]: string }>()[
-        SYSTEM_TOKEN_HEADER_KEY
-      ];
+    const token = ctx.request.headers[SYSTEM_TOKEN_HEADER_KEY];
     ctx.logger.trace('[systemTokenAuthMiddleware token]', token);
     const systemUserInfo = await getSystemUserInfoByToken(token, options);
     ctx.logger.info('[systemTokenAuthMiddleware systemUserInfo]', {

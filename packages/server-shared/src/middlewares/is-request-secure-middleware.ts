@@ -43,7 +43,6 @@ export function isRequestSecureMiddleware() {
       setForbidden();
       return;
     }
-    await secureCheckRedisNamespace.set(`nonce-${nonce}`, '1', 60 * 60);
     const params = ctx.getRequestData<any>();
     const requestData = {
       path: ctx.request.url,
@@ -62,6 +61,7 @@ export function isRequestSecureMiddleware() {
       return;
     }
     ctx.logger.info('[isRequestSecureMiddleware] secure check success');
+    await secureCheckRedisNamespace.set(`nonce-${nonce}`, '1', 60 * 60);
     await next();
   };
 }

@@ -7,11 +7,7 @@ export function clientTokenAuthMiddleware(options?: {
   fetchPassword?: boolean;
 }) {
   return async (ctx: Context, next: Next) => {
-    const token =
-      ctx.request.headers[CLIENT_TOKEN_HEADER_KEY] ||
-      ctx.getRequestData<{ [CLIENT_TOKEN_HEADER_KEY]: string }>()[
-        CLIENT_TOKEN_HEADER_KEY
-      ];
+    const token = ctx.request.headers[CLIENT_TOKEN_HEADER_KEY];
     ctx.logger.trace('[clientTokenAuthMiddleware token]', token);
     const clientInfo = await getOrgMemberInfoByToken(token, options);
     ctx.logger.info('[clientTokenAuthMiddleware clientInfo]', {

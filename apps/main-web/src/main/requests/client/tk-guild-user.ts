@@ -17,6 +17,17 @@ import type {
 import { CLIENT_TOKEN_HEADER_KEY } from '@tk-crawler/biz-shared';
 
 import {
+  CreateTKGuildUser,
+  DeleteTKGuildUser,
+  GetTKGuildUserDetail,
+  GetTKGuildUserList,
+  OwnServerUrl,
+  Post,
+  StartTKGuildUserAccount,
+  StopTKGuildUserAccount,
+  UpdateTKGuildUser,
+} from '@tk-crawler/secure';
+import {
   RESPONSE_CODE,
   simpleDecrypt,
   simpleEncrypt,
@@ -30,9 +41,9 @@ export async function getTKGuildUserList(
   token: string,
 ) {
   const response = await commonRequest<GetTKGuildUserListResponse>({
-    baseURL: config.ownServerUrl,
-    method: 'post',
-    path: '/client/tk-guild-user/get-user-list',
+    baseURL: config[OwnServerUrl],
+    method: Post,
+    path: GetTKGuildUserList,
     params,
     headers: {
       [CLIENT_TOKEN_HEADER_KEY]: token,
@@ -56,9 +67,9 @@ export async function getTKGuildUserDetail(
   token: string,
 ) {
   const response = await commonRequest<GetTKGuildUserDetailResponse>({
-    baseURL: config.ownServerUrl,
-    method: 'post',
-    path: '/client/tk-guild-user/get-user-detail',
+    baseURL: config[OwnServerUrl],
+    method: Post,
+    path: GetTKGuildUserDetail,
     params,
     headers: {
       [CLIENT_TOKEN_HEADER_KEY]: token,
@@ -86,9 +97,9 @@ export function createTKGuildUser(
     };
   }
   return commonRequest<CreateTKGuildUserResponse>({
-    baseURL: config.ownServerUrl,
-    method: 'post',
-    path: '/client/tk-guild-user/create-user',
+    baseURL: config[OwnServerUrl],
+    method: Post,
+    path: CreateTKGuildUser,
     params,
     headers: {
       [CLIENT_TOKEN_HEADER_KEY]: token,
@@ -112,9 +123,9 @@ export function updateTKGuildUser(
     };
   }
   return commonRequest<UpdateTKGuildUserResponse>({
-    baseURL: config.ownServerUrl,
-    method: 'post',
-    path: '/client/tk-guild-user/update-user',
+    baseURL: config[OwnServerUrl],
+    method: Post,
+    path: UpdateTKGuildUser,
     params,
     headers: {
       [CLIENT_TOKEN_HEADER_KEY]: token,
@@ -128,9 +139,9 @@ export function deleteTKGuildUser(
   token: string,
 ) {
   return commonRequest<DeleteTKGuildUserResponse>({
-    baseURL: config.ownServerUrl,
-    method: 'post',
-    path: '/client/tk-guild-user/delete-user',
+    baseURL: config[OwnServerUrl],
+    method: Post,
+    path: DeleteTKGuildUser,
     params,
     headers: {
       [CLIENT_TOKEN_HEADER_KEY]: token,
@@ -161,9 +172,9 @@ export function startTKGuildUserAccount(
   token: string,
 ) {
   return commonRequest<StartTKLiveAdminAccountResponse>({
-    baseURL: config.ownServerUrl,
-    method: 'post',
-    path: '/client/tk-guild-user/start-live-admin-account',
+    baseURL: config[OwnServerUrl],
+    method: Post,
+    path: StartTKGuildUserAccount,
     params,
     headers: {
       [CLIENT_TOKEN_HEADER_KEY]: token,
@@ -177,9 +188,9 @@ export function stopTKGuildUserAccount(
   token: string,
 ) {
   return commonRequest<StopTKLiveAdminAccountResponse>({
-    baseURL: config.ownServerUrl,
-    method: 'post',
-    path: '/client/tk-guild-user/stop-live-admin-account',
+    baseURL: config[OwnServerUrl],
+    method: Post,
+    path: StopTKGuildUserAccount,
     params,
     headers: {
       [CLIENT_TOKEN_HEADER_KEY]: token,

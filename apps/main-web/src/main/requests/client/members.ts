@@ -11,6 +11,14 @@ import type {
 
 import { CLIENT_TOKEN_HEADER_KEY } from '@tk-crawler/biz-shared';
 
+import {
+  CreateOrgMember,
+  DeleteOrgMember,
+  GetOrgMemberList,
+  OwnServerUrl,
+  Post,
+  UpdateOrgMember,
+} from '@tk-crawler/secure';
 import { commonRequest } from '@tk-crawler/view-shared';
 import config from '../../config';
 
@@ -19,9 +27,9 @@ export function getOrgMemberList(
   token: string,
 ) {
   return commonRequest<GetOrgMemberListResponse>({
-    baseURL: config.ownServerUrl,
-    method: 'post',
-    path: '/client/org-and-user/get-org-member-list',
+    baseURL: config[OwnServerUrl],
+    method: Post,
+    path: GetOrgMemberList,
     params,
     headers: {
       [CLIENT_TOKEN_HEADER_KEY]: token,
@@ -34,9 +42,9 @@ export function createOrgMember(
   token: string,
 ) {
   return commonRequest<CreateOrgMemberResponse>({
-    baseURL: config.ownServerUrl,
-    method: 'post',
-    path: '/client/org-and-user/create-org-member',
+    baseURL: config[OwnServerUrl],
+    method: Post,
+    path: CreateOrgMember,
     params,
     headers: {
       [CLIENT_TOKEN_HEADER_KEY]: token,
@@ -49,9 +57,9 @@ export function updateOrgMember(
   token: string,
 ) {
   return commonRequest<UpdateOrgMemberResponse>({
-    baseURL: config.ownServerUrl,
-    method: 'post',
-    path: '/client/org-and-user/update-org-member',
+    baseURL: config[OwnServerUrl],
+    method: Post,
+    path: UpdateOrgMember,
     params,
     headers: {
       [CLIENT_TOKEN_HEADER_KEY]: token,
@@ -64,9 +72,9 @@ export function deleteOrgMember(
   token: string,
 ) {
   return commonRequest<DeleteOrgMemberResponse>({
-    baseURL: config.ownServerUrl,
-    method: 'post',
-    path: '/client/org-and-user/delete-org-member',
+    baseURL: config[OwnServerUrl],
+    method: Post,
+    path: DeleteOrgMember,
     params,
     headers: {
       [CLIENT_TOKEN_HEADER_KEY]: token,

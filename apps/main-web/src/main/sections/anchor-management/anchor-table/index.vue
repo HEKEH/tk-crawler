@@ -216,13 +216,12 @@ onKeepAliveActivated(refetch);
       <ElPagination
         v-model:current-page="pageNum"
         v-model:page-size="pageSize"
+        class="pagination"
         size="small"
         background
-        :layout="
-          isWeb ? 'total, sizes, prev, pager, next' : 'total, prev, pager, next'
-        "
-        :page-sizes="[10, 20, 50, 100]"
-        :pager-count="isWeb ? 7 : 5"
+        layout="total, sizes, prev, pager, next"
+        :page-sizes="[10, 20, 50, 100, 200, 500, 1000]"
+        :pager-count="isWeb ? 7 : 3"
         :total="data?.total || 0"
         @size-change="handlePageSizeChange"
         @current-change="handlePageNumChange"
@@ -230,3 +229,9 @@ onKeepAliveActivated(refetch);
     </div>
   </div>
 </template>
+
+<style scoped>
+.pagination {
+  --el-pagination-item-gap: 8px;
+}
+</style>

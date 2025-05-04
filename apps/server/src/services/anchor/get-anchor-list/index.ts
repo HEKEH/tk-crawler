@@ -12,7 +12,7 @@ import { mysqlClient } from '@tk-crawler/database';
 import { transformAnchorListFilterValues } from './filter';
 import { transformAnchorListOrderBy } from './order-by';
 
-const PAGE_SIZE_LIMIT = 200;
+const PAGE_SIZE_LIMIT = 1000;
 
 export async function getAnchorList(
   request: GetAnchorListRequest & { org_id: string },

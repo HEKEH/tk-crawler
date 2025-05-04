@@ -12,6 +12,8 @@ RUN npm install -g pnpm@8.15.8 --force
 COPY . /app
 WORKDIR /app
 
+RUN chmod -R 777 /app
+
 RUN rm -rf node_modules apps/*/node_modules packages/*/node_modules
 ENV NODE_ENV=development
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --ignore-scripts

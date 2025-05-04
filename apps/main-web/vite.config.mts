@@ -78,6 +78,24 @@ export default defineConfig(({ mode }) => {
         input: {
           main: path.resolve(__dirname, 'index.html'),
         },
+        // plugins: [
+        //   (obfuscator as any)({
+        //     options: {
+        //       compact: false, // 不压缩代码，便于调试
+        //       controlFlowFlattening: false, // 不做控制流混淆
+        //       deadCodeInjection: false, // 不注入死代码
+        //       debugProtection: false, // 不做debug保护
+        //       disableConsoleOutput: false, // 不禁用console
+        //       // identifierNamesGenerator: 'dictionary', // 不混淆变量名
+        //       renameGlobals: false, // 不混淆全局变量
+        //       stringArray: true, // 开启字符串数组
+        //       stringArrayEncoding: ['base64', 'rc4'], // 字符串加密
+        //       stringArrayThreshold: 1, // 100%字符串都加密
+        //       transformObjectKeys: false, // 不混淆对象key
+        //       unicodeEscapeSequence: false, // 不做unicode转义
+        //     },
+        //   }),
+        // ],
       },
       terserOptions: CommonTerserOptions,
       target: 'es2015',

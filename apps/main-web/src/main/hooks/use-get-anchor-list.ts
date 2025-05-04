@@ -4,6 +4,7 @@ import type {
 } from '@tk-crawler/biz-shared';
 import type { UseQueryParams } from '@tk-crawler/view-shared';
 import { useQuery } from '@tanstack/vue-query';
+import { UseTkAnchorList } from '@tk-crawler/secure';
 import { RESPONSE_CODE } from '@tk-crawler/shared';
 import { toValue } from 'vue';
 import { getAnchorList } from '../requests';
@@ -27,7 +28,7 @@ export function useGetAnchorList(
   token: string,
 ) {
   const queryKey = [
-    'use-tk-anchor-list',
+    UseTkAnchorList,
     token,
     pageNum,
     pageSize,

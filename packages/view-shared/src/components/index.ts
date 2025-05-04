@@ -6,6 +6,7 @@ import CopyIcon from './copy-icon.vue';
 import MenuSelect from './menu-select.vue';
 import RefreshButton from './refresh-button.vue';
 import RegionSelect from './region-select.vue';
+import VirtualizedTable from './virtualized-table.vue';
 
 export * from './range';
 export {
@@ -17,4 +18,5 @@ export {
   MenuSelect,
   RefreshButton,
   RegionSelect,
+  VirtualizedTable,
 };

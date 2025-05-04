@@ -1,39 +1,27 @@
 <script setup lang="tsx">
+import { useQuery } from '@tanstack/vue-query';
 import type {
   AnchorFrom87,
   BatchAddToAnchorFollowGroupRequest,
   CreateAnchorFollowGroupRequest,
   GetAnchorFrom87ListResponseData,
 } from '@tk-crawler/biz-shared';
-import type { Column, SortBy } from 'element-plus';
-// import { confirmAfterSeconds } from '@tk-crawler/view-shared';
-import { useQuery } from '@tanstack/vue-query';
 import { formatDateTime, RESPONSE_CODE } from '@tk-crawler/shared';
 import {
   ClearMessage,
   onKeepAliveActivated,
   RefreshButton,
-  useTableMultiSelect,
+  VirtualizedTable,
 } from '@tk-crawler/view-shared';
+import type { Column } from 'element-plus';
 import {
   ElButton,
-  ElCheckbox,
   ElMessage,
   ElMessageBox,
-  ElPagination,
-  ElTableV2,
   ElTag,
   TableV2SortOrder,
 } from 'element-plus';
-import {
-  computed,
-  h,
-  onBeforeUnmount,
-  onMounted,
-  reactive,
-  ref,
-  shallowRef,
-} from 'vue';
+import { computed, h, reactive, ref } from 'vue';
 import {
   batchAddToAnchorFollowGroup,
   clearAnchorFrom87,
@@ -57,7 +45,6 @@ defineOptions({
 
 const globalStore = useGlobalStore();
 
-const tableRef = shallowRef<InstanceType<typeof ElTableV2>>();
 const pageNum = ref(1);
 const pageSize = ref(1000);
 const sortState = ref<
@@ -67,6 +54,7 @@ const sortState = ref<
     }
   | undefined
 >();
+const selectedRows = ref<AnchorFrom87[]>([]);
 
 // 过滤条件
 const filters = ref<FilterViewValues>(DefaultFilterViewValues);
@@ -121,33 +109,6 @@ const { data, isLoading, isError, error, refetch } = useQuery<
 
 const anchorList = computed(() => data.value?.list || []);
 
-const {
-  selectedRows,
-  isAllRowSelected,
-  isPartialSelected,
-  onToggleRowSelect,
-  onToggleAllRowSelect,
-  isRowSelected,
-} = useTableMultiSelect(anchorList, {
-  rowKey: 'id',
-});
-
-// TODO element-plus 排序有bug，自定义排序顺序
-function handleSortChange(sort: SortBy) {
-  if (sort.key !== sortState.value?.key) {
-    sortState.value = {
-      key: sort.key as string,
-      order: TableV2SortOrder.ASC,
-    };
-  } else {
-    if (sortState.value?.order === TableV2SortOrder.ASC) {
-      sortState.value.order = TableV2SortOrder.DESC;
-    } else if (sortState.value?.order === TableV2SortOrder.DESC) {
-      sortState.value = undefined;
-    }
-  }
-}
-
 function resetSort() {
   sortState.value = undefined;
 }
@@ -181,18 +142,6 @@ async function deleteItem(item: AnchorFrom87) {
   await refetch();
 }
 
-function handlePageNumChange(_pageNum: number) {
-  pageNum.value = _pageNum;
-}
-
-function handlePageSizeChange(_pageSize: number) {
-  pageSize.value = _pageSize;
-}
-
-// 处理选择变化
-function handleSelectionChange(rows: AnchorFrom87[]) {
-  selectedRows.value = rows;
-}
 const hasSelectedRows = computed(() => selectedRows.value.length > 0);
 
 const createGroupDialogVisible = ref(false);
@@ -320,58 +269,7 @@ async function handleClearData() {
 
 onKeepAliveActivated(refetch);
 
-const containerWidth = ref(800);
-const containerHeight = ref(600);
-const tableContainer = ref<HTMLElement>();
-
-function updateSize() {
-  if (tableContainer.value) {
-    containerWidth.value = tableContainer.value.offsetWidth;
-    containerHeight.value = Math.max(tableContainer.value.offsetHeight, 100);
-  }
-}
-let resizeObserver: ResizeObserver | null = null;
-onMounted(() => {
-  if (tableContainer.value) {
-    resizeObserver = new ResizeObserver(updateSize);
-    resizeObserver.observe(tableContainer.value);
-  }
-  updateSize();
-});
-
-onBeforeUnmount(() => {
-  if (!resizeObserver) {
-    return;
-  }
-  if (tableContainer.value) {
-    resizeObserver.unobserve(tableContainer.value);
-  }
-  resizeObserver.disconnect();
-  resizeObserver = null;
-});
-
 const columns = computed<Column<AnchorFrom87>[]>(() => [
-  {
-    key: 'selection',
-    width: 55,
-    cellRenderer: ({ rowData }) => {
-      const onChange = () => onToggleRowSelect(rowData);
-      return (
-        <ElCheckbox modelValue={isRowSelected(rowData)} onChange={onChange} />
-      );
-    },
-
-    headerCellRenderer: () => {
-      const allSelected = isAllRowSelected.value;
-      return (
-        <ElCheckbox
-          modelValue={allSelected}
-          indeterminate={isPartialSelected.value}
-          onChange={onToggleAllRowSelect}
-        />
-      );
-    },
-  },
   {
     key: 'account_id',
     dataKey: 'account_id',
@@ -570,35 +468,17 @@ const columns = computed<Column<AnchorFrom87>[]>(() => [
           <RefreshButton @click="refresh" />
         </div>
       </div>
-      <div ref="tableContainer" class="table-container">
-        <ElTableV2
-          ref="tableRef"
-          :cache="10"
-          :data="anchorList"
-          :width="containerWidth"
-          :height="containerHeight"
-          :columns="columns"
-          :fixed="true"
-          :row-height="43"
-          row-key="id"
-          :sort-by="sortState"
-          @column-sort="handleSortChange"
-          @selection-change="handleSelectionChange"
-        />
-      </div>
-      <div class="pagination-row">
-        <ElPagination
-          v-model:current-page="pageNum"
-          v-model:page-size="pageSize"
-          size="small"
-          background
-          layout="total, sizes, prev, pager, next"
-          :page-sizes="[100, 200, 500, 1000]"
-          :total="data?.total || 0"
-          @size-change="handlePageSizeChange"
-          @current-change="handlePageNumChange"
-        />
-      </div>
+      <VirtualizedTable
+        v-model:page-num="pageNum"
+        v-model:page-size="pageSize"
+        v-model:selected-rows="selectedRows"
+        v-model:sort-state="sortState"
+        :data="anchorList"
+        :columns="columns"
+        :loading="isLoading || isRefreshing"
+        :error="error?.message"
+        :total="data?.total"
+      />
       <CreateGroupDialog
         :visible="createGroupDialogVisible"
         :anchors="selectedRows"
@@ -628,12 +508,6 @@ const columns = computed<Column<AnchorFrom87>[]>(() => [
   flex-direction: column;
   width: 100%;
   height: 100%;
-}
-
-.table-container {
-  flex: 1;
-  width: 100%;
-  min-height: 0; /* 重要：防止flex子元素溢出 */
 }
 
 .filter-row {
@@ -682,18 +556,6 @@ const columns = computed<Column<AnchorFrom87>[]>(() => [
   color: var(--el-color-danger);
 }
 
-.pagination-row {
-  width: 100%;
-  display: flex;
-  margin-top: 1rem;
-  padding-right: 1rem;
-  @include mobile {
-    justify-content: center;
-  }
-  @include web {
-    justify-content: flex-end;
-  }
-}
 :deep(.group-container) {
   max-width: 100%;
   overflow: hidden;

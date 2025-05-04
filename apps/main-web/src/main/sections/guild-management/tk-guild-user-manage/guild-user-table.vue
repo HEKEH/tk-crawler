@@ -610,11 +610,9 @@ onKeepAliveActivated(refetch);
         v-model:page-size="pageSize"
         size="small"
         background
-        :layout="
-          isWeb ? 'total, sizes, prev, pager, next' : 'total, prev, pager, next'
-        "
+        layout="total, sizes, prev, pager, next"
         :page-sizes="[10, 20, 50, 100]"
-        :pager-count="isWeb ? 7 : 5"
+        :pager-count="isWeb ? 7 : 3"
         :total="data?.total || 0"
         @size-change="handlePageSizeChange"
         @current-change="handlePageNumChange"

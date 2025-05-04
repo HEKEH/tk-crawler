@@ -1,11 +1,12 @@
 <script setup lang="tsx">
-import { useQuery } from '@tanstack/vue-query';
 import type {
   AnchorFrom87,
   BatchAddToAnchorFollowGroupRequest,
   CreateAnchorFollowGroupRequest,
   GetAnchorFrom87ListResponseData,
 } from '@tk-crawler/biz-shared';
+import type { Column, TableV2SortOrder } from 'element-plus';
+import { useQuery } from '@tanstack/vue-query';
 import { formatDateTime, RESPONSE_CODE } from '@tk-crawler/shared';
 import {
   ClearMessage,
@@ -13,14 +14,7 @@ import {
   RefreshButton,
   VirtualizedTable,
 } from '@tk-crawler/view-shared';
-import type { Column } from 'element-plus';
-import {
-  ElButton,
-  ElMessage,
-  ElMessageBox,
-  ElTag,
-  TableV2SortOrder,
-} from 'element-plus';
+import { ElButton, ElMessage, ElMessageBox, ElTag } from 'element-plus';
 import { computed, h, reactive, ref } from 'vue';
 import {
   batchAddToAnchorFollowGroup,

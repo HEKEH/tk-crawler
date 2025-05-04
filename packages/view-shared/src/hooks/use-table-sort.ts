@@ -26,13 +26,15 @@ export function useTableSort<T>({
   });
 
   // 处理排序变化
-  function handleSortChange({
-    prop,
-    order,
-  }: {
-    prop: string;
-    order: 'ascending' | 'descending' | null;
-  }) {
+  function handleSortChange(
+    params:
+      | {
+          prop: string;
+          order: 'ascending' | 'descending' | null;
+        }
+      | undefined,
+  ) {
+    const { prop, order } = params ?? {};
     sortField.value = order ? prop : undefined;
     sortOrder.value = order || undefined;
     pageNum.value = 1;

@@ -26,8 +26,9 @@ export interface Props<T extends Record<string, any>> {
   pageNum: number;
   pageSize: number;
   pageSizes?: number[];
-  showSelection?: boolean;
   rowKey?: string;
+  showSelection?: boolean;
+  selectionColumnConfig?: Partial<Column<T>>;
   selectedRows?: T[];
   pagerSize?: number;
   sortState?: { key: string; order: TableV2SortOrder } | undefined;
@@ -156,7 +157,7 @@ function handleSortChange(sort: SortBy) {
   handleSortKeyChange(sort.key);
 }
 
-const selectionColumn: Column<T> = {
+const selectionColumn = computed<Column<T>>(() => ({
   key: 'selection',
   width: 55,
   cellRenderer: ({ rowData }) => {
@@ -175,7 +176,8 @@ const selectionColumn: Column<T> = {
       />
     );
   },
-};
+  ...props.selectionColumnConfig,
+}));
 
 function createSortableColumn<T extends Record<string, any>>(
   column: Column<T>,
@@ -207,7 +209,7 @@ const computedColumns = computed(() => {
     return props.columns;
   }
   return [
-    selectionColumn,
+    selectionColumn.value,
     ...props.columns.map(column => createSortableColumn(column)),
   ];
 });

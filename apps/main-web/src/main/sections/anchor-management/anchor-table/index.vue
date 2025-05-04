@@ -4,7 +4,7 @@ import type {
   GetAnchorListOrderBy,
 } from '@tk-crawler/biz-shared';
 import type { TableV2SortOrder } from 'element-plus';
-import type { CustomColumnConfig } from './anchor-table-columns-new';
+import type { CustomColumnConfig } from './anchor-table-columns';
 import {
   onKeepAliveActivated,
   RefreshButton,
@@ -16,7 +16,7 @@ import { computed, ref } from 'vue';
 import config from '../../../config';
 import { useGetAnchorList } from '../../../hooks';
 import { useGlobalStore } from '../../../utils/vue';
-import useAnchorTableColumns from './anchor-table-columns-new';
+import useAnchorTableColumns from './anchor-table-columns';
 import ExportButton from './export-button/index.vue';
 import {
   type FilterViewValues,
@@ -208,9 +208,3 @@ onKeepAliveActivated(refetch);
   </div>
   <component :is="operationColumnDialog?.()" />
 </template>
-
-<style scoped>
-.pagination {
-  --el-pagination-item-gap: 8px;
-}
-</style>

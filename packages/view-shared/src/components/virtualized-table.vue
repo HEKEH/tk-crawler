@@ -247,7 +247,7 @@ const computedColumns = computed(() => {
           layout="total, sizes, prev, pager, next"
           :page-sizes="pageSizes"
           :pager-count="isWebSize ? 7 : 3"
-          :total="total"
+          :total="total ?? 0"
           @size-change="handlePageSizeChange"
           @current-change="handlePageNumChange"
         />

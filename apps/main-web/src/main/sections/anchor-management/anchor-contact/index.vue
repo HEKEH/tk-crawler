@@ -3,19 +3,20 @@ import type {
   DisplayedAnchorItem,
   GetAnchorListOrderBy,
 } from '@tk-crawler/biz-shared';
+import type { TableV2SortOrder } from 'element-plus';
 import type { CustomColumnConfig } from '../anchor-table/anchor-table-columns';
 import {
   onKeepAliveActivated,
   RefreshButton,
   useIsWebSize,
-  useTableSort,
+  VirtualizedTable,
 } from '@tk-crawler/view-shared';
-import { ElButton, ElPagination, ElTable } from 'element-plus';
+import { ElButton } from 'element-plus';
 import { computed, ref } from 'vue';
 import config from '../../../config';
 import { useGetAnchorList } from '../../../hooks';
 import { useGlobalStore } from '../../../utils/vue';
-import TKAnchorTableColumns from '../anchor-table/anchor-table-columns';
+import useAnchorTableColumns from '../anchor-table/anchor-table-columns';
 import ExportButton from '../anchor-table/export-button/index.vue';
 import {
   type FilterViewValues,
@@ -23,7 +24,7 @@ import {
   transformFilterViewValuesToFilterValues,
 } from '../anchor-table/filter';
 import TKAnchorFilter from '../anchor-table/filter.vue';
-import { BatchOperationButtons, OperationColumn } from './operation';
+import { BatchOperationButtons, useOperationColumn } from './operation';
 import '../anchor-table/styles.scss';
 
 defineOptions({
@@ -34,14 +35,38 @@ const isWeb = useIsWebSize();
 
 const globalStore = useGlobalStore();
 
-const tableRef = ref<InstanceType<typeof ElTable>>();
 const pageNum = ref(1);
 const pageSize = ref(20);
-const { sortField, sortOrder, orderBy, handleSortChange, resetSort } =
-  useTableSort<GetAnchorListOrderBy>({
-    tableRef,
-    pageNum,
-  });
+const sortState = ref<
+  | {
+      key: string;
+      order: TableV2SortOrder;
+    }
+  | undefined
+>();
+
+function handleSortChange(
+  sort:
+    | {
+        key: string;
+        order: TableV2SortOrder;
+      }
+    | undefined,
+) {
+  sortState.value = sort;
+  pageNum.value = 1;
+}
+function resetSort() {
+  sortState.value = undefined;
+}
+
+const orderBy = computed<GetAnchorListOrderBy | undefined>(() =>
+  sortState.value?.key && sortState.value.order
+    ? ({
+        [sortState.value.key]: sortState.value.order!,
+      } as GetAnchorListOrderBy)
+    : undefined,
+);
 
 const defaultFilterViewValues = computed<FilterViewValues>(() => {
   const commonDefaultFilterViewValues = getCommonDefaultFilterViewValues();
@@ -95,43 +120,28 @@ async function refresh() {
   });
 }
 
-function handlePageNumChange(_pageNum: number) {
-  pageNum.value = _pageNum;
-}
-
-function handlePageSizeChange(_pageSize: number) {
-  pageSize.value = _pageSize;
-}
-
 const selectedRows = ref<DisplayedAnchorItem[]>([]);
 
-// 处理选择变化
-function handleSelectionChange(rows: DisplayedAnchorItem[]) {
-  selectedRows.value = rows;
-}
-
-const operationColumn = computed<CustomColumnConfig>(() => {
-  return {
-    key: 'operation',
-    after: 'display_id',
-    renderColumn: () => {
-      return (
-        <OperationColumn
-          min-width={isWeb.value ? 160 : 150}
-          key="operation"
-          refetch={refetch}
-          {...{
-            fixed: isWeb.value ? 'left' : undefined,
-          }}
-        />
-      );
-    },
-  };
+const operationColumnResult = useOperationColumn({
+  refetch,
 });
-
 const customColumns = computed<CustomColumnConfig[]>(() => {
-  return [operationColumn.value];
+  return [
+    {
+      ...operationColumnResult.column.value,
+      customPosition: { after: 'display_id' },
+    },
+  ];
 });
+
+const columns = useAnchorTableColumns({
+  customColumns,
+});
+
+const selectionColumnConfig = {
+  width: 30,
+  fixed: 'left' as any,
+};
 
 // const hasSelectedRows = computed(() => selectedRows.value.length > 0);
 
@@ -170,42 +180,19 @@ onKeepAliveActivated(refetch);
         />
       </div>
     </div>
-    <ElTable
-      ref="tableRef"
-      :size="isWeb ? 'default' : 'small'"
-      :data="data?.list"
-      class="main-table"
-      :default-sort="
-        sortField && sortOrder
-          ? { prop: sortField, order: sortOrder }
-          : undefined
-      "
+    <VirtualizedTable
+      v-model:page-num="pageNum"
+      v-model:page-size="pageSize"
+      v-model:selected-rows="selectedRows"
+      :data="data?.list ?? []"
+      :columns="columns"
+      :loading="isLoading || isRefreshing"
+      :total="data?.total"
+      :sort-state="sortState"
+      :show-selection="true"
+      :selection-column-config="selectionColumnConfig"
       row-key="id"
-      @sort-change="handleSortChange"
-      @selection-change="handleSelectionChange"
-    >
-      <TKAnchorTableColumns :custom-columns="customColumns" />
-    </ElTable>
-    <div class="pagination-row">
-      <ElPagination
-        v-model:current-page="pageNum"
-        v-model:page-size="pageSize"
-        class="pagination"
-        size="small"
-        background
-        layout="total, sizes, prev, pager, next"
-        :page-sizes="[10, 20, 50, 100, 200, 500, 1000]"
-        :pager-count="isWeb ? 7 : 3"
-        :total="data?.total || 0"
-        @size-change="handlePageSizeChange"
-        @current-change="handlePageNumChange"
-      />
-    </div>
+      @update:sort-state="handleSortChange"
+    />
   </div>
 </template>
-
-<style scoped>
-.pagination {
-  --el-pagination-item-gap: 8px;
-}
-</style>

@@ -8,3 +8,14 @@
     max-width: calc(100vw - 20px);
   }
 }
+.el-pagination {
+  @include mobile {
+    --el-pagination-item-gap: 4px;
+  }
+}
+
+.el-pagination--small .el-select {
+  @include mobile {
+    width: 95px;
+  }
+}

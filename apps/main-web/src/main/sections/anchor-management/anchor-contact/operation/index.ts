@@ -1,4 +1,4 @@
 import BatchOperationButtons from './batch-operation-buttons.vue';
-import OperationColumn from './operation-column.vue';
+import { useOperationColumn } from './use-operation-column';
 
-export { BatchOperationButtons, OperationColumn };
+export { BatchOperationButtons, useOperationColumn };

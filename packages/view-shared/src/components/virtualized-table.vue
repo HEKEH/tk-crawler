@@ -1,6 +1,5 @@
 <script setup lang="tsx" generic="T extends Record<string, any>">
 import type { Column, SortBy } from 'element-plus';
-import { useIsWebSize, useTableMultiSelect } from '../hooks';
 import {
   ElCheckbox,
   ElPagination,
@@ -15,6 +14,8 @@ import {
   shallowRef,
   watch,
 } from 'vue';
+import { useIsWebSize, useTableMultiSelect } from '../hooks';
+import SortIcon from './sort-icon.vue';
 
 export interface Props<T extends Record<string, any>> {
   data: T[];
@@ -32,8 +33,6 @@ export interface Props<T extends Record<string, any>> {
   sortState?: { key: string; order: TableV2SortOrder } | undefined;
 }
 
-const isWebSize = useIsWebSize();
-
 const props = withDefaults(defineProps<Props<T>>(), {
   showSelection: true,
   rowKey: 'id',
@@ -50,6 +49,8 @@ const emit = defineEmits<{
   (e: 'update:selectedRows', rows: T[]): void;
   (e: 'selectionChange', rows: T[]): void;
 }>();
+
+const isWebSize = useIsWebSize();
 
 const tableData = shallowRef<T[]>(props.data);
 
@@ -130,25 +131,29 @@ function handlePageSizeChange(_pageSize: number) {
   emit('update:pageSize', _pageSize);
 }
 
-/**
- * TODO element-plus 排序有bug，自定义排序顺序
- */
-function handleSortChange(sort: SortBy) {
-  if (sort.key !== props.sortState?.key) {
+function handleSortKeyChange(key: SortBy['key']) {
+  if (key !== props.sortState?.key) {
     emit('update:sortState', {
-      key: sort.key as string,
+      key: key as string,
       order: TableV2SortOrder.ASC,
     });
   } else {
     if (props.sortState?.order === TableV2SortOrder.ASC) {
       emit('update:sortState', {
-        key: sort.key as string,
+        key: key as string,
         order: TableV2SortOrder.DESC,
       });
     } else if (props.sortState?.order === TableV2SortOrder.DESC) {
       emit('update:sortState', undefined);
     }
   }
+}
+
+/**
+ * TODO element-plus 排序有bug，自定义排序顺序
+ */
+function handleSortChange(sort: SortBy) {
+  handleSortKeyChange(sort.key);
 }
 
 const selectionColumn: Column<T> = {
@@ -172,11 +177,39 @@ const selectionColumn: Column<T> = {
   },
 };
 
+function createSortableColumn<T extends Record<string, any>>(
+  column: Column<T>,
+): Column<T> {
+  if (!column.sortable) {
+    return column;
+  }
+
+  return {
+    ...column,
+    headerCellRenderer: ({ column: col }) => {
+      const sortOrder =
+        props.sortState && props.sortState.key === col.key
+          ? props.sortState.order
+          : undefined;
+
+      return (
+        <div class="sortable-header">
+          <span>{col.title}</span>
+          <SortIcon direction={sortOrder} />
+        </div>
+      );
+    },
+  };
+}
+
 const computedColumns = computed(() => {
   if (!props.showSelection) {
     return props.columns;
   }
-  return [selectionColumn, ...props.columns];
+  return [
+    selectionColumn,
+    ...props.columns.map(column => createSortableColumn(column)),
+  ];
 });
 </script>
 
@@ -197,7 +230,7 @@ const computedColumns = computed(() => {
           :height="containerHeight"
           :columns="computedColumns"
           :fixed="true"
-          :row-height="43"
+          :row-height="isWebSize ? 43 : 36"
           :row-key="rowKey"
           :sort-by="sortState"
           @column-sort="handleSortChange"
@@ -228,8 +261,22 @@ const computedColumns = computed(() => {
       font-size: var(--el-font-size-extra-small);
     }
   }
+  .el-table-v2__sort-icon {
+    // 屏蔽掉原来的icon
+    display: none;
+  }
+  .table-main {
+    .sortable-header {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      position: relative;
+      cursor: pointer;
+    }
+  }
 }
 </style>
+
 <style lang="scss" scoped>
 .virtualized-table {
   position: relative;

@@ -99,7 +99,7 @@ const queryFilter = computed(() => {
   return transformFilterViewValuesToFilterValues(filters.value);
 });
 
-const { data, isLoading, refetch } = useGetAnchorList(
+const { data, isFetching, refetch } = useGetAnchorList(
   {
     pageNum,
     pageSize,
@@ -112,11 +112,11 @@ const { data, isLoading, refetch } = useGetAnchorList(
 );
 
 // 刷新功能
-const isRefreshing = ref(false);
+// const isRefreshing = ref(false);
 async function refresh() {
-  isRefreshing.value = true;
+  // isRefreshing.value = true;
   return refetch().finally(() => {
-    isRefreshing.value = false;
+    // isRefreshing.value = false;
   });
 }
 
@@ -151,7 +151,7 @@ onKeepAliveActivated(refetch);
 </script>
 
 <template>
-  <div v-loading="isLoading || isRefreshing" class="tk-anchor-user-table">
+  <div class="tk-anchor-user-table">
     <!-- <div v-if="isError" class="error-msg">
       {{ error?.message }}
     </div> -->
@@ -196,7 +196,7 @@ onKeepAliveActivated(refetch);
       v-model:selected-rows="selectedRows"
       :data="data?.list ?? []"
       :columns="columns"
-      :loading="isLoading || isRefreshing"
+      :loading="isFetching"
       :total="data?.total"
       :sort-state="sortState"
       :show-selection="true"

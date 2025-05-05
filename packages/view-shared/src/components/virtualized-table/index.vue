@@ -1,53 +1,54 @@
 <script setup lang="tsx" generic="T extends Record<string, any>">
-import type { SortBy } from 'element-plus';
-import type { AnyColumns } from 'element-plus/es/components/table-v2/src/types';
+import type { VxeTableInstance } from 'vxe-table';
 import type { VirtualizedTableColumn } from './types';
-import {
-  ElCheckbox,
-  ElPagination,
-  ElTableV2,
-  TableV2SortOrder,
-} from 'element-plus';
-import {
-  computed,
-  onBeforeUnmount,
-  onMounted,
-  ref,
-  shallowRef,
-  watch,
-} from 'vue';
-import { useIsWebSize, useTableMultiSelect } from '../../hooks';
-import SortIcon from './sort-icon.vue';
+import { ElPagination } from 'element-plus';
+import { onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vue';
+import { VxeColumn, VxeTable } from 'vxe-table';
+import { useIsWebSize } from '../../hooks';
 
-export interface Props<T extends Record<string, any>> {
-  data: T[];
-  columns: VirtualizedTableColumn<T>[];
-  loading?: boolean;
-  error?: string;
-  total?: number;
-  pageNum: number;
-  pageSize: number;
-  pageSizes?: number[];
-  rowKey?: string;
-  showSelection?: boolean;
-  selectionColumnConfig?: Partial<VirtualizedTableColumn<T>>;
-  selectedRows?: T[];
-  pagerSize?: number;
-  sortState?: { key: string; order: TableV2SortOrder } | undefined;
-}
-
-const props = withDefaults(defineProps<Props<T>>(), {
-  showSelection: true,
-  rowKey: 'id',
-  pageSizes: () => [10, 20, 50, 100, 200, 500, 1000],
-});
+const props = withDefaults(
+  defineProps<{
+    data: T[];
+    columns: VirtualizedTableColumn<T>[];
+    loading?: boolean;
+    error?: string;
+    rowKey?: string;
+    showSelection?: boolean;
+    selectionColumnConfig?: Partial<VirtualizedTableColumn<T>>;
+    pageNum?: number;
+    pageSize?: number;
+    total?: number;
+    pageSizes?: number[];
+    sortState?: {
+      field: string;
+      order: 'asc' | 'desc' | null;
+    };
+    selectedRows?: T[];
+  }>(),
+  {
+    loading: false,
+    error: '',
+    rowKey: 'id',
+    showSelection: false,
+    selectionColumnConfig: () => ({}),
+    pageNum: 1,
+    pageSize: 10,
+    total: 0,
+    pageSizes: () => [10, 20, 50, 100, 200, 500, 1000],
+    sortState: () => ({
+      field: '',
+      order: null,
+    }),
+    selectedRows: () => [],
+  },
+);
 
 const emit = defineEmits<{
   (e: 'update:pageNum', value: number): void;
   (e: 'update:pageSize', value: number): void;
   (
     e: 'update:sortState',
-    value: { key: string; order: TableV2SortOrder } | undefined,
+    value: { field: string; order: 'asc' | 'desc' } | undefined,
   ): void;
   (e: 'update:selectedRows', rows: T[]): void;
   (e: 'selectionChange', rows: T[]): void;
@@ -56,17 +57,7 @@ const emit = defineEmits<{
 const isWebSize = useIsWebSize();
 
 const tableData = shallowRef<T[]>(props.data);
-
-const {
-  selectedRows,
-  isAllRowSelected,
-  isPartialSelected,
-  onToggleRowSelect,
-  onToggleAllRowSelect,
-  isRowSelected,
-} = useTableMultiSelect<T>(tableData, {
-  rowKey: props.rowKey,
-});
+const selectedRows = ref<T[]>([]);
 
 // 监听data变化
 watch(
@@ -82,7 +73,7 @@ watch(
   () => props.selectedRows,
   newVal => {
     if (newVal) {
-      selectedRows.value = newVal;
+      selectedRows.value = newVal as T[];
     }
   },
   { immediate: true },
@@ -90,11 +81,11 @@ watch(
 
 // 监听selectedRows变化并触发事件
 watch(selectedRows, newVal => {
-  emit('update:selectedRows', newVal);
-  emit('selectionChange', newVal);
+  emit('update:selectedRows', newVal as T[]);
+  emit('selectionChange', newVal as T[]);
 });
 
-const tableRef = shallowRef<InstanceType<typeof ElTableV2>>();
+const tableRef = shallowRef<VxeTableInstance>();
 const containerWidth = ref(800);
 const containerHeight = ref(600);
 const tableContainer = ref<HTMLElement>();
@@ -134,87 +125,25 @@ function handlePageSizeChange(_pageSize: number) {
   emit('update:pageSize', _pageSize);
 }
 
-function handleSortKeyChange(key: SortBy['key']) {
-  if (key !== props.sortState?.key) {
-    emit('update:sortState', {
-      key: key as string,
-      order: TableV2SortOrder.ASC,
-    });
+function handleSortChange(params: { property: string; order: string | null }) {
+  if (!params.order) {
+    emit('update:sortState', undefined);
   } else {
-    if (props.sortState?.order === TableV2SortOrder.ASC) {
-      emit('update:sortState', {
-        key: key as string,
-        order: TableV2SortOrder.DESC,
-      });
-    } else if (props.sortState?.order === TableV2SortOrder.DESC) {
-      emit('update:sortState', undefined);
-    }
+    emit('update:sortState', {
+      field: params.property,
+      order: params.order as 'asc' | 'desc',
+    });
   }
 }
 
-/**
- * TODO element-plus 排序有bug，自定义排序顺序
- */
-function handleSortChange(sort: SortBy) {
-  handleSortKeyChange(sort.key);
+interface CheckboxEventParams {
+  records: any[];
+  checked: boolean;
 }
 
-const selectionColumn = computed<VirtualizedTableColumn<T>>(() => ({
-  key: 'selection',
-  width: 55,
-  cellRenderer: ({ rowData }) => {
-    const onChange = () => onToggleRowSelect(rowData);
-    return (
-      <ElCheckbox modelValue={isRowSelected(rowData)} onChange={onChange} />
-    );
-  },
-  headerCellRenderer: () => {
-    const allSelected = isAllRowSelected.value;
-    return (
-      <ElCheckbox
-        modelValue={allSelected}
-        indeterminate={isPartialSelected.value}
-        onChange={onToggleAllRowSelect}
-      />
-    );
-  },
-  ...props.selectionColumnConfig,
-}));
-
-function createSortableColumn<T extends Record<string, any>>(
-  column: VirtualizedTableColumn<T>,
-): VirtualizedTableColumn<T> {
-  if (!column.sortable) {
-    return column;
-  }
-
-  return {
-    ...column,
-    headerCellRenderer: ({ column: col }) => {
-      const sortOrder =
-        props.sortState && props.sortState.key === col.key
-          ? props.sortState.order
-          : undefined;
-
-      return (
-        <div class="sortable-header">
-          <span>{col.title}</span>
-          <SortIcon direction={sortOrder} />
-        </div>
-      );
-    },
-  };
+function handleCheckboxChange(params: CheckboxEventParams) {
+  selectedRows.value = params.records as T[];
 }
-
-const computedColumns = computed(() => {
-  if (!props.showSelection) {
-    return props.columns;
-  }
-  return [
-    selectionColumn.value,
-    ...props.columns.map(column => createSortableColumn(column)),
-  ];
-});
 </script>
 
 <template>
@@ -224,21 +153,49 @@ const computedColumns = computed(() => {
     </div>
     <div v-show="!error" class="table-main">
       <div ref="tableContainer" class="table-container">
-        <ElTableV2
+        <VxeTable
           v-bind="$attrs"
           ref="tableRef"
-          :size="isWebSize ? 'default' : 'small'"
-          :cache="10"
           :data="tableData"
-          :width="containerWidth"
           :height="containerHeight"
-          :columns="computedColumns as AnyColumns"
-          :fixed="true"
-          :row-height="isWebSize ? 43 : 36"
-          :row-key="rowKey"
-          :sort-by="sortState"
-          @column-sort="handleSortChange"
-        />
+          :row-config="{ keyField: rowKey }"
+          :column-config="{ resizable: true }"
+          :scroll-x="{ enabled: true }"
+          :scroll-y="{ enabled: true }"
+          :sort-config="{ multiple: false, defaultSort: sortState }"
+          :checkbox-config="{
+            checkField: 'checked',
+            checkRowKeys: selectedRows?.map(row => row[rowKey]),
+          }"
+          :size="isWebSize ? 'medium' : 'small'"
+          @sort-change="handleSortChange"
+          @checkbox-change="handleCheckboxChange"
+          @checkbox-all="handleCheckboxChange"
+        >
+          <template v-if="showSelection">
+            <VxeColumn
+              type="checkbox"
+              :width="selectionColumnConfig?.width ?? 55"
+              fixed="left"
+            />
+          </template>
+          <template v-for="col in props.columns" :key="col.key">
+            <VxeColumn
+              :field="col.key"
+              :title="col.title"
+              :width="col.width"
+              :sortable="col.sortable"
+              :fixed="col.fixed"
+            >
+              <template v-if="col.cellRenderer" #default="{ row }">
+                <component :is="col.cellRenderer({ rowData: row })" />
+              </template>
+              <template v-else #default="{ row }">
+                {{ row[col.key as keyof T] }}
+              </template>
+            </VxeColumn>
+          </template>
+        </VxeTable>
       </div>
       <div class="pagination-row">
         <ElPagination
@@ -259,15 +216,13 @@ const computedColumns = computed(() => {
 </template>
 
 <style lang="scss">
+@import 'vxe-table/lib/style.css';
+
 .virtualized-table {
   @include mobile {
-    .el-table-v2__table {
+    .vxe-table {
       font-size: var(--el-font-size-extra-small);
     }
-  }
-  .el-table-v2__sort-icon {
-    // 屏蔽掉原来的icon
-    display: none;
   }
   .table-main {
     .sortable-header {
@@ -278,18 +233,6 @@ const computedColumns = computed(() => {
       cursor: pointer;
     }
   }
-  // .el-vl__wrapper > :first-child > :first-child {
-  //   -webkit-overflow-scrolling: touch;
-  //   scroll-behavior: smooth;
-  //   overscroll-behavior: contain;
-  //   touch-action: pan-x pan-y;
-  //   div {
-  //     -webkit-overflow-scrolling: touch;
-  //     scroll-behavior: smooth;
-  //     overscroll-behavior: contain;
-  //     touch-action: pan-x pan-y;
-  //   }
-  // }
 }
 </style>
 

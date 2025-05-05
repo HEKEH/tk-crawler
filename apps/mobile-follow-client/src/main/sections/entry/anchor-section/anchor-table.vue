@@ -6,7 +6,6 @@ import type {
   GetAnchorFrom87ListResponseData,
 } from '@tk-crawler/biz-shared';
 import type { VirtualizedTableColumn } from '@tk-crawler/view-shared';
-import type { TableV2SortOrder } from 'element-plus';
 import { useQuery } from '@tanstack/vue-query';
 import { formatDateTime, RESPONSE_CODE } from '@tk-crawler/shared';
 import {
@@ -44,8 +43,8 @@ const pageNum = ref(1);
 const pageSize = ref(1000);
 const sortState = ref<
   | {
-      key: string;
-      order: TableV2SortOrder;
+      field: string;
+      order: 'asc' | 'desc';
     }
   | undefined
 >();
@@ -66,8 +65,8 @@ function handleFilterReset() {
 }
 
 const orderBy = computed(() =>
-  sortState.value?.key && sortState.value.order
-    ? { [sortState.value.key]: sortState.value.order! }
+  sortState.value?.field && sortState.value.order
+    ? { [sortState.value.field]: sortState.value.order! }
     : undefined,
 );
 const filter = computed(() =>

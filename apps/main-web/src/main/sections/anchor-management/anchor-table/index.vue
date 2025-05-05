@@ -3,7 +3,6 @@ import type {
   DisplayedAnchorItem,
   GetAnchorListOrderBy,
 } from '@tk-crawler/biz-shared';
-import type { TableV2SortOrder } from 'element-plus';
 import type { CustomColumnConfig } from './anchor-table-columns';
 import {
   onKeepAliveActivated,
@@ -43,8 +42,8 @@ const pageNum = ref(1);
 const pageSize = ref(20);
 const sortState = ref<
   | {
-      key: string;
-      order: TableV2SortOrder;
+      field: string;
+      order: 'asc' | 'desc';
     }
   | undefined
 >();
@@ -52,8 +51,8 @@ const sortState = ref<
 function handleSortChange(
   sort:
     | {
-        key: string;
-        order: TableV2SortOrder;
+        field: string;
+        order: 'asc' | 'desc';
       }
     | undefined,
 ) {
@@ -65,9 +64,9 @@ function resetSort() {
 }
 
 const orderBy = computed<GetAnchorListOrderBy | undefined>(() =>
-  sortState.value?.key && sortState.value.order
+  sortState.value?.field && sortState.value.order
     ? ({
-        [sortState.value.key]: sortState.value.order!,
+        [sortState.value.field]: sortState.value.order!,
       } as GetAnchorListOrderBy)
     : undefined,
 );

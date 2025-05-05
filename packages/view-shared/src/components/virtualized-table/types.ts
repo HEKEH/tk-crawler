@@ -1,17 +1,16 @@
 import type {
-  CellRenderer,
   ClassNameGetter,
   HeaderCellRenderer,
   HeaderClassGetter,
 } from 'element-plus/es/components/table-v2/src/types';
-import type { CSSProperties } from 'vue';
+import type { CSSProperties, VNode } from 'vue';
 
 export interface VirtualizedTableColumn<T> {
   align?: 'left' | 'center' | 'right';
   class?: string | ClassNameGetter<T>;
   key?: string;
   dataKey?: string;
-  fixed?: true | 'left' | 'right';
+  fixed?: 'left' | 'right' | null;
   flexGrow?: CSSProperties['flexGrow'];
   flexShrink?: CSSProperties['flexShrink'];
   title?: string;
@@ -25,7 +24,7 @@ export interface VirtualizedTableColumn<T> {
   /**
    * Renderers
    */
-  cellRenderer?: CellRenderer<T>;
+  cellRenderer?: (params: { rowData: T }) => VNode;
   headerCellRenderer?: HeaderCellRenderer<T>;
   /**
    * Extendable sections

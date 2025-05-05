@@ -42,7 +42,7 @@ export default function useAnchorTableColumns(props: {
           title: '主播展示ID',
           width: isWeb.value ? 160 : 140,
           sortable: true,
-          fixed: true,
+          fixed: 'left',
           cellRenderer: ({ rowData }) => (
             <div class="display-id-container">
               <ElLink

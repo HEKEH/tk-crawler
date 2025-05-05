@@ -1,6 +1,6 @@
 const MIN_PASSWORD_LENGTH = 8;
-const PASSWORD_PATTERN =
-  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/;
+// const PASSWORD_PATTERN =
+//   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/;
 
 export interface PasswordValidationResult {
   isValid: boolean;
@@ -16,12 +16,12 @@ export function validatePassword(password: string): PasswordValidationResult {
     };
   }
 
-  if (!PASSWORD_PATTERN.test(password)) {
-    return {
-      isValid: false,
-      error: '密码必须包含大小写字母、数字',
-    };
-  }
+  // if (!PASSWORD_PATTERN.test(password)) {
+  //   return {
+  //     isValid: false,
+  //     error: '密码必须包含大小写字母、数字',
+  //   };
+  // }
 
   if (password.includes(' ')) {
     return {

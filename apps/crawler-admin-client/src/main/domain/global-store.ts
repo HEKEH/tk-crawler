@@ -99,8 +99,10 @@ export default class GlobalStore {
         }
       }
       this._userProfile.clear();
+      this._gotoLoginPage();
     } catch (error) {
       this._userProfile.clear();
+      this._gotoLoginPage();
       throw error;
     }
   }

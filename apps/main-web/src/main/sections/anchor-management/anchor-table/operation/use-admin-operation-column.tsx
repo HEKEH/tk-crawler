@@ -1,5 +1,5 @@
 import type { DisplayedAnchorItem } from '@tk-crawler/biz-shared';
-import type { Column } from 'element-plus';
+import type { VirtualizedTableColumn } from '@tk-crawler/view-shared';
 import { useIsWebSize } from '@tk-crawler/view-shared';
 import { ElButton } from 'element-plus';
 import { computed, Teleport } from 'vue';
@@ -20,7 +20,7 @@ export function useAdminOperationColumn(props: {
     handleCancelAssignTask,
   } = useTaskAssign(props);
 
-  const column = computed<Column<DisplayedAnchorItem>>(() => ({
+  const column = computed<VirtualizedTableColumn<DisplayedAnchorItem>>(() => ({
     key: 'admin-operation',
     title: '操作',
     width: 190,

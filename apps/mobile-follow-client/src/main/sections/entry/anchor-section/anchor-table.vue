@@ -5,7 +5,8 @@ import type {
   CreateAnchorFollowGroupRequest,
   GetAnchorFrom87ListResponseData,
 } from '@tk-crawler/biz-shared';
-import type { Column, TableV2SortOrder } from 'element-plus';
+import type { VirtualizedTableColumn } from '@tk-crawler/view-shared';
+import type { TableV2SortOrder } from 'element-plus';
 import { useQuery } from '@tanstack/vue-query';
 import { formatDateTime, RESPONSE_CODE } from '@tk-crawler/shared';
 import {
@@ -263,7 +264,7 @@ async function handleClearData() {
 
 onKeepAliveActivated(refetch);
 
-const columns = computed<Column<AnchorFrom87>[]>(() => [
+const columns = computed<VirtualizedTableColumn<AnchorFrom87>[]>(() => [
   {
     key: 'account_id',
     dataKey: 'account_id',

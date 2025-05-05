@@ -1,5 +1,5 @@
 import type { DisplayedAnchorItem } from '@tk-crawler/biz-shared';
-import type { Column } from 'element-plus';
+import type { VirtualizedTableColumn } from '@tk-crawler/view-shared';
 import { StarFilled } from '@element-plus/icons-vue';
 import { getPlatform, openScheme, useIsWebSize } from '@tk-crawler/view-shared';
 import { ElButton, ElIcon, ElMessage, ElMessageBox } from 'element-plus';
@@ -58,7 +58,7 @@ export function useOperationColumn(props: {
     }
   }
 
-  const column = computed<Column<DisplayedAnchorItem>>(() => ({
+  const column = computed<VirtualizedTableColumn<DisplayedAnchorItem>>(() => ({
     key: 'operation',
     title: '操作',
     width: isWeb.value ? 190 : 160,

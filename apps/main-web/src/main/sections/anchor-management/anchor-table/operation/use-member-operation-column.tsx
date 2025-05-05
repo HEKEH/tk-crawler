@@ -1,5 +1,5 @@
 import type { DisplayedAnchorItem } from '@tk-crawler/biz-shared';
-import type { Column } from 'element-plus';
+import type { VirtualizedTableColumn } from '@tk-crawler/view-shared';
 import { useIsWebSize } from '@tk-crawler/view-shared';
 import { ElButton } from 'element-plus';
 import { computed } from 'vue';
@@ -14,7 +14,7 @@ export function useMemberOperationColumn(props: {
 
   const { handleClaimTask, handleCancelClaimTask } = useTaskClaim(props);
 
-  const column = computed<Column<DisplayedAnchorItem>>(() => ({
+  const column = computed<VirtualizedTableColumn<DisplayedAnchorItem>>(() => ({
     key: 'member-operation',
     title: '操作',
     width: isWeb.value ? 130 : 110,

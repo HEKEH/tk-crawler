@@ -1,5 +1,5 @@
 import type { DisplayedAnchorItem } from '@tk-crawler/biz-shared';
-import type { Column } from 'element-plus';
+import type { VirtualizedTableColumn } from '@tk-crawler/view-shared';
 import type { ComputedRef } from 'vue';
 import type { JSX } from 'vue/jsx-runtime';
 import type { UseTaskAssignParams } from '../hooks';
@@ -11,7 +11,7 @@ import { useMemberOperationColumn } from './use-member-operation-column';
 export function useOperationColumn(props: {
   refetch: UseTaskAssignParams['refetch'];
 }): ComputedRef<{
-  column: ComputedRef<Column<DisplayedAnchorItem>>;
+  column: ComputedRef<VirtualizedTableColumn<DisplayedAnchorItem>>;
   view?: () => JSX.Element;
 }> {
   const globalStore = useGlobalStore();

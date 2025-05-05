@@ -1,5 +1,7 @@
 <script setup lang="tsx" generic="T extends Record<string, any>">
-import type { Column, SortBy } from 'element-plus';
+import type { SortBy } from 'element-plus';
+import type { AnyColumns } from 'element-plus/es/components/table-v2/src/types';
+import type { VirtualizedTableColumn } from './types';
 import {
   ElCheckbox,
   ElPagination,
@@ -14,12 +16,12 @@ import {
   shallowRef,
   watch,
 } from 'vue';
-import { useIsWebSize, useTableMultiSelect } from '../hooks';
+import { useIsWebSize, useTableMultiSelect } from '../../hooks';
 import SortIcon from './sort-icon.vue';
 
 export interface Props<T extends Record<string, any>> {
   data: T[];
-  columns: Column<T>[];
+  columns: VirtualizedTableColumn<T>[];
   loading?: boolean;
   error?: string;
   total?: number;
@@ -28,7 +30,7 @@ export interface Props<T extends Record<string, any>> {
   pageSizes?: number[];
   rowKey?: string;
   showSelection?: boolean;
-  selectionColumnConfig?: Partial<Column<T>>;
+  selectionColumnConfig?: Partial<VirtualizedTableColumn<T>>;
   selectedRows?: T[];
   pagerSize?: number;
   sortState?: { key: string; order: TableV2SortOrder } | undefined;
@@ -157,7 +159,7 @@ function handleSortChange(sort: SortBy) {
   handleSortKeyChange(sort.key);
 }
 
-const selectionColumn = computed<Column<T>>(() => ({
+const selectionColumn = computed<VirtualizedTableColumn<T>>(() => ({
   key: 'selection',
   width: 55,
   cellRenderer: ({ rowData }) => {
@@ -180,8 +182,8 @@ const selectionColumn = computed<Column<T>>(() => ({
 }));
 
 function createSortableColumn<T extends Record<string, any>>(
-  column: Column<T>,
-): Column<T> {
+  column: VirtualizedTableColumn<T>,
+): VirtualizedTableColumn<T> {
   if (!column.sortable) {
     return column;
   }
@@ -230,7 +232,7 @@ const computedColumns = computed(() => {
           :data="tableData"
           :width="containerWidth"
           :height="containerHeight"
-          :columns="computedColumns"
+          :columns="computedColumns as AnyColumns"
           :fixed="true"
           :row-height="isWebSize ? 43 : 36"
           :row-key="rowKey"
@@ -276,6 +278,18 @@ const computedColumns = computed(() => {
       cursor: pointer;
     }
   }
+  // .el-vl__wrapper > :first-child > :first-child {
+  //   -webkit-overflow-scrolling: touch;
+  //   scroll-behavior: smooth;
+  //   overscroll-behavior: contain;
+  //   touch-action: pan-x pan-y;
+  //   div {
+  //     -webkit-overflow-scrolling: touch;
+  //     scroll-behavior: smooth;
+  //     overscroll-behavior: contain;
+  //     touch-action: pan-x pan-y;
+  //   }
+  // }
 }
 </style>
 

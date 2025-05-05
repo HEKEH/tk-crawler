@@ -237,7 +237,7 @@ importers:
         version: 26.0.12(electron-builder-squirrel-windows@26.0.12)
       element-plus:
         specifier: ^2.9.9
-        version: 2.9.6(vue@3.5.13)
+        version: 2.9.9(vue@3.5.13)
       get-system-proxy:
         specifier: ^1.0.0
         version: 1.0.0
@@ -346,7 +346,7 @@ importers:
         version: 26.0.12(electron-builder-squirrel-windows@26.0.12)
       element-plus:
         specifier: ^2.9.9
-        version: 2.9.6(vue@3.5.13)
+        version: 2.9.9(vue@3.5.13)
       get-system-proxy:
         specifier: ^1.0.0
         version: 1.0.0
@@ -419,7 +419,7 @@ importers:
         version: 26.0.12(electron-builder-squirrel-windows@26.0.12)
       element-plus:
         specifier: ^2.9.9
-        version: 2.9.6(vue@3.5.13)
+        version: 2.9.9(vue@3.5.13)
       get-system-proxy:
         specifier: ^1.0.0
         version: 1.0.0
@@ -497,7 +497,7 @@ importers:
         version: 4.2.0
       element-plus:
         specifier: ^2.9.9
-        version: 2.9.6(vue@3.5.13)
+        version: 2.9.9(vue@3.5.13)
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
@@ -557,7 +557,7 @@ importers:
         version: 26.0.12(electron-builder-squirrel-windows@26.0.12)
       element-plus:
         specifier: ^2.9.9
-        version: 2.9.6(vue@3.5.13)
+        version: 2.9.9(vue@3.5.13)
       get-system-proxy:
         specifier: ^1.0.0
         version: 1.0.0
@@ -870,13 +870,16 @@ importers:
         version: 13.1.0(vue@3.5.13)
       element-plus:
         specifier: ^2.9.9
-        version: 2.9.6(vue@3.5.13)
+        version: 2.9.9(vue@3.5.13)
       rxjs:
         specifier: ^7.8.1
         version: 7.8.2
       vue:
         specifier: ^3.5.12
         version: 3.5.13(typescript@5.5.4)
+      vxe-table:
+        specifier: ^4.13.17
+        version: 4.13.17(vue@3.5.13)
     devDependencies:
       '@tk-crawler/biz-shared':
         specifier: workspace:*
@@ -4514,6 +4517,16 @@ packages:
       - '@vue/composition-api'
       - vue
 
+  /@vxe-ui/core@4.1.0(vue@3.5.13):
+    resolution: {integrity: sha512-1+VXZ+Z2lNJl2nZf8Yu5s4P5W8EhTylgkZQk2SK7aq/AML9LZzq9uvWF3s+mVqPYxO1yQPlEP/EGmebaa7Td2A==}
+    peerDependencies:
+      vue: ^3.2.0
+    dependencies:
+      dom-zindex: 1.0.6
+      vue: 3.5.13(typescript@5.5.4)
+      xe-utils: 3.7.4
+    dev: false
+
   /@xmldom/xmldom@0.8.10:
     resolution: {integrity: sha512-2WALfTl4xo2SkGCYRt6rDTFfk9R1czmBvUQy12gK2KuRKIpWEhcbbzy8EZXtz/jkRqHX8bFEc6FC1HjX4TUWYw==}
     engines: {node: '>=10.0.0'}
@@ -5988,6 +6001,10 @@ packages:
       entities: 4.5.0
     dev: false
 
+  /dom-zindex@1.0.6:
+    resolution: {integrity: sha512-FKWIhiU96bi3xpP9ewRMgANsoVmMUBnMnmpCT6dPMZOunVYJQmJhSRruoI0XSPoHeIif3kyEuiHbFrOJwEJaEA==}
+    dev: false
+
   /domelementtype@2.3.0:
     resolution: {integrity: sha512-OLETBj6w0OsagBwdXnPdN0cnMfF9opN69co+7ZrbfPGrdpPVNBUj02spi6B1N7wChLQiPn4CSH/zJvXw56gmHw==}
 
@@ -6185,8 +6202,8 @@ packages:
     transitivePeerDependencies:
       - supports-color
 
-  /element-plus@2.9.6(vue@3.5.13):
-    resolution: {integrity: sha512-D9zU28Ce0s/9O/Vp3ewemikxzFVA6gdZyMwmWijHijo+t5/9H3sHRTIm1WlfeNpFW2Yq0y8nHXD0fU5YxU6qlQ==}
+  /element-plus@2.9.9(vue@3.5.13):
+    resolution: {integrity: sha512-gN553+xr7ETkhJhH26YG0fERmd2BSCcQKslbtR8fats0Mc0yCtZOXr00bmoPOt5xGzhuRN1TWc9+f1pCaiA0/Q==}
     peerDependencies:
       vue: ^3.2.0
     dependencies:
@@ -11974,6 +11991,22 @@ packages:
       '@vue/shared': 3.5.13
       typescript: 5.5.4
 
+  /vxe-pc-ui@4.5.35(vue@3.5.13):
+    resolution: {integrity: sha512-Uz4TacwTlithKkLY3sVyjOkwijstAnfCnVhhM5Gkrh33ABFZzNWGk/RC4xSRkSzrTATaCjLdlDoeRFczSF2/yQ==}
+    dependencies:
+      '@vxe-ui/core': 4.1.0(vue@3.5.13)
+    transitivePeerDependencies:
+      - vue
+    dev: false
+
+  /vxe-table@4.13.17(vue@3.5.13):
+    resolution: {integrity: sha512-hgWCCKX5/11o9ai+1XvrCK9sQPOcJZz2o0lDFFn4Xvpoep/7cp7u5Ol0TT+Hlm1444dxsdTMZZ2DSw70VF+kKQ==}
+    dependencies:
+      vxe-pc-ui: 4.5.35(vue@3.5.13)
+    transitivePeerDependencies:
+      - vue
+    dev: false
+
   /w3c-xmlserializer@5.0.0:
     resolution: {integrity: sha512-o8qghlI8NZHU1lLPrpi2+Uq7abh4GGPpYANlalzWxyWteJOCsr/P+oPBA49TOLu5FTZO4d3F9MnWJfiMo4BkmA==}
     engines: {node: '>=18'}
@@ -12124,6 +12157,10 @@ packages:
         optional: true
       utf-8-validate:
         optional: true
+    dev: false
+
+  /xe-utils@3.7.4:
+    resolution: {integrity: sha512-9yuCHLOU+og4OEkPWWtzrYk1Zt1hgN66U/NCJ0+vYJSx1MplBtoQRz8aEA+2RmCr3leLru98vQxNpw/vJsu/sg==}
     dev: false
 
   /xml-name-validator@4.0.0:

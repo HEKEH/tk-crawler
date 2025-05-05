@@ -197,10 +197,14 @@ function handleSortChange(params: { property: string; order: string | null }) {
           :data="tableData"
           :height="containerHeight"
           :row-config="{ useKey: true, keyField: rowKey }"
-          :column-config="{ resizable: true }"
           :scroll-x="{ enabled: true, gt: 0 }"
           :scroll-y="{ enabled: true, gt: 0, mode: 'wheel', oSize: 50 }"
-          :sort-config="{ multiple: false, defaultSort: sortState }"
+          :sort-config="{
+            multiple: false,
+            defaultSort: sortState,
+            trigger: 'cell',
+            allowBtn: false,
+          }"
           :size="isWebSize ? 'medium' : 'mini'"
           @sort-change="handleSortChange"
         >
@@ -275,9 +279,20 @@ function handleSortChange(params: { property: string; order: string | null }) {
     }
   }
   .vxe-table {
+    --vxe-ui-font-primary-color: var(--el-color-primary);
+    th.is--sortable {
+      cursor: pointer;
+    }
+    @include mobile {
+      --scroll-bar-width: 6px;
+    }
+    @include web {
+      --scroll-bar-width: 10px;
+    }
     .vxe-table--scroll-y-virtual {
-      max-width: 10px !important;
+      max-width: var(--scroll-bar-width) !important;
       .vxe-table--scroll-y-handle {
+        max-width: var(--scroll-bar-width) !important;
         // 滚动条滑块
         &::-webkit-scrollbar-thumb {
           border-radius: 4px;
@@ -285,8 +300,9 @@ function handleSortChange(params: { property: string; order: string | null }) {
       }
     }
     .vxe-table--scroll-x-virtual {
-      max-height: 10px !important;
+      max-height: var(--scroll-bar-width) !important;
       .vxe-table--scroll-x-handle {
+        max-height: var(--scroll-bar-width) !important;
         // 滚动条滑块
         &::-webkit-scrollbar-thumb {
           border-radius: 4px;
@@ -294,7 +310,10 @@ function handleSortChange(params: { property: string; order: string | null }) {
       }
     }
     .vxe-table--scroll-x-right-corner {
-      max-width: 10px !important;
+      max-width: var(--scroll-bar-width) !important;
+    }
+    .vxe-table--scroll-x-wrapper {
+      width: 100% !important;
     }
   }
 }

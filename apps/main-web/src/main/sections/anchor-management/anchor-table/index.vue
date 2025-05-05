@@ -205,5 +205,9 @@ onKeepAliveActivated(refetch);
       @update:sort-state="handleSortChange"
     />
   </div>
-  <component :is="operationColumnDialog" v-if="operationColumnDialog" />
+  <component
+    :is="operationColumnDialog"
+    v-if="operationColumnDialog"
+    :is-functional="true"
+  />
 </template>

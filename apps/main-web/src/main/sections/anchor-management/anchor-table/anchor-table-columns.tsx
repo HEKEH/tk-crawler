@@ -1,9 +1,6 @@
 import type { Area, DisplayedAnchorItem, Region } from '@tk-crawler/biz-shared';
-import type {
-  CellComponentProps,
-  VirtualizedTableColumn,
-} from '@tk-crawler/view-shared';
-import type { ComputedRef, PropType, Ref } from 'vue';
+import type { VirtualizedTableColumn } from '@tk-crawler/view-shared';
+import type { ComputedRef, Ref } from 'vue';
 import { InfoFilled } from '@element-plus/icons-vue';
 import {
   AREA_NAME_MAP,
@@ -18,7 +15,7 @@ import {
   useIsWebSize,
 } from '@tk-crawler/view-shared';
 import { ElIcon, ElLink, ElTag, ElTooltip } from 'element-plus';
-import { computed, defineComponent } from 'vue';
+import { computed } from 'vue';
 import './anchor-table-columns.scss';
 
 export interface CustomColumnConfig
@@ -31,210 +28,164 @@ export interface CustomColumnConfig
   };
 }
 
-// 定义基础单元格渲染器组件
-const BaseCellRenderer = defineComponent({
-  props: {
-    rowData: {
-      type: Object as PropType<DisplayedAnchorItem>,
-      required: true,
-    },
-  },
-});
+interface CellComponentProps<T> {
+  rowData: T;
+}
 
-// 定义各种单元格渲染器组件
-const DisplayIdCellRenderer = defineComponent({
-  extends: BaseCellRenderer,
-  setup(props: CellComponentProps<DisplayedAnchorItem>) {
-    return () => (
-      <div class="display-id-container">
-        <ElLink
-          type="primary"
-          class="display-id-link"
-          href={`${TIKTOK_URL}/@${props.rowData.display_id}`}
-          target="_blank"
-        >
-          {props.rowData.display_id}
-        </ElLink>
-        <CopyIcon
-          tooltip="复制主播展示ID"
-          copyContent={props.rowData.display_id}
-        />
-      </div>
-    );
-  },
-});
+// 展示ID单元格
+function DisplayIdCellRenderer(props: CellComponentProps<DisplayedAnchorItem>) {
+  return (
+<div class="display-id-container">
+    <ElLink
+      type="primary"
+      class="display-id-link"
+      href={`${TIKTOK_URL}/@${props.rowData.display_id}`}
+      target="_blank"
+    >
+      {props.rowData.display_id}
+    </ElLink>
+    <CopyIcon tooltip="复制主播展示ID" copyContent={props.rowData.display_id} />
+</div>
+)
+}
 
-const ContactedByCellRenderer = defineComponent({
-  extends: BaseCellRenderer,
-  setup(props: CellComponentProps<DisplayedAnchorItem>) {
-    return () =>
-      !props.rowData.contacted_user ? (
-        <ElTag class="org-user-tag" type="info">
-          未建联
-        </ElTag>
-      ) : (
-        <ElTag
-          type="success"
-          class="org-user-tag"
-          style={{
-            color: getColorFromName(props.rowData.contacted_user.display_name),
-          }}
-        >
-          {props.rowData.contacted_user.display_name}
-        </ElTag>
-      );
-  },
-});
+// 建联人单元格
+function ContactedByCellRenderer(props: CellComponentProps<DisplayedAnchorItem>) {
+  return !props.rowData.contacted_user ? (
+    <ElTag class="org-user-tag" type="info">
+      未建联
+    </ElTag>
+  ) : (
+    <ElTag
+      type="success"
+      class="org-user-tag"
+      style={{
+        color: getColorFromName(props.rowData.contacted_user.display_name),
+      }}
+    >
+      {props.rowData.contacted_user.display_name}
+    </ElTag>
+  )
+}
 
-const AssignToCellRenderer = defineComponent({
-  extends: BaseCellRenderer,
-  setup(props) {
-    return () =>
-      !props.rowData.assigned_user ? (
-        <ElTag class="org-user-tag" type="info">
-          未分配
-        </ElTag>
-      ) : (
-        <ElTag
-          type="success"
-          class="org-user-tag"
-          style={{
-            color: getColorFromName(props.rowData.assigned_user.display_name),
-          }}
-        >
-          {props.rowData.assigned_user.display_name}
-        </ElTag>
-      );
-  },
-});
+// 分配人单元格
+function AssignToCellRenderer(props: CellComponentProps<DisplayedAnchorItem>) {
+  return !props.rowData.assigned_user ? (
+    <ElTag class="org-user-tag" type="info">
+      未分配
+    </ElTag>
+  ) : (
+    <ElTag
+      type="success"
+      class="org-user-tag"
+      style={{
+        color: getColorFromName(props.rowData.assigned_user.display_name),
+      }}
+    >
+      {props.rowData.assigned_user.display_name}
+    </ElTag>
+  )
+}
 
-const UserIdCellRenderer = defineComponent({
-  extends: BaseCellRenderer,
-  setup(props) {
-    return () => (
-      <div class="number-id-container">
-        <span class="number-id-text">{props.rowData.user_id}</span>
-        <CopyIcon tooltip="复制主播ID" copyContent={props.rowData.user_id} />
-      </div>
-    );
-  },
-});
+// 用户ID单元格
+function UserIdCellRenderer(props: CellComponentProps<DisplayedAnchorItem>) {
+  return (
+<div class="number-id-container">
+    <span class="number-id-text">{props.rowData.user_id}</span>
+    <CopyIcon tooltip="复制主播ID" copyContent={props.rowData.user_id} />
+</div>
+)
+}
 
-const AreaCellRenderer = defineComponent({
-  extends: BaseCellRenderer,
-  setup(props) {
-    return () => (
-      <div class="area-with-tooltip">
-        {AREA_NAME_MAP[props.rowData.area as Area] || '-'}
-        <AreaTooltipIcon area={props.rowData.area as Area} />
-      </div>
-    );
-  },
-});
+// 地区单元格
+function AreaCellRenderer(props: CellComponentProps<DisplayedAnchorItem>) {
+  return (
+<div class="area-with-tooltip">
+    {AREA_NAME_MAP[props.rowData.area as Area] || '-'}
+    <AreaTooltipIcon area={props.rowData.area as Area} />
+</div>
+)
+}
 
-const RegionCellRenderer = defineComponent({
-  extends: BaseCellRenderer,
-  setup(props) {
-    return () => (
-      <span>
-        {REGION_LABEL_MAP[props.rowData.region as Region]
-          ? `${REGION_LABEL_MAP[props.rowData.region as Region]} (${props.rowData.region})`
-          : props.rowData.region}
-      </span>
-    );
-  },
-});
+// 区域单元格
+function RegionCellRenderer(props: CellComponentProps<DisplayedAnchorItem>) {
+  return (
+<span>
+    {REGION_LABEL_MAP[props.rowData.region as Region]
+      ? `${REGION_LABEL_MAP[props.rowData.region as Region]} (${props.rowData.region})`
+      : props.rowData.region}
+</span>
+)
+}
 
-const CheckedResultCellRenderer = defineComponent({
-  extends: BaseCellRenderer,
-  setup(props) {
-    return () =>
-      props.rowData.checked_result ? (
-        <ElTag type="success">是</ElTag>
-      ) : (
-        <ElTag type="danger">否</ElTag>
-      );
-  },
-});
+// 检查结果单元格
+function CheckedResultCellRenderer(props: CellComponentProps<DisplayedAnchorItem>) {
+  return props.rowData.checked_result ? (
+    <ElTag type="success">是</ElTag>
+  ) : (
+    <ElTag type="danger">否</ElTag>
+  )
+}
 
-const InviteTypeCellRenderer = defineComponent({
-  extends: BaseCellRenderer,
-  setup(props) {
-    return () =>
-      props.rowData.invite_type === CanUseInvitationType.Elite ? (
-        <ElTag type="warning">金票邀约</ElTag>
-      ) : props.rowData.invite_type === CanUseInvitationType.Regular ? (
-        <ElTag type="success">常规邀约</ElTag>
-      ) : (
-        <span>-</span>
-      );
-  },
-});
+// 邀约类型单元格
+function InviteTypeCellRenderer(props: CellComponentProps<DisplayedAnchorItem>) {
+  return props.rowData.invite_type === CanUseInvitationType.Elite ? (
+    <ElTag type="warning">金票邀约</ElTag>
+  ) : props.rowData.invite_type === CanUseInvitationType.Regular ? (
+    <ElTag type="success">常规邀约</ElTag>
+  ) : (
+    <span>-</span>
+  )
+}
 
-const AudienceCountCellRenderer = defineComponent({
-  extends: BaseCellRenderer,
-  setup(props) {
-    return () => <span>{props.rowData.audience_count ?? '-'}</span>;
-  },
-});
+// 观众数单元格
+function AudienceCountCellRenderer(props: CellComponentProps<DisplayedAnchorItem>) {
+  return <span>{props.rowData.audience_count ?? '-'}</span>
+}
 
-const LastDiamondsCellRenderer = defineComponent({
-  extends: BaseCellRenderer,
-  setup(props) {
-    return () => <span>{props.rowData.last_diamonds ?? '-'}</span>;
-  },
-});
+// 最后钻石数单元格
+function LastDiamondsCellRenderer(props: CellComponentProps<DisplayedAnchorItem>) {
+  return <span>{props.rowData.last_diamonds ?? '-'}</span>
+}
 
-const RankLeagueCellRenderer = defineComponent({
-  extends: BaseCellRenderer,
-  setup(props) {
-    return () => <span>{props.rowData.rank_league ?? '-'}</span>;
-  },
-});
+// 排名联赛单元格
+function RankLeagueCellRenderer(props: CellComponentProps<DisplayedAnchorItem>) {
+  return <span>{props.rowData.rank_league ?? '-'}</span>
+}
 
-const HasCommerceGoodsCellRenderer = defineComponent({
-  extends: BaseCellRenderer,
-  setup(props) {
-    return () => <span>{props.rowData.has_commerce_goods ? '是' : '否'}</span>;
-  },
-});
+// 是否有商品单元格
+function HasCommerceGoodsCellRenderer(props: CellComponentProps<DisplayedAnchorItem>) {
+  return <span>{props.rowData.has_commerce_goods ? '是' : '否'}</span>
+}
 
-const TagCellRenderer = defineComponent({
-  extends: BaseCellRenderer,
-  setup(props) {
-    return () => <span>{props.rowData.tag || '-'}</span>;
-  },
-});
+// 标签单元格
+function TagCellRenderer(props: CellComponentProps<DisplayedAnchorItem>) {
+  return <span>{props.rowData.tag || '-'}</span>
+}
 
-const CrawledAtCellRenderer = defineComponent({
-  extends: BaseCellRenderer,
-  setup(props) {
-    return () => <span>{formatDateTime(props.rowData.crawled_at)}</span>;
-  },
-});
+// 爬取时间单元格
+function CrawledAtCellRenderer(props: CellComponentProps<DisplayedAnchorItem>) {
+  return <span>{formatDateTime(props.rowData.crawled_at)}</span>
+}
 
-const CheckedAtCellRenderer = defineComponent({
-  extends: BaseCellRenderer,
-  setup(props) {
-    return () => <span>{formatDateTime(props.rowData.checked_at)}</span>;
-  },
-});
+// 检查时间单元格
+function CheckedAtCellRenderer(props: CellComponentProps<DisplayedAnchorItem>) {
+  return <span>{formatDateTime(props.rowData.checked_at)}</span>
+}
 
-const RoomIdCellRenderer = defineComponent({
-  extends: BaseCellRenderer,
-  setup(props) {
-    return () => (
-      <div class="number-id-container">
-        <span class="number-id-text">
-          {props.rowData.room_id && props.rowData.room_id !== '0'
-            ? props.rowData.room_id
-            : '-'}
-        </span>
-        <CopyIcon tooltip="复制直播间ID" copyContent={props.rowData.room_id} />
-      </div>
-    );
-  },
-});
+// 房间ID单元格
+function RoomIdCellRenderer(props: CellComponentProps<DisplayedAnchorItem>) {
+  return (
+<div class="number-id-container">
+    <span class="number-id-text">
+      {props.rowData.room_id && props.rowData.room_id !== '0'
+        ? props.rowData.room_id
+        : '-'}
+    </span>
+    <CopyIcon tooltip="复制直播间ID" copyContent={props.rowData.room_id} />
+</div>
+)
+}
 
 export default function useAnchorTableColumns(props: {
   hiddenColumns?: string[];
@@ -251,56 +202,56 @@ export default function useAnchorTableColumns(props: {
           width: isWeb.value ? 160 : 140,
           sortable: true,
           fixed: 'left',
-          CellComponent: DisplayIdCellRenderer,
+          cellRenderer: DisplayIdCellRenderer,
         },
         {
           key: 'contacted_by',
           title: '建联状态',
           width: isWeb.value ? 120 : 100,
           sortable: true,
-          CellComponent: ContactedByCellRenderer,
+          cellRenderer: ContactedByCellRenderer,
         },
         {
           key: 'assign_to',
           title: '分配状态',
           width: isWeb.value ? 120 : 100,
           sortable: true,
-          CellComponent: AssignToCellRenderer,
+          cellRenderer: AssignToCellRenderer,
         },
         {
           key: 'user_id',
           title: '主播ID',
           width: isWeb.value ? 210 : 160,
           sortable: true,
-          CellComponent: UserIdCellRenderer,
+          cellRenderer: UserIdCellRenderer,
         },
         {
           key: 'area',
           title: '主播分区',
           width: isWeb.value ? 120 : 100,
           sortable: true,
-          CellComponent: AreaCellRenderer,
+          cellRenderer: AreaCellRenderer,
         },
         {
           key: 'region',
           title: '国家或地区',
           width: isWeb.value ? 120 : 100,
           sortable: true,
-          CellComponent: RegionCellRenderer,
+          cellRenderer: RegionCellRenderer,
         },
         {
           key: 'checked_result',
           title: '可邀约',
           width: isWeb.value ? 100 : 80,
           sortable: true,
-          CellComponent: CheckedResultCellRenderer,
+          cellRenderer: CheckedResultCellRenderer,
         },
         {
           key: 'invite_type',
           title: '邀约方式',
           width: isWeb.value ? 120 : 100,
           sortable: true,
-          CellComponent: InviteTypeCellRenderer,
+          cellRenderer: InviteTypeCellRenderer,
         },
         {
           key: 'follower_count',
@@ -313,7 +264,7 @@ export default function useAnchorTableColumns(props: {
           title: '直播间观众数',
           width: isWeb.value ? 140 : 120,
           sortable: true,
-          CellComponent: AudienceCountCellRenderer,
+          cellRenderer: AudienceCountCellRenderer,
         },
         {
           key: 'current_diamonds',
@@ -326,7 +277,7 @@ export default function useAnchorTableColumns(props: {
           title: '上次钻石',
           width: isWeb.value ? 120 : 100,
           sortable: true,
-          CellComponent: LastDiamondsCellRenderer,
+          cellRenderer: LastDiamondsCellRenderer,
         },
         {
           key: 'highest_diamonds',
@@ -339,28 +290,28 @@ export default function useAnchorTableColumns(props: {
           title: '直播段位',
           width: isWeb.value ? 120 : 100,
           sortable: true,
-          CellComponent: RankLeagueCellRenderer,
+          cellRenderer: RankLeagueCellRenderer,
         },
         {
           key: 'has_commerce_goods',
           title: '带货主播',
           width: isWeb.value ? 120 : 100,
           sortable: true,
-          CellComponent: HasCommerceGoodsCellRenderer,
+          cellRenderer: HasCommerceGoodsCellRenderer,
         },
         {
           key: 'tag',
           title: '直播标签',
           width: isWeb.value ? 140 : 120,
           sortable: true,
-          CellComponent: TagCellRenderer,
+          cellRenderer: TagCellRenderer,
         },
         {
           key: 'crawled_at',
           title: '最新时间',
           width: isWeb.value ? 200 : 180,
           sortable: true,
-          CellComponent: CrawledAtCellRenderer,
+          cellRenderer: CrawledAtCellRenderer,
           headerCellRenderer: () => (
             <span class="column-header-label">
               最新时间
@@ -382,7 +333,7 @@ export default function useAnchorTableColumns(props: {
           title: '邀约检测时间',
           width: isWeb.value ? 200 : 180,
           sortable: true,
-          CellComponent: CheckedAtCellRenderer,
+          cellRenderer: CheckedAtCellRenderer,
           headerCellRenderer: () => (
             <span class="column-header-label">
               邀约检测时间
@@ -409,7 +360,7 @@ export default function useAnchorTableColumns(props: {
           title: '直播间ID',
           width: isWeb.value ? 210 : 160,
           sortable: true,
-          CellComponent: RoomIdCellRenderer,
+          cellRenderer: RoomIdCellRenderer,
         },
       ];
     },

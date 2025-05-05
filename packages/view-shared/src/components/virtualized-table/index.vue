@@ -92,7 +92,6 @@ watch(selectedRows, newVal => {
   emit('selectionChange', newVal as T[]);
 });
 
-const tableRef = shallowRef<VxeTableInstance>();
 const containerWidth = ref(800);
 const containerHeight = ref(600);
 const tableContainer = ref<HTMLElement>();
@@ -162,19 +161,18 @@ function handleCheckboxChange(params: CheckboxEventParams) {
       <div ref="tableContainer" class="table-container">
         <VxeTable
           v-bind="$attrs"
-          ref="tableRef"
           :data="tableData"
           :height="containerHeight"
-          :row-config="{ keyField: rowKey }"
+          :row-config="{ useKey: true, keyField: rowKey }"
           :column-config="{ resizable: true }"
-          :scroll-x="{ enabled: true }"
-          :scroll-y="{ enabled: true }"
+          :scroll-x="{ enabled: true, gt: 0 }"
+          :scroll-y="{ enabled: true, gt: 0, mode: 'wheel', oSize: 50 }"
           :sort-config="{ multiple: false, defaultSort: sortState }"
           :checkbox-config="{
             checkField: 'checked',
             checkRowKeys: selectedRows?.map(row => row[rowKey]),
           }"
-          :size="isWebSize ? 'medium' : 'small'"
+          :size="isWebSize ? 'medium' : 'mini'"
           @sort-change="handleSortChange"
           @checkbox-change="handleCheckboxChange"
           @checkbox-all="handleCheckboxChange"
@@ -195,12 +193,12 @@ function handleCheckboxChange(params: CheckboxEventParams) {
               :fixed="col.fixed"
             >
               <template #default="{ row }">
-                <template v-if="col.CellComponent">
-                  <component :is="markRaw(col.CellComponent)" :row-data="row" />
+                <template v-if="col.cellRenderer">
+                  <component
+                    :is="col.cellRenderer({ rowData: row })"
+                    :is-functional="true"
+                  />
                 </template>
-                <!-- <template v-else-if="col.cellRenderer">
-                  <component :is="col.cellRenderer({ rowData: row })" />
-                </template> -->
                 <template v-else>
                   {{ row[col.key as keyof T] }}
                 </template>

@@ -199,6 +199,17 @@ function handleSortChange(params: { property: string; order: string | null }) {
           :row-config="{ useKey: true, keyField: rowKey }"
           :scroll-x="{ enabled: true, gt: 0 }"
           :scroll-y="{ enabled: true, gt: 0, mode: 'wheel', oSize: 50 }"
+          :scrollbar-config="
+            isWebSize
+              ? {
+                  width: 8,
+                  height: 8,
+                }
+              : {
+                  width: 6,
+                  height: 6,
+                }
+          "
           :sort-config="{
             multiple: false,
             defaultSort: sortState,
@@ -282,38 +293,6 @@ function handleSortChange(params: { property: string; order: string | null }) {
     --vxe-ui-font-primary-color: var(--el-color-primary);
     th.is--sortable {
       cursor: pointer;
-    }
-    @include mobile {
-      --scroll-bar-width: 6px;
-    }
-    @include web {
-      --scroll-bar-width: 10px;
-    }
-    .vxe-table--scroll-y-virtual {
-      max-width: var(--scroll-bar-width) !important;
-      .vxe-table--scroll-y-handle {
-        max-width: var(--scroll-bar-width) !important;
-        // 滚动条滑块
-        &::-webkit-scrollbar-thumb {
-          border-radius: 4px;
-        }
-      }
-    }
-    .vxe-table--scroll-x-virtual {
-      max-height: var(--scroll-bar-width) !important;
-      .vxe-table--scroll-x-handle {
-        max-height: var(--scroll-bar-width) !important;
-        // 滚动条滑块
-        &::-webkit-scrollbar-thumb {
-          border-radius: 4px;
-        }
-      }
-    }
-    .vxe-table--scroll-x-right-corner {
-      max-width: var(--scroll-bar-width) !important;
-    }
-    .vxe-table--scroll-x-wrapper {
-      width: 100% !important;
     }
   }
 }

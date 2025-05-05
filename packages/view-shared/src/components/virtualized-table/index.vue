@@ -2,7 +2,14 @@
 import type { VxeTableInstance } from 'vxe-table';
 import type { VirtualizedTableColumn } from './types';
 import { ElPagination } from 'element-plus';
-import { onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vue';
+import {
+  markRaw,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  shallowRef,
+  watch,
+} from 'vue';
 import { VxeColumn, VxeTable } from 'vxe-table';
 import { useIsWebSize } from '../../hooks';
 
@@ -187,11 +194,16 @@ function handleCheckboxChange(params: CheckboxEventParams) {
               :sortable="col.sortable"
               :fixed="col.fixed"
             >
-              <template v-if="col.cellRenderer" #default="{ row }">
-                <component :is="col.cellRenderer({ rowData: row })" />
-              </template>
-              <template v-else #default="{ row }">
-                {{ row[col.key as keyof T] }}
+              <template #default="{ row }">
+                <template v-if="col.CellComponent">
+                  <component :is="markRaw(col.CellComponent)" :row-data="row" />
+                </template>
+                <!-- <template v-else-if="col.cellRenderer">
+                  <component :is="col.cellRenderer({ rowData: row })" />
+                </template> -->
+                <template v-else>
+                  {{ row[col.key as keyof T] }}
+                </template>
               </template>
             </VxeColumn>
           </template>

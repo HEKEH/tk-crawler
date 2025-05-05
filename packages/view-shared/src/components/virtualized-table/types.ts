@@ -3,7 +3,13 @@ import type {
   HeaderCellRenderer,
   HeaderClassGetter,
 } from 'element-plus/es/components/table-v2/src/types';
-import type { CSSProperties, VNode } from 'vue';
+import type { Component, CSSProperties, VNode } from 'vue';
+
+export interface CellComponentProps<T = any> {
+  rowData: T;
+}
+
+export type CellComponent<T = any> = Component<CellComponentProps<T>>;
 
 export interface VirtualizedTableColumn<T> {
   align?: 'left' | 'center' | 'right';
@@ -25,6 +31,7 @@ export interface VirtualizedTableColumn<T> {
    * Renderers
    */
   cellRenderer?: (params: { rowData: T }) => VNode;
+  CellComponent?: CellComponent<T>;
   headerCellRenderer?: HeaderCellRenderer<T>;
   /**
    * Extendable sections

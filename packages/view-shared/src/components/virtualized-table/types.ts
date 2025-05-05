@@ -1,6 +1,5 @@
 import type {
   ClassNameGetter,
-  HeaderCellRenderer,
   HeaderClassGetter,
 } from 'element-plus/es/components/table-v2/src/types';
 import type { CSSProperties, VNode } from 'vue';
@@ -25,7 +24,7 @@ export interface VirtualizedTableColumn<T> {
    * Renderers
    */
   cellRenderer?: (params: { rowData: T }) => VNode;
-  headerCellRenderer?: HeaderCellRenderer<T>;
+  headerCellRenderer?: () => VNode;
   /**
    * Extendable sections
    */

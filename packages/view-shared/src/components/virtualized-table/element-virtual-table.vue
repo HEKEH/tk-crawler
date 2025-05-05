@@ -1,0 +1,340 @@
+<script setup lang="tsx" generic="T extends Record<string, any>">
+import type { SortBy } from 'element-plus';
+import type { AnyColumns } from 'element-plus/es/components/table-v2/src/types';
+import type { VirtualizedTableColumn } from './types';
+import {
+  ElCheckbox,
+  ElPagination,
+  ElTableV2,
+  TableV2SortOrder,
+} from 'element-plus';
+import {
+  computed,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  shallowRef,
+  watch,
+} from 'vue';
+import { useIsWebSize, useTableMultiSelect } from '../../hooks';
+import SortIcon from './sort-icon.vue';
+
+export interface Props<T extends Record<string, any>> {
+  data: T[];
+  columns: VirtualizedTableColumn<T>[];
+  loading?: boolean;
+  error?: string;
+  total?: number;
+  pageNum: number;
+  pageSize: number;
+  pageSizes?: number[];
+  rowKey?: string;
+  showSelection?: boolean;
+  selectionColumnConfig?: Partial<VirtualizedTableColumn<T>>;
+  selectedRows?: T[];
+  pagerSize?: number;
+  sortState?: { key: string; order: TableV2SortOrder } | undefined;
+}
+
+const props = withDefaults(defineProps<Props<T>>(), {
+  showSelection: true,
+  rowKey: 'id',
+  pageSizes: () => [10, 20, 50, 100, 200, 500, 1000],
+});
+
+const emit = defineEmits<{
+  (e: 'update:pageNum', value: number): void;
+  (e: 'update:pageSize', value: number): void;
+  (
+    e: 'update:sortState',
+    value: { key: string; order: TableV2SortOrder } | undefined,
+  ): void;
+  (e: 'update:selectedRows', rows: T[]): void;
+  (e: 'selectionChange', rows: T[]): void;
+}>();
+
+const isWebSize = useIsWebSize();
+
+const tableData = shallowRef<T[]>(props.data);
+
+const {
+  selectedRows,
+  isAllRowSelected,
+  isPartialSelected,
+  onToggleRowSelect,
+  onToggleAllRowSelect,
+  isRowSelected,
+} = useTableMultiSelect<T>(tableData, {
+  rowKey: props.rowKey,
+});
+
+// 监听data变化
+watch(
+  () => props.data,
+  newVal => {
+    tableData.value = newVal;
+  },
+  { immediate: true },
+);
+
+// 监听selectedRows变化
+watch(
+  () => props.selectedRows,
+  newVal => {
+    if (newVal) {
+      selectedRows.value = newVal;
+    }
+  },
+  { immediate: true },
+);
+
+// 监听selectedRows变化并触发事件
+watch(selectedRows, newVal => {
+  emit('update:selectedRows', newVal);
+  emit('selectionChange', newVal);
+});
+
+const tableRef = shallowRef<InstanceType<typeof ElTableV2>>();
+const containerWidth = ref(800);
+const containerHeight = ref(600);
+const tableContainer = ref<HTMLElement>();
+
+function updateSize() {
+  if (tableContainer.value) {
+    containerWidth.value = tableContainer.value.offsetWidth;
+    containerHeight.value = Math.max(tableContainer.value.offsetHeight, 100);
+  }
+}
+
+let resizeObserver: ResizeObserver | null = null;
+onMounted(() => {
+  if (tableContainer.value) {
+    resizeObserver = new ResizeObserver(updateSize);
+    resizeObserver.observe(tableContainer.value);
+  }
+  updateSize();
+});
+
+onBeforeUnmount(() => {
+  if (!resizeObserver) {
+    return;
+  }
+  if (tableContainer.value) {
+    resizeObserver.unobserve(tableContainer.value);
+  }
+  resizeObserver.disconnect();
+  resizeObserver = null;
+});
+
+function handlePageNumChange(_pageNum: number) {
+  emit('update:pageNum', _pageNum);
+}
+
+function handlePageSizeChange(_pageSize: number) {
+  emit('update:pageSize', _pageSize);
+}
+
+function handleSortKeyChange(key: SortBy['key']) {
+  if (key !== props.sortState?.key) {
+    emit('update:sortState', {
+      key: key as string,
+      order: TableV2SortOrder.ASC,
+    });
+  } else {
+    if (props.sortState?.order === TableV2SortOrder.ASC) {
+      emit('update:sortState', {
+        key: key as string,
+        order: TableV2SortOrder.DESC,
+      });
+    } else if (props.sortState?.order === TableV2SortOrder.DESC) {
+      emit('update:sortState', undefined);
+    }
+  }
+}
+
+/**
+ * TODO element-plus 排序有bug，自定义排序顺序
+ */
+function handleSortChange(sort: SortBy) {
+  handleSortKeyChange(sort.key);
+}
+
+const selectionColumn = computed<VirtualizedTableColumn<T>>(() => ({
+  key: 'selection',
+  width: 55,
+  cellRenderer: ({ rowData }) => {
+    const onChange = () => onToggleRowSelect(rowData);
+    return (
+      <ElCheckbox modelValue={isRowSelected(rowData)} onChange={onChange} />
+    );
+  },
+  headerCellRenderer: () => {
+    const allSelected = isAllRowSelected.value;
+    return (
+      <ElCheckbox
+        modelValue={allSelected}
+        indeterminate={isPartialSelected.value}
+        onChange={onToggleAllRowSelect}
+      />
+    );
+  },
+  ...props.selectionColumnConfig,
+}));
+
+function createSortableColumn<T extends Record<string, any>>(
+  column: VirtualizedTableColumn<T>,
+): VirtualizedTableColumn<T> {
+  if (!column.sortable) {
+    return column;
+  }
+
+  return {
+    ...column,
+    headerCellRenderer: () => {
+      const sortOrder =
+        props.sortState && props.sortState.key === column.key
+          ? props.sortState.order
+          : undefined;
+
+      return (
+        <div class="sortable-header">
+          <span>{column.title}</span>
+          <SortIcon direction={sortOrder} />
+        </div>
+      );
+    },
+  };
+}
+
+const computedColumns = computed(() => {
+  if (!props.showSelection) {
+    return props.columns;
+  }
+  return [
+    selectionColumn.value,
+    ...props.columns.map(column => createSortableColumn(column)),
+  ];
+});
+</script>
+
+<template>
+  <div v-loading="loading" class="virtualized-table">
+    <div v-if="error" class="table-error">
+      {{ error }}
+    </div>
+    <div v-show="!error" class="table-main">
+      <div ref="tableContainer" class="table-container">
+        <ElTableV2
+          v-bind="$attrs"
+          ref="tableRef"
+          :size="isWebSize ? 'default' : 'small'"
+          :cache="10"
+          :data="tableData"
+          :width="containerWidth"
+          :height="containerHeight"
+          :columns="computedColumns as AnyColumns"
+          :fixed="true"
+          :row-height="isWebSize ? 43 : 36"
+          :row-key="rowKey"
+          :sort-by="sortState"
+          @column-sort="handleSortChange"
+        />
+      </div>
+      <div class="pagination-row">
+        <ElPagination
+          :current-page="pageNum"
+          :page-size="pageSize"
+          size="small"
+          background
+          layout="total, sizes, prev, pager, next"
+          :page-sizes="pageSizes"
+          :pager-count="isWebSize ? 7 : 3"
+          :total="total ?? 0"
+          @size-change="handlePageSizeChange"
+          @current-change="handlePageNumChange"
+        />
+      </div>
+    </div>
+  </div>
+</template>
+
+<style lang="scss">
+.virtualized-table {
+  @include mobile {
+    .el-table-v2__table {
+      font-size: var(--el-font-size-extra-small);
+    }
+  }
+  .el-table-v2__sort-icon {
+    // 屏蔽掉原来的icon
+    display: none;
+  }
+  .table-main {
+    .sortable-header {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      position: relative;
+      cursor: pointer;
+    }
+  }
+  // .el-vl__wrapper > :first-child > :first-child {
+  //   -webkit-overflow-scrolling: touch;
+  //   scroll-behavior: smooth;
+  //   overscroll-behavior: contain;
+  //   touch-action: pan-x pan-y;
+  //   div {
+  //     -webkit-overflow-scrolling: touch;
+  //     scroll-behavior: smooth;
+  //     overscroll-behavior: contain;
+  //     touch-action: pan-x pan-y;
+  //   }
+  // }
+}
+</style>
+
+<style lang="scss" scoped>
+.virtualized-table {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  flex: 1;
+  min-height: 200px;
+}
+
+.table-main {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+
+.table-container {
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+}
+
+.table-error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--el-color-danger);
+  padding: 1rem;
+  text-align: center;
+  min-height: 200px;
+}
+
+.pagination-row {
+  width: 100%;
+  display: flex;
+  margin-top: 1rem;
+  padding-right: 1rem;
+  @include mobile {
+    justify-content: center;
+  }
+  @include web {
+    justify-content: flex-end;
+  }
+}
+</style>

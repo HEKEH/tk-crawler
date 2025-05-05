@@ -1,17 +1,16 @@
 <script setup lang="tsx" generic="T extends Record<string, any>">
-import type { VxeTableInstance } from 'vxe-table';
-import type { VirtualizedTableColumn } from './types';
-import { ElPagination } from 'element-plus';
+import { ElCheckbox, ElPagination } from 'element-plus';
 import {
-  markRaw,
   onBeforeUnmount,
   onMounted,
   ref,
   shallowRef,
   watch,
+  computed,
 } from 'vue';
 import { VxeColumn, VxeTable } from 'vxe-table';
-import { useIsWebSize } from '../../hooks';
+import { useIsWebSize, useTableMultiSelect } from '../../hooks';
+import type { VirtualizedTableColumn } from './types';
 
 const props = withDefaults(
   defineProps<{
@@ -64,7 +63,18 @@ const emit = defineEmits<{
 const isWebSize = useIsWebSize();
 
 const tableData = shallowRef<T[]>(props.data);
-const selectedRows = ref<T[]>([]);
+
+// 使用useTableMultiSelect hook
+const {
+  selectedRows,
+  isAllRowSelected,
+  isPartialSelected,
+  onToggleRowSelect,
+  onToggleAllRowSelect,
+  isRowSelected,
+} = useTableMultiSelect<T>(tableData, {
+  rowKey: props.rowKey,
+});
 
 // 监听data变化
 watch(
@@ -80,7 +90,7 @@ watch(
   () => props.selectedRows,
   newVal => {
     if (newVal) {
-      selectedRows.value = newVal as T[];
+      selectedRows.value = newVal;
     }
   },
   { immediate: true },
@@ -88,8 +98,40 @@ watch(
 
 // 监听selectedRows变化并触发事件
 watch(selectedRows, newVal => {
-  emit('update:selectedRows', newVal as T[]);
-  emit('selectionChange', newVal as T[]);
+  emit('update:selectedRows', newVal);
+  emit('selectionChange', newVal);
+});
+
+// 创建selection column
+const selectionColumn = computed<VirtualizedTableColumn<T>>(() => ({
+  key: 'selection',
+  width: props.selectionColumnConfig?.width ?? 55,
+  fixed: 'left',
+  cellRenderer: ({ rowData }) => {
+    const onChange = () => onToggleRowSelect(rowData);
+    return (
+      <ElCheckbox modelValue={isRowSelected(rowData)} onChange={onChange} />
+    );
+  },
+  headerCellRenderer: () => {
+    const allSelected = isAllRowSelected.value;
+    return (
+      <ElCheckbox
+        modelValue={allSelected}
+        indeterminate={isPartialSelected.value}
+        onChange={onToggleAllRowSelect}
+      />
+    );
+  },
+  ...props.selectionColumnConfig,
+}));
+
+// 计算最终的columns
+const computedColumns = computed(() => {
+  if (!props.showSelection) {
+    return props.columns;
+  }
+  return [selectionColumn.value, ...props.columns];
 });
 
 const containerWidth = ref(800);
@@ -141,15 +183,6 @@ function handleSortChange(params: { property: string; order: string | null }) {
     });
   }
 }
-
-interface CheckboxEventParams {
-  records: any[];
-  checked: boolean;
-}
-
-function handleCheckboxChange(params: CheckboxEventParams) {
-  selectedRows.value = params.records as T[];
-}
 </script>
 
 <template>
@@ -168,23 +201,10 @@ function handleCheckboxChange(params: CheckboxEventParams) {
           :scroll-x="{ enabled: true, gt: 0 }"
           :scroll-y="{ enabled: true, gt: 0, mode: 'wheel', oSize: 50 }"
           :sort-config="{ multiple: false, defaultSort: sortState }"
-          :checkbox-config="{
-            checkField: 'checked',
-            checkRowKeys: selectedRows?.map(row => row[rowKey]),
-          }"
           :size="isWebSize ? 'medium' : 'mini'"
           @sort-change="handleSortChange"
-          @checkbox-change="handleCheckboxChange"
-          @checkbox-all="handleCheckboxChange"
         >
-          <template v-if="showSelection">
-            <VxeColumn
-              type="checkbox"
-              :width="selectionColumnConfig?.width ?? 55"
-              fixed="left"
-            />
-          </template>
-          <template v-for="col in props.columns" :key="col.key">
+          <template v-for="col in computedColumns" :key="col.key">
             <VxeColumn
               :field="col.key"
               :title="col.title"
@@ -192,6 +212,17 @@ function handleCheckboxChange(params: CheckboxEventParams) {
               :sortable="col.sortable"
               :fixed="col.fixed"
             >
+              <template #header>
+                <template v-if="col.headerCellRenderer">
+                  <component
+                    :is="col.headerCellRenderer()"
+                    :is-functional="true"
+                  />
+                </template>
+                <template v-else>
+                  {{ col.title }}
+                </template>
+              </template>
               <template #default="{ row }">
                 <template v-if="col.cellRenderer">
                   <component
@@ -241,6 +272,29 @@ function handleCheckboxChange(params: CheckboxEventParams) {
       gap: 4px;
       position: relative;
       cursor: pointer;
+    }
+  }
+  .vxe-table {
+    .vxe-table--scroll-y-virtual {
+      max-width: 10px !important;
+      .vxe-table--scroll-y-handle {
+        // 滚动条滑块
+        &::-webkit-scrollbar-thumb {
+          border-radius: 4px;
+        }
+      }
+    }
+    .vxe-table--scroll-x-virtual {
+      max-height: 10px !important;
+      .vxe-table--scroll-x-handle {
+        // 滚动条滑块
+        &::-webkit-scrollbar-thumb {
+          border-radius: 4px;
+        }
+      }
+    }
+    .vxe-table--scroll-x-right-corner {
+      max-width: 10px !important;
     }
   }
 }

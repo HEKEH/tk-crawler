@@ -203,6 +203,7 @@ onMounted(async () => {
           :row-config="{ useKey: true, keyField: rowKey }"
           :virtual-x-config="{ enabled: true, gt: 0 }"
           :virtual-y-config="{ enabled: true, gt: 0, oSize: 50, preSize: 20 }"
+          empty-text="暂无数据"
           :scrollbar-config="
             isWebSize
               ? {
@@ -218,7 +219,7 @@ onMounted(async () => {
             multiple: false,
             defaultSort: sortState,
             trigger: 'cell',
-            allowBtn: false,
+            allowBtn: true,
           }"
           :size="isWebSize ? 'medium' : 'mini'"
           @sort-change="handleSortChange"

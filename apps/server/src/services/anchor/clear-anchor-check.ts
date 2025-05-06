@@ -3,6 +3,7 @@ import type {
   ClearAnchorCheckResponseData,
 } from '@tk-crawler/biz-shared';
 import { mysqlClient } from '@tk-crawler/database';
+import { clearAnchorListCache } from './get-anchor-list';
 import { transformAnchorListFilterValues } from './get-anchor-list/filter';
 
 export async function clearAnchorCheck({
@@ -17,6 +18,7 @@ export async function clearAnchorCheck({
       where,
     },
   );
+  await clearAnchorListCache(org_id);
   return {
     deleted_count: count,
   };

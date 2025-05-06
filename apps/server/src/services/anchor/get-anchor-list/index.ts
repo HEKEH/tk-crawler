@@ -8,11 +8,22 @@ import type {
   Region,
 } from '@tk-crawler/biz-shared';
 import assert from 'node:assert';
-import { mysqlClient } from '@tk-crawler/database';
+import { mysqlClient, redisClient } from '@tk-crawler/database';
+import { logger } from '../../../infra/logger';
 import { transformAnchorListFilterValues } from './filter';
 import { transformAnchorListOrderBy } from './order-by';
 
 const PAGE_SIZE_LIMIT = 1000;
+const CACHE_TTL = 60; // 缓存1分钟
+
+// 清除指定机构的缓存
+export async function clearAnchorListCache(org_id: string) {
+  const pattern = `anchor_list:${org_id}:*`;
+  const keys = await redisClient.keys(pattern);
+  if (keys.length > 0) {
+    await redisClient.del(...keys);
+  }
+}
 
 export async function getAnchorList(
   request: GetAnchorListRequest & { org_id: string },
@@ -34,6 +45,16 @@ export async function getAnchorList(
     include_task_assign,
     include_anchor_contact,
   } = request;
+
+  // 生成缓存key，使用更精确的key
+  const cacheKey = `anchor_list:${org_id}:${page_num}:${page_size}:${JSON.stringify(filter || {})}:${JSON.stringify(order_by || {})}:${include_task_assign}:${include_anchor_contact}`;
+
+  // 尝试从缓存获取
+  const cachedData = await redisClient.get(cacheKey);
+  if (cachedData) {
+    return JSON.parse(cachedData);
+  }
+
   const where = transformAnchorListFilterValues(filter, org_id);
   const orderBy = transformAnchorListOrderBy(order_by);
 
@@ -43,19 +64,64 @@ export async function getAnchorList(
       orderBy,
       skip: (page_num - 1) * page_size,
       take: page_size,
-      include: {
-        anchor: true,
+      select: {
+        id: true,
+        org_id: true,
+        anchor_id: true,
+        checked_at: true,
+        checked_by: true,
+        checked_result: true,
+        area: true,
+        created_at: true,
+        updated_at: true,
+        invite_type: true,
+        anchor: {
+          select: {
+            user_id: true,
+            display_id: true,
+            rank_league: true,
+            region: true,
+            has_commerce_goods: true,
+            follower_count: true,
+            audience_count: true,
+            current_diamonds: true,
+            last_diamonds: true,
+            highest_diamonds: true,
+            room_id: true,
+            level: true,
+            tag: true,
+            updated_at: true,
+          },
+        },
         assigned_user: include_task_assign
           ? {
-              omit: {
-                password: true,
+              select: {
+                id: true,
+                username: true,
+                display_name: true,
+                org_id: true,
+                role_id: true,
+                status: true,
+                created_at: true,
+                updated_at: true,
+                email: true,
+                mobile: true,
               },
             }
           : false,
         contacted_user: include_anchor_contact
           ? {
-              omit: {
-                password: true,
+              select: {
+                id: true,
+                username: true,
+                display_name: true,
+                org_id: true,
+                role_id: true,
+                status: true,
+                created_at: true,
+                updated_at: true,
+                email: true,
+                mobile: true,
               },
             }
           : false,
@@ -126,6 +192,11 @@ export async function getAnchorList(
     list,
     total,
   };
+
+  // 缓存结果
+  redisClient.set(cacheKey, JSON.stringify(result), CACHE_TTL).catch(e => {
+    logger.error('anchor-list cache fail', e);
+  });
 
   return result;
 }

@@ -111,7 +111,6 @@ const { data, isFetching, refetch } = useGetAnchorList(
 );
 
 // 刷新功能
-const isRefreshing = ref(false);
 async function refresh() {
   // isRefreshing.value = true;
   return refetch().finally(() => {

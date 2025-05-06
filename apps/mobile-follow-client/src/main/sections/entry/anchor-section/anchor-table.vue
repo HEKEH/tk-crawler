@@ -73,7 +73,7 @@ const filter = computed(() =>
   transformFilterViewValuesToFilterValues(filters.value),
 );
 
-const { data, isLoading, isError, error, refetch } = useQuery<
+const { data, isFetching, isError, error, refetch } = useQuery<
   GetAnchorFrom87ListResponseData | undefined
 >({
   queryKey: [
@@ -85,6 +85,7 @@ const { data, isLoading, isError, error, refetch } = useQuery<
     filter,
   ],
   retry: false,
+  refetchOnWindowFocus: false,
   queryFn: async () => {
     const response = await getAnchorFrom87List({
       page_num: pageNum.value,
@@ -108,11 +109,11 @@ function resetSort() {
 }
 
 // 刷新功能
-const isRefreshing = ref(false);
+// const isRefreshing = ref(false);
 async function refresh() {
-  isRefreshing.value = true;
+  // isRefreshing.value = true;
   return refetch().finally(() => {
-    isRefreshing.value = false;
+    // isRefreshing.value = false;
   });
 }
 
@@ -413,7 +414,7 @@ const columns = computed<VirtualizedTableColumn<AnchorFrom87>[]>(() => [
 </script>
 
 <template>
-  <div v-loading="isLoading || isRefreshing" class="outer-container">
+  <div class="outer-container">
     <div v-if="isError" class="anchor-table-error">
       {{ error?.message || '加载失败' }}
     </div>
@@ -469,7 +470,7 @@ const columns = computed<VirtualizedTableColumn<AnchorFrom87>[]>(() => [
         v-model:sort-state="sortState"
         :data="anchorList"
         :columns="columns"
-        :loading="isLoading || isRefreshing"
+        :loading="isFetching"
         :error="error?.message"
         :total="data?.total"
       />

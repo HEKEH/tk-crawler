@@ -79,7 +79,7 @@ function handleFilterReset() {
   pageNum.value = 1; // 重置页码
 }
 
-const { data, isLoading, isError, error, refetch } = useQuery<
+const { data, isFetching, isError, error, refetch } = useQuery<
   GetAnchorCommentTemplateGroupListResponseData | undefined
 >({
   queryKey: [
@@ -92,6 +92,7 @@ const { data, isLoading, isError, error, refetch } = useQuery<
     filters,
   ],
   retry: false,
+  refetchOnWindowFocus: false,
   queryFn: async () => {
     const orderBy = sortField.value
       ? { [sortField.value]: sortOrder.value === 'ascending' ? 'asc' : 'desc' }
@@ -130,11 +131,11 @@ function resetSort() {
 }
 
 // 刷新功能
-const isRefreshing = ref(false);
+// const isRefreshing = ref(false);
 async function refresh() {
-  isRefreshing.value = true;
+  // isRefreshing.value = true;
   return refetch().finally(() => {
-    isRefreshing.value = false;
+    // isRefreshing.value = false;
   });
 }
 
@@ -297,10 +298,7 @@ async function handleCreateOrEdit(data: Partial<AnchorCommentTemplateGroup>) {
 </script>
 
 <template>
-  <div
-    v-loading="isLoading || isRefreshing"
-    class="comment-template-group-table"
-  >
+  <div v-loading="isFetching" class="comment-template-group-table">
     <div v-if="isError" class="comment-template-group-table-error">
       {{ error?.message }}
     </div>
@@ -435,7 +433,7 @@ async function handleCreateOrEdit(data: Partial<AnchorCommentTemplateGroup>) {
   />
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .comment-template-group-table {
   position: relative;
   flex: 1;

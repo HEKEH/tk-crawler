@@ -26,6 +26,7 @@ const { data, isFetching, isError, error, refetch } = useQuery<
 >({
   queryKey: ['crawler-statistics', token],
   retry: false,
+  refetchOnWindowFocus: false,
   queryFn: async () => {
     const response = await getCrawlStatistics(
       { force_refresh: forceRefresh.value },

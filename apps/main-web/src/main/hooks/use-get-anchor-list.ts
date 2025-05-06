@@ -40,6 +40,7 @@ export function useGetAnchorList(
   return useQuery<GetAnchorListResponseData | undefined>({
     queryKey,
     retry: false,
+    refetchOnWindowFocus: false,
     queryFn: async () => {
       const response = await getAnchorList(
         {

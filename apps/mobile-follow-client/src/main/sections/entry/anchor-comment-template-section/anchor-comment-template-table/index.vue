@@ -87,7 +87,7 @@ watch(
   },
 );
 
-const { data, isLoading, isError, error, refetch } = useQuery<
+const { data, isFetching, isError, error, refetch } = useQuery<
   GetAnchorCommentTemplateListResponseData | undefined
 >({
   queryKey: [
@@ -101,6 +101,7 @@ const { data, isLoading, isError, error, refetch } = useQuery<
     filters,
   ],
   retry: false,
+  refetchOnWindowFocus: false,
   queryFn: async () => {
     const orderBy = sortField.value
       ? { [sortField.value]: sortOrder.value === 'ascending' ? 'asc' : 'desc' }
@@ -143,11 +144,11 @@ function resetSort() {
 }
 
 // 刷新功能
-const isRefreshing = ref(false);
+// const isRefreshing = ref(false);
 async function refresh() {
-  isRefreshing.value = true;
+  // isRefreshing.value = true;
   return refetch().finally(() => {
-    isRefreshing.value = false;
+    // isRefreshing.value = false;
   });
 }
 
@@ -319,7 +320,7 @@ async function handleCreateOrEdit(data: Partial<AnchorCommentTemplate>) {
 </script>
 
 <template>
-  <div v-loading="isLoading || isRefreshing" class="comment-template-table">
+  <div v-loading="isFetching" class="comment-template-table">
     <div v-if="isError" class="comment-template-table-error">
       {{ error?.message }}
     </div>

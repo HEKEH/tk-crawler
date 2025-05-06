@@ -66,7 +66,7 @@ function handleFilterReset() {
   pageNum.value = 1; // 重置页码
 }
 
-const { data, isLoading, isError, error, refetch } = useGetFollowGroupList({
+const { data, isFetching, isError, error, refetch } = useGetFollowGroupList({
   orgId: globalStore.orgId,
   pageNum,
   pageSize,
@@ -99,11 +99,11 @@ function resetSort() {
 }
 
 // 刷新功能
-const isRefreshing = ref(false);
+// const isRefreshing = ref(false);
 async function refresh() {
-  isRefreshing.value = true;
+  // isRefreshing.value = true;
   return refetch().finally(() => {
-    isRefreshing.value = false;
+    // isRefreshing.value = false;
   });
 }
 
@@ -331,7 +331,7 @@ function handleCollectAnchorsToGroup(item: AnchorFollowGroupItem) {
 </script>
 
 <template>
-  <div v-loading="isLoading || isRefreshing" class="group-table">
+  <div v-loading="isFetching" class="group-table">
     <div v-if="isError" class="group-table-error">
       {{ error?.message }}
     </div>
@@ -489,7 +489,7 @@ function handleCollectAnchorsToGroup(item: AnchorFollowGroupItem) {
   />
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .group-table {
   position: relative;
   flex: 1;

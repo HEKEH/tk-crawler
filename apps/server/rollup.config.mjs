@@ -23,7 +23,7 @@ function externalFn(id) {
   );
 
   if (isExternal) {
-    console.log(`Marking as external: ${id}`);
+    // console.log(`Marking as external: ${id}`);
   }
 
   return isExternal;

@@ -96,7 +96,7 @@ function handleFilterReset() {
   pageNum.value = 1; // 重置页码
 }
 
-const { data, isLoading, refetch } = useQuery<
+const { data, isFetching, refetch } = useQuery<
   GetTKGuildUserListResponseData | undefined
 >({
   queryKey: [
@@ -109,6 +109,7 @@ const { data, isLoading, refetch } = useQuery<
     filters,
   ],
   retry: false,
+  refetchOnWindowFocus: false,
   queryFn: async () => {
     const orderBy = sortField.value
       ? { [sortField.value]: sortOrder.value === 'ascending' ? 'asc' : 'desc' }
@@ -157,11 +158,11 @@ function resetSort() {
 }
 
 // 刷新功能
-const isRefreshing = ref(false);
+// const isRefreshing = ref(false);
 async function refresh() {
-  isRefreshing.value = true;
+  // isRefreshing.value = true;
   return refetch().finally(() => {
-    isRefreshing.value = false;
+    // isRefreshing.value = false;
   });
 }
 
@@ -409,7 +410,7 @@ onKeepAliveActivated(refetch);
 </script>
 
 <template>
-  <div v-loading="isLoading || isRefreshing" class="tk-guild-user-table">
+  <div v-loading="isFetching" class="tk-guild-user-table">
     <!-- <div v-if="isError" class="error-msg">
       {{ error?.message }}
     </div> -->

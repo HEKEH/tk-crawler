@@ -3,7 +3,8 @@ import path from 'node:path';
 import commonjs from '@rollup/plugin-commonjs';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import typescript from '@rollup/plugin-typescript';
-import dts from 'rollup-plugin-dts';
+import { sync } from 'glob';
+// import dts from 'rollup-plugin-dts';
 
 const packageJSON = JSON.parse(
   fs.readFileSync(new URL('./package.json', import.meta.url), 'utf8'),
@@ -28,36 +29,43 @@ function externalFn(id) {
   return isExternal;
 }
 
-function removeFile(filePath) {
-  return {
-    name: 'remove-file',
-    closeBundle() {
-      const file = path.resolve(filePath);
-      if (fs.existsSync(file)) {
-        fs.rmSync(file, { recursive: true, force: true });
-      }
-    },
-  };
-}
+// function removeFile(filePath) {
+//   return {
+//     name: 'remove-file',
+//     closeBundle() {
+//       const file = path.resolve(filePath);
+//       if (fs.existsSync(file)) {
+//         fs.rmSync(file, { recursive: true, force: true });
+//       }
+//     },
+//   };
+// }
 
-export default [
-  // JavaScript 打包配置 (CJS 和 ESM)
-  {
-    input: 'src/index.ts',
+// Get all .mts files in the src directory
+const sourceFiles = sync('src/**/*.mts');
+
+// Create a config for each source file
+const sourceConfigs = sourceFiles.map(inputFile => {
+  const relativePath = path.relative('src', inputFile);
+  const outputPath = path.join('dist', relativePath);
+
+  return {
+    input: inputFile,
     output: [
       {
-        file: 'dist/index.js',
+        file: outputPath.replace('.mts', '.js'),
         format: 'cjs',
+      },
+      {
+        file: outputPath.replace('.mts', '.mjs'),
+        format: 'es',
       },
     ],
     external: externalFn,
     plugins: [
       commonjs(),
       nodeResolve({
-        resolveOnly: moduleId => {
-          const shouldResolve = !externalFn(moduleId);
-          return shouldResolve;
-        },
+        resolveOnly: moduleId => !externalFn(moduleId),
       }),
       typescript({
         tsconfig: './tsconfig.build.json',
@@ -65,16 +73,18 @@ export default [
         declarationDir: './dist/types',
       }),
     ],
-  },
+  };
+});
 
-  // DTS 打包配置
-  {
-    input: './dist/types/index.d.ts',
-    output: {
-      file: 'dist/index.d.ts',
-      format: 'es',
-    },
-    external: externalFn,
-    plugins: [dts(), removeFile('./dist/types')],
-  },
-];
+// DTS config for type definitions
+// const dtsConfig = {
+//   input: './dist/types/**/*.d.mts',
+//   output: {
+//     dir: 'dist/types',
+//     format: 'es',
+//   },
+//   external: externalFn,
+//   plugins: [dts(), removeFile('./dist/types')],
+// };
+
+export default [...sourceConfigs];

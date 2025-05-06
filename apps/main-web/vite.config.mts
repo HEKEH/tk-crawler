@@ -1,16 +1,12 @@
-import type { AliasOptions, PluginOption, UserConfig } from 'vite';
+import type { AliasOptions, UserConfig } from 'vite';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
-import tailwindcss from '@tailwindcss/vite';
 import {
   CommonTerserOptions,
-  getCommonPackageAlias,
-} from '@tk-crawler/build-and-deploy';
-import { svgVueComponentPlugin } from '@tk-crawler/plugins';
-import vue from '@vitejs/plugin-vue';
-import vueJsx from '@vitejs/plugin-vue-jsx';
+  getCommonVitePlugins,
+} from '@tk-crawler/build-and-deploy/index.mjs';
+import { getCommonPackageAlias } from '@tk-crawler/build-and-deploy/package-alias.js';
 import { defineConfig } from 'vite';
-import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js';
 import { createHtmlPlugin } from 'vite-plugin-html';
 
 // https://vitejs.dev/config/
@@ -33,14 +29,7 @@ export default defineConfig(({ mode }) => {
   const result: UserConfig = {
     publicDir: 'public',
     plugins: [
-      vue(),
-      vueJsx() as PluginOption,
-      svgVueComponentPlugin(),
-      tailwindcss(),
-      cssInjectedByJsPlugin({
-        styleId: 'main-web-style',
-        relativeCSSInjection: true, // for multiple format
-      }),
+      ...getCommonVitePlugins({ packageJSON }),
       createHtmlPlugin({
         pages: [
           {

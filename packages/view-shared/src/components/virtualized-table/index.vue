@@ -1,16 +1,16 @@
 <script setup lang="tsx" generic="T extends Record<string, any>">
+import type { VirtualizedTableColumn } from './types';
 import { ElCheckbox, ElPagination } from 'element-plus';
 import {
+  computed,
   onBeforeUnmount,
   onMounted,
   ref,
   shallowRef,
   watch,
-  computed,
 } from 'vue';
 import { VxeColumn, VxeTable } from 'vxe-table';
 import { useIsWebSize, useTableMultiSelect } from '../../hooks';
-import type { VirtualizedTableColumn } from './types';
 
 const props = withDefaults(
   defineProps<{
@@ -183,6 +183,10 @@ function handleSortChange(params: { property: string; order: string | null }) {
     });
   }
 }
+
+onMounted(async () => {
+  await import('vxe-table/lib/style.css');
+});
 </script>
 
 <template>
@@ -197,8 +201,8 @@ function handleSortChange(params: { property: string; order: string | null }) {
           :data="tableData"
           :height="containerHeight"
           :row-config="{ useKey: true, keyField: rowKey }"
-          :scroll-x="{ enabled: true, gt: 0 }"
-          :scroll-y="{ enabled: true, gt: 0, mode: 'wheel', oSize: 50 }"
+          :virtual-x-config="{ enabled: true, gt: 0 }"
+          :virtual-y-config="{ enabled: true, gt: 0, oSize: 50, preSize: 20 }"
           :scrollbar-config="
             isWebSize
               ? {
@@ -272,8 +276,6 @@ function handleSortChange(params: { property: string; order: string | null }) {
 </template>
 
 <style lang="scss">
-@import 'vxe-table/lib/style.css';
-
 .virtualized-table {
   @include mobile {
     .vxe-table {

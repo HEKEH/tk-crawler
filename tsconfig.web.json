@@ -28,6 +28,7 @@
     "packages/script-tools/**",
     "packages/database/**",
     "packages/plugins/src/**",
+    "packages/build-and-deploy/**",
     "packages/tk-requests/**/*",
     "packages/server-shared/**/*",
     "**/node_modules/**",

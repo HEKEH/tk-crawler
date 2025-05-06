@@ -35,22 +35,27 @@ interface CellComponentProps<T> {
 // 展示ID单元格
 function DisplayIdCellRenderer(props: CellComponentProps<DisplayedAnchorItem>) {
   return (
-<div class="display-id-container">
-    <ElLink
-      type="primary"
-      class="display-id-link"
-      href={`${TIKTOK_URL}/@${props.rowData.display_id}`}
-      target="_blank"
-    >
-      {props.rowData.display_id}
-    </ElLink>
-    <CopyIcon tooltip="复制主播展示ID" copyContent={props.rowData.display_id} />
-</div>
-)
+    <div class="display-id-container">
+      <ElLink
+        type="primary"
+        class="display-id-link"
+        href={`${TIKTOK_URL}/@${props.rowData.display_id}`}
+        target="_blank"
+      >
+        {props.rowData.display_id}
+      </ElLink>
+      <CopyIcon
+        tooltip="复制主播展示ID"
+        copyContent={props.rowData.display_id}
+      />
+    </div>
+  );
 }
 
 // 建联人单元格
-function ContactedByCellRenderer(props: CellComponentProps<DisplayedAnchorItem>) {
+function ContactedByCellRenderer(
+  props: CellComponentProps<DisplayedAnchorItem>,
+) {
   return !props.rowData.contacted_user ? (
     <ElTag class="org-user-tag" type="info">
       未建联
@@ -65,7 +70,7 @@ function ContactedByCellRenderer(props: CellComponentProps<DisplayedAnchorItem>)
     >
       {props.rowData.contacted_user.display_name}
     </ElTag>
-  )
+  );
 }
 
 // 分配人单元格
@@ -84,107 +89,119 @@ function AssignToCellRenderer(props: CellComponentProps<DisplayedAnchorItem>) {
     >
       {props.rowData.assigned_user.display_name}
     </ElTag>
-  )
+  );
 }
 
 // 用户ID单元格
 function UserIdCellRenderer(props: CellComponentProps<DisplayedAnchorItem>) {
   return (
-<div class="number-id-container">
-    <span class="number-id-text">{props.rowData.user_id}</span>
-    <CopyIcon tooltip="复制主播ID" copyContent={props.rowData.user_id} />
-</div>
-)
+    <div class="number-id-container">
+      <span class="number-id-text">{props.rowData.user_id}</span>
+      <CopyIcon tooltip="复制主播ID" copyContent={props.rowData.user_id} />
+    </div>
+  );
 }
 
 // 地区单元格
 function AreaCellRenderer(props: CellComponentProps<DisplayedAnchorItem>) {
   return (
-<div class="area-with-tooltip">
-    {AREA_NAME_MAP[props.rowData.area as Area] || '-'}
-    <AreaTooltipIcon area={props.rowData.area as Area} />
-</div>
-)
+    <div class="area-with-tooltip">
+      {AREA_NAME_MAP[props.rowData.area as Area] || '-'}
+      <AreaTooltipIcon area={props.rowData.area as Area} />
+    </div>
+  );
 }
 
 // 区域单元格
 function RegionCellRenderer(props: CellComponentProps<DisplayedAnchorItem>) {
   return (
-<span>
-    {REGION_LABEL_MAP[props.rowData.region as Region]
-      ? `${REGION_LABEL_MAP[props.rowData.region as Region]} (${props.rowData.region})`
-      : props.rowData.region}
-</span>
-)
+    <span>
+      {REGION_LABEL_MAP[props.rowData.region as Region]
+        ? `${REGION_LABEL_MAP[props.rowData.region as Region]} (${props.rowData.region})`
+        : props.rowData.region}
+    </span>
+  );
 }
 
 // 检查结果单元格
-function CheckedResultCellRenderer(props: CellComponentProps<DisplayedAnchorItem>) {
+function CheckedResultCellRenderer(
+  props: CellComponentProps<DisplayedAnchorItem>,
+) {
   return props.rowData.checked_result ? (
     <ElTag type="success">是</ElTag>
   ) : (
     <ElTag type="danger">否</ElTag>
-  )
+  );
 }
 
 // 邀约类型单元格
-function InviteTypeCellRenderer(props: CellComponentProps<DisplayedAnchorItem>) {
+function InviteTypeCellRenderer(
+  props: CellComponentProps<DisplayedAnchorItem>,
+) {
   return props.rowData.invite_type === CanUseInvitationType.Elite ? (
     <ElTag type="warning">金票邀约</ElTag>
   ) : props.rowData.invite_type === CanUseInvitationType.Regular ? (
     <ElTag type="success">常规邀约</ElTag>
   ) : (
     <span>-</span>
-  )
+  );
 }
 
 // 观众数单元格
-function AudienceCountCellRenderer(props: CellComponentProps<DisplayedAnchorItem>) {
-  return <span>{props.rowData.audience_count ?? '-'}</span>
+function AudienceCountCellRenderer(
+  props: CellComponentProps<DisplayedAnchorItem>,
+) {
+  return <span>{props.rowData.audience_count ?? '-'}</span>;
 }
 
 // 最后钻石数单元格
-function LastDiamondsCellRenderer(props: CellComponentProps<DisplayedAnchorItem>) {
-  return <span>{props.rowData.last_diamonds ?? '-'}</span>
+function LastDiamondsCellRenderer(
+  props: CellComponentProps<DisplayedAnchorItem>,
+) {
+  return <span>{props.rowData.last_diamonds ?? '-'}</span>;
 }
 
 // 排名联赛单元格
-function RankLeagueCellRenderer(props: CellComponentProps<DisplayedAnchorItem>) {
-  return <span>{props.rowData.rank_league ?? '-'}</span>
+function RankLeagueCellRenderer(
+  props: CellComponentProps<DisplayedAnchorItem>,
+) {
+  return <span>{props.rowData.rank_league ?? '-'}</span>;
 }
 
 // 是否有商品单元格
-function HasCommerceGoodsCellRenderer(props: CellComponentProps<DisplayedAnchorItem>) {
-  return <span>{props.rowData.has_commerce_goods ? '是' : '否'}</span>
+function HasCommerceGoodsCellRenderer(
+  props: CellComponentProps<DisplayedAnchorItem>,
+) {
+  return <span>{props.rowData.has_commerce_goods ? '是' : '否'}</span>;
 }
 
 // 标签单元格
 function TagCellRenderer(props: CellComponentProps<DisplayedAnchorItem>) {
-  return <span>{props.rowData.tag || '-'}</span>
+  return <span>{props.rowData.tag || '-'}</span>;
 }
 
 // 爬取时间单元格
 function CrawledAtCellRenderer(props: CellComponentProps<DisplayedAnchorItem>) {
-  return <span>{formatDateTime(props.rowData.crawled_at)}</span>
+  return <span>{formatDateTime(props.rowData.crawled_at)}</span>;
 }
 
 // 检查时间单元格
 function CheckedAtCellRenderer(props: CellComponentProps<DisplayedAnchorItem>) {
-  return <span>{formatDateTime(props.rowData.checked_at)}</span>
+  return <span>{formatDateTime(props.rowData.checked_at)}</span>;
 }
 
 // 房间ID单元格
 function RoomIdCellRenderer(props: CellComponentProps<DisplayedAnchorItem>) {
   return (
-<div class="number-id-container">
-    <span class="number-id-text">
-      {props.rowData.room_id && props.rowData.room_id !== '0'
-        ? props.rowData.room_id
-        : '-'}
-    </span>
-    <CopyIcon tooltip="复制直播间ID" copyContent={props.rowData.room_id} />
-</div>
-)
+    <div class="number-id-container">
+      <span class="number-id-text">
+        {props.rowData.room_id && props.rowData.room_id !== '0'
+          ? props.rowData.room_id
+          : '-'}
+      </span>
+      <CopyIcon tooltip="复制直播间ID" copyContent={props.rowData.room_id} />
+    </div>
+  );
 }
 
 export default function useAnchorTableColumns(props: {
@@ -315,16 +332,23 @@ export default function useAnchorTableColumns(props: {
           headerCellRenderer: () => (
             <span class="column-header-label">
               最新时间
-              <ElTooltip
-                placement="top"
-                v-slots={{
-                  content: () => <div>爬虫最新采集主播直播间信息的时间</div>,
+              <span
+                class="tip"
+                onClick={e => {
+                  e.stopPropagation();
                 }}
               >
-                <ElIcon>
-                  <InfoFilled />
-                </ElIcon>
-              </ElTooltip>
+                <ElTooltip
+                  placement="top"
+                  v-slots={{
+                    content: () => <div>爬虫最新采集主播直播间信息的时间</div>,
+                  }}
+                >
+                  <ElIcon>
+                    <InfoFilled />
+                  </ElIcon>
+                </ElTooltip>
+              </span>
             </span>
           ),
         },
@@ -337,21 +361,28 @@ export default function useAnchorTableColumns(props: {
           headerCellRenderer: () => (
             <span class="column-header-label">
               邀约检测时间
-              <ElTooltip
-                placement="top"
-                v-slots={{
-                  content: () => (
-                    <>
-                      <div>使用TK公会账号检测主播可邀约状态的时间</div>
-                      <div>注：7天内不会重复检测（账号检测次数有限）</div>
-                    </>
-                  ),
+              <span
+                onClick={e => {
+                  e.stopPropagation();
                 }}
+                class="tip"
               >
-                <ElIcon>
-                  <InfoFilled />
-                </ElIcon>
-              </ElTooltip>
+                <ElTooltip
+                  placement="top"
+                  v-slots={{
+                    content: () => (
+                      <>
+                        <div>使用TK公会账号检测主播可邀约状态的时间</div>
+                        <div>注：7天内不会重复检测（账号检测次数有限）</div>
+                      </>
+                    ),
+                  }}
+                >
+                  <ElIcon>
+                    <InfoFilled />
+                  </ElIcon>
+                </ElTooltip>
+              </span>
             </span>
           ),
         },

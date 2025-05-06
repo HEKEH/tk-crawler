@@ -1,19 +1,15 @@
-import type {
-  AliasOptions,
-  InlineConfig,
-  PluginOption,
-  UserConfig,
-} from 'vite';
+import type { AliasOptions, InlineConfig, UserConfig } from 'vite';
 import type { ElectronSimpleOptions } from 'vite-plugin-electron/simple';
 import { readFileSync } from 'node:fs';
 import path, { resolve } from 'node:path';
 import process from 'node:process';
-import tailwindcss from '@tailwindcss/vite';
-import { svgVueComponentPlugin } from '@tk-crawler/plugins';
-import vue from '@vitejs/plugin-vue';
-import vueJsx from '@vitejs/plugin-vue-jsx';
+import {
+  CommonTerserOptions,
+  getCommonVitePlugins,
+} from '@tk-crawler/build-and-deploy/index.mjs';
+import { getCommonPackageAlias } from '@tk-crawler/build-and-deploy/package-alias.js';
+
 import { defineConfig } from 'vite';
-import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js';
 import electron from 'vite-plugin-electron/simple';
 import { createHtmlPlugin } from 'vite-plugin-html';
 
@@ -29,21 +25,7 @@ export default defineConfig(({ mode }) => {
   ];
   const alias: AliasOptions = {
     '@tk-mobile-follow-client/shared': resolve(__dirname, 'shared'),
-    '@tk-crawler/shared': resolve(__dirname, '../../packages/shared/src'),
-    '@tk-crawler/biz-shared': resolve(
-      __dirname,
-      '../../packages/biz-shared/src',
-    ),
-    '@tk-crawler/electron-utils': resolve(
-      __dirname,
-      '../../packages/electron-utils/src',
-    ),
-    '@tk-crawler/view-shared': resolve(
-      __dirname,
-      '../../packages/view-shared/src',
-    ),
-    '@tk-crawler/styles': resolve(__dirname, '../../packages/styles'),
-    '@tk-crawler/assets': resolve(__dirname, '../../packages/assets'),
+    ...getCommonPackageAlias(isProduction),
   };
 
   const envConfig = {
@@ -85,14 +67,7 @@ export default defineConfig(({ mode }) => {
   };
   const result: UserConfig = {
     plugins: [
-      vue(),
-      vueJsx() as PluginOption,
-      svgVueComponentPlugin(),
-      tailwindcss(),
-      cssInjectedByJsPlugin({
-        styleId: 'mobile-follow-client-style',
-        relativeCSSInjection: true, // for multiple format
-      }),
+      ...getCommonVitePlugins({ packageJSON }),
       createHtmlPlugin({
         pages: [
           {
@@ -134,6 +109,9 @@ export default defineConfig(({ mode }) => {
           ),
         },
       },
+      terserOptions: CommonTerserOptions,
+      target: 'es2015',
+      sourcemap: !isProduction,
     },
     resolve: {
       alias,

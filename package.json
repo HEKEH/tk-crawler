@@ -64,8 +64,7 @@
     "typescript": "~5.5.0",
     "unplugin-vue-macros": "^2.13.3",
     "vite": "^5.4.11",
-    "vite-plugin-css-injected-by-js": "^3.5.2",
-    "vite-plugin-dts": "^4.3.0"
+    "vite-plugin-html": "^3.2.2"
   },
   "lint-staged": {
     "{packages,apps}/**/*.{js,ts,tsx}": [

@@ -52,9 +52,15 @@
     display: inline-flex;
     align-items: center;
     vertical-align: middle;
-    .el-icon {
+    .tip {
+      display: inline-block;
+      align-items: center;
       margin-left: 4px;
+      vertical-align: middle;
       cursor: help;
+      .el-icon {
+        vertical-align: middle;
+      }
     }
   }
 }

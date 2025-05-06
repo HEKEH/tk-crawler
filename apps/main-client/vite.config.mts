@@ -1,22 +1,14 @@
-import type {
-  AliasOptions,
-  InlineConfig,
-  PluginOption,
-  UserConfig,
-} from 'vite';
+import type { AliasOptions, InlineConfig, UserConfig } from 'vite';
 import type { ElectronSimpleOptions } from 'vite-plugin-electron/simple';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
-import tailwindcss from '@tailwindcss/vite';
 import {
   CommonTerserOptions,
-  getCommonPackageAlias,
-} from '@tk-crawler/build-and-deploy';
-import vue from '@vitejs/plugin-vue';
-import vueJsx from '@vitejs/plugin-vue-jsx';
+  getCommonVitePlugins,
+} from '@tk-crawler/build-and-deploy/index.mjs';
+import { getCommonPackageAlias } from '@tk-crawler/build-and-deploy/package-alias.js';
 import { defineConfig } from 'vite';
-import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js';
 import electron from 'vite-plugin-electron/simple';
 import { createHtmlPlugin } from 'vite-plugin-html';
 
@@ -72,13 +64,7 @@ export default defineConfig(({ mode }) => {
   };
   const result: UserConfig = {
     plugins: [
-      vue(),
-      vueJsx() as PluginOption,
-      tailwindcss(),
-      cssInjectedByJsPlugin({
-        styleId: 'main-client-style',
-        relativeCSSInjection: true, // for multiple format
-      }),
+      ...getCommonVitePlugins({ packageJSON }),
       createHtmlPlugin({
         pages: [
           {

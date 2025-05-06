@@ -4,6 +4,7 @@ import { AREA_OPTIONS } from '@tk-crawler/biz-shared';
 import { ElOption, ElSelect } from 'element-plus';
 import { computed, ref } from 'vue';
 import AreaTooltipIcon from './area-tooltip-icon.vue';
+import { useIsWebSize } from '../hooks';
 
 defineOptions({
   name: 'AreaSelectSingle',
@@ -69,6 +70,8 @@ const showOptions = computed(() => {
   }
   return allOptions.value.filter(item => item.label.includes(q));
 });
+
+const isWebSize = useIsWebSize(); // 移动端屏蔽搜索，因为会弹出键盘，影响使用
 </script>
 
 <template>
@@ -76,7 +79,7 @@ const showOptions = computed(() => {
     v-bind="$attrs"
     v-model="value"
     :placeholder="placeholder"
-    filterable
+    :filterable="isWebSize"
     :filter-method="handleFilter"
     :reserve-keyword="false"
     @change="handleChange"

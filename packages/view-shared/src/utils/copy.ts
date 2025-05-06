@@ -18,6 +18,8 @@ export async function copyToClipboard(text: string) {
   const successful = fallbackCopyToClipboard(text);
   if (!successful) {
     ElMessage.warning('复制失败，请手动复制');
+  } else {
+    ElMessage.success('复制成功');
   }
 }
 

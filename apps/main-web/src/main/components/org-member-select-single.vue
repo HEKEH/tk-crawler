@@ -8,6 +8,7 @@ import { ElOption, ElSelect, ElTag } from 'element-plus';
 import { computed, ref } from 'vue';
 import { useGetOrgMemberList } from '../hooks';
 import { useGlobalStore } from '../utils';
+import { useIsWebSize } from '@tk-crawler/view-shared';
 
 defineOptions({
   name: 'OrgMemberSelectSingle',
@@ -118,6 +119,8 @@ const showOptions = computed<Option[]>(() => {
   options.push(...membersOptions);
   return options;
 });
+
+const isWebSize = useIsWebSize(); // 移动端屏蔽搜索，因为会弹出键盘，影响使用
 </script>
 
 <template>
@@ -125,7 +128,7 @@ const showOptions = computed<Option[]>(() => {
     v-bind="$attrs"
     v-model="value"
     :placeholder="placeholder"
-    filterable
+    :filterable="isWebSize"
     :filter-method="handleFilter"
     :reserve-keyword="false"
     :loading="isLoading"

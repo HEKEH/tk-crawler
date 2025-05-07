@@ -1,17 +1,16 @@
-import type { Area, DisplayedAnchorItem, Region } from '@tk-crawler/biz-shared';
+import type { DisplayedAnchorItem, Region } from '@tk-crawler/biz-shared';
 import type { VirtualizedTableColumn } from '@tk-crawler/view-shared';
 import type { ComputedRef, Ref } from 'vue';
 import { InfoFilled } from '@element-plus/icons-vue';
 import {
-  AREA_NAME_MAP,
   CanUseInvitationType,
+  getTiktokAnchorLink,
   REGION_LABEL_MAP,
-  TIKTOK_URL,
 } from '@tk-crawler/biz-shared';
 import { formatDateTime, getColorFromName } from '@tk-crawler/shared';
 import {
-  AreaTooltipIcon,
   CopyIcon,
+  isMobilePlatform,
   useIsWebSize,
 } from '@tk-crawler/view-shared';
 import { ElIcon, ElLink, ElTag, ElTooltip } from 'element-plus';
@@ -33,13 +32,16 @@ interface CellComponentProps<T> {
 }
 
 // 展示ID单元格
-function DisplayIdCellRenderer(props: CellComponentProps<DisplayedAnchorItem>) {
+function DisplayIdCellRenderer(
+  props: CellComponentProps<DisplayedAnchorItem>,
+  isInMobile: boolean,
+) {
   return (
     <div class="display-id-container">
       <ElLink
         type="primary"
         class="display-id-link"
-        href={`${TIKTOK_URL}/@${props.rowData.display_id}`}
+        href={getTiktokAnchorLink(props.rowData, isInMobile)}
         target="_blank"
       >
         {props.rowData.display_id}
@@ -102,15 +104,15 @@ function UserIdCellRenderer(props: CellComponentProps<DisplayedAnchorItem>) {
   );
 }
 
-// 地区单元格
-function AreaCellRenderer(props: CellComponentProps<DisplayedAnchorItem>) {
-  return (
-    <div class="area-with-tooltip">
-      {AREA_NAME_MAP[props.rowData.area as Area] || '-'}
-      <AreaTooltipIcon area={props.rowData.area as Area} />
-    </div>
-  );
-}
+// // 地区单元格
+// function AreaCellRenderer(props: CellComponentProps<DisplayedAnchorItem>) {
+//   return (
+//     <div class="area-with-tooltip">
+//       {AREA_NAME_MAP[props.rowData.area as Area] || '-'}
+//       <AreaTooltipIcon area={props.rowData.area as Area} />
+//     </div>
+//   );
+// }
 
 // 区域单元格
 function RegionCellRenderer(props: CellComponentProps<DisplayedAnchorItem>) {
@@ -210,6 +212,8 @@ export default function useAnchorTableColumns(props: {
 }) {
   const isWeb = useIsWebSize();
 
+  const isInMobilePlatform = isMobilePlatform();
+
   const baseColumns = computed<VirtualizedTableColumn<DisplayedAnchorItem>[]>(
     () => {
       return [
@@ -219,7 +223,8 @@ export default function useAnchorTableColumns(props: {
           width: isWeb.value ? 160 : 140,
           sortable: true,
           fixed: 'left',
-          cellRenderer: DisplayIdCellRenderer,
+          cellRenderer: params =>
+            DisplayIdCellRenderer(params, isInMobilePlatform),
         },
         {
           key: 'contacted_by',
@@ -242,13 +247,13 @@ export default function useAnchorTableColumns(props: {
           sortable: true,
           cellRenderer: UserIdCellRenderer,
         },
-        {
-          key: 'area',
-          title: '主播分区',
-          width: isWeb.value ? 120 : 100,
-          sortable: true,
-          cellRenderer: AreaCellRenderer,
-        },
+        // {
+        //   key: 'area',
+        //   title: '主播分区',
+        //   width: isWeb.value ? 120 : 100,
+        //   sortable: true,
+        //   cellRenderer: AreaCellRenderer,
+        // },
         {
           key: 'region',
           title: '国家或地区',

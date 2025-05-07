@@ -327,7 +327,7 @@ function toggleExpand() {
           clearable
         />
       </div>
-      <div v-if="!hiddenFilters?.includes('display_id')" class="filter-item">
+      <!-- <div v-if="!hiddenFilters?.includes('display_id')" class="filter-item">
         <label class="filter-label">主播展示ID</label>
         <ElInput v-model="filters.display_id" clearable size="small" />
       </div>
@@ -338,7 +338,7 @@ function toggleExpand() {
       <div v-if="!hiddenFilters?.includes('room_id')" class="filter-item">
         <label class="filter-label">直播间ID</label>
         <ElInput v-model="filters.room_id" clearable size="small" />
-      </div>
+      </div> -->
     </div>
     <div class="buttons">
       <ElButton type="primary" size="small" @click="handleSubmit">
@@ -365,6 +365,7 @@ function toggleExpand() {
         </ElIcon>
         {{ isExpanded ? '收起' : '展开' }}
       </ElButton>
+      <slot name="extra-buttons" />
     </div>
   </div>
 </template>

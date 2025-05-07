@@ -13,6 +13,7 @@ export function transformAnchorListFilterValues(
   };
 
   const {
+    id,
     user_id,
     display_id,
     rank_league,
@@ -93,6 +94,10 @@ export function transformAnchorListFilterValues(
   }
   if (room_id?.trim()) {
     anchorFilter.room_id = BigInt(room_id.trim());
+  }
+
+  if (id?.trim()) {
+    filter.id = BigInt(id.trim());
   }
 
   if (checked_result !== undefined) {

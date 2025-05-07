@@ -13,7 +13,7 @@ const emit = defineEmits<{
 
 <template>
   <ElButton v-bind="props" @click="emit('click')">
-    <ElIcon>
+    <ElIcon style="margin-right: 0.25rem">
       <RefreshRight />
     </ElIcon>
     刷新

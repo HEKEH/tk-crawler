@@ -1,10 +1,18 @@
-import type { DisplayedAnchorItem } from '@tk-crawler/biz-shared';
 import type { VirtualizedTableColumn } from '@tk-crawler/view-shared';
 import { StarFilled } from '@element-plus/icons-vue';
-import { getPlatform, openScheme, useIsWebSize } from '@tk-crawler/view-shared';
+import {
+  type DisplayedAnchorItem,
+  getTiktokAnchorLink,
+} from '@tk-crawler/biz-shared';
+import {
+  isMobilePlatform,
+  openScheme,
+  useIsWebSize,
+} from '@tk-crawler/view-shared';
 import { ElButton, ElIcon, ElMessage, ElMessageBox } from 'element-plus';
 import { computed, ref } from 'vue';
-import { localStorageStore } from '../../../../utils';
+import { clearAnchorCheck } from '../../../../requests';
+import { localStorageStore, useGlobalStore } from '../../../../utils';
 import { useAnchorContact, type UseAnchorContactParams } from '../hooks';
 
 export function useOperationColumn(props: {
@@ -18,9 +26,10 @@ export function useOperationColumn(props: {
     localStorageStore.getItem('has_notified_TK_install') === '1',
   );
 
+  const globalStore = useGlobalStore();
+
   async function gotoTKPage(anchor: DisplayedAnchorItem): Promise<boolean> {
-    const platform = getPlatform();
-    if (platform !== 'Android' && platform !== 'iOS') {
+    if (!isMobilePlatform()) {
       try {
         await ElMessageBox.alert('该操作需要在手机端进行！', {
           type: 'warning',
@@ -41,7 +50,7 @@ export function useOperationColumn(props: {
       hasNotifiedTKInstall.value = true;
       localStorageStore.setItem('has_notified_TK_install', '1');
     }
-    const scheme = `snssdk1180://user/profile/${anchor.user_id}?refer=web&gd_label=click_wap_download_follow&type=need_follow&needlaunchlog=1`;
+    const scheme = getTiktokAnchorLink(anchor, true);
     try {
       await openScheme(scheme);
     } catch {
@@ -58,10 +67,32 @@ export function useOperationColumn(props: {
     }
   }
 
+  async function ignoreAnchor(anchor: DisplayedAnchorItem) {
+    try {
+      await ElMessageBox.confirm(`确定跳过主播 「${anchor.display_id}」`, {
+        confirmButtonText: '继续',
+        cancelButtonText: '取消',
+        type: 'warning',
+      });
+    } catch {
+      return false;
+    }
+    await clearAnchorCheck(
+      {
+        filter: {
+          id: anchor.id,
+        },
+      },
+      globalStore.token,
+    );
+    await props.refetch();
+    ElMessage.success('已跳过');
+  }
+
   const column = computed<VirtualizedTableColumn<DisplayedAnchorItem>>(() => ({
     key: 'operation',
     title: '操作',
-    width: isWeb.value ? 190 : 160,
+    width: 150,
     fixed: isWeb.value ? ('left' as any) : undefined,
     cellRenderer: ({ rowData }: { rowData: DisplayedAnchorItem }) => (
       <div class="operation-buttons">
@@ -88,10 +119,10 @@ export function useOperationColumn(props: {
         ) : null}
         <ElButton
           size="small"
-          type="primary"
-          onClick={() => gotoTKPage(rowData)}
+          type="info"
+          onClick={() => ignoreAnchor(rowData)}
         >
-          跳转
+          跳过
         </ElButton>
       </div>
     ),

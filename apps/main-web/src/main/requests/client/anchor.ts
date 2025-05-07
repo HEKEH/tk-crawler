@@ -48,8 +48,8 @@ export function getAnchorListForDownload(
   });
 }
 export function clearAnchorCheck(
-  token: string,
   params: ClearAnchorCheckRequest,
+  token: string,
 ) {
   return commonRequest<ClearAnchorCheckResponse>({
     baseURL: config[OwnServerUrl],

@@ -12,7 +12,16 @@
     "types": ["unplugin-vue-macros/macros-global"],
     "skipLibCheck": true
   },
-  "include": ["packages", "apps"],
+  "include": [
+    "packages/**/*.ts",
+    "packages/**/*.d.ts",
+    "packages/**/*.vue",
+    "packages/**/*.tsx",
+    "apps/**/*.ts",
+    "apps/**/*.d.ts",
+    "apps/**/*.vue",
+    "apps/**/*.tsx"
+  ],
   "exclude": [
     "scripts/**",
     "apps/server/**",

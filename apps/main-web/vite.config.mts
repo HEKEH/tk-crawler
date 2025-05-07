@@ -19,7 +19,10 @@ export default defineConfig(({ mode }) => {
     ...Object.keys(packageJSON.dependencies || {}),
     ...Object.keys(packageJSON.peerDependencies || {}),
   ];
-  const alias: AliasOptions = getCommonPackageAlias(isProduction);
+  const alias: AliasOptions = {
+    ...getCommonPackageAlias(isProduction),
+    'apps/main-web': path.resolve(__dirname, './src'),
+  };
 
   const envConfig = {
     envDir: path.resolve(__dirname, '../..'), // 环境文件目录

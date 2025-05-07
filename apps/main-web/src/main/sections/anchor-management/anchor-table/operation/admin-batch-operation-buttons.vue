@@ -5,7 +5,7 @@ import type {
   GetAnchorListResponseData,
 } from '@tk-crawler/biz-shared';
 import { RESPONSE_CODE } from '@tk-crawler/shared';
-import { confirmAfterSeconds } from '@tk-crawler/view-shared';
+import { confirmAfterSeconds, useIsWebSize } from '@tk-crawler/view-shared';
 import { ElButton, ElMessage } from 'element-plus';
 import { h, reactive } from 'vue';
 import { clearAnchorCheck } from '../../../../requests';
@@ -64,9 +64,12 @@ async function handleClearAnchorCheck() {
       };
     }
 
-    const resp = await clearAnchorCheck(globalStore.token, {
-      filter,
-    });
+    const resp = await clearAnchorCheck(
+      {
+        filter,
+      },
+      globalStore.token,
+    );
 
     if (resp.status_code !== RESPONSE_CODE.SUCCESS) {
       return;
@@ -81,6 +84,8 @@ async function handleClearAnchorCheck() {
     await props.refetch();
   } catch {}
 }
+
+const isWebSize = useIsWebSize();
 </script>
 
 <template>
@@ -102,10 +107,10 @@ async function handleClearAnchorCheck() {
       batchCancelAssignTasks(selectedRows.filter(item => item.assigned_user))
     "
   >
-    批量取消分配
+    {{ isWebSize ? '批量取消分配' : '取消分配' }}
   </ElButton>
   <ElButton type="danger" size="small" @click="handleClearAnchorCheck">
-    一键清空
+    {{ isWebSize ? '一键清空' : '清空' }}
   </ElButton>
   <Teleport to="body">
     <AssignTaskFormDialog

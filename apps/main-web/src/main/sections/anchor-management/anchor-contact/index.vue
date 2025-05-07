@@ -14,7 +14,7 @@ import { ElButton } from 'element-plus';
 import { computed, ref } from 'vue';
 import config from '../../../config';
 import { useGetAnchorList } from '../../../hooks';
-import { useGlobalStore } from '../../../utils/vue';
+import { localStorageStore, useGlobalStore } from '../../../utils';
 import useAnchorTableColumns from '../anchor-table/anchor-table-columns';
 import ExportButton from '../anchor-table/export-button/index.vue';
 import {
@@ -23,6 +23,10 @@ import {
   transformFilterViewValuesToFilterValues,
 } from '../anchor-table/filter';
 import TKAnchorFilter from '../anchor-table/filter.vue';
+import {
+  EXPORT_DATA_FUNCTION_IS_OPENED_KEY,
+  useOpenDataExportFunction,
+} from '../anchor-table/hooks';
 import { BatchOperationButtons, useOperationColumn } from './operation';
 import '../anchor-table/styles.scss';
 
@@ -142,7 +146,7 @@ const selectionColumnConfig = {
 };
 
 // const hasSelectedRows = computed(() => selectedRows.value.length > 0);
-
+useOpenDataExportFunction();
 onKeepAliveActivated(refetch);
 </script>
 
@@ -158,7 +162,11 @@ onKeepAliveActivated(refetch);
         :areas="globalStore.userProfile.orgInfo?.areas ?? []"
         @submit="handleFilterSubmit"
         @reset="handleFilterReset"
-      />
+      >
+        <template v-if="!isWeb" #extra-buttons>
+          <RefreshButton @click="refresh" />
+        </template>
+      </TKAnchorFilter>
     </div>
     <div class="header-row">
       <div class="left-part"></div>
@@ -172,7 +180,10 @@ onKeepAliveActivated(refetch);
         </ElButton>
         <RefreshButton v-if="isWeb" @click="refresh" />
         <ExportButton
-          v-if="config.enableDataDownload"
+          v-if="
+            config.enableDataDownload &&
+            localStorageStore.getItem(EXPORT_DATA_FUNCTION_IS_OPENED_KEY)
+          "
           :query-filter="queryFilter"
           filename="主播建联"
         />

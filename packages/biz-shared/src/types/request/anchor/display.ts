@@ -9,6 +9,7 @@ import type { Area } from '../../area';
 import type { Region } from '../../region';
 
 export interface GetAnchorListFilter {
+  id?: string;
   user_id?: string;
   display_id?: string;
   invite_type?: CanUseInvitationType;

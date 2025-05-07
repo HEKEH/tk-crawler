@@ -72,7 +72,7 @@ function handleCancel() {
     </ElFormItem>
     <ElFormItem class="buttons-row">
       <ElButton type="primary" :loading="isLoading" @click="handleSubmit">
-        保存
+        分配
       </ElButton>
       <ElButton @click="handleCancel">取消</ElButton>
     </ElFormItem>

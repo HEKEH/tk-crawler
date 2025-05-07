@@ -7,7 +7,7 @@ import type { CSSProperties, VNode } from 'vue';
 export interface VirtualizedTableColumn<T> {
   align?: 'left' | 'center' | 'right';
   class?: string | ClassNameGetter<T>;
-  key?: string;
+  key: string;
   dataKey?: string;
   fixed?: 'left' | 'right' | null;
   flexGrow?: CSSProperties['flexGrow'];

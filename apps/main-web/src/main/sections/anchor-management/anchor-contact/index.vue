@@ -5,9 +5,11 @@ import type {
 } from '@tk-crawler/biz-shared';
 import type { CustomColumnConfig } from '../anchor-table/anchor-table-columns';
 import {
+  ColumnSettingIcon,
   onKeepAliveActivated,
   RefreshButton,
   useIsWebSize,
+  useVisibleColumnList,
   VirtualizedTable,
 } from '@tk-crawler/view-shared';
 import { ElButton } from 'element-plus';
@@ -140,6 +142,17 @@ const columns = useAnchorTableColumns({
   customColumns,
 });
 
+const {
+  columnsForVisibleSetting,
+  visibleSettingColumnMap,
+  visibleColumns,
+  setVisibleColumnMap,
+} = useVisibleColumnList({
+  columns,
+  localStoreKey: 'anchor-contact-table-columns-visible',
+  localStorageStore,
+});
+
 const selectionColumnConfig = {
   width: 30,
   fixed: 'left' as any,
@@ -187,6 +200,12 @@ onKeepAliveActivated(refetch);
           :query-filter="queryFilter"
           filename="主播建联"
         />
+        <ColumnSettingIcon
+          :columns="columnsForVisibleSetting"
+          :columns-visible-map="visibleSettingColumnMap"
+          class="ml-auto md:ml-3"
+          @update:columns-visible-map="setVisibleColumnMap"
+        />
       </div>
     </div>
     <VirtualizedTable
@@ -194,7 +213,7 @@ onKeepAliveActivated(refetch);
       v-model:page-size="pageSize"
       v-model:selected-rows="selectedRows"
       :data="data?.list ?? []"
-      :columns="columns"
+      :columns="visibleColumns"
       :loading="isFetching"
       :total="data?.total"
       :sort-state="sortState"

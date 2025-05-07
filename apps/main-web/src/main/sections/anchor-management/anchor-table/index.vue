@@ -5,9 +5,11 @@ import type {
 } from '@tk-crawler/biz-shared';
 import type { CustomColumnConfig } from './anchor-table-columns';
 import {
+  ColumnSettingIcon,
   onKeepAliveActivated,
   RefreshButton,
   useIsWebSize,
+  useVisibleColumnList,
   VirtualizedTable,
 } from '@tk-crawler/view-shared';
 import { ElButton } from 'element-plus';
@@ -138,11 +140,22 @@ const customColumns = computed<CustomColumnConfig[]>(() => {
   ];
 });
 
-const operationColumnDialog = computed(() => operationColumnResult.value.view);
-
 const columns = useAnchorTableColumns({
   customColumns,
 });
+
+const {
+  columnsForVisibleSetting,
+  visibleSettingColumnMap,
+  visibleColumns,
+  setVisibleColumnMap,
+} = useVisibleColumnList({
+  columns,
+  localStoreKey: 'anchor-table-columns-visible',
+  localStorageStore,
+});
+
+const operationColumnDialog = computed(() => operationColumnResult.value.view);
 
 const selectionColumnConfig = {
   width: 30,
@@ -201,6 +214,12 @@ onKeepAliveActivated(refetch);
           :query-filter="queryFilter"
           filename="主播列表"
         />
+        <ColumnSettingIcon
+          :columns="columnsForVisibleSetting"
+          :columns-visible-map="visibleSettingColumnMap"
+          class="ml-auto md:ml-3"
+          @update:columns-visible-map="setVisibleColumnMap"
+        />
       </div>
     </div>
     <VirtualizedTable
@@ -208,7 +227,7 @@ onKeepAliveActivated(refetch);
       v-model:page-size="pageSize"
       v-model:selected-rows="selectedRows"
       :data="data?.list ?? []"
-      :columns="columns"
+      :columns="visibleColumns"
       :loading="isFetching"
       :total="data?.total"
       :sort-state="sortState"

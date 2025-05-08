@@ -35,18 +35,23 @@ export class GuildUserCollection {
     const guildUsersCount = this._guildUsers.filter(
       item => item.isValid,
     ).length;
-    const maxInterval = 1000 * 60 * 1;
-    const minInterval = (1000 * 60) / 2;
+    const maxInterval = 1000 * 60 * 1; // 60000ms
+    const minInterval = (1000 * 60) / 4; // 15000ms
+
     if (guildUsersCount === 0) {
       return maxInterval;
     }
-    if (guildUsersCount >= 50) {
+    if (guildUsersCount >= 30) {
       return minInterval;
     }
-    return (
-      maxInterval -
-      ((maxInterval - minInterval) * guildUsersCount) / 50 +
-      (10 * Math.random() - 5)
+
+    // 使用指数函数：y = a * e^(-bx) + c
+    const a = maxInterval - minInterval;
+    const b = 0.05; // 控制衰减速度
+    const c = minInterval;
+
+    return Math.ceil(
+      a * Math.exp(-b * guildUsersCount) + c + (10 * Math.random() - 5),
     );
   }
 

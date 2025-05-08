@@ -1,9 +1,5 @@
-import {
-  type BroadcastAnchorMessage,
-  ServerBroadcastMessageChannel,
-  type UpdateAnchorRequest,
-} from '@tk-crawler/biz-shared';
-import { mysqlClient, Prisma, redisMessageBus } from '@tk-crawler/database';
+import type { UpdateAnchorRequest } from '@tk-crawler/biz-shared';
+import { mysqlClient, Prisma } from '@tk-crawler/database';
 
 export async function updateAnchor(data: UpdateAnchorRequest) {
   // 因为查询较为复杂，所以使用原生sql
@@ -70,13 +66,13 @@ export async function updateAnchor(data: UpdateAnchorRequest) {
     third_party_id = null
 `;
   await mysqlClient.prismaClient.$executeRaw(sql);
-  const message: BroadcastAnchorMessage = {
-    data: {
-      user_id,
-      display_id,
-      region,
-      has_commerce_goods,
-    },
-  };
-  redisMessageBus.publish(ServerBroadcastMessageChannel.AnchorMessage, message);
+  // const message: BroadcastAnchorMessage = {
+  //   data: {
+  //     user_id,
+  //     display_id,
+  //     region,
+  //     has_commerce_goods,
+  //   },
+  // };
+  // redisMessageBus.publish(ServerBroadcastMessageChannel.AnchorMessage, message);
 }

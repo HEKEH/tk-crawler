@@ -33,7 +33,7 @@ const drawerVisible = ref(false);
           'text-[var(--el-color-primary)]':
             globalStore.currentPage === item.key,
         }"
-        :underline="false"
+        underline="never"
         @click="handleClick(item)"
       >
         {{ item.name }}

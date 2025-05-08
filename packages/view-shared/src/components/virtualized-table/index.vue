@@ -14,7 +14,7 @@ import { useIsWebSize, useTableMultiSelect } from '../../hooks';
 
 const props = withDefaults(
   defineProps<{
-    data: T[];
+    data?: T[];
     columns: VirtualizedTableColumn<T>[];
     loading?: boolean;
     error?: string;
@@ -62,7 +62,7 @@ const emit = defineEmits<{
 
 const isWebSize = useIsWebSize();
 
-const tableData = shallowRef<T[]>(props.data);
+const tableData = shallowRef<T[]>(props.data ?? []);
 
 // 使用useTableMultiSelect hook
 const {
@@ -80,7 +80,7 @@ const {
 watch(
   () => props.data,
   newVal => {
-    tableData.value = newVal;
+    tableData.value = newVal ?? [];
   },
   { immediate: true },
 );

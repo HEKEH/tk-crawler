@@ -119,7 +119,7 @@ const isWeb = useIsWebSize();
 
         <!-- <ElFormItem>
           <div class="login-options">
-            <ElLink type="primary" :underline="false">忘记密码？</ElLink>
+            <ElLink type="primary" underline="never">忘记密码？</ElLink>
           </div>
         </ElFormItem> -->
 

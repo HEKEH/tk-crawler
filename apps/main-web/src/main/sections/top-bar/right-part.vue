@@ -18,7 +18,7 @@ const hasLoggedIn = computed(() => globalStore.userProfile.hasLoggedIn);
     </template>
     <!-- <ElLink
       class="right-part-item"
-      :underline="false"
+      underline="never"
       @click="globalStore.switchTikTokAccount()"
     >
       切换TikTok账号

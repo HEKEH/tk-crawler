@@ -212,7 +212,7 @@ onKeepAliveActivated(refetch);
       v-model:page-num="pageNum"
       v-model:page-size="pageSize"
       v-model:selected-rows="selectedRows"
-      :data="data?.list ?? []"
+      :data="data?.list"
       :columns="visibleColumns"
       :loading="isFetching"
       :total="data?.total"

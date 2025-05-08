@@ -13,7 +13,7 @@ const globalStore = useGlobalStore();
   <div class="right-part">
     <ElLink
       class="right-part-item"
-      :underline="false"
+      underline="never"
       @click="globalStore.switchTikTokAccount()"
     >
       切换TikTok账号

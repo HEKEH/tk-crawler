@@ -16,8 +16,18 @@ export interface HashOptions {
 /**
  * Sorts object keys recursively to ensure consistent hashing
  */
-function sortObjectKeys(obj: Record<string, any>): Record<string, any> {
-  if (obj === null || typeof obj !== 'object') {
+function sortObjectKeys(
+  obj: Record<string, any>,
+): Record<string, any> | string {
+  if (obj === null) {
+    return obj;
+  }
+
+  if (obj instanceof Date) {
+    return obj.toISOString();
+  }
+
+  if (typeof obj !== 'object') {
     return obj;
   }
 

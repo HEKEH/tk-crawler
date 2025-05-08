@@ -23,7 +23,7 @@ const globalStore = useGlobalStore();
       <ElLink
         class="left-menu-item"
         :class="{ active: globalStore.currentMenu === menu.key }"
-        :underline="false"
+        underline="never"
         @click="globalStore.setCurrentMenu(menu.key)"
       >
         {{ menu.name }}
@@ -32,7 +32,7 @@ const globalStore = useGlobalStore();
     <!-- <div class="left-menu">
       <ElLink
         class="left-menu-item"
-        :underline="false"
+        underline="never"
         @click="globalStore.goToCollectPage()"
       >
         主播采集页

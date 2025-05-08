@@ -8,7 +8,8 @@ import {
 } from '@tk-crawler-admin-client/shared';
 import { initProxy } from '@tk-crawler/electron-utils/main';
 import { ipcMain, WebContentsView } from 'electron';
-import { isDevelopment, RENDERER_DIST, VITE_DEV_SERVER_URL } from '../../env';
+import config from '../../config';
+import { isDevelopment } from '../../env';
 import { logger } from '../../infra/logger';
 import { transformCookieString } from '../services/cookie';
 
@@ -165,15 +166,18 @@ export class TKLoginView implements IView {
           preload: path.join(__dirname, 'preload.js'),
         },
       });
-      if (VITE_DEV_SERVER_URL) {
-        await this._helpView.webContents.loadURL(
-          `${VITE_DEV_SERVER_URL}login-tiktok-help.html`,
-        );
-      } else {
-        await this._helpView.webContents.loadFile(
-          path.join(RENDERER_DIST, 'login-tiktok-help.html'),
-        );
-      }
+      // if (VITE_DEV_SERVER_URL) {
+      //   await this._helpView.webContents.loadURL(
+      //     `${VITE_DEV_SERVER_URL}login-tiktok-help.html`,
+      //   );
+      // } else {
+      //   await this._helpView.webContents.loadFile(
+      //     path.join(RENDERER_DIST, 'login-tiktok-help.html'),
+      //   );
+      // }
+      await this._helpView.webContents.loadURL(
+        path.join(config.adminWebUrl, 'login-tiktok-help.html'),
+      );
       this._parentWindow.contentView.addChildView(this._helpView);
       this._onResize();
     }

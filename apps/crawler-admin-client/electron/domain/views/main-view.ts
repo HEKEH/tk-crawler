@@ -10,8 +10,9 @@ import path from 'node:path';
 import { TKRequestMessage } from '@tk-crawler/biz-shared';
 import { bindViewToWindowBounds } from '@tk-crawler/electron-utils/main';
 import { globalShortcut, WebContentsView } from 'electron';
+import config from '../../config';
 import { CRAWL_EVENTS, CUSTOM_EVENTS } from '../../constants';
-import { isDevelopment, RENDERER_DIST, VITE_DEV_SERVER_URL } from '../../env';
+import { isDevelopment } from '../../env';
 
 export class MainView implements IView {
   private _parentWindow: BaseWindow;
@@ -93,13 +94,14 @@ export class MainView implements IView {
       }
       this._registerDevToolsShortcut();
     });
-    if (VITE_DEV_SERVER_URL) {
-      await this._view.webContents.loadURL(`${VITE_DEV_SERVER_URL}index.html`);
-    } else {
-      await this._view.webContents.loadFile(
-        path.join(RENDERER_DIST, 'index.html'),
-      );
-    }
+    await this._view.webContents.loadURL(config.adminWebUrl);
+    // if (VITE_DEV_SERVER_URL) {
+    //   await this._view.webContents.loadURL(`${VITE_DEV_SERVER_URL}index.html`);
+    // } else {
+    //   await this._view.webContents.loadFile(
+    //     path.join(RENDERER_DIST, 'index.html'),
+    //   );
+    // }
     this._parentWindow.contentView.addChildView(this._view);
     this._bindResizeListener();
   }

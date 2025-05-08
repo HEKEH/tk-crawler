@@ -58,7 +58,10 @@ export async function searchAnchorsNeedCheck(data: {
     },
   });
   logger.trace(
-    `[search-anchors-need-check] search anchors need check result: ${beautifyJsonStringify(result)}`,
+    `[search-anchors-need-check] [orgId: ${data.org_id}] [area: ${data.area}] search anchors need check result: ${beautifyJsonStringify(result)}`,
+  );
+  logger.info(
+    `[search-anchors-need-check] [orgId: ${data.org_id}] [area: ${data.area}] search anchors need check result count: ${result.length}`,
   );
   return result.map(item => ({
     user_id: item.user_id.toString(),

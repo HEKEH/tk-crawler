@@ -24,8 +24,15 @@ import {
   updateGuildUserStatus,
 } from '../../services';
 
+export interface GuildUserModelContext {
+  readonly orgName: string;
+}
+
 export class GuildUserModel {
   readonly id: string;
+
+  private _context: GuildUserModelContext;
+
   private _username: string;
   private _orgId: string;
   private _status: TKGuildUserStatus;
@@ -51,7 +58,10 @@ export class GuildUserModel {
     return this._area;
   }
 
-  constructor(data: BroadcastGuildUserMessageData) {
+  constructor(
+    data: BroadcastGuildUserMessageData,
+    context: GuildUserModelContext,
+  ) {
     this.id = data.id;
     this._username = data.username;
     this._orgId = data.org_id;
@@ -61,6 +71,7 @@ export class GuildUserModel {
     this._maxQueryPerDay = data.max_query_per_day;
     this._cookie = data.cookie;
     this._factionId = data.faction_id;
+    this._context = context;
     this._keepAlive();
   }
 
@@ -163,6 +174,10 @@ export class GuildUserModel {
   private async _batchUpdateAnchorInviteCheck(
     anchorInviteCheckData: AnchorCheckInfo[],
   ) {
+    logger.info(
+      `[guild-user] [orgName: ${this._context.orgName}] [orgId: ${this._orgId}] [area: ${this._area}] batch update anchor invite check`,
+    );
+    logger.trace(beautifyJsonStringify(anchorInviteCheckData));
     const getInviteType = (types: CanUseInvitationType[] | undefined) => {
       if (types?.includes(CanUseInvitationType.Elite)) {
         return CanUseInvitationType.Elite;
@@ -173,6 +188,9 @@ export class GuildUserModel {
       return null;
     };
     const data = anchorInviteCheckData
+      .filter(
+        item => item.UserBaseInfo.UserID && item.UserBaseInfo.UserID !== '0',
+      )
       .map(item => {
         return {
           anchor_id: item.UserBaseInfo.UserID!,
@@ -182,9 +200,11 @@ export class GuildUserModel {
           invite_type: getInviteType(item.CanUseInvitationType),
           area: this._area!,
         };
-      })
-      .filter(item => item.anchor_id && item.anchor_id !== '0');
+      });
     if (!data.length) {
+      logger.info(
+        `[guild-user] [orgName: ${this._context.orgName}] [orgId: ${this._orgId}] [area: ${this._area}] no anchor invite check data`,
+      );
       return;
     }
     await batchUpdateAnchorInviteCheck(data);
@@ -203,6 +223,9 @@ export class GuildUserModel {
   async checkAnchors(anchors: BroadcastAnchorMessageData[]): Promise<{
     success: boolean;
   }> {
+    logger.info(
+      `[guild-user] [orgName: ${this._context.orgName}] [orgId: ${this._orgId}] [area: ${this._area}] check anchors`,
+    );
     if (!this.isValid) {
       return {
         success: false,
@@ -247,7 +270,7 @@ export class GuildUserModel {
       };
     }
     logger.info(
-      `[guild-user] batchCheckAnchors result: ${beautifyJsonStringify(result)}`,
+      `[guild-user] [orgName: ${this._context.orgName}] [orgId: ${this._orgId}] [area: ${this._area}] batchCheckAnchors result: ${beautifyJsonStringify(result)}`,
     );
     if (this._status !== TKGuildUserStatus.RUNNING) {
       await this._updateGuildUserStatus(TKGuildUserStatus.RUNNING);
@@ -259,7 +282,7 @@ export class GuildUserModel {
       await this._deleteAbnormalAnchors(abnormalAnchors);
     }
 
-    const anchorInviteCheckData = abnormalAnchors.filter(
+    const anchorInviteCheckData = (result.data!.AnchorList || []).filter(
       item => item.UserBaseInfo?.UserID && item.UserBaseInfo.UserID !== '0',
     );
     await this._compareAnchors(anchors, anchorInviteCheckData);

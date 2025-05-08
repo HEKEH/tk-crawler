@@ -11,7 +11,7 @@ export async function batchUpdateAnchorInviteCheck(
 ) {
   assert(dataArray.length > 0, 'dataArray must not be empty');
   logger.info(
-    `[anchor] batch update anchor invite check: ${beautifyJsonStringify(dataArray)}`,
+    `[anchor] [orgId: ${dataArray[0].org_id}] [area: ${dataArray[0].area}] batch update anchor invite check: ${beautifyJsonStringify(dataArray)}`,
   );
   // 构建批量插入语句参数
   const values = dataArray.map(data => {

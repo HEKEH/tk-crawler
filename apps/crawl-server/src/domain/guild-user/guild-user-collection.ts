@@ -29,6 +29,10 @@ export class GuildUserCollection {
 
   private _checkTimer: NodeJS.Timeout | null = null;
 
+  get orgName() {
+    return this._context.orgName;
+  }
+
   // private _queuedAnchorIdsSet: Set<string> = new Set();
 
   private get checkInterval() {
@@ -102,7 +106,7 @@ export class GuildUserCollection {
     );
     const result = guildUsers[minIndex] || null;
     if (result) {
-      logger.trace('choose best guild user', result.username);
+      logger.info('choose best guild user', result.username);
     }
     return result;
   }
@@ -111,7 +115,7 @@ export class GuildUserCollection {
     data: BroadcastGuildUserMessageData[],
     context: GuildUserCollectionContext,
   ) {
-    this._guildUsers = data.map(item => new GuildUserModel(item));
+    this._guildUsers = data.map(item => new GuildUserModel(item, this));
     this._context = context;
     this._intervalCheck();
   }
@@ -131,7 +135,7 @@ export class GuildUserCollection {
         delete oldGuildUserMap[item.id];
         return guildUser;
       }
-      return new GuildUserModel(item);
+      return new GuildUserModel(item, this);
     });
     this._guildUsers = newGuildUserList;
     await Promise.all(
@@ -280,7 +284,7 @@ export class GuildUserCollection {
   // }
 
   private _createGuildUser(data: BroadcastGuildUserMessageData) {
-    const guildUser = new GuildUserModel(data);
+    const guildUser = new GuildUserModel(data, this);
     this._guildUsers.push(guildUser);
     return guildUser;
   }
@@ -311,9 +315,15 @@ export class GuildUserCollection {
         excludeGuildUserIds,
       );
       if (!guildUser) {
+        logger.info(
+          `[guild-user] [orgName: ${this._context.orgName}] [orgId: ${this._context.orgId}] [area: ${area}] no guild user to check anchors`,
+        );
         break;
       }
       excludeGuildUserIds.add(guildUser.id);
+      logger.info(
+        `[guild-user] [orgName: ${this._context.orgName}] [orgId: ${this._context.orgId}] [area: ${area}] choose the guild user: [name: ${guildUser.username}] [id: ${guildUser.id}]`,
+      );
       const { success } = await guildUser.checkAnchors(anchors);
       checkSuccess = success;
     }

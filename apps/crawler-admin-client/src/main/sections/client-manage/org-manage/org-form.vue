@@ -151,7 +151,7 @@ function handleCancel() {
     :model="form"
     :rules="rules"
     :size="isWeb ? 'default' : 'small'"
-    :label-width="isWeb ? '120px' : '100px'"
+    :label-width="isWeb ? '100px' : '80px'"
     label-position="right"
   >
     <ElFormItem label="机构名称" prop="name">
@@ -198,7 +198,7 @@ function handleCancel() {
       </ElSelect>
     </ElFormItem>
 
-    <ElFormItem label="设备数量上限" prop="mobile_device_limit">
+    <ElFormItem label="设备上限" prop="mobile_device_limit">
       <ElInputNumber
         v-model="form.mobile_device_limit"
         style="width: 100%"

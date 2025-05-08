@@ -15,6 +15,7 @@ import { createHtmlPlugin } from 'vite-plugin-html';
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   const isProduction = mode === 'production';
+  const onlyWeb = process.env.ONLY_WEB === 'true';
   const packageJson = JSON.parse(
     readFileSync(new URL('./package.json', import.meta.url), 'utf8'),
   );
@@ -86,7 +87,7 @@ export default defineConfig(({ mode }) => {
           },
         ],
       }),
-      (electron as any)(electronOptions),
+      onlyWeb ? undefined : (electron as any)(electronOptions),
     ],
     css: {
       preprocessorOptions: {
@@ -96,6 +97,12 @@ export default defineConfig(({ mode }) => {
           `,
         },
       },
+    },
+    server: {
+      port: 6002,
+      strictPort: true,
+      host: true,
+      open: true,
     },
     build: {
       minify: isProduction ? 'terser' : false,

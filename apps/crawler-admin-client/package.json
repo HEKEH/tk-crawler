@@ -11,6 +11,7 @@
   ],
   "scripts": {
     "dev": "vite",
+    "dev:web": "cross-env ONLY_WEB=true vite",
     "check-production-env": "node -e \"if(!require('fs').existsSync('../../.env.production')){console.error('.env.production file not found');process.exit(1)}\"",
     "build": "echo $npm_package_version && npm run check-production-env && vue-tsc && vite build && electron-builder --config electron-builder.ts",
     "preview": "vite preview"

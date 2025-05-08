@@ -9,8 +9,15 @@ export function getElectronBuilderConfig(props: {
   productName: string;
   protocolName: string;
   publishUrl: string;
+  files?: string[];
 }) {
-  const { appId, productName, protocolName, publishUrl } = props;
+  const {
+    appId,
+    productName,
+    protocolName,
+    publishUrl,
+    files = ['dist', 'dist-electron'],
+  } = props;
   const config: Configuration = {
     appId,
     asar: true,
@@ -18,7 +25,7 @@ export function getElectronBuilderConfig(props: {
     directories: {
       output: 'release/${version}',
     },
-    files: ['dist', 'dist-electron'],
+    files,
     protocols: {
       name: protocolName,
       schemes: [appId],

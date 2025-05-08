@@ -1,5 +1,5 @@
+import { isInElectronApp } from '@tk-crawler/electron-utils/render';
 import { TOKEN_EVENTS } from '@tk-crawler/main-client-shared';
-import { isInElectronApp } from './electron';
 import { localStorageStore } from './local-storage-store';
 
 export async function getToken(): Promise<string> {

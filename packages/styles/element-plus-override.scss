@@ -19,3 +19,25 @@
     width: 95px;
   }
 }
+
+.el-picker-panel.has-sidebar {
+  @include mobile {
+    --side-bar-width: 80px;
+    --panel-width: 360px;
+
+    max-width: var(--panel-width);
+    .el-picker-panel__sidebar {
+      max-width: var(--side-bar-width);
+    }
+
+    .el-picker-panel__body {
+      margin-left: var(--side-bar-width);
+      max-width: calc(var(--panel-width) - var(--side-bar-width));
+      overflow-x: auto;
+    }
+    .el-picker-panel__content {
+      margin: 8px;
+      max-width: calc(var(--panel-width) - var(--side-bar-width) - 16px);
+    }
+  }
+}

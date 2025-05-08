@@ -16,6 +16,7 @@ import {
   TKGuildUserStatus,
   VALID_GUILD_USER_STATUS_LIST,
 } from '@tk-crawler/biz-shared';
+import { isInElectronApp } from '@tk-crawler/electron-utils/render';
 import {
   CUSTOM_EVENTS,
   MAIN_APP_ID,
@@ -50,7 +51,6 @@ import {
   stopTKGuildUserAccount,
   updateTKGuildUser,
 } from '../../../requests';
-import { isInElectronApp } from '../../../utils';
 import { useGlobalStore } from '../../../utils/vue';
 import {
   DefaultFilterViewValues,

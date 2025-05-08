@@ -1,9 +1,9 @@
 <script setup lang="ts">
+import type { Page } from '../../types';
 import { MenuIcon } from '@tk-crawler/assets';
 import { useIsWebSize } from '@tk-crawler/view-shared';
 import { ElDrawer, ElLink } from 'element-plus';
 import { computed, ref } from 'vue';
-import { Page } from '../../types';
 import { useGlobalStore } from '../../utils';
 
 defineOptions({
@@ -11,26 +11,8 @@ defineOptions({
 });
 const globalStore = useGlobalStore();
 
-const Menus = computed(() => {
-  if (globalStore.currentPage === Page.Login) {
-    return [
-      {
-        key: Page.Login,
-        name: '登录',
-      },
-    ];
-  }
-  return [
-    {
-      key: Page.Crawler,
-      name: '爬虫管理',
-    },
-    {
-      key: Page.Client,
-      name: '客户管理',
-    },
-  ];
-});
+const allPages = computed(() => globalStore.allPages);
+
 function handleClick(item: { key: Page; name: string }) {
   if (item.key === globalStore.currentPage) {
     return;
@@ -44,7 +26,7 @@ const drawerVisible = ref(false);
 
 <template>
   <div v-if="isWeb" class="h-full flex items-center gap-12">
-    <div v-for="item in Menus" :key="item.key">
+    <div v-for="item in allPages" :key="item.key">
       <ElLink
         class="text-base hover:text-[var(--el-color-primary)]"
         :class="{
@@ -66,7 +48,7 @@ const drawerVisible = ref(false);
     <ElDrawer v-model="drawerVisible" append-to-body :size="180">
       <div class="w-full flex flex-col items-center gap-4">
         <ElLink
-          v-for="item in Menus"
+          v-for="item in allPages"
           :key="item.key"
           class="text-base hover:text-[var(--el-color-primary)]"
           :class="{

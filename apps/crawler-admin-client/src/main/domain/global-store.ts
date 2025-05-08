@@ -4,6 +4,7 @@ import type {
 } from '@tk-crawler/biz-shared';
 import type { Subscription } from 'rxjs';
 import { CRAWL_EVENTS } from '@tk-crawler-admin-client/shared';
+import { isInElectronApp } from '@tk-crawler/electron-utils/render';
 import {
   InitializationState,
   MessageCenter,
@@ -22,7 +23,7 @@ export default class GlobalStore {
   private _crawlerManage: CrawlerManage;
 
   private _clientManage: ClientManage;
-  private _currentPage: Page = Page.Crawler;
+  private _currentPage: Page | null = null;
 
   private _userProfile = new UserProfile();
 
@@ -69,6 +70,7 @@ export default class GlobalStore {
 
   private _handleLoginSuccess(data: SystemUserLoginSuccessData) {
     this._userProfile.initAfterLoginSuccess(data);
+    this._currentPage = this.allPages[0].key;
   }
 
   private _subscribeTokenInvalid() {
@@ -107,6 +109,29 @@ export default class GlobalStore {
     }
   }
 
+  get allPages() {
+    if (!this.userProfile.hasLoggedIn) {
+      return [
+        {
+          key: Page.Login,
+          name: '登录',
+        },
+      ];
+    }
+    return isInElectronApp()
+      ? [
+          {
+            key: Page.Crawler,
+            name: '爬虫管理',
+          },
+          {
+            key: Page.Client,
+            name: '客户管理',
+          },
+        ]
+      : [{ key: Page.Client, name: '客户管理' }];
+  }
+
   async login(params: SystemUserLoginRequest) {
     const resp = await login(params);
     if (resp.status_code === RESPONSE_CODE.SUCCESS) {
@@ -114,7 +139,7 @@ export default class GlobalStore {
       this._token = data.token;
       await setToken(data.token);
       this._handleLoginSuccess(data);
-      this._currentPage = Page.Crawler;
+      this._currentPage = this.allPages[0].key;
     }
     return resp;
   }

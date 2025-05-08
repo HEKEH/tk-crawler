@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import { getBodyHeight } from '@tk-crawler/electron-utils/render';
 import TopBar from './top-bar/index.vue';
 
 defineOptions({
   name: 'Homepage',
 });
+const bodyHeight = getBodyHeight();
 </script>
 
 <template>
@@ -24,7 +26,7 @@ defineOptions({
   height: 100%;
 }
 .body {
-  height: calc(100% - var(--top-bar-height) - 30px);
+  height: v-bind(bodyHeight);
   width: 100%;
   overflow: hidden;
 }

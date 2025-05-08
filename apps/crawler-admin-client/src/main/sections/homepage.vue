@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { getBodyHeight } from '@tk-crawler/electron-utils/render';
 import { computed } from 'vue';
 import { Page } from '../types';
 import { useGlobalStore } from '../utils';
@@ -11,6 +12,8 @@ defineOptions({
   name: 'Homepage',
 });
 const globalStore = useGlobalStore();
+
+const bodyHeight = getBodyHeight();
 
 const currentPage = computed(() => {
   return globalStore.currentPage;
@@ -41,7 +44,7 @@ const currentPage = computed(() => {
   height: 100%;
 }
 .body {
-  height: calc(100% - var(--top-bar-height) - 30px);
+  height: v-bind(bodyHeight);
   width: 100%;
   overflow: hidden;
 }

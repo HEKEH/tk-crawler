@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import { getBodyHeight } from '@tk-crawler/electron-utils/render';
 import { computed } from 'vue';
 import { Menu } from '../types';
 import { useGlobalStore } from '../utils/vue';
+
 import Entry from './entry/index.vue';
 import TopBar from './top-bar/index.vue';
 
@@ -12,6 +14,8 @@ const globalStore = useGlobalStore();
 const currentMenu = computed(() => {
   return globalStore.currentMenu;
 });
+
+const bodyHeight = getBodyHeight();
 </script>
 
 <template>
@@ -32,7 +36,7 @@ const currentMenu = computed(() => {
   height: 100%;
 }
 .body {
-  height: calc(100% - var(--top-bar-height) - 30px);
+  height: v-bind(bodyHeight);
   width: 100%;
   overflow: hidden;
   padding: 2rem;

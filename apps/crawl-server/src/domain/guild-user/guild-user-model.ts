@@ -18,6 +18,7 @@ import { batchCheckAnchors, getProfile } from '@tk-crawler/tk-requests';
 import { logger } from '../../infra/logger';
 import {
   batchUpdateAnchorInviteCheck,
+  deleteAnchorByDisplayIds,
   deleteAnchorById,
   // recordAnchorCheckByOrg,
   updateGuildUserStatus,
@@ -251,7 +252,14 @@ export class GuildUserModel {
     if (this._status !== TKGuildUserStatus.RUNNING) {
       await this._updateGuildUserStatus(TKGuildUserStatus.RUNNING);
     }
-    const anchorInviteCheckData = (result.data!.AnchorList || []).filter(
+    const abnormalAnchors = (result.data!.AnchorList || []).filter(
+      item => !item.UserBaseInfo?.UserID || item.UserBaseInfo.UserID === '0',
+    );
+    if (abnormalAnchors.length) {
+      await this._deleteAbnormalAnchors(abnormalAnchors);
+    }
+
+    const anchorInviteCheckData = abnormalAnchors.filter(
       item => item.UserBaseInfo?.UserID && item.UserBaseInfo.UserID !== '0',
     );
     await this._compareAnchors(anchors, anchorInviteCheckData);
@@ -279,6 +287,15 @@ export class GuildUserModel {
     return {
       success: true,
     };
+  }
+
+  private async _deleteAbnormalAnchors(anchors: AnchorCheckInfo[]) {
+    const abnormalAnchorsDisplayIds = anchors.map(
+      item => item.UserBaseInfo?.DisplayID,
+    );
+    await deleteAnchorByDisplayIds({
+      display_ids: abnormalAnchorsDisplayIds,
+    });
   }
 
   /** 处理前后id不一致的情况，这种情况很罕见，但确实存在，怀疑是tiktok数据异常 */

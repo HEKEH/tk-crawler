@@ -114,3 +114,15 @@ export interface StopTKLiveAdminAccountResponse {
   status_code: RESPONSE_CODE;
   message?: string;
 }
+
+export interface IsAnyAccountErrorRequest {}
+
+export interface IsAnyAccountErrorResponseData {
+  has_error: boolean;
+}
+
+export interface IsAnyAccountErrorResponse {
+  status_code: RESPONSE_CODE;
+  data?: IsAnyAccountErrorResponseData;
+  message?: string;
+}

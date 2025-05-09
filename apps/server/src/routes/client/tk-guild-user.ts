@@ -7,28 +7,39 @@ import {
 
 const tkGuildUserRouter = new Router({ prefix: '/tk-guild-user' });
 
-tkGuildUserRouter.use(
-  clientTokenAuthMiddleware(),
-  checkIsAdminClientMiddleware,
-);
+tkGuildUserRouter.use(clientTokenAuthMiddleware());
 
 // 主播相关路由
 tkGuildUserRouter.post(
   '/get-user-list',
+  checkIsAdminClientMiddleware,
   TKGuildUserController.getTKGuildUserList,
 );
 
 tkGuildUserRouter.post(
   '/get-user-detail',
+  checkIsAdminClientMiddleware,
   TKGuildUserController.getTKGuildUserDetail,
 );
 
-tkGuildUserRouter.post('/delete-user', TKGuildUserController.deleteTKGuildUser);
+tkGuildUserRouter.post(
+  '/delete-user',
+  checkIsAdminClientMiddleware,
+  TKGuildUserController.deleteTKGuildUser,
+);
 
 // 分组相关路由
-tkGuildUserRouter.post('/create-user', TKGuildUserController.createTKGuildUser);
+tkGuildUserRouter.post(
+  '/create-user',
+  checkIsAdminClientMiddleware,
+  TKGuildUserController.createTKGuildUser,
+);
 
-tkGuildUserRouter.post('/update-user', TKGuildUserController.updateTKGuildUser);
+tkGuildUserRouter.post(
+  '/update-user',
+  checkIsAdminClientMiddleware,
+  TKGuildUserController.updateTKGuildUser,
+);
 
 // tkGuildUserRouter.post(
 //   '/update-user-cookie',
@@ -37,12 +48,19 @@ tkGuildUserRouter.post('/update-user', TKGuildUserController.updateTKGuildUser);
 
 tkGuildUserRouter.post(
   '/start-live-admin-account',
+  checkIsAdminClientMiddleware,
   TKGuildUserController.startLiveAdminAccount,
 );
 
 tkGuildUserRouter.post(
   '/stop-live-admin-account',
+  checkIsAdminClientMiddleware,
   TKGuildUserController.stopLiveAdminAccount,
+);
+
+tkGuildUserRouter.post(
+  '/is-any-account-error',
+  TKGuildUserController.isAnyAccountError,
 );
 
 export default tkGuildUserRouter;

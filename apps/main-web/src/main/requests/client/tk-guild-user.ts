@@ -7,6 +7,8 @@ import type {
   GetTKGuildUserDetailResponse,
   GetTKGuildUserListRequest,
   GetTKGuildUserListResponse,
+  IsAnyAccountErrorRequest,
+  IsAnyAccountErrorResponse,
   StartTKLiveAdminAccountRequest,
   StartTKLiveAdminAccountResponse,
   StopTKLiveAdminAccountRequest,
@@ -21,6 +23,7 @@ import {
   DeleteTKGuildUser,
   GetTKGuildUserDetail,
   GetTKGuildUserList,
+  IsAnyAccountError,
   OwnServerUrl,
   Post,
   StartTKGuildUserAccount,
@@ -191,6 +194,22 @@ export function stopTKGuildUserAccount(
     baseURL: config[OwnServerUrl],
     method: Post,
     path: StopTKGuildUserAccount,
+    params,
+    headers: {
+      [CLIENT_TOKEN_HEADER_KEY]: token,
+    },
+  });
+}
+
+// Is Any TK Guild User Account Error
+export function isAnyGuildUserAccountError(
+  params: IsAnyAccountErrorRequest,
+  token: string,
+) {
+  return commonRequest<IsAnyAccountErrorResponse>({
+    baseURL: config[OwnServerUrl],
+    method: Post,
+    path: IsAnyAccountError,
     params,
     headers: {
       [CLIENT_TOKEN_HEADER_KEY]: token,

@@ -11,6 +11,8 @@ export const OwnServerUrl = 'ownServerUrl';
 
 // TK Guild User paths
 export const GetTKGuildUserList = '/client/tk-guild-user/get-user-list';
+
+export const IsAnyAccountError = '/client/tk-guild-user/is-any-account-error';
 export const GetTKGuildUserDetail = '/client/tk-guild-user/get-user-detail';
 export const CreateTKGuildUser = '/client/tk-guild-user/create-user';
 export const UpdateTKGuildUser = '/client/tk-guild-user/update-user';

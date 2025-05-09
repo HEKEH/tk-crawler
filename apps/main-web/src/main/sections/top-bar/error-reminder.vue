@@ -5,6 +5,7 @@ import { ElLink, ElTooltip, ElIcon } from 'element-plus';
 import { Bell } from '@element-plus/icons-vue';
 import { useIsWebSize } from '@tk-crawler/view-shared';
 import { useRouter } from 'vue-router';
+import { GuildManagementRouteRecord } from '../../router/route-records';
 
 const globalStore = useGlobalStore();
 
@@ -22,11 +23,16 @@ const errorMessage = computed<{
       return {
         title: (
           <div class="flex items-center">
-            某些公会账号登录已过期或出现错误，请前往
+            某些公会账号登录已过期或出错，请前往
             <ElLink
               class="mx-1 text-xs"
               type="primary"
-              onClick={() => router.push('/guild-management')}
+              onClick={() =>
+                router.push(
+                  GuildManagementRouteRecord.jumpTo ??
+                    GuildManagementRouteRecord.path,
+                )
+              }
             >
               公会管理
             </ElLink>
@@ -36,7 +42,7 @@ const errorMessage = computed<{
       };
     } else {
       return {
-        title: '某些公会账号登录已过期或出现错误，请及时联系管理员处理',
+        title: '某些公会账号登录已过期或出错，请及时联系管理员处理',
       };
     }
   }

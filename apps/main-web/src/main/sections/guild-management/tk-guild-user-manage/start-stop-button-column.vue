@@ -65,12 +65,12 @@ function getStopButtonTextAndType(
   if (VALID_GUILD_USER_STATUS_LIST.includes(status)) {
     return { text: '停止查询', type: 'danger' };
   }
-  if (
-    status === TKGuildUserStatus.ERROR ||
-    status === TKGuildUserStatus.COOKIE_EXPIRED
-  ) {
-    return { text: '停止', type: 'default' };
-  }
+  // if (
+  //   status === TKGuildUserStatus.ERROR ||
+  //   status === TKGuildUserStatus.COOKIE_EXPIRED
+  // ) {
+  //   return { text: '停止', type: 'default' };
+  // }
   return null;
 }
 
@@ -181,7 +181,7 @@ const getButtonConfig = (status: TKGuildUserStatus): ButtonConfig[] => {
       text: stopConfig.text,
       type: stopConfig.type,
       handler: onStop,
-      class: 'flex-0',
+      class: startConfig ? 'flex-0' : 'flex-1',
     },
   ];
 
@@ -190,7 +190,7 @@ const getButtonConfig = (status: TKGuildUserStatus): ButtonConfig[] => {
 </script>
 
 <template>
-  <ElTableColumn label="启动/停止" :min-width="160">
+  <ElTableColumn label="启动/停止" :min-width="120">
     <template #default="scope: ScopeType">
       <div class="flex">
         <ElButton

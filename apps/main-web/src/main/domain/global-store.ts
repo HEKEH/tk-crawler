@@ -5,8 +5,7 @@ import type {
 import type { Subscription } from 'rxjs';
 import type { CustomRouteRecord } from '../router/route-records';
 import type { Menu } from '../types';
-import type {
-  GuildAccountsManageContext } from './guild-accounts-manage';
+import type { GuildAccountsManageContext } from './guild-accounts-manage';
 import {
   InitializationState,
   MessageCenter,
@@ -23,9 +22,7 @@ import {
   SystemManagementRouteRecord,
 } from '../router/route-records';
 import { getToken, removeToken, setToken } from '../utils';
-import {
-  GuildAccountsManage,
-} from './guild-accounts-manage';
+import { GuildAccountsManage } from './guild-accounts-manage';
 import { UserProfile } from './user-profile';
 
 export default class GlobalStore implements GuildAccountsManageContext {
@@ -46,10 +43,6 @@ export default class GlobalStore implements GuildAccountsManageContext {
   private _tokenInvalidSubscription: Subscription | null = null;
 
   readonly messageCenter = markRaw(new MessageCenter());
-
-  get hasLoggedIn() {
-    return this._userProfile.hasLoggedIn;
-  }
 
   get menus() {
     let records: CustomRouteRecord[] = [];

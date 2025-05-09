@@ -32,7 +32,7 @@ export function useGetOrgMemberList(
   return useQuery<GetOrgMemberListResponseData | undefined>({
     queryKey,
     retry: false,
-    refetchOnWindowFocus: false,
+    // refetchOnWindowFocus: false,
     queryFn: async () => {
       const response = await getOrgMemberList(
         {

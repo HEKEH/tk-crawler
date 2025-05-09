@@ -55,6 +55,7 @@ async function main() {
     () => initProxy(logger),
     1000 * 60 * 2, // 2分钟检查一次代理
   );
+
   const globalManager = GlobalManager.getInstance();
   await globalManager.start();
 

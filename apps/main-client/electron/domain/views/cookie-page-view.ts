@@ -45,6 +45,10 @@ export class CookiePageView implements IView {
 
   private _shortcutRegistered = false;
 
+  private _isActivating = false;
+
+  private _activateSuccessCheckInterval: NodeJS.Timeout | null = null;
+
   private _removeResizeListener: (() => void) | null = null;
 
   private _backToMainView: () => void;
@@ -52,6 +56,34 @@ export class CookiePageView implements IView {
   constructor(props: { parentWindow: BaseWindow; backToMainView: () => void }) {
     this._parentWindow = props.parentWindow;
     this._backToMainView = props.backToMainView;
+  }
+
+  private _clearActivateSuccessInterval() {
+    if (this._activateSuccessCheckInterval) {
+      clearInterval(this._activateSuccessCheckInterval);
+      this._activateSuccessCheckInterval = null;
+    }
+  }
+
+  private _setActivateSuccessCheckInterval() {
+    if (this.isClosed) {
+      return;
+    }
+    if (this._activateSuccessCheckInterval) {
+      return;
+    }
+    this._activateSuccessCheckInterval = setInterval(async () => {
+      logger.info('[cookie-page-view] _setActivateSuccessInterval');
+      if (this.isClosed) {
+        this._clearActivateSuccessInterval();
+        return;
+      }
+      const isActivateSuccess = await this._checkIfFinishActivate();
+      if (isActivateSuccess) {
+        this._clearActivateSuccessInterval();
+        this._finishActivate();
+      }
+    }, 100);
   }
 
   private _setStatus(status: GUILD_COOKIE_PAGE_HELP_STATUS) {
@@ -470,20 +502,21 @@ export class CookiePageView implements IView {
     if (!operationResult.success) {
       return;
     }
-    let isActivateSuccess = false;
-    let tryCount = 0;
-    await sleep(1000);
-    while (!isActivateSuccess && tryCount < 40 && !this.isClosed) {
-      isActivateSuccess = await this._checkIfFinishActivate();
-      tryCount++;
-      if (!isActivateSuccess) {
-        await sleep(1000);
-      }
-    }
-    // await sleep(2000);
-    if (isActivateSuccess) {
-      this._finishActivate();
-    }
+    this._setActivateSuccessCheckInterval();
+    // let isActivateSuccess = false;
+    // let tryCount = 0;
+    // await sleep(1000);
+    // while (!isActivateSuccess && tryCount < 80 && !this.isClosed) {
+    //   isActivateSuccess = await this._checkIfFinishActivate();
+    //   tryCount++;
+    //   if (!isActivateSuccess) {
+    //     await sleep(500);
+    //   }
+    // }
+    // // await sleep(2000);
+    // if (isActivateSuccess) {
+    //   this._finishActivate();
+    // }
   }
 
   private async _checkIfFinishActivate() {
@@ -515,14 +548,18 @@ export class CookiePageView implements IView {
   }
 
   private async _finishActivate() {
-    const cookies = await this._getCookies();
-    logger.info('[cookie-page-view] finishActivate cookies:', cookies);
-    const token = getToken();
-    if (!token) {
-      logger.error('[cookie-page-view] finishActivate: Token is not found');
+    if (this._isActivating) {
       return;
     }
+    this._isActivating = true;
     try {
+      const cookies = await this._getCookies();
+      logger.info('[cookie-page-view] finishActivate cookies:', cookies);
+      const token = getToken();
+      if (!token) {
+        logger.error('[cookie-page-view] finishActivate: Token is not found');
+        return;
+      }
       await initProxy(logger); // 保险一点
       const response = await startTKGuildUserAccount(
         {
@@ -549,6 +586,8 @@ export class CookiePageView implements IView {
         GUILD_COOKIE_PAGE_HELP_EVENTS.REQUEST_ERROR,
         `保存失败: ${(error as any).message}`,
       );
+    } finally {
+      this._isActivating = false;
     }
   }
 
@@ -600,6 +639,7 @@ export class CookiePageView implements IView {
   }
 
   close() {
+    this._clearActivateSuccessInterval();
     this._unregisterDevToolsShortcut();
     this._removeResizeListener?.();
     this._removeEventHandlers();

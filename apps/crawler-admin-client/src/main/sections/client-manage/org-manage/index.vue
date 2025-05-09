@@ -71,7 +71,7 @@ const { data, isLoading, refetch } = useQuery<
 >({
   queryKey: ['orgs', pageNum, pageSize, sortField, sortOrder],
   retry: false,
-  refetchOnWindowFocus: false,
+  // refetchOnWindowFocus: false,
   queryFn: async () => {
     const orderBy = sortField.value
       ? { [sortField.value]: sortOrder.value === 'ascending' ? 'asc' : 'desc' }

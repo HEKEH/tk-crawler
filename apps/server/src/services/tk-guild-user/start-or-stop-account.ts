@@ -125,16 +125,16 @@ export async function stopLiveAdminAccount(
 
   assert(user, '用户不存在');
 
-  if (
-    [
-      TKGuildUserStatus.INACTIVE,
-      TKGuildUserStatus.STOPPED,
-      TKGuildUserStatus.ERROR,
-      TKGuildUserStatus.COOKIE_EXPIRED,
-    ].includes(user.status)
-  ) {
-    throw new BusinessError('用户已停止');
-  }
+  // if (
+  //   [
+  //     TKGuildUserStatus.INACTIVE,
+  //     TKGuildUserStatus.STOPPED,
+  //     TKGuildUserStatus.ERROR,
+  //     TKGuildUserStatus.COOKIE_EXPIRED,
+  //   ].includes(user.status)
+  // ) {
+  //   throw new BusinessError('用户已停止');
+  // }
 
   const updateData = {
     status: TKGuildUserStatus.STOPPED,

@@ -5,6 +5,8 @@ import type {
 import type { Subscription } from 'rxjs';
 import type { CustomRouteRecord } from '../router/route-records';
 import type { Menu } from '../types';
+import type {
+  GuildAccountsManageContext } from './guild-accounts-manage';
 import {
   InitializationState,
   MessageCenter,
@@ -21,14 +23,19 @@ import {
   SystemManagementRouteRecord,
 } from '../router/route-records';
 import { getToken, removeToken, setToken } from '../utils';
+import {
+  GuildAccountsManage,
+} from './guild-accounts-manage';
 import { UserProfile } from './user-profile';
 
-export default class GlobalStore {
+export default class GlobalStore implements GuildAccountsManageContext {
   currentMenu: Menu | null = null;
   private _initializationState = new InitializationState();
   private _token = '';
 
   private _userProfile = new UserProfile();
+
+  private _guildAccountsManage = new GuildAccountsManage(this);
 
   private _messageQueue = markRaw(
     new MessageQueue({
@@ -39,6 +46,10 @@ export default class GlobalStore {
   private _tokenInvalidSubscription: Subscription | null = null;
 
   readonly messageCenter = markRaw(new MessageCenter());
+
+  get hasLoggedIn() {
+    return this._userProfile.hasLoggedIn;
+  }
 
   get menus() {
     let records: CustomRouteRecord[] = [];
@@ -63,6 +74,10 @@ export default class GlobalStore {
 
   get userProfile() {
     return this._userProfile;
+  }
+
+  get guildAccountsManage() {
+    return this._guildAccountsManage;
   }
 
   // get isInitialized() {
@@ -124,6 +139,7 @@ export default class GlobalStore {
 
   private _handleLoginSuccess(data: OrgMemberLoginSuccessData) {
     this._userProfile.initAfterLoginSuccess(data);
+    this._guildAccountsManage.start();
   }
 
   private async _loginByToken() {
@@ -193,6 +209,7 @@ export default class GlobalStore {
   private _clear() {
     this._token = '';
     this._userProfile.clear();
+    this._guildAccountsManage.clear();
     // this._removeEventListeners();
   }
 

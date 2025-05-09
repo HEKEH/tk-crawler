@@ -10,24 +10,10 @@ import type {
 import type { TableColumnCtx } from 'element-plus';
 // import { InfoFilled } from '@element-plus/icons-vue';
 import { useQuery } from '@tanstack/vue-query';
-import {
-  AREA_NAME_MAP,
-  TIKTOK_LIVE_ADMIN_URL,
-  TKGuildUserStatus,
-  VALID_GUILD_USER_STATUS_LIST,
-} from '@tk-crawler/biz-shared';
-import { isInElectronApp } from '@tk-crawler/electron-utils/render';
-import {
-  CUSTOM_EVENTS,
-  MAIN_APP_ID,
-  MAIN_APP_PRODUCT_NAME,
-  MAIN_APP_PUBLISH_URL,
-} from '@tk-crawler/main-client-shared';
+import { AREA_NAME_MAP, TIKTOK_LIVE_ADMIN_URL } from '@tk-crawler/biz-shared';
 import { formatDateTime, RESPONSE_CODE } from '@tk-crawler/shared';
 import {
   AreaTooltipIcon,
-  getPlatform,
-  isDesktopPlatform,
   onKeepAliveActivated,
   RefreshButton,
   useIsWebSize,
@@ -42,13 +28,12 @@ import {
   ElTableColumn,
   ElTooltip,
 } from 'element-plus';
-import { computed, ref, toRaw } from 'vue';
+import { computed, ref } from 'vue';
 import { VisiblePassword } from '../../../components';
 import {
   createTKGuildUser,
   deleteTKGuildUser,
   getTKGuildUserList,
-  stopTKGuildUserAccount,
   updateTKGuildUser,
 } from '../../../requests';
 import { useGlobalStore } from '../../../utils/vue';
@@ -59,6 +44,7 @@ import {
 } from './filter';
 import TKGuildUserFilter from './guild-user-filter.vue';
 import FormDialog from './guild-user-form-dialog.vue';
+import StartStopButtonColumn from './start-stop-button-column.vue';
 import StatusTag from './status-tag.vue';
 
 defineOptions({
@@ -139,6 +125,11 @@ const { data, isFetching, refetch } = useQuery<
   placeholderData: previousData => previousData,
 });
 
+const refresh = () => {
+  refetch();
+  globalStore.guildAccountsManage.checkIsAnyAccountError();
+};
+
 // 处理排序变化
 function handleSortChange({
   prop,
@@ -155,15 +146,6 @@ function resetSort() {
   tableRef.value?.clearSort();
   sortField.value = undefined;
   sortOrder.value = undefined;
-}
-
-// 刷新功能
-// const isRefreshing = ref(false);
-async function refresh() {
-  // isRefreshing.value = true;
-  return refetch().finally(() => {
-    // isRefreshing.value = false;
-  });
 }
 
 // 删除用户
@@ -185,7 +167,7 @@ async function deleteUser(user: TKGuildUserRow) {
 
   if (response.status_code === RESPONSE_CODE.SUCCESS) {
     ElMessage.success({ message: '删除成功', type: 'success', duration: 2000 });
-    await refetch();
+    await refresh();
   } else {
     ElMessage.error({
       message: response.message || '删除失败',
@@ -237,7 +219,7 @@ async function handleBatchDelete() {
       type: 'success',
       duration: 2000,
     });
-    await refetch();
+    await refresh();
   } else {
     ElMessage.error({
       message: response.message || '删除失败',
@@ -288,125 +270,16 @@ async function handleSubmitCreateOrEdit(data: Partial<TKGuildUser>) {
   if (result.status_code !== RESPONSE_CODE.SUCCESS) {
     return;
   }
-  await refetch();
+  await refresh();
   onCloseFormDialog();
   ElMessage.success('保存成功');
 }
 
-function getStartOrStopButtonText(status: TKGuildUserStatus) {
-  if (VALID_GUILD_USER_STATUS_LIST.includes(status)) {
-    return '停止查询';
-  }
-  if (
-    status === TKGuildUserStatus.ERROR ||
-    status === TKGuildUserStatus.COOKIE_EXPIRED
-  ) {
-    return '点击重新启动';
-  }
-  return '点击启动查询';
+function onFinishOperation() {
+  refresh();
 }
 
-function getStartOrStopType(status: TKGuildUserStatus): 'stop' | 'start' {
-  if (VALID_GUILD_USER_STATUS_LIST.includes(status)) {
-    return 'stop';
-  }
-  return 'start';
-}
-
-async function onStartOrStop(item: TKGuildUserRow) {
-  const type = getStartOrStopType(item.status);
-  if (type === 'stop') {
-    try {
-      await ElMessageBox.confirm('确定要停止查询吗？', {
-        type: 'warning',
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-      });
-    } catch {
-      return;
-    }
-    const result = await stopTKGuildUserAccount(
-      { user_id: item.id },
-      globalStore.token,
-    );
-    if (result.status_code !== RESPONSE_CODE.SUCCESS) {
-      return;
-    }
-    await refetch();
-    ElMessage.success('成功停止');
-  } else {
-    if (!isInElectronApp()) {
-      if (!isDesktopPlatform()) {
-        ElMessage.warning('手机端无法支持此操作，请在桌面客户端中尝试');
-        return;
-      }
-      try {
-        const platform = getPlatform();
-        await ElMessageBox({
-          title: '提示',
-          message: (
-            <div>
-              <div
-                style={{
-                  width: '100%',
-                }}
-              >
-                浏览器环境无法支持此功能，请在
-                <span
-                  style={{
-                    fontWeight: 'bold',
-                  }}
-                >
-                  {`「${MAIN_APP_PRODUCT_NAME}」`}
-                </span>
-                中尝试。
-              </div>
-              <div
-                style={{
-                  width: '100%',
-                }}
-              >
-                如果你尚未安装应用，请前往
-                <ElLink
-                  style={{
-                    display: 'inline-block',
-                    verticalAlign: 'baseline',
-                    marginRight: '0.5rem',
-                    marginLeft: '0.5rem',
-                  }}
-                  href={
-                    platform === 'Mac'
-                      ? `${MAIN_APP_PUBLISH_URL}/${MAIN_APP_PRODUCT_NAME}-Mac-Installer.dmg`
-                      : `${MAIN_APP_PUBLISH_URL}/${MAIN_APP_PRODUCT_NAME}-Windows-Installer.exe`
-                  }
-                  target="_blank"
-                  type="primary"
-                  underline
-                >
-                  下载页面
-                </ElLink>
-                安装。
-              </div>
-            </div>
-          ),
-          type: 'warning',
-          confirmButtonText: '尝试打开客户端',
-        });
-        window.open(`${MAIN_APP_ID}://`);
-      } catch {}
-      return;
-    }
-    if (!globalStore.userProfile.hasMembership) {
-      ElMessage.warning('您没有权限进行修改，请先开通会员');
-      return;
-    }
-    await window.ipcRenderer.invoke(CUSTOM_EVENTS.GO_TO_GUILD_COOKIE_PAGE, {
-      guildUser: toRaw(item),
-    });
-  }
-}
-
-onKeepAliveActivated(refetch);
+onKeepAliveActivated(refresh);
 </script>
 
 <template>
@@ -486,22 +359,7 @@ onKeepAliveActivated(refetch);
         :fixed="isWeb ? undefined : 'left'"
         :min-width="isWeb ? 200 : 140"
       />
-      <ElTableColumn label="启动/停止" :min-width="isWeb ? 120 : 100">
-        <template #default="scope: ScopeType">
-          <ElButton
-            class="start-or-stop-button"
-            size="small"
-            :type="
-              getStartOrStopType(scope.row.status) === 'stop'
-                ? 'danger'
-                : 'success'
-            "
-            @click="onStartOrStop(scope.row)"
-          >
-            {{ getStartOrStopButtonText(scope.row.status) }}
-          </ElButton>
-        </template>
-      </ElTableColumn>
+      <StartStopButtonColumn @finish-operation="onFinishOperation" />
       <ElTableColumn
         prop="status"
         label="状态"

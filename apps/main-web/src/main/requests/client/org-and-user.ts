@@ -5,6 +5,8 @@ import type {
   DeleteOrgMemberResponse,
   GetOrgMemberListRequest,
   GetOrgMemberListResponse,
+  UpdateOrgAnchorSearchPoliciesRequest,
+  UpdateOrgAnchorSearchPoliciesResponse,
   UpdateOrgMemberRequest,
   UpdateOrgMemberResponse,
 } from '@tk-crawler/biz-shared';
@@ -17,6 +19,7 @@ import {
   GetOrgMemberList,
   OwnServerUrl,
   Post,
+  UpdateOrgAnchorSearchPolicies,
   UpdateOrgMember,
 } from '@tk-crawler/secure';
 import { commonRequest } from '@tk-crawler/view-shared';
@@ -75,6 +78,21 @@ export function deleteOrgMember(
     baseURL: config[OwnServerUrl],
     method: Post,
     path: DeleteOrgMember,
+    params,
+    headers: {
+      [CLIENT_TOKEN_HEADER_KEY]: token,
+    },
+  });
+}
+
+export function updateOrgAnchorSearchPolicies(
+  params: UpdateOrgAnchorSearchPoliciesRequest,
+  token: string,
+) {
+  return commonRequest<UpdateOrgAnchorSearchPoliciesResponse>({
+    baseURL: config[OwnServerUrl],
+    method: Post,
+    path: UpdateOrgAnchorSearchPolicies,
     params,
     headers: {
       [CLIENT_TOKEN_HEADER_KEY]: token,

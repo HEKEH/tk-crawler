@@ -41,6 +41,7 @@ export async function createOrg(_data: CreateOrgRequest): Promise<void> {
         membership_expire_at: org.membership_expire_at,
         status: org.status,
         areas,
+        ignore_commerce_anchor: org.ignore_commerce_anchor,
       },
     };
     redisMessageBus.publish(

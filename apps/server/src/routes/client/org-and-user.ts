@@ -1,5 +1,5 @@
 import Router from 'koa-router';
-import MemberController from '../../controllers/client/member';
+import ClientOrgAndUserController from '../../controllers/client/org-and-user';
 import {
   checkIsAdminClientMiddleware,
   clientTokenAuthMiddleware,
@@ -14,22 +14,28 @@ orgAndUserRouter.use(clientTokenAuthMiddleware());
 // org and user
 orgAndUserRouter.post(
   '/get-org-member-list',
-  MemberController.getOrgMemberList,
+  ClientOrgAndUserController.getOrgMemberList,
 );
 orgAndUserRouter.post(
   '/create-org-member',
   checkIsAdminClientMiddleware,
-  MemberController.createOrgMember,
+  ClientOrgAndUserController.createOrgMember,
 );
 orgAndUserRouter.post(
   '/update-org-member',
   checkIsAdminClientMiddleware,
-  MemberController.updateOrgMember,
+  ClientOrgAndUserController.updateOrgMember,
 );
 orgAndUserRouter.post(
   '/delete-org-member',
   checkIsAdminClientMiddleware,
-  MemberController.deleteOrgMember,
+  ClientOrgAndUserController.deleteOrgMember,
+);
+
+orgAndUserRouter.post(
+  '/update-org-anchor-search-policies',
+  checkIsAdminClientMiddleware,
+  ClientOrgAndUserController.updateOrgAnchorSearchPolicies,
 );
 
 export default orgAndUserRouter;

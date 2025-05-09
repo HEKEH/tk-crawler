@@ -58,3 +58,14 @@ export interface UpdateOrgMembershipResponse {
   status_code: RESPONSE_CODE;
   message?: string;
 }
+
+export interface OrgAnchorSearchPolicies {
+  ignore_commerce_anchor: boolean;
+}
+
+export type UpdateOrgAnchorSearchPoliciesRequest = OrgAnchorSearchPolicies;
+
+export interface UpdateOrgAnchorSearchPoliciesResponse {
+  status_code: RESPONSE_CODE;
+  message?: string;
+}

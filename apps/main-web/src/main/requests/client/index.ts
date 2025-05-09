@@ -1,4 +1,4 @@
 export * from './anchor';
-export * from './members';
+export * from './org-and-user';
 export * from './task';
 export * from './tk-guild-user';

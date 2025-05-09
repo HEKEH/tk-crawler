@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { TKGuildUser } from '@tk-crawler/biz-shared';
 import { InfoFilled } from '@element-plus/icons-vue';
+import { useIsWebSize } from '@tk-crawler/view-shared';
 import {
   ElButton,
   ElForm,
@@ -13,7 +14,6 @@ import {
   type FormRules,
 } from 'element-plus';
 import { reactive, ref } from 'vue';
-import { useIsWebSize } from '@tk-crawler/view-shared';
 
 export type GuildUserFormValues = Pick<
   TKGuildUser,

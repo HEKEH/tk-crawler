@@ -1,9 +1,10 @@
-import {
-  type OrganizationItem,
-  type OrgMemberItem,
-  type OrgMemberLoginSuccessData,
-  OrgMemberRole,
+import type {
+  OrgAnchorSearchPolicies,
+  OrganizationItem,
+  OrgMemberItem,
+  OrgMemberLoginSuccessData,
 } from '@tk-crawler/biz-shared';
+import { OrgMemberRole } from '@tk-crawler/biz-shared';
 
 export enum MembershipStatus {
   /** 会员 */
@@ -64,6 +65,16 @@ export class UserProfile {
 
   get isAdmin() {
     return this._userInfo?.role_id === OrgMemberRole.admin;
+  }
+
+  get searchAnchorPolicies(): OrgAnchorSearchPolicies {
+    return {
+      ignore_commerce_anchor: this.orgInfo!.ignore_commerce_anchor,
+    };
+  }
+
+  setSearchAnchorPolicies(policies: OrgAnchorSearchPolicies) {
+    this._orgInfo!.ignore_commerce_anchor = policies.ignore_commerce_anchor;
   }
 
   clear() {

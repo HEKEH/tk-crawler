@@ -4,6 +4,7 @@ import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useGlobalStore } from '../../utils';
 import TKGuildUserManage from './tk-guild-user-manage';
+import AnchorSearchPoliciesSetting from './anchor-search-policies';
 
 defineOptions({
   name: 'GuildManagement',
@@ -11,6 +12,7 @@ defineOptions({
 
 enum MenuType {
   TK_GUILD_USER = 'tk-guild-user',
+  ANCHOR_SEARCH_POLICIES = 'anchor-search-policies',
 }
 const route = useRoute();
 const router = useRouter();
@@ -20,6 +22,10 @@ const MenuList = [
   {
     value: MenuType.TK_GUILD_USER,
     label: '查询账号管理',
+  },
+  {
+    value: MenuType.ANCHOR_SEARCH_POLICIES,
+    label: '搜索策略设置',
   },
 ];
 const currentMenu = computed(() => {
@@ -45,6 +51,11 @@ function handleSelectMenu(key: string) {
     <div class="main-part">
       <KeepAlive>
         <TKGuildUserManage v-if="currentMenu === MenuType.TK_GUILD_USER" />
+      </KeepAlive>
+      <KeepAlive>
+        <AnchorSearchPoliciesSetting
+          v-if="currentMenu === MenuType.ANCHOR_SEARCH_POLICIES"
+        />
       </KeepAlive>
     </div>
   </div>

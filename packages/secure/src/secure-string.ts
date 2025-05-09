@@ -6,6 +6,8 @@ export const GetOrgMemberList = '/client/org-and-user/get-org-member-list';
 export const CreateOrgMember = '/client/org-and-user/create-org-member';
 export const UpdateOrgMember = '/client/org-and-user/update-org-member';
 export const DeleteOrgMember = '/client/org-and-user/delete-org-member';
+export const UpdateOrgAnchorSearchPolicies =
+  '/client/org-and-user/update-org-anchor-search-policies';
 export const Post = 'post';
 export const OwnServerUrl = 'ownServerUrl';
 

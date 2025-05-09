@@ -100,15 +100,17 @@ model AnchorInviteCheck {
 
 // 机构表
 model Organization {
-  id                             BigInt                       @id @default(autoincrement()) @db.UnsignedBigInt
-  name                           String                       @unique @db.VarChar(100)
-  membership_start_at            DateTime?                    @db.DateTime(3)
-  membership_expire_at           DateTime?                    @db.DateTime(3)
-  status                         Int                          @db.UnsignedTinyInt
-  remark                         String?                      @db.VarChar(200)
-  created_at                     DateTime                     @default(now()) @db.DateTime(3)
-  updated_at                     DateTime                     @updatedAt @db.DateTime(3)
-  mobile_device_limit            Int                          @default(10) @db.UnsignedInt
+  id                     BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  name                   String    @unique @db.VarChar(100)
+  membership_start_at    DateTime? @db.DateTime(3)
+  membership_expire_at   DateTime? @db.DateTime(3)
+  status                 Int       @db.UnsignedTinyInt
+  remark                 String?   @db.VarChar(200)
+  created_at             DateTime  @default(now()) @db.DateTime(3)
+  updated_at             DateTime  @updatedAt @db.DateTime(3)
+  mobile_device_limit    Int       @default(10) @db.UnsignedInt
+  ignore_commerce_anchor Boolean   @default(true)
+
   liveAdminUsers                 LiveAdminUser[]
   orgUsers                       OrgUser[]
   // 公会分区

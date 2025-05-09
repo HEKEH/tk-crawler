@@ -50,6 +50,7 @@ export async function updateOrg(_data: UpdateOrgRequest): Promise<void> {
         id: rest.id,
         name: data.name,
         status: data.status,
+        ignore_commerce_anchor: data.ignore_commerce_anchor,
         areas,
       },
     };

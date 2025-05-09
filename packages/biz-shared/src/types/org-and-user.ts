@@ -33,6 +33,9 @@ export interface OrganizationItem {
 
   /** 设备限制 */
   mobile_device_limit: number;
+
+  /** 是否忽略电商主播，默认为true */
+  ignore_commerce_anchor: boolean;
 }
 
 export enum OrgMemberStatus {

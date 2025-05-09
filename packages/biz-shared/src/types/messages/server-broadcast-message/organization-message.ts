@@ -8,6 +8,7 @@ export type BroadcastOrganizationMessageData = Pick<
   | 'membership_expire_at'
   | 'areas'
   | 'status'
+  | 'ignore_commerce_anchor'
 >;
 
 export interface BroadcastOrganizationUpdateMessage {

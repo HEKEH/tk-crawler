@@ -297,6 +297,41 @@ onMounted(async () => {
     th.is--sortable {
       cursor: pointer;
     }
+    --scrollbar-color: #888;
+    @include mobile {
+      --scrollbar-width: 6px;
+    }
+    @include web {
+      --scrollbar-width: 8px;
+    }
+    .vxe-table--scroll-y-wrapper {
+      &::after {
+        width: 100% !important;
+      }
+    }
+    .vxe-table--scroll-y-handle {
+      &::-webkit-scrollbar {
+        width: var(--scrollbar-width);
+      }
+      &::-webkit-scrollbar-thumb {
+        background: var(--scrollbar-color);
+        border-radius: calc(var(--scrollbar-width) / 2);
+      }
+    }
+    .vxe-table--scroll-x-wrapper {
+      &::after {
+        width: 100% !important;
+      }
+    }
+    .vxe-table--scroll-x-handle {
+      &::-webkit-scrollbar {
+        height: var(--scrollbar-width);
+      }
+      &::-webkit-scrollbar-thumb {
+        background: var(--scrollbar-color);
+        border-radius: calc(var(--scrollbar-width) / 2);
+      }
+    }
   }
 }
 </style>

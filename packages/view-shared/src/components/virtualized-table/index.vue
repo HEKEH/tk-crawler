@@ -297,7 +297,7 @@ onMounted(async () => {
     th.is--sortable {
       cursor: pointer;
     }
-    --scrollbar-color: #888;
+    --scrollbar-color: #999;
     @include mobile {
       --scrollbar-width: 6px;
     }

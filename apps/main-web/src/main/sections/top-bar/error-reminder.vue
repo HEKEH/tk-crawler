@@ -1,11 +1,12 @@
 <script setup lang="tsx">
-import { computed, VNode } from 'vue';
-import { useGlobalStore } from '../../utils';
-import { ElLink, ElTooltip, ElIcon } from 'element-plus';
+import type { VNode } from 'vue';
 import { Bell } from '@element-plus/icons-vue';
 import { useIsWebSize } from '@tk-crawler/view-shared';
+import { ElIcon, ElLink, ElTooltip } from 'element-plus';
+import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { GuildManagementRouteRecord } from '../../router/route-records';
+import { useGlobalStore } from '../../utils';
 
 const globalStore = useGlobalStore();
 
@@ -55,7 +56,10 @@ const isWebSize = useIsWebSize();
 <template>
   <ElTooltip v-if="errorMessage" open>
     <template #content>
-      <component :is="errorMessage.title" :is-functional="true" />
+      <span v-if="typeof errorMessage.title === 'string'">
+        {{ errorMessage.title }}
+      </span>
+      <component :is="errorMessage.title" v-else :is-functional="true" />
     </template>
     <ElIcon :size="isWebSize ? 22 : 18" class="text-red-500 cursor-pointer">
       <Bell />

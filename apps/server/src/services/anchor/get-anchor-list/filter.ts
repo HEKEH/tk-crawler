@@ -2,7 +2,6 @@ import type {
   AnchorListWhereInput,
   GetAnchorListFilter,
 } from '@tk-crawler/biz-shared';
-import type { Prisma } from '@tk-crawler/database';
 
 export function transformAnchorListFilterValues(
   filterValues: GetAnchorListFilter = {},
@@ -55,20 +54,7 @@ export function transformAnchorListFilterValues(
     if (has_commerce_goods) {
       anchorFilter.has_commerce_goods = true;
     } else {
-      // 语法问题，不能直接写has_commerce_goods，只能这么写
-      if (!anchorFilter.AND) {
-        anchorFilter.AND = [];
-      }
-      (anchorFilter.AND as Array<Prisma.AnchorWhereInput>).push({
-        OR: [
-          {
-            has_commerce_goods: false,
-          },
-          {
-            has_commerce_goods: null,
-          },
-        ],
-      });
+      anchorFilter.has_commerce_goods = false;
     }
   }
   if (tag) {

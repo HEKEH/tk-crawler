@@ -13,9 +13,9 @@ export async function updateAnchor(data: UpdateAnchorRequest) {
     level,
     current_diamonds,
     rank_league,
-    has_commerce_goods,
     tag,
   } = data;
+  const has_commerce_goods = data.has_commerce_goods ?? false;
   const sql = Prisma.sql`
   INSERT INTO Anchor (
     user_id,

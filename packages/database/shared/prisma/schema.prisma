@@ -38,7 +38,7 @@ model Anchor {
   highest_diamonds   Int                 @db.UnsignedInt
   rank_league        String?             @db.Char(2)
   level              Int?                @db.UnsignedTinyInt
-  has_commerce_goods Boolean?
+  has_commerce_goods Boolean             @default(false)
   tag                String?             @db.VarChar(20)
   created_at         DateTime            @default(now()) @db.DateTime(3)
   updated_at         DateTime            @updatedAt @db.DateTime(3)
@@ -47,6 +47,7 @@ model Anchor {
 
   @@index([follower_count])
   @@index([highest_diamonds])
+  @@index([has_commerce_goods])
   @@index([rank_league])
   @@index([region, updated_at(sort: Desc)], name: "region_updated_at_desc")
 }

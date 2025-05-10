@@ -1,11 +1,11 @@
 import type {
-  type Area,
-  type BroadcastGuildUserMessage,
-  type BroadcastGuildUserMessageData,
-  type BroadcastGuildUserUpdateMessage,
+  Area,
+  BroadcastGuildUserMessage,
+  BroadcastGuildUserMessageData,
+  BroadcastGuildUserUpdateMessage,
   OrgAnchorSearchPolicies,
-  TKGuildUserStatus,
 } from '@tk-crawler/biz-shared';
+import { TKGuildUserStatus } from '@tk-crawler/biz-shared';
 import { getAnchorCheckCount } from '@tk-crawler/server-shared';
 import { getMinArrayValueIndex } from '@tk-crawler/shared';
 import { ANCHORS_CHECK_NUMBER } from '../../constants';

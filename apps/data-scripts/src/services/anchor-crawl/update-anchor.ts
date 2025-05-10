@@ -45,7 +45,7 @@ export async function updateAnchor(data: UpdateAnchorData[]) {
           level: item.level,
           current_diamonds: item.current_diamonds,
           rank_league: item.rank_league,
-          has_commerce_goods: item.has_commerce_goods,
+          has_commerce_goods: Boolean(item.has_commerce_goods),
           tag: item.tag,
           last_diamonds: item.last_diamonds || null,
           highest_diamonds: item.highest_diamonds,

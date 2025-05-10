@@ -1,8 +1,9 @@
-import {
+import type {
   type Area,
   type BroadcastGuildUserMessage,
   type BroadcastGuildUserMessageData,
   type BroadcastGuildUserUpdateMessage,
+  OrgAnchorSearchPolicies,
   TKGuildUserStatus,
 } from '@tk-crawler/biz-shared';
 import { getAnchorCheckCount } from '@tk-crawler/server-shared';
@@ -18,6 +19,7 @@ export interface GuildUserCollectionContext {
   readonly orgId: string;
   readonly orgName: string;
   readonly isValid: boolean;
+  readonly anchorSearchPolicies: OrgAnchorSearchPolicies;
 }
 
 // 每次的主播检测数量
@@ -303,6 +305,7 @@ export class GuildUserCollection {
     const anchors = await searchAnchorsNeedCheck({
       area,
       org_id: this._context.orgId,
+      anchor_search_policies: this._context.anchorSearchPolicies,
     });
     if (anchors.length < ANCHORS_CHECK_NUMBER) {
       return;

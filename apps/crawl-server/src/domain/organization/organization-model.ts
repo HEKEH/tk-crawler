@@ -3,6 +3,7 @@ import type {
   BroadcastGuildUserMessage,
   BroadcastGuildUserMessageData,
   BroadcastOrganizationMessageData,
+  OrgAnchorSearchPolicies,
 } from '@tk-crawler/biz-shared';
 import type { GuildUserCollectionContext } from '../guild-user/guild-user-collection';
 import { OrganizationStatus } from '@tk-crawler/biz-shared';
@@ -17,6 +18,8 @@ export class OrganizationModel implements GuildUserCollectionContext {
   private _status: OrganizationStatus;
   private _areas: Area[];
   private _guildUserCollection: GuildUserCollection;
+
+  private _anchor_search_policies: OrgAnchorSearchPolicies;
 
   get orgId() {
     return this.id;
@@ -36,6 +39,10 @@ export class OrganizationModel implements GuildUserCollectionContext {
 
   get areas() {
     return this._areas;
+  }
+
+  get anchorSearchPolicies() {
+    return this._anchor_search_policies;
   }
 
   // async handleAnchorMessage(message: BroadcastAnchorMessage) {
@@ -72,6 +79,9 @@ export class OrganizationModel implements GuildUserCollectionContext {
     data.membership_expire_at !== undefined &&
       (this._membership_expire_at = data.membership_expire_at);
     data.status !== undefined && (this._status = data.status);
+    data.ignore_commerce_anchor !== undefined &&
+      (this._anchor_search_policies.ignore_commerce_anchor =
+        data.ignore_commerce_anchor);
     if (data.guild_users) {
       await this._handleGuildUsersChange(data.guild_users);
     }
@@ -88,6 +98,9 @@ export class OrganizationModel implements GuildUserCollectionContext {
     this._membership_expire_at = data.membership_expire_at;
     this._status = data.status;
     this._areas = data.areas;
+    this._anchor_search_policies = {
+      ignore_commerce_anchor: data.ignore_commerce_anchor,
+    };
     this._guildUserCollection = new GuildUserCollection(data.guild_users, this);
   }
 }

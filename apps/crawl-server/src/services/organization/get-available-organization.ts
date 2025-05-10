@@ -33,6 +33,7 @@ export async function getAvailableOrganization(
       membership_start_at: true,
       membership_expire_at: true,
       status: true,
+      ignore_commerce_anchor: true,
       areas: {
         select: {
           area: true,
@@ -75,6 +76,7 @@ export async function getAvailableOrganization(
       membership_expire_at: org.membership_expire_at,
       status: org.status as OrganizationStatus,
       areas: areas.map(item => item.area as Area),
+      ignore_commerce_anchor: org.ignore_commerce_anchor,
       guild_users: liveAdminUsers.map(item => ({
         id: item.id.toString(),
         username: item.username,

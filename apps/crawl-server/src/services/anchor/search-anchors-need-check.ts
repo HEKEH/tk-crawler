@@ -1,6 +1,7 @@
 import type {
   Area,
   BroadcastAnchorMessageData,
+  OrgAnchorSearchPolicies,
   Region,
 } from '@tk-crawler/biz-shared';
 import { getRegionsByArea } from '@tk-crawler/biz-shared';
@@ -16,6 +17,7 @@ export async function searchAnchorsNeedCheck(data: {
   org_id: string;
   area: Area;
   take?: number;
+  anchor_search_policies: OrgAnchorSearchPolicies;
 }): Promise<BroadcastAnchorMessageData[]> {
   logger.info(`[search-anchors-need-check] search anchors need check:`, {
     org_id: data.org_id,
@@ -37,6 +39,9 @@ export async function searchAnchorsNeedCheck(data: {
       region: {
         in: regions,
       },
+      has_commerce_goods: data.anchor_search_policies.ignore_commerce_anchor
+        ? false
+        : undefined,
       invite_checks: {
         none: {
           org_id: BigInt(data.org_id),

@@ -3,8 +3,8 @@ import { MenuSelect } from '@tk-crawler/view-shared';
 import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useGlobalStore } from '../../utils';
-import TKGuildUserManage from './tk-guild-user-manage';
 import AnchorSearchPoliciesSetting from './anchor-search-policies';
+import TKGuildUserManage from './tk-guild-user-manage';
 
 defineOptions({
   name: 'GuildManagement',
@@ -25,7 +25,7 @@ const MenuList = [
   },
   {
     value: MenuType.ANCHOR_SEARCH_POLICIES,
-    label: '搜索策略设置',
+    label: '采集策略设置',
   },
 ];
 const currentMenu = computed(() => {

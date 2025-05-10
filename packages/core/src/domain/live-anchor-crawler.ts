@@ -263,7 +263,7 @@ export class LiveAnchorCrawler {
               follower_count: anchor.follow_info.follower_count ?? 0,
               level: level ?? null,
               audience_count: item.data.user_count ?? null,
-              has_commerce_goods: item.data.has_commerce_goods ?? null,
+              has_commerce_goods: item.data.has_commerce_goods ?? false,
               tag: item.data.hashtag?.title ?? null,
             });
           }

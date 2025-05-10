@@ -204,7 +204,7 @@ export class AnchorPool {
       // highest_diamonds: liveDiamondsInfoData.diamonds,
       rank_league: (giftListInfoData.anchor_ranking_league ??
         null) as AnchorRankLeague | null,
-      has_commerce_goods: anchor.has_commerce_goods,
+      has_commerce_goods: anchor.has_commerce_goods ?? false,
       tag: anchor.tag,
     };
   }

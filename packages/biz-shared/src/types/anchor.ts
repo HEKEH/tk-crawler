@@ -25,7 +25,7 @@ export interface CollectedAnchorInfo {
   /** 主播直播段位 */
   rank_league: AnchorRankLeague | null;
   /** 是否有商品，由此判断是否带货主播 */
-  has_commerce_goods: boolean | null;
+  has_commerce_goods: boolean;
   tag: string | null;
   // /** 是否可以签约 */
   // qualified: QualificationStatus;

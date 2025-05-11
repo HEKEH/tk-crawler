@@ -175,9 +175,15 @@ export class TKLoginView implements IView {
       //     path.join(RENDERER_DIST, 'login-tiktok-help.html'),
       //   );
       // }
-      await this._helpView.webContents.loadURL(
-        `${config.adminWebUrl}login-tiktok-help.html`,
-      );
+      try {
+        await this._helpView.webContents.loadURL(
+          `${config.adminWebUrl}login-tiktok-help.html`,
+        );
+      } catch (error) {
+        logger.error('Failed to load tiktok login help URL:', error);
+        this._helpView.webContents.close();
+        throw error;
+      }
       this._parentWindow.contentView.addChildView(this._helpView);
       this._onResize();
     }
@@ -200,7 +206,9 @@ export class TKLoginView implements IView {
           await this._tkPageView.webContents.loadURL(TK_LOGIN_PAGE_URL);
           break;
         } catch (error) {
-          logger.error('Error loading URL:', error, { retryCount });
+          logger.error('Error loading tiktok login page URL:', error, {
+            retryCount,
+          });
           this._tkPageView.webContents.close();
           retryCount++;
           if (retryCount >= maxRetries) {

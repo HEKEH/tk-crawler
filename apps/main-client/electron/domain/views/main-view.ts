@@ -7,6 +7,7 @@ import { bindViewToWindowBounds } from '@tk-crawler/electron-utils/main';
 import { globalShortcut, WebContentsView } from 'electron';
 import config from '../../config';
 import { isDevelopment } from '../../env';
+import { logger } from '../../infra/logger';
 
 export class MainView implements IView {
   private _parentWindow: BaseWindow;
@@ -68,7 +69,13 @@ export class MainView implements IView {
       }
       this._registerDevToolsShortcut();
     });
-    await this._view.webContents.loadURL(config.mainWebUrl);
+    try {
+      await this._view.webContents.loadURL(config.mainWebUrl);
+    } catch (error) {
+      logger.error('Failed to load URL:', error);
+      this._view.webContents.close();
+      throw error;
+    }
     this._parentWindow.contentView.addChildView(this._view);
     this._bindResizeListener();
   }

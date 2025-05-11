@@ -9,6 +9,7 @@ import { bindViewToWindowBounds } from '@tk-crawler/electron-utils/main';
 import { globalShortcut, WebContentsView } from 'electron';
 import { CUSTOM_EVENTS } from '../../constants';
 import { isDevelopment, RENDERER_DIST, VITE_DEV_SERVER_URL } from '../../env';
+import { logger } from '../../infra/logger';
 
 export class MainView implements IView {
   private _parentWindow: BaseWindow;
@@ -70,12 +71,20 @@ export class MainView implements IView {
       }
       this._registerDevToolsShortcut();
     });
-    if (VITE_DEV_SERVER_URL) {
-      await this._view.webContents.loadURL(`${VITE_DEV_SERVER_URL}index.html`);
-    } else {
-      await this._view.webContents.loadFile(
-        path.join(RENDERER_DIST, 'index.html'),
-      );
+    try {
+      if (VITE_DEV_SERVER_URL) {
+        await this._view.webContents.loadURL(
+          `${VITE_DEV_SERVER_URL}index.html`,
+        );
+      } else {
+        await this._view.webContents.loadFile(
+          path.join(RENDERER_DIST, 'index.html'),
+        );
+      }
+    } catch (error) {
+      logger.error('Failed to load URL:', error);
+      this._view.webContents.close();
+      throw error;
     }
     this._parentWindow.contentView.addChildView(this._view);
     this._bindResizeListener();

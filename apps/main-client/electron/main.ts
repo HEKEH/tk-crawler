@@ -26,6 +26,13 @@ import { logger } from './infra/logger';
 // const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 async function main() {
+  process.on('uncaughtException', error => {
+    logger.error('Uncaught Exception:', error);
+  });
+
+  process.on('unhandledRejection', (reason, promise) => {
+    logger.error('Unhandled Rejection at:', promise, 'reason:', reason);
+  });
   if (process.env.NODE_ENV === 'production') {
     const gotTheLock = app.requestSingleInstanceLock();
     logger.info('requestSingleInstanceLock', gotTheLock);

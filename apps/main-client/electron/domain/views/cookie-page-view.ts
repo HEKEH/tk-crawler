@@ -129,14 +129,20 @@ export class CookiePageView implements IView {
           preload: path.join(__dirname, 'preload.js'),
         },
       });
-      if (VITE_DEV_SERVER_URL) {
-        await this._helpView.webContents.loadURL(
-          `${VITE_DEV_SERVER_URL}guild-cookie-page-help.html`,
-        );
-      } else {
-        await this._helpView.webContents.loadFile(
-          path.join(RENDERER_DIST, 'guild-cookie-page-help.html'),
-        );
+      try {
+        if (VITE_DEV_SERVER_URL) {
+          await this._helpView.webContents.loadURL(
+            `${VITE_DEV_SERVER_URL}guild-cookie-page-help.html`,
+          );
+        } else {
+          await this._helpView.webContents.loadFile(
+            path.join(RENDERER_DIST, 'guild-cookie-page-help.html'),
+          );
+        }
+      } catch (error) {
+        logger.error('Failed to load URL:', error);
+        this._helpView.webContents.close();
+        throw error;
       }
       if (isDevelopment) {
         if (this._helpView?.webContents) {
@@ -213,10 +219,26 @@ export class CookiePageView implements IView {
         'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
       );
       // 加载目标网页
-      await this._loadThirdPartyURL(
-        this._thirdPartyView,
-        TIKTOK_LIVE_ADMIN_URL,
-      );
+      const maxRetries = 3;
+      let retryCount = 0;
+      while (retryCount < maxRetries) {
+        try {
+          await this._loadThirdPartyURL(
+            this._thirdPartyView,
+            TIKTOK_LIVE_ADMIN_URL,
+          );
+          break;
+        } catch (error) {
+          logger.error('Failed to load TIKTOK_LIVE_ADMIN_URL URL:', error, {
+            retryCount,
+          });
+          this._thirdPartyView.webContents.close();
+          retryCount++;
+          if (retryCount >= maxRetries) {
+            throw error;
+          }
+        }
+      }
       await sleep(2000);
       if (currentOpenTurnId !== this._openTurnId) {
         // 已过时

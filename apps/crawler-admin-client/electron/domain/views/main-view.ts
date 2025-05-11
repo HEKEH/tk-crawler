@@ -13,6 +13,7 @@ import { globalShortcut, WebContentsView } from 'electron';
 import config from '../../config';
 import { CRAWL_EVENTS, CUSTOM_EVENTS } from '../../constants';
 import { isDevelopment } from '../../env';
+import { logger } from '../../infra/logger';
 
 export class MainView implements IView {
   private _parentWindow: BaseWindow;
@@ -94,14 +95,20 @@ export class MainView implements IView {
       }
       this._registerDevToolsShortcut();
     });
-    await this._view.webContents.loadURL(config.adminWebUrl);
-    // if (VITE_DEV_SERVER_URL) {
-    //   await this._view.webContents.loadURL(`${VITE_DEV_SERVER_URL}index.html`);
-    // } else {
-    //   await this._view.webContents.loadFile(
-    //     path.join(RENDERER_DIST, 'index.html'),
-    //   );
-    // }
+    try {
+      await this._view.webContents.loadURL(config.adminWebUrl);
+      // if (VITE_DEV_SERVER_URL) {
+      //   await this._view.webContents.loadURL(`${VITE_DEV_SERVER_URL}index.html`);
+      // } else {
+      //   await this._view.webContents.loadFile(
+      //     path.join(RENDERER_DIST, 'index.html'),
+      //   );
+      // }
+    } catch (error) {
+      logger.error('Failed to load URL:', error);
+      this._view.webContents.close();
+      throw error;
+    }
     this._parentWindow.contentView.addChildView(this._view);
     this._bindResizeListener();
   }

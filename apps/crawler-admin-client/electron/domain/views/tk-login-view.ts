@@ -200,6 +200,8 @@ export class TKLoginView implements IView {
           await this._tkPageView.webContents.loadURL(TK_LOGIN_PAGE_URL);
           break;
         } catch (error) {
+          logger.error('Error loading URL:', error, { retryCount });
+          this._tkPageView.webContents.close();
           retryCount++;
           if (retryCount >= maxRetries) {
             throw error;
@@ -251,8 +253,12 @@ export class TKLoginView implements IView {
   }
 
   private async _reopenTKPageView() {
-    this._closeTKPageView();
-    await this._openTKPageView();
+    try {
+      this._closeTKPageView();
+      await this._openTKPageView();
+    } catch (error) {
+      logger.error('Error reopening tiktok login page:', error);
+    }
   }
 
   private _eventNames: Array<string> = [];
@@ -319,7 +325,7 @@ export class TKLoginView implements IView {
       await this._openHelpView();
       await this._openTKPageView();
     } catch (error) {
-      console.error('Error loading URL:', error);
+      logger.error('Error loading URL:', error);
     }
   }
 

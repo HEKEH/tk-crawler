@@ -176,7 +176,7 @@ export class TKLoginView implements IView {
       //   );
       // }
       await this._helpView.webContents.loadURL(
-        path.join(config.adminWebUrl, 'login-tiktok-help.html'),
+        `${config.adminWebUrl}login-tiktok-help.html`,
       );
       this._parentWindow.contentView.addChildView(this._helpView);
       this._onResize();

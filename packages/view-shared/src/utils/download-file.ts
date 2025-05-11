@@ -9,9 +9,10 @@ export function downloadCSV<
       key: keyof T;
       label: string;
     }[];
+    suffix?: string;
   },
 ) {
-  const { filename, withTimeSuffix = true } = options;
+  const { filename, withTimeSuffix = true, suffix = 'csv' } = options;
   const columns =
     options.columns ||
     (Object.keys(list[0]) as (keyof T)[]).map(key => ({
@@ -44,7 +45,7 @@ export function downloadCSV<
     _filename = `${filename}_${year}-${month}-${day}_${hours}-${minutes}-${seconds}`;
   }
 
-  link.setAttribute('download', `${_filename}.csv`);
+  link.setAttribute('download', `${_filename}.${suffix}`);
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);

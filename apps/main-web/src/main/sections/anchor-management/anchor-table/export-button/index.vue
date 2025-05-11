@@ -71,6 +71,7 @@ async function handleExport() {
           label: '主播展示ID',
         },
       ],
+      suffix: 'txt',
     });
   } catch (error) {
     console.error(error);

@@ -1,6 +1,6 @@
 import type { UserProfile } from './user-profile';
 import { RESPONSE_CODE } from '@tk-crawler/shared';
-import { ElMessageBox } from 'element-plus';
+import { ElMessage, ElMessageBox } from 'element-plus';
 import { isAnyGuildUserAccountError } from '../requests';
 import router from '../router';
 import { GuildManagementRouteRecord } from '../router/route-records';
@@ -52,33 +52,33 @@ export class GuildAccountsManage {
   }
 
   private async _handleIsAnyAccountErrorOrStart() {
-    if (!this._context.userProfile.isAdmin) {
-      return;
-    }
-
-    if (localStorageStore.getItem(IGNORE_ERROR_KEY) === 1) {
-      return;
-    }
-
     if (this._isAnyAccountError) {
-      try {
-        await ElMessageBox.confirm(
-          '某些公会账号登录已过期或出错，请及时处理!',
-          {
-            title: '警告',
-            type: 'warning',
-            confirmButtonText: '去处理',
-            cancelButtonText: '忽略',
-            showClose: false,
-            closeOnClickModal: false,
-            closeOnPressEscape: false,
-          },
-        );
-        router.push(
-          GuildManagementRouteRecord.jumpTo ?? GuildManagementRouteRecord.path,
-        );
-      } catch {
-        localStorageStore.setItem(IGNORE_ERROR_KEY, 1);
+      if (this._context.userProfile.isAdmin) {
+        if (localStorageStore.getItem(IGNORE_ERROR_KEY) === 1) {
+          return;
+        }
+        try {
+          await ElMessageBox.confirm(
+            '某些公会账号登录已过期或出错，请及时处理!',
+            {
+              title: '警告',
+              type: 'warning',
+              confirmButtonText: '去处理',
+              cancelButtonText: '忽略',
+              showClose: false,
+              closeOnClickModal: false,
+              closeOnPressEscape: false,
+            },
+          );
+          router.push(
+            GuildManagementRouteRecord.jumpTo ??
+              GuildManagementRouteRecord.path,
+          );
+        } catch {
+          localStorageStore.setItem(IGNORE_ERROR_KEY, 1);
+        }
+      } else {
+        ElMessage.warning('某些公会账号登录已过期或出错，请及时联系管理员处理');
       }
     }
   }

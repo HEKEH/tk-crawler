@@ -31,7 +31,7 @@
     "axios": "^1.7.9",
     "crypto-js": "^4.2.0",
     "dayjs": "^1.11.13",
-    "electron": "^35.2.1",
+    "electron": "^36.2.0",
     "electron-builder": "^26.0.12",
     "element-plus": "^2.9.9",
     "get-system-proxy": "^1.0.0",

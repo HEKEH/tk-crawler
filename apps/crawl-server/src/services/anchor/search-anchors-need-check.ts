@@ -4,7 +4,6 @@ import type {
   OrgAnchorSearchPolicies,
   Region,
 } from '@tk-crawler/biz-shared';
-import { getRegionsByArea } from '@tk-crawler/biz-shared';
 import { mysqlClient } from '@tk-crawler/database';
 import { beautifyJsonStringify } from '@tk-crawler/shared';
 import {
@@ -23,8 +22,6 @@ export async function searchAnchorsNeedCheck(data: {
     org_id: data.org_id,
     area: data.area,
   });
-  const regions = getRegionsByArea(data.area);
-
   const dbStart = Date.now();
   const result = await mysqlClient.prismaClient.anchor.findMany({
     orderBy: {
@@ -38,9 +35,7 @@ export async function searchAnchorsNeedCheck(data: {
     },
     take: data.take ?? ANCHORS_CHECK_NUMBER,
     where: {
-      region: {
-        in: regions,
-      },
+      area: data.area,
       has_commerce_goods: data.anchor_search_policies.ignore_commerce_anchor
         ? false
         : undefined,

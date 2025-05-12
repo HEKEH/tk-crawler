@@ -45,8 +45,8 @@ export class GuildUserCollection {
     // const minInterval = (1000 * 60) / 4; // 15000ms
 
     // TODO: 还原
-    const maxInterval = 1000 * 60 * 4; // 60000ms
-    const minInterval = 1000 * 60; // 15000ms
+    const maxInterval = 1000 * 60 * 2; // 120000ms
+    const minInterval = (1000 * 60) / 2; // 30000ms
 
     if (guildUsersCount === 0) {
       return maxInterval;

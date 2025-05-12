@@ -1,4 +1,7 @@
-import type { UpdateAnchorRequest } from '@tk-crawler/biz-shared';
+import {
+  getAreaByRegion,
+  type UpdateAnchorRequest,
+} from '@tk-crawler/biz-shared';
 import { mysqlClient, Prisma } from '@tk-crawler/database';
 
 export async function updateAnchor(data: UpdateAnchorRequest) {
@@ -15,6 +18,7 @@ export async function updateAnchor(data: UpdateAnchorRequest) {
     rank_league,
     tag,
   } = data;
+  const area = getAreaByRegion(region) ?? null;
   const has_commerce_goods = data.has_commerce_goods ?? false;
   const sql = Prisma.sql`
   INSERT INTO Anchor (
@@ -22,6 +26,7 @@ export async function updateAnchor(data: UpdateAnchorRequest) {
     display_id,
     room_id,
     region,
+    area,
     follower_count,
     audience_count,
     level,
@@ -37,6 +42,7 @@ export async function updateAnchor(data: UpdateAnchorRequest) {
     ${display_id},
     ${room_id},
     ${region},
+    ${area},
     ${follower_count},
     ${audience_count},
     ${level},
@@ -56,6 +62,7 @@ export async function updateAnchor(data: UpdateAnchorRequest) {
     highest_diamonds = GREATEST(${current_diamonds}, highest_diamonds),
     room_id = ${room_id},
     region = ${region},
+    area = ${area},
     follower_count = ${follower_count},
     audience_count = ${audience_count},
     level = ${level},

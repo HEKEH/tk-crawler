@@ -24,6 +24,8 @@ export async function searchAnchorsNeedCheck(data: {
     area: data.area,
   });
   const regions = getRegionsByArea(data.area);
+
+  const dbStart = Date.now();
   const result = await mysqlClient.prismaClient.anchor.findMany({
     orderBy: {
       updated_at: 'desc',
@@ -61,6 +63,9 @@ export async function searchAnchorsNeedCheck(data: {
         },
       },
     },
+  });
+  logger.info(`[search-anchors-need-check] after db query`, {
+    cost: Date.now() - dbStart,
   });
   logger.trace(
     `[search-anchors-need-check] [orgId: ${data.org_id}] [area: ${data.area}] search anchors need check result: ${beautifyJsonStringify(result)}`,

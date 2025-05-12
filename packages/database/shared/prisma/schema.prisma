@@ -31,6 +31,7 @@ model Anchor {
   display_id         String              @unique @db.VarChar(24)
   room_id            BigInt              @default(0) @db.UnsignedBigInt
   region             String              @db.Char(2)
+  area               String?             @db.VarChar(6)
   follower_count     Int                 @db.UnsignedInt
   audience_count     Int?                @db.UnsignedInt
   current_diamonds   Int                 @db.UnsignedInt
@@ -49,7 +50,8 @@ model Anchor {
   @@index([highest_diamonds])
   @@index([has_commerce_goods])
   @@index([rank_league])
-  @@index([region, updated_at(sort: Desc)], name: "region_updated_at_desc")
+  @@index([region], name: "region")
+  @@index([area, updated_at(sort: Desc)], name: "area_updated_at_desc")
 }
 
 model LiveAdminUser {

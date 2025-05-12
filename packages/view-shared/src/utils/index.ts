@@ -1,6 +1,7 @@
 export * from './confirm-after-seconds';
 export * from './copy';
 export * from './download-file';
+export * from './error';
 export * from './local-storage-store';
 export * from './message-queue';
 export * from './platform';

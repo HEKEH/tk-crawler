@@ -11,6 +11,7 @@ import {
 } from '@tk-crawler/shared';
 import { ElNotification } from 'element-plus';
 import { Subject } from 'rxjs';
+import { RequestError } from './error';
 
 interface CommonRequestParams<RequestParams>
   extends Omit<SharedCommonRequestParams<RequestParams>, 'onBusinessError'> {
@@ -74,6 +75,6 @@ export async function commonRequest<
         message: (error as any)?.message,
       });
     }
-    throw error;
+    throw new RequestError(error as Error);
   }
 }

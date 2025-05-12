@@ -13,6 +13,7 @@ import { computed, onBeforeUnmount, onErrorCaptured } from 'vue';
 
 import Homepage from './sections/homepage.vue';
 import { provideGlobalStore } from './utils';
+import { RequestError } from '@tk-crawler/view-shared';
 
 const globalStore: GlobalStore = provideGlobalStore();
 
@@ -37,10 +38,15 @@ onBeforeUnmount(async () => {
   await globalStore.destroy();
 });
 onErrorCaptured(e => {
-  ElNotification.error({
-    message: typeof e === 'string' ? e : (e as Error).message,
-  });
-  console.error(e);
+  if (e instanceof RequestError) {
+    // 不需要处理
+    console.error(e.rawError);
+  } else {
+    ElNotification.error({
+      message: typeof e === 'string' ? e : (e as Error).message,
+    });
+    console.error(e);
+  }
   return false;
 });
 </script>

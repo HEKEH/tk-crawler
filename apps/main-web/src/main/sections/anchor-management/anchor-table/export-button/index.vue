@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { GetAnchorListFilter } from '@tk-crawler/biz-shared';
 import { RESPONSE_CODE } from '@tk-crawler/shared';
-import { downloadCSV } from '@tk-crawler/view-shared';
+import { downloadCSV, downloadXLSX } from '@tk-crawler/view-shared';
 import { ElButton, ElMessage, ElMessageBox } from 'element-plus';
 import { h, ref } from 'vue';
 import { getAnchorListForDownload } from '../../../../requests';
@@ -22,6 +22,7 @@ async function handleExport() {
   }
 
   const count = ref<number | undefined>(undefined);
+  const format = ref<'xlsx' | 'csv' | 'txt'>('xlsx');
 
   try {
     try {
@@ -29,8 +30,12 @@ async function handleExport() {
         title: '导出提示',
         message: h(ExportDialogContent, {
           value: count.value,
+          format: format.value,
           onUpdate: val => {
             count.value = val;
+          },
+          onFormatChange: val => {
+            format.value = val;
           },
         }),
         showCancelButton: true,
@@ -58,20 +63,37 @@ async function handleExport() {
       ElMessage.warning('没有数据可以导出');
       return;
     }
-
-    downloadCSV(list, {
+    if (format.value === 'csv' || format.value === 'txt') {
+      downloadCSV(list, {
+        filename: props.filename,
+        columns: [
+          {
+            key: 'user_id',
+            label: '主播ID',
+          },
+          {
+            key: 'display_id',
+            label: '主播展示ID',
+          },
+        ],
+        suffix: format.value,
+      });
+      return;
+    }
+    downloadXLSX(list, {
       filename: props.filename,
       columns: [
         {
           key: 'user_id',
           label: '主播ID',
+          width: 30,
         },
         {
           key: 'display_id',
           label: '主播展示ID',
+          width: 30,
         },
       ],
-      suffix: 'txt',
     });
   } catch (error) {
     console.error(error);

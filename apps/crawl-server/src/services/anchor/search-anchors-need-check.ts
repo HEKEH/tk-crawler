@@ -75,6 +75,7 @@ export async function searchAnchorsNeedCheck(data: {
       FROM AnchorInviteCheck ic
       WHERE ic.anchor_id = a.user_id
         AND ic.org_id = ${BigInt(data.org_id)}
+        AND ic.area = ${data.area}
         AND (
           ic.contacted_by IS NOT NULL
           OR ic.checked_at > ${new Date(Date.now() - ANCHOR_CHECK_OUTDATE_TIME)}

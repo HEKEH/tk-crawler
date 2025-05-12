@@ -1,24 +1,34 @@
 <script setup lang="ts">
 import { ANCHORS_DOWNLOAD_SIZE_LIMIT } from '@tk-crawler/biz-shared';
 import { useIsWebSize } from '@tk-crawler/view-shared';
-import { ElInputNumber } from 'element-plus';
+import { ElInputNumber, ElRadioGroup, ElRadio } from 'element-plus';
 import { ref } from 'vue';
 
 interface Props {
   value?: number | undefined;
+  format?: 'xlsx' | 'csv' | 'txt';
 }
 
 const props = defineProps<Props>();
 const emit = defineEmits<{
   (e: 'update', type: number | undefined): void;
+  (e: 'formatChange', type: 'xlsx' | 'csv' | 'txt'): void;
 }>();
 
 const count = ref<number | undefined>(props.value);
+
+const format = ref<'xlsx' | 'csv' | 'txt'>(props.format || 'xlsx');
 
 function handleUpdate(val: number | undefined | null) {
   count.value = val || undefined;
   emit('update', count.value);
 }
+
+function handleFormatChange(val: any) {
+  format.value = val as 'xlsx' | 'csv' | 'txt';
+  emit('formatChange', format.value);
+}
+
 const isWeb = useIsWebSize();
 </script>
 
@@ -42,6 +52,18 @@ const isWeb = useIsWebSize();
         :max="ANCHORS_DOWNLOAD_SIZE_LIMIT"
         @update:model-value="handleUpdate"
       />
+      <div class="flex items-center gap-x-3">
+        <div class="text-xs md:text-sm">导出格式:</div>
+        <ElRadioGroup
+          :size="isWeb ? 'default' : 'small'"
+          :model-value="format"
+          @update:model-value="handleFormatChange"
+        >
+          <ElRadio label="xlsx" value="xlsx" />
+          <ElRadio label="csv" value="csv" />
+          <ElRadio label="txt" value="txt" />
+        </ElRadioGroup>
+      </div>
     </div>
   </div>
 </template>
@@ -60,6 +82,8 @@ const isWeb = useIsWebSize();
 .input-container {
   width: 100%;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  row-gap: 8px;
 }
 </style>

@@ -1,8 +1,12 @@
 <script setup lang="ts">
 import type { GetAnchorListFilter } from '@tk-crawler/biz-shared';
 import { RESPONSE_CODE } from '@tk-crawler/shared';
-import { downloadCSV, downloadXLSX } from '@tk-crawler/view-shared';
-import { ElButton, ElMessage, ElMessageBox } from 'element-plus';
+import {
+  downloadCSV,
+  downloadXLSX,
+  useIsWebSize,
+} from '@tk-crawler/view-shared';
+import { ElButton, ElMessage, ElMessageBox, ElDialog } from 'element-plus';
 import { h, ref } from 'vue';
 import { getAnchorListForDownload } from '../../../../requests';
 import { useGlobalStore } from '../../../../utils';
@@ -15,37 +19,15 @@ const props = defineProps<{
 
 const isLoading = ref(false);
 const globalStore = useGlobalStore();
+const isDialogVisible = ref(false);
+const isWebSize = useIsWebSize();
 
 async function handleExport() {
   if (isLoading.value) {
     return;
   }
 
-  const count = ref<number | undefined>(undefined);
-  const format = ref<'xlsx' | 'csv' | 'txt'>('xlsx');
-
   try {
-    try {
-      await ElMessageBox({
-        title: '导出提示',
-        message: h(ExportDialogContent, {
-          value: count.value,
-          format: format.value,
-          onUpdate: val => {
-            count.value = val;
-          },
-          onFormatChange: val => {
-            format.value = val;
-          },
-        }),
-        showCancelButton: true,
-        confirmButtonText: '继续',
-        cancelButtonText: '取消',
-      });
-    } catch {
-      return;
-    }
-
     isLoading.value = true;
     const response = await getAnchorListForDownload(
       {
@@ -78,33 +60,84 @@ async function handleExport() {
         ],
         suffix: format.value,
       });
-      return;
+    } else {
+      downloadXLSX(list, {
+        filename: props.filename,
+        columns: [
+          {
+            key: 'user_id',
+            label: '主播ID',
+            width: 30,
+          },
+          {
+            key: 'display_id',
+            label: '主播展示ID',
+            width: 30,
+          },
+        ],
+      });
     }
-    downloadXLSX(list, {
-      filename: props.filename,
-      columns: [
-        {
-          key: 'user_id',
-          label: '主播ID',
-          width: 30,
-        },
-        {
-          key: 'display_id',
-          label: '主播展示ID',
-          width: 30,
-        },
-      ],
-    });
+    closeDialog();
   } catch (error) {
     console.error(error);
   } finally {
     isLoading.value = false;
   }
 }
+
+const count = ref<number | undefined>(undefined);
+const format = ref<'xlsx' | 'csv' | 'txt'>('xlsx');
+
+const handleUpdate = (val: number | undefined) => {
+  count.value = val;
+};
+const handleFormatChange = (val: 'xlsx' | 'csv' | 'txt') => {
+  format.value = val;
+};
+
+const openDialog = () => {
+  isDialogVisible.value = true;
+};
+const closeDialog = () => {
+  isDialogVisible.value = false;
+  count.value = undefined;
+  format.value = 'xlsx';
+};
 </script>
 
 <template>
-  <ElButton :loading="isLoading" size="small" @click="handleExport">
+  <ElButton :loading="isLoading" size="small" @click="openDialog">
     {{ isLoading ? '导出中' : '导出' }}
   </ElButton>
+  <ElDialog
+    :model-value="isDialogVisible"
+    @update:model-value="closeDialog"
+    title="导出提示"
+    width="400px"
+    destroy-on-close
+    @close="closeDialog"
+    class="[&_.el-dialog\_\_header]:pb-0 [&_.dialog-container]:!p-0"
+  >
+    <ExportDialogContent
+      :value="count"
+      :format="format"
+      @update="handleUpdate"
+      @formatChange="handleFormatChange"
+    />
+    <template #footer>
+      <div class="flex w-full justify-center">
+        <ElButton
+          :loading="isLoading"
+          :size="isWebSize ? 'default' : 'small'"
+          type="primary"
+          @click="handleExport"
+        >
+          导出
+        </ElButton>
+        <ElButton :size="isWebSize ? 'default' : 'small'" @click="closeDialog">
+          取消
+        </ElButton>
+      </div>
+    </template>
+  </ElDialog>
 </template>

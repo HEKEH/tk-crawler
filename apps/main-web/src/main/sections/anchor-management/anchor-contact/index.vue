@@ -194,8 +194,8 @@ onKeepAliveActivated(refetch);
         <RefreshButton v-if="isWeb" @click="refresh" />
         <ExportButton
           v-if="
-            config.enableDataDownload &&
-            localStorageStore.getItem(EXPORT_DATA_FUNCTION_IS_OPENED_KEY)
+            config.enableDataDownload
+            // && localStorageStore.getItem(EXPORT_DATA_FUNCTION_IS_OPENED_KEY)
           "
           :query-filter="queryFilter"
           filename="主播建联"

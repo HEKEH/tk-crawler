@@ -3,7 +3,6 @@ import type {
   DisplayedAnchorItem,
   GetAnchorListOrderBy,
 } from '@tk-crawler/biz-shared';
-import type { CustomColumnConfig } from './anchor-table-columns';
 import {
   ColumnSettingIcon,
   onKeepAliveActivated,
@@ -17,6 +16,7 @@ import { computed, ref } from 'vue';
 import config from '../../../config';
 import { useGetAnchorList } from '../../../hooks';
 import { localStorageStore, useGlobalStore } from '../../../utils';
+import type { CustomColumnConfig } from './anchor-table-columns';
 import useAnchorTableColumns from './anchor-table-columns';
 import ExportButton from './export-button/index.vue';
 import {
@@ -25,10 +25,7 @@ import {
   transformFilterViewValuesToFilterValues,
 } from './filter';
 import TKAnchorFilter from './filter.vue';
-import {
-  EXPORT_DATA_FUNCTION_IS_OPENED_KEY,
-  useOpenDataExportFunction,
-} from './hooks';
+import { useOpenDataExportFunction } from './hooks';
 import {
   AdminBatchOperationButtons,
   MemberBatchOperationButtons,
@@ -208,8 +205,8 @@ onKeepAliveActivated(refetch);
         <RefreshButton v-if="isWeb" @click="refresh" />
         <ExportButton
           v-if="
-            config.enableDataDownload &&
-            localStorageStore.getItem(EXPORT_DATA_FUNCTION_IS_OPENED_KEY)
+            config.enableDataDownload
+            // && localStorageStore.getItem(EXPORT_DATA_FUNCTION_IS_OPENED_KEY)
           "
           :query-filter="queryFilter"
           filename="主播列表"

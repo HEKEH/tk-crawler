@@ -1,28 +1,30 @@
-import type { Crawler } from './crawler';
+import type { Runner } from './runner';
 import process from 'node:process';
 import {
   mysqlClient,
   setLogger as setDatabaseLogger,
 } from '@tk-crawler/database';
 import config from './config';
-import { TK87Crawler } from './crawler';
 import { logger } from './infra/logger';
+import { AreaUpdateRunner } from './runner';
 
 class App {
   private _isClosed = false;
 
-  private _crawler: Crawler = new TK87Crawler();
+  // private _runner: Runner = new TK87Crawler();
+
+  private _runner: Runner = new AreaUpdateRunner();
 
   async run() {
     logger.info('App is running');
     try {
-      const { success, end } = await this._crawler.run();
-      logger.info('Crawler run result', { success, end });
+      const { success, end } = await this._runner.run();
+      logger.info('Runner run result', { success, end });
       if (!success) {
-        logger.error('Crawler run failed');
+        logger.error('Runner run failed');
       }
       if (end) {
-        logger.info('Crawler run end');
+        logger.info('Runner run end');
         await this.close();
       }
     } catch (error) {

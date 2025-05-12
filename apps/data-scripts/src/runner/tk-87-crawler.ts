@@ -4,7 +4,7 @@ import type {
   Region,
 } from '@tk-crawler/biz-shared';
 import type { UpdateAnchorData } from '../services';
-import type { Crawler } from './types';
+import type { Runner } from './types';
 import axios from 'axios';
 import globalConfig from '../config';
 import { logger } from '../infra/logger';
@@ -55,7 +55,7 @@ const BASE_PARAMS = {
   'params[endTime]': '',
 };
 
-export class TK87Crawler implements Crawler {
+export class TK87Crawler implements Runner {
   private _crawlRegions = globalConfig.crawlRegions;
   private _pageSize = globalConfig.pageSize;
   private _pageNum = globalConfig.startPage;

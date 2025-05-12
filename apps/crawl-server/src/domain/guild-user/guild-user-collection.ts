@@ -41,8 +41,12 @@ export class GuildUserCollection {
     const guildUsersCount = this._guildUsers.filter(
       item => item.isValid,
     ).length;
-    const maxInterval = 1000 * 60 * 1; // 60000ms
-    const minInterval = (1000 * 60) / 4; // 15000ms
+    // const maxInterval = 1000 * 60 * 1; // 60000ms
+    // const minInterval = (1000 * 60) / 4; // 15000ms
+
+    // TODO: 还原
+    const maxInterval = 1000 * 60 * 4; // 60000ms
+    const minInterval = 1000 * 60; // 15000ms
 
     if (guildUsersCount === 0) {
       return maxInterval;

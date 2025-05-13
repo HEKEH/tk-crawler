@@ -2,7 +2,8 @@ import { onBeforeUnmount, ref } from 'vue';
 
 /**
  * A composable that tracks whether the window is currently visible/active
- * @returns A shallow ref containing the window's active state
+ * Uses both visibility change and page lifecycle events
+ * @returns A ref containing the window's active state
  */
 export function useIsWindowActive() {
   const isActive = ref(true);
@@ -16,13 +17,28 @@ export function useIsWindowActive() {
     }
   };
 
+  const handleFreeze = () => {
+    isActive.value = false;
+  };
+
+  const handleResume = () => {
+    isActive.value = true;
+  };
+
   // Initialize state
   if (typeof window !== 'undefined') {
     try {
+      // Set initial state
       isActive.value = document.visibilityState === 'visible';
+
+      // Listen for visibility changes
       window.addEventListener('visibilitychange', handleVisibilityChange);
+
+      // Listen for page lifecycle events
+      document.addEventListener('freeze', handleFreeze);
+      document.addEventListener('resume', handleResume);
     } catch (error) {
-      console.error('Error setting up window visibility listener:', error);
+      console.error('Error setting up window state listeners:', error);
     }
   }
 
@@ -30,8 +46,10 @@ export function useIsWindowActive() {
     if (typeof window !== 'undefined') {
       try {
         window.removeEventListener('visibilitychange', handleVisibilityChange);
+        document.removeEventListener('freeze', handleFreeze);
+        document.removeEventListener('resume', handleResume);
       } catch (error) {
-        console.error('Error cleaning up window visibility listener:', error);
+        console.error('Error cleaning up window state listeners:', error);
       }
     }
   });

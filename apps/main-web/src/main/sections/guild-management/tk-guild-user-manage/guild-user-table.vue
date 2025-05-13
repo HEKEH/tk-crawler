@@ -395,7 +395,7 @@ onKeepAliveActivated(refresh);
       <ElTableColumn
         prop="started_at"
         label="启动查询时间"
-        :min-width="isWeb ? 205 : 160"
+        :min-width="isWeb ? 205 : 170"
         sortable="custom"
       >
         <template #default="scope: ScopeType">
@@ -406,8 +406,8 @@ onKeepAliveActivated(refresh);
       </ElTableColumn>
       <ElTableColumn
         prop="error_at"
-        label="账号过期时间"
-        :min-width="isWeb ? 205 : 160"
+        label="账号失效时间"
+        :min-width="isWeb ? 205 : 170"
         sortable="custom"
       >
         <template #default="scope: ScopeType">
@@ -439,7 +439,7 @@ onKeepAliveActivated(refresh);
       <ElTableColumn
         prop="created_at"
         label="创建时间"
-        :min-width="isWeb ? 205 : 160"
+        :min-width="isWeb ? 205 : 170"
         sortable="custom"
       >
         <template #default="scope: ScopeType">
@@ -449,7 +449,7 @@ onKeepAliveActivated(refresh);
       <ElTableColumn
         prop="updated_at"
         label="更新时间"
-        :min-width="isWeb ? 205 : 160"
+        :min-width="isWeb ? 205 : 170"
         sortable="custom"
       >
         <template #default="scope: ScopeType">

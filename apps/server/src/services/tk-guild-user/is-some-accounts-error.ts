@@ -19,6 +19,9 @@ export async function isAnyAccountError(
           in: [TKGuildUserStatus.ERROR, TKGuildUserStatus.COOKIE_EXPIRED],
         },
       },
+      select: {
+        id: true,
+      },
     }),
   );
   logger.trace('[Is Any Account Error]', {

@@ -35,9 +35,9 @@ export class MessageQueue {
     document.addEventListener('freeze', this._handleFreeze);
     document.addEventListener('resume', this._handleResume);
 
-    // 窗口焦点变化
-    window.addEventListener('blur', this._handleBlur);
-    window.addEventListener('focus', this._handleFocus);
+    // // 窗口焦点变化
+    // window.addEventListener('blur', this._handleBlur);
+    // window.addEventListener('focus', this._handleFocus);
 
     // 页面卸载前清理
     window.addEventListener('beforeunload', this._cleanupListeners);
@@ -56,14 +56,14 @@ export class MessageQueue {
     this._isPageActive = true;
   };
 
-  private _handleBlur = () => {
-    this._isPageActive = false;
-    this.clearMessages();
-  };
+  // private _handleBlur = () => {
+  //   this._isPageActive = false;
+  //   this.clearMessages();
+  // };
 
-  private _handleFocus = () => {
-    this._isPageActive = true;
-  };
+  // private _handleFocus = () => {
+  //   this._isPageActive = true;
+  // };
 
   showMessage(data: {
     message: string;
@@ -112,8 +112,8 @@ export class MessageQueue {
     );
     document.removeEventListener('freeze', this._handleFreeze);
     document.removeEventListener('resume', this._handleResume);
-    window.removeEventListener('blur', this._handleBlur);
-    window.removeEventListener('focus', this._handleFocus);
+    // window.removeEventListener('blur', this._handleBlur);
+    // window.removeEventListener('focus', this._handleFocus);
     window.removeEventListener('beforeunload', this._cleanupListeners);
   };
 

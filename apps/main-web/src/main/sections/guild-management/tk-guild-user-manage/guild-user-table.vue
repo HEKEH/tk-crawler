@@ -406,7 +406,7 @@ onKeepAliveActivated(refresh);
       </ElTableColumn>
       <ElTableColumn
         prop="error_at"
-        label="账号失效时间"
+        label="账号过期时间"
         :min-width="isWeb ? 205 : 170"
         sortable="custom"
       >

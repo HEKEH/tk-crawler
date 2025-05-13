@@ -77,12 +77,13 @@ export async function startLiveAdminAccount(
 
   assert(user, '用户不存在');
 
-  if (VALID_GUILD_USER_STATUS_LIST.includes(user.status)) {
-    throw new BusinessError('用户已启动');
-  }
-
   if (!user.organization.areas.some(item => item.area === area)) {
     throw new BusinessError('当前机构不支持当前账号的分区');
+  }
+
+  if (VALID_GUILD_USER_STATUS_LIST.includes(user.status)) {
+    return;
+    // throw new BusinessError('用户已启动');
   }
 
   const updateData = {

@@ -242,7 +242,7 @@ export class GuildUserModel {
       await this._recordQueryByGuildUserCount();
     } catch (e) {
       logger.error(
-        `[guild-user] check anchors error: ${this.id} ${this._username}`,
+        `[guild-user] check anchors error: user_id: ${this.id} username: ${this._username}`,
         e,
       );
       // 系统错误直接退出

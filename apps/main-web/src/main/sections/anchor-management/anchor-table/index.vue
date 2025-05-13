@@ -3,6 +3,7 @@ import type {
   DisplayedAnchorItem,
   GetAnchorListOrderBy,
 } from '@tk-crawler/biz-shared';
+import type { CustomColumnConfig } from './anchor-table-columns';
 import {
   ColumnSettingIcon,
   onKeepAliveActivated,
@@ -16,7 +17,6 @@ import { computed, ref } from 'vue';
 import config from '../../../config';
 import { useGetAnchorList } from '../../../hooks';
 import { localStorageStore, useGlobalStore } from '../../../utils';
-import type { CustomColumnConfig } from './anchor-table-columns';
 import useAnchorTableColumns from './anchor-table-columns';
 import ExportButton from './export-button/index.vue';
 import {

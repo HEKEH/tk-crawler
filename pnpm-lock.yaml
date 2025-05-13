@@ -686,6 +686,12 @@ importers:
         specifier: ^3.0.2
         version: 3.0.2
 
+  packages/electron-biz-shared:
+    dependencies:
+      electron:
+        specifier: ^35.2.1
+        version: 35.2.1
+
   packages/electron-utils:
     dependencies:
       electron:

@@ -1,0 +1,13 @@
+{
+  "name": "@tk-crawler/electron-biz-shared",
+  "version": "0.0.1",
+  "private": true,
+  "files": [],
+  "scripts": {
+    "preinstall": "npx only-allow pnpm"
+  },
+  "peerDependencies": {
+    "electron": "^35.2.1"
+  },
+  "devDependencies": {}
+}

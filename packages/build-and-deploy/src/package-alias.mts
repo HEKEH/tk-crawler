@@ -9,6 +9,10 @@ export function getCommonPackageAlias(isProduction: boolean) {
       __dirname,
       '../../electron-utils/src',
     ),
+    '@tk-crawler/electron-biz-shared': resolve(
+      __dirname,
+      '../../electron-biz-shared/src',
+    ),
     '@tk-crawler/tk-requests': resolve(__dirname, '../../tk-requests/src'),
     '@tk-crawler/core': resolve(__dirname, '../../core/src'),
     '@tk-crawler/styles': resolve(__dirname, '../../styles'),

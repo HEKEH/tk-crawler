@@ -26,6 +26,7 @@
     "packages/main-client-shared/**/*",
     "packages/shared/**/*",
     "packages/electron-utils/src/main/**/*",
+    "packages/electron-biz-shared/src/main/**/*",
     "packages/biz-shared/**/*",
     "packages/tk-requests/**/*",
     "packages/server-shared/**/*",

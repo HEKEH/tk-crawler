@@ -15,6 +15,8 @@ export interface TKGuildUser {
   // is_cookie_valid: boolean | null;
   created_at: Date | string;
   updated_at: Date | string;
+  started_at: Date | string | null;
+  error_at: Date | string | null;
   organization?: OrganizationItem;
   area: Area | null;
   faction_id: number | null;

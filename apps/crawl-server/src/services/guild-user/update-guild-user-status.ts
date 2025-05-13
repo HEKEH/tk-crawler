@@ -27,7 +27,11 @@ export async function updateGuildUserStatus(data: {
           where: {
             id: BigInt(id),
           },
-          data: { status: TKGuildUserStatus.ERROR, warning_count: 0 },
+          data: {
+            status: TKGuildUserStatus.ERROR,
+            warning_count: 0,
+            error_at: new Date(),
+          },
         });
         return TKGuildUserStatus.ERROR;
       }
@@ -48,6 +52,15 @@ export async function updateGuildUserStatus(data: {
       });
       return TKGuildUserStatus.WARNING;
     });
+  }
+  if (status === TKGuildUserStatus.COOKIE_EXPIRED) {
+    await mysqlClient.prismaClient.liveAdminUser.update({
+      where: {
+        id: BigInt(id),
+      },
+      data: { status, warning_count: 0, error_at: new Date() },
+    });
+    return status;
   }
   await mysqlClient.prismaClient.liveAdminUser.update({
     where: {

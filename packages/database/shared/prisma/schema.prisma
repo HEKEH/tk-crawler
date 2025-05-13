@@ -64,6 +64,8 @@ model LiveAdminUser {
   max_query_per_day   Int                 @default(280) @db.UnsignedInt
   cookie              String?             @db.Text
   is_cookie_valid     Boolean?
+  started_at          DateTime?           @db.DateTime(3)
+  error_at            DateTime?           @db.DateTime(3)
   created_at          DateTime            @default(now()) @db.DateTime(3)
   updated_at          DateTime            @updatedAt @db.DateTime(3)
   faction_id          Int?                @db.UnsignedInt

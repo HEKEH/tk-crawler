@@ -3,7 +3,11 @@ import type { SystemCrawlStatisticsResponseData } from '@tk-crawler/biz-shared';
 import { InfoFilled } from '@element-plus/icons-vue';
 import { useQuery } from '@tanstack/vue-query';
 import { formatTime, RESPONSE_CODE } from '@tk-crawler/shared';
-import { useIsWebSize } from '@tk-crawler/view-shared';
+import {
+  useIsComponentActive,
+  useIsWebSize,
+  useIsWindowActive,
+} from '@tk-crawler/view-shared';
 import { ElButton, ElIcon, ElTooltip } from 'element-plus';
 import { computed, onBeforeUnmount, ref } from 'vue';
 import { getCrawlStatistics } from '../../../../requests/statistics';
@@ -20,6 +24,10 @@ const forceRefresh = ref(false);
 
 const globalStore = useGlobalStore();
 const token = computed(() => globalStore.token);
+
+const isWindowActive = useIsWindowActive();
+
+const isComponentActive = useIsComponentActive();
 
 const { data, isFetching, isError, error, refetch } = useQuery<
   SystemCrawlStatisticsResponseData | undefined
@@ -49,6 +57,9 @@ onBeforeUnmount(() => {
 });
 
 function handleRefresh() {
+  if (!isWindowActive.value || !isComponentActive.value) {
+    return;
+  }
   forceRefresh.value = true;
   refetch();
 }

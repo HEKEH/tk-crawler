@@ -125,10 +125,10 @@ const { data, isFetching, refetch } = useQuery<
   placeholderData: previousData => previousData,
 });
 
-const refresh = () => {
+function refresh() {
   refetch();
   globalStore.guildAccountsManage.checkIsAnyAccountError();
-};
+}
 
 // 处理排序变化
 function handleSortChange({
@@ -393,6 +393,28 @@ onKeepAliveActivated(refresh);
         </template>
       </ElTableColumn>
       <ElTableColumn
+        prop="started_at"
+        label="启动查询时间"
+        :min-width="isWeb ? 205 : 160"
+        sortable="custom"
+      >
+        <template #default="scope: ScopeType">
+          {{
+            scope.row.started_at ? formatDateTime(scope.row.started_at) : '-'
+          }}
+        </template>
+      </ElTableColumn>
+      <ElTableColumn
+        prop="error_at"
+        label="账号过期时间"
+        :min-width="isWeb ? 205 : 160"
+        sortable="custom"
+      >
+        <template #default="scope: ScopeType">
+          {{ scope.row.error_at ? formatDateTime(scope.row.error_at) : '-' }}
+        </template>
+      </ElTableColumn>
+      <ElTableColumn
         prop="max_query_per_day"
         label="每天最大查询次数"
         :min-width="isWeb ? 160 : 140"
@@ -427,7 +449,7 @@ onKeepAliveActivated(refresh);
       <ElTableColumn
         prop="updated_at"
         label="更新时间"
-        min-width="205"
+        :min-width="isWeb ? 205 : 160"
         sortable="custom"
       >
         <template #default="scope: ScopeType">

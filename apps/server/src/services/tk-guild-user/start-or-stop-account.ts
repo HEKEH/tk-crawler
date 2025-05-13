@@ -10,6 +10,7 @@ import {
   VALID_GUILD_USER_STATUS_LIST,
 } from '@tk-crawler/biz-shared';
 import { mysqlClient, redisMessageBus } from '@tk-crawler/database';
+import { omit } from 'lodash';
 import { BusinessError } from '../../utils';
 
 // Update TK Guild User Cookie
@@ -89,6 +90,8 @@ export async function startLiveAdminAccount(
     cookie,
     faction_id,
     area,
+    started_at: new Date(),
+    error_at: null,
     warning_count: 0,
   };
   await mysqlClient.prismaClient.liveAdminUser.update({
@@ -102,7 +105,7 @@ export async function startLiveAdminAccount(
     data: {
       id: user_id,
       org_id,
-      ...updateData,
+      ...omit(updateData, 'started_at', 'error_at'),
     },
   };
   redisMessageBus.publish(
@@ -136,6 +139,8 @@ export async function stopLiveAdminAccount(
   const updateData = {
     status: TKGuildUserStatus.STOPPED,
     warning_count: 0,
+    started_at: null,
+    error_at: null,
   };
 
   await mysqlClient.prismaClient.liveAdminUser.update({
@@ -149,7 +154,7 @@ export async function stopLiveAdminAccount(
     data: {
       id: user_id,
       org_id,
-      ...updateData,
+      ...omit(updateData, 'started_at', 'error_at'),
     },
   };
   redisMessageBus.publish(

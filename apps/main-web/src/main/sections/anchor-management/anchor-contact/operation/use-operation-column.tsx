@@ -54,7 +54,7 @@ export function useOperationColumn(props: {
     try {
       await openScheme(scheme);
     } catch {
-      ElMessage.error('打开链接失败');
+      ElMessage.error('打开TK失败，请确保手机已安装TK');
       return false;
     }
     return true;

@@ -13,7 +13,11 @@ import {
   MAIN_APP_PUBLISH_URL,
 } from '@tk-crawler/main-client-shared';
 import { RESPONSE_CODE } from '@tk-crawler/shared';
-import { getPlatform, isDesktopPlatform } from '@tk-crawler/view-shared';
+import {
+  getPlatform,
+  isDesktopPlatform,
+  openScheme,
+} from '@tk-crawler/view-shared';
 import {
   ElButton,
   ElLink,
@@ -39,7 +43,7 @@ interface ButtonConfig {
 }
 
 const emit = defineEmits<{
-  (e: 'finish-operation'): void;
+  (e: 'finishOperation'): void;
 }>();
 
 const globalStore = useGlobalStore();
@@ -132,8 +136,15 @@ async function onStart(item: TKGuildUserRow) {
         type: 'warning',
         confirmButtonText: '尝试打开客户端',
       });
-      window.open(`${MAIN_APP_ID}://`);
-    } catch {}
+    } catch {
+      return;
+    }
+    try {
+      await openScheme(`${MAIN_APP_ID}://`);
+    } catch {
+      ElMessage.error('打开客户端失败，请手动打开');
+      return;
+    }
     return;
   }
   if (!globalStore.userProfile.hasMembership) {
@@ -162,11 +173,11 @@ async function onStop(item: TKGuildUserRow) {
   if (result.status_code !== RESPONSE_CODE.SUCCESS) {
     return;
   }
-  emit('finish-operation');
+  emit('finishOperation');
   ElMessage.success('成功停止');
 }
 
-const getButtonConfig = (status: TKGuildUserStatus): ButtonConfig[] => {
+function getButtonConfig(status: TKGuildUserStatus): ButtonConfig[] {
   const startConfig = getStartButtonTextAndType(status);
   const stopConfig = getStopButtonTextAndType(status);
 
@@ -186,7 +197,7 @@ const getButtonConfig = (status: TKGuildUserStatus): ButtonConfig[] => {
   ];
 
   return configs.filter((config): config is ButtonConfig => Boolean(config));
-};
+}
 </script>
 
 <template>

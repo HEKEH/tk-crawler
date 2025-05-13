@@ -1,23 +1,23 @@
 <script setup lang="ts">
-import { ElLink } from 'element-plus';
+import { ElLink, ElIcon } from 'element-plus';
 import { Lock } from '@element-plus/icons-vue';
 
 defineOptions({
   name: 'NoMembershipView',
 });
 
-function handleClick() {
-  // TODO: 跳转开通会员页面
-}
+// function handleClick() {
+//   // TODO: 跳转开通会员页面
+// }
 </script>
 
 <template>
   <div class="no-membership-view">
-    <el-icon class="lock-icon"><Lock /></el-icon>
+    <ElIcon class="lock-icon"><Lock /></ElIcon>
     <span class="text">开通会员即可查看完整内容</span>
-    <ElLink class="membership-link" type="primary" @click="handleClick">
+    <!-- <ElLink class="membership-link" type="primary" @click="handleClick">
       立即开通
-    </ElLink>
+    </ElLink> -->
   </div>
 </template>
 

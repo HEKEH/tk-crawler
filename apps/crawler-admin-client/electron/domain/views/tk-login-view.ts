@@ -192,16 +192,15 @@ export class TKLoginView implements IView {
   private async _openTKPageView() {
     this._openTurnId++;
     const currentOpenTurnId = this._openTurnId;
-    this._tkPageView = new WebContentsView();
     this._setStatus(LOGIN_TIKTOK_STATUS.loading);
     try {
-      this._tkPageView.webContents.setUserAgent(
-        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
-      );
-
       const maxRetries = 3; // 最多重试3次
       let retryCount = 0;
       while (retryCount < maxRetries) {
+        this._tkPageView = new WebContentsView();
+        this._tkPageView.webContents.setUserAgent(
+          'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+        );
         try {
           await this._tkPageView.webContents.loadURL(TK_LOGIN_PAGE_URL);
           break;
@@ -209,7 +208,7 @@ export class TKLoginView implements IView {
           logger.error('Error loading tiktok login page URL:', error, {
             retryCount,
           });
-          this._tkPageView.webContents.close();
+          this._closeView(this._tkPageView!);
           retryCount++;
           if (retryCount >= maxRetries) {
             throw error;
@@ -227,7 +226,7 @@ export class TKLoginView implements IView {
           });
         }
       }
-      this._parentWindow.contentView.addChildView(this._tkPageView);
+      this._parentWindow.contentView.addChildView(this._tkPageView!);
       this._setStatus(LOGIN_TIKTOK_STATUS.opened);
     } catch (error) {
       if ((error as any)?.code === 'ERR_CONNECTION_TIMED_OUT') {
@@ -242,8 +241,10 @@ export class TKLoginView implements IView {
 
   private _closeView(view: WebContentsView) {
     const webContents = view.webContents;
-    webContents.close();
-    this._parentWindow.contentView.removeChildView(view);
+    if (webContents) {
+      webContents.close();
+      this._parentWindow.contentView.removeChildView(view);
+    }
   }
 
   private _closeTKPageView() {

@@ -187,8 +187,10 @@ export class CollectPageView implements IView {
 
   private _closeView(view: WebContentsView) {
     const webContents = view.webContents;
-    webContents.close();
-    this._parentWindow.contentView.removeChildView(view);
+    if (webContents) {
+      webContents.close();
+      this._parentWindow.contentView.removeChildView(view);
+    }
   }
 
   private _closeThirdPartyPageView() {

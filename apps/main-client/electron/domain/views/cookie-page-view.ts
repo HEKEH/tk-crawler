@@ -198,41 +198,37 @@ export class CookiePageView implements IView {
     logger.info('[cookie-page-view] Unknown running status');
   }
 
-  private _loadThirdPartyURL(view: WebContentsView, url: string) {
-    return view.webContents.loadURL(url);
-  }
-
-  private async _openThirdPartyPageView(): Promise<'failed' | undefined> {
+  private async _openThirdPartyPageView(): Promise<void> {
     this._openTurnId++;
     const currentOpenTurnId = this._openTurnId;
     if (!this._guildUser) {
       throw new Error('Guild user is not set');
     }
-    this._thirdPartyView = new WebContentsView({
-      webPreferences: {
-        partition: `persist:tk-live-admin-user-${this._guildUser.username}`,
-      },
-    });
     this._setStatus(GUILD_COOKIE_PAGE_HELP_STATUS.loading);
     try {
-      this._thirdPartyView.webContents.setUserAgent(
-        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
-      );
       // 加载目标网页
       const maxRetries = 3;
       let retryCount = 0;
       while (retryCount < maxRetries) {
+        logger.info('Loading TIKTOK_LIVE_ADMIN_URL URL:', {
+          retryCount,
+        });
         try {
-          await this._loadThirdPartyURL(
-            this._thirdPartyView,
-            TIKTOK_LIVE_ADMIN_URL,
+          this._thirdPartyView = new WebContentsView({
+            webPreferences: {
+              partition: `persist:tk-live-admin-user-${this._guildUser.username}`,
+            },
+          });
+          this._thirdPartyView.webContents.setUserAgent(
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
           );
+          await this._thirdPartyView.webContents.loadURL(TIKTOK_LIVE_ADMIN_URL);
           break;
         } catch (error) {
           logger.error('Failed to load TIKTOK_LIVE_ADMIN_URL URL:', error, {
             retryCount,
           });
-          this._thirdPartyView.webContents.close();
+          this._closeView(this._thirdPartyView!);
           retryCount++;
           if (retryCount >= maxRetries) {
             throw error;
@@ -251,7 +247,7 @@ export class CookiePageView implements IView {
           });
         }
       }
-      this._parentWindow.contentView.addChildView(this._thirdPartyView);
+      this._parentWindow.contentView.addChildView(this._thirdPartyView!);
       this._registerDevToolsShortcut();
       this._setStatus(GUILD_COOKIE_PAGE_HELP_STATUS.opened);
       this._catchBatchCheckAnchorRequestCookies();
@@ -283,17 +279,18 @@ export class CookiePageView implements IView {
         logger.error('Open cookie page error:', error);
         this._setStatus(GUILD_COOKIE_PAGE_HELP_STATUS.fail);
       }
-      return 'failed';
     }
   }
 
   private _closeView(view: WebContentsView) {
     const webContents = view.webContents;
-    webContents.debugger.detach();
-    webContents.removeAllListeners();
-    webContents.close();
-    view.removeAllListeners();
-    this._parentWindow.contentView.removeChildView(view);
+    if (webContents && !webContents.isDestroyed()) {
+      webContents.debugger.detach();
+      webContents.removeAllListeners();
+      webContents.close();
+      view.removeAllListeners();
+      this._parentWindow.contentView.removeChildView(view);
+    }
   }
 
   private _closeThirdPartyPageView() {
@@ -489,13 +486,21 @@ export class CookiePageView implements IView {
           }
           workspaceButton.click();
           await sleep(1000);
-          const scoutCreatorsTabBar = document.querySelector('.semi-tabs[data-id="TodoTaskStageCard2"] #semiTab1');
+          let scoutCreatorsTabBar = document.querySelector('.semi-tabs[data-id="TodoTaskStageCard2"] #semiTab1');
+          if (!scoutCreatorsTabBar) {
+            await sleep(1000);
+            scoutCreatorsTabBar = document.querySelector('.semi-tabs[data-id="TodoTaskStageCard2"] #semiTab2');
+          }
           if (!scoutCreatorsTabBar) {
             return { success: false, error: 'scoutCreatorsTabBar not found' };
           }
           scoutCreatorsTabBar.click();
           await sleep(500);
-          const inviteCreatorsButton = document.querySelector('button[data-id="agent-workplace-add-host"]');
+          let inviteCreatorsButton = document.querySelector('button[data-id="agent-workplace-add-host"]');
+          if (!inviteCreatorsButton) {
+            await sleep(1000);
+            inviteCreatorsButton = document.querySelector('button[data-id="agent-workplace-add-host"]');
+          }
           if (!inviteCreatorsButton) {
             return { success: false, error: 'inviteCreatorsButton not found' };
           }
@@ -629,11 +634,12 @@ export class CookiePageView implements IView {
         this._removeResizeListener = null;
       };
       await this._openHelpView();
-      const result = await this._openThirdPartyPageView();
-      if (result === 'failed') {
-        // 如果失败了，重试一次
-        await this._reopenThirdPartyPageView();
-      }
+      await this._openThirdPartyPageView();
+      // const result = await this._openThirdPartyPageView();
+      // if (result === 'failed') {
+      //   // 如果失败了，重试一次
+      //   await this._reopenThirdPartyPageView();
+      // }
     } catch (error) {
       console.error('Error loading URL:', error);
     }

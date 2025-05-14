@@ -36,6 +36,10 @@ export default defineConfig(({ mode }) => {
       createHtmlPlugin({
         pages: [
           {
+            filename: 'guild-cookie-page-help.html',
+            template: 'guild-cookie-page-help.html',
+          },
+          {
             filename: 'index.html',
             template: 'index.html',
             injectOptions: {
@@ -68,6 +72,10 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         external,
         input: {
+          'guild-cookie-page-help': path.resolve(
+            __dirname,
+            'guild-cookie-page-help.html',
+          ),
           main: path.resolve(__dirname, 'index.html'),
         },
         // plugins: [

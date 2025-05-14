@@ -76,10 +76,6 @@ export default defineConfig(({ mode }) => {
               },
             },
           },
-          {
-            filename: 'guild-cookie-page-help.html',
-            template: 'guild-cookie-page-help.html',
-          },
         ],
       }),
       (electron as any)(electronOptions),
@@ -100,10 +96,6 @@ export default defineConfig(({ mode }) => {
         external,
         input: {
           main: path.resolve(__dirname, 'index.html'),
-          'guild-cookie-page-help': path.resolve(
-            __dirname,
-            'guild-cookie-page-help.html',
-          ),
         },
       },
       terserOptions: CommonTerserOptions,

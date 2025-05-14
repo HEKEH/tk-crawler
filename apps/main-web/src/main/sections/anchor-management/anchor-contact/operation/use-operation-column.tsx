@@ -29,41 +29,53 @@ export function useOperationColumn(props: {
   const globalStore = useGlobalStore();
 
   async function gotoTKPage(anchor: DisplayedAnchorItem): Promise<boolean> {
-    if (!isMobilePlatform()) {
-      try {
-        await ElMessageBox.alert('该操作需要在手机端进行！', {
-          type: 'warning',
-        });
-      } catch {}
-      return false;
-    }
-    if (!hasNotifiedTKInstall.value) {
-      try {
-        await ElMessageBox.confirm('请确保手机已安装TK，再进行下一步操作', {
-          confirmButtonText: '继续',
-          cancelButtonText: '取消',
-          type: 'warning',
-        });
-      } catch {
+    try {
+      if (!isMobilePlatform()) {
+        try {
+          await ElMessageBox.alert('该操作需要在手机端进行！', {
+            type: 'warning',
+          });
+        } catch {}
         return false;
       }
-      hasNotifiedTKInstall.value = true;
-      localStorageStore.setItem('has_notified_TK_install', '1');
-    }
-    const scheme = getTiktokAnchorLink(anchor, true);
-    try {
-      await openScheme(scheme);
-    } catch {
-      ElMessage.error('打开TK失败，请确保手机已安装TK');
+      if (!hasNotifiedTKInstall.value) {
+        try {
+          await ElMessageBox.confirm('请确保手机已安装TK，再进行下一步操作', {
+            confirmButtonText: '继续',
+            cancelButtonText: '取消',
+            type: 'warning',
+          });
+        } catch {
+          return false;
+        }
+        hasNotifiedTKInstall.value = true;
+        localStorageStore.setItem('has_notified_TK_install', '1');
+      }
+      const scheme = getTiktokAnchorLink(anchor, true);
+      try {
+        await openScheme(scheme);
+      } catch (e) {
+        ElMessage.error((e as Error)?.message);
+        // ElMessage.error('打开TK失败，请确保手机已安装TK');
+        return false;
+      }
+      return true;
+    } catch (e) {
+      ElMessage.error((e as Error)?.message);
+      console.error(e);
       return false;
     }
-    return true;
   }
 
   async function onContactAnchor(anchor: DisplayedAnchorItem) {
-    const isSuccess = await gotoTKPage(anchor);
-    if (isSuccess) {
-      await handleContactAnchor([anchor]);
+    try {
+      const isSuccess = await gotoTKPage(anchor);
+      if (isSuccess) {
+        await handleContactAnchor([anchor]);
+      }
+    } catch (e) {
+      ElMessage.error((e as Error)?.message);
+      console.error(e);
     }
   }
 

@@ -8,7 +8,7 @@ export function getMobileDeviceType(): MobileDeviceType {
     return 'Android';
   }
 
-  if (/iphone|ipad|ipod/.test(userAgent)) {
+  if (/iphone|ipad|ipod|safari/.test(userAgent)) {
     return 'iOS';
   }
 

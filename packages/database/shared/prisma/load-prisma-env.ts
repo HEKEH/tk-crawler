@@ -9,9 +9,11 @@ export function loadPrismaEnv(projectRootPath: string) {
 
     if (MYSQL_SSL_CA) {
       MYSQL_SSL_CA = path.join(projectRootPath, MYSQL_SSL_CA);
+      process.env.COMPLETE_MYSQL_SSL_CA = MYSQL_SSL_CA;
     }
     if (MYSQL_CLIENT_IDENTITY) {
       MYSQL_CLIENT_IDENTITY = path.join(projectRootPath, MYSQL_CLIENT_IDENTITY);
+      process.env.COMPLETE_MYSQL_CLIENT_IDENTITY = MYSQL_CLIENT_IDENTITY;
     }
     if (
       (MYSQL_SSL_CA && !existsSync(MYSQL_SSL_CA)) ||

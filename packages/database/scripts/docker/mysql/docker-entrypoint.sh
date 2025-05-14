@@ -46,6 +46,8 @@ mysql --defaults-file=/tmp/mysql.cnf <<-EOSQL
     -- 授予用户权限
     GRANT ALL PRIVILEGES ON ${TK_CRAWLER_DATABASE}.* TO '${MYSQL_USER}'@'%';
     GRANT ALL PRIVILEGES ON ${TK_CRAWLER_DATABASE_SHADOW}.* TO '${MYSQL_USER}'@'%';
+    -- 授予复制相关权限
+    GRANT REPLICATION CLIENT, REPLICATION SLAVE, SUPER ON *.* TO '${MYSQL_USER}'@'%';
     FLUSH PRIVILEGES;
 EOSQL
 

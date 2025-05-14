@@ -10,10 +10,13 @@ export function transformAnchorListOrderBy(
   if (!orderBy || Object.keys(orderBy).length === 0) {
     // 默认时间倒序
     return {
-      anchor: {
-        updated_at: 'desc',
-      },
+      checked_at: 'desc',
     };
+    // return {
+    //   anchor: {
+    //     updated_at: 'desc',
+    //   },
+    // };
   }
   const result: AnchorInviteCheckOrderByInput = {};
   if ('crawled_at' in orderBy && orderBy.crawled_at) {

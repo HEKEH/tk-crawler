@@ -31,7 +31,7 @@ export async function backupDatabase(options?: BackupOptions) {
   const {
     strategy = 'full',
     tables = 'all',
-    outputDir = './backups-mysql-files',
+    outputDir = path.join(__dirname, 'backups-mysql-files'),
     compress = true,
     onlyScript = false,
   } = options || {};
@@ -171,33 +171,84 @@ export async function backupDatabase(options?: BackupOptions) {
 
     console.log(backupCommand);
 
-    if (onlyScript) {
-      return;
-    }
-
     // Execute backup command
-    await execAsync(backupCommand);
+    if (onlyScript) {
+      // Generate shell script
+      const scriptPath = path.join(
+        outputDir,
+        `backup-${strategy}-${timestamp}.sh`,
+      );
+      const scriptContent = `#!/bin/bash
+set -e
 
-    // Log backup metadata
-    const backupInfo: BackupMetadata = {
-      type: strategy,
-      timestamp,
-      tables,
-      path: `${backupPath}${compress ? '.gz' : ''}`,
-      size: fs.statSync(`${backupPath}${compress ? '.gz' : ''}`).size,
-      logFile: strategy === 'incremental' ? logFile : undefined,
-      position: strategy === 'incremental' ? position : undefined,
-    };
+# Create output directory if it doesn't exist
+mkdir -p "${outputDir}"
 
-    // Save backup metadata
-    let metadata: BackupMetadata[] = [];
-    if (fs.existsSync(metadataPath)) {
-      metadata = JSON.parse(fs.readFileSync(metadataPath, 'utf-8'));
+# Backup command with MySQL 8.0+ authentication
+${backupCommand.replace('mysqldump', 'mysqldump --protocol=TCP --ssl-mode=PREFERRED --connect-timeout=60')}
+
+# Create backup info JSON
+cat > ${path.join(outputDir, `backup-info-${timestamp}.json`)} << EOF
+${JSON.stringify(
+  {
+    type: strategy,
+    timestamp,
+    tables,
+    path: `${backupPath}${compress ? '.gz' : ''}`,
+    size: 0, // Will be updated after backup
+    logFile: strategy === 'incremental' ? logFile : undefined,
+    position: strategy === 'incremental' ? position : undefined,
+  },
+  null,
+  2,
+)}
+EOF
+
+# Update metadata file
+if [ -f "${metadataPath}" ]; then
+  # If metadata file exists, append new backup info
+  jq -s '.[0] + [.[1]]' "${metadataPath}" "${path.join(outputDir, `backup-info-${timestamp}.json`)}" > "${metadataPath}.tmp"
+  mv "${metadataPath}.tmp" "${metadataPath}"
+else
+  # If metadata file doesn't exist, create it with first backup info
+  cp "${path.join(outputDir, `backup-info-${timestamp}.json`)}" "${metadataPath}"
+fi
+
+# Update backup size in metadata
+if [ -f "${backupPath}${compress ? '.gz' : ''}" ]; then
+  size=\$(stat -f%z "${backupPath}${compress ? '.gz' : ''}")
+  jq --arg size "\$size" '.[-1].size = ($size | tonumber)' "${metadataPath}" > "${metadataPath}.tmp"
+  mv "${metadataPath}.tmp" "${metadataPath}"
+fi
+
+# Clean up temporary files
+rm "${path.join(outputDir, `backup-info-${timestamp}.json`)}"
+`;
+
+      fs.writeFileSync(scriptPath, scriptContent);
+      fs.chmodSync(scriptPath, '755'); // Make script executable
+      console.log(`Backup script generated at: ${scriptPath}`);
+    } else {
+      await execAsync(backupCommand);
+      // Log backup metadata
+      const backupInfo: BackupMetadata = {
+        type: strategy,
+        timestamp,
+        tables,
+        path: `${backupPath}${compress ? '.gz' : ''}`,
+        size: fs.statSync(`${backupPath}${compress ? '.gz' : ''}`).size,
+        logFile: strategy === 'incremental' ? logFile : undefined,
+        position: strategy === 'incremental' ? position : undefined,
+      };
+
+      // Save backup metadata
+      let metadata: BackupMetadata[] = [];
+      if (fs.existsSync(metadataPath)) {
+        metadata = JSON.parse(fs.readFileSync(metadataPath, 'utf-8'));
+      }
+      metadata.push(backupInfo);
+      fs.writeFileSync(metadataPath, JSON.stringify(metadata, null, 2));
     }
-    metadata.push(backupInfo);
-    fs.writeFileSync(metadataPath, JSON.stringify(metadata, null, 2));
-
-    return backupInfo;
   } catch (error) {
     console.error('Backup failed:', error);
     throw error;

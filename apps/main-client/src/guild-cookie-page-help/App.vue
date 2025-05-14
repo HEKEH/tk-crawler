@@ -2,7 +2,7 @@
 import {
   GUILD_COOKIE_PAGE_HELP_EVENTS,
   GUILD_COOKIE_PAGE_HELP_STATUS,
-} from '@tk-crawler/main-client-shared';
+} from '@tk-crawler/biz-shared';
 import { ElButton } from 'element-plus';
 import { onBeforeUnmount, ref } from 'vue';
 import MainView from './sections/main-view.vue';

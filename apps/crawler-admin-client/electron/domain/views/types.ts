@@ -1,5 +1,1 @@
-export interface IView {
-  show: () => Promise<void>;
-  close: () => void;
-  destroy: () => void;
-}
+export { IView } from '@tk-crawler/electron-biz-shared/main';

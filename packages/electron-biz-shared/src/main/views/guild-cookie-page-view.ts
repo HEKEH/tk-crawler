@@ -1,30 +1,35 @@
-import type { TKGuildUser } from '@tk-crawler/biz-shared';
+import type {
+  StartTKLiveAdminAccountRequest,
+  StartTKLiveAdminAccountResponse,
+  TKGuildUser,
+} from '@tk-crawler/biz-shared';
+import type { Logger } from '@tk-crawler/shared';
 import type { BaseWindow } from 'electron';
-import type { IView } from './types';
+import type { IView } from '../types';
 import path from 'node:path';
-import { TIKTOK_LIVE_ADMIN_URL } from '@tk-crawler/biz-shared';
+import {
+  GUILD_COOKIE_PAGE_HELP_EVENTS,
+  GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS,
+  GUILD_COOKIE_PAGE_HELP_STATUS,
+  GUILD_COOKIE_PAGE_HELP_WIDTH,
+  TIKTOK_LIVE_ADMIN_URL,
+} from '@tk-crawler/biz-shared';
 import {
   catchRequestCookies,
   findElement,
   initProxy,
   InputEventFunctionStr,
 } from '@tk-crawler/electron-utils/main';
-import {
-  GUILD_COOKIE_PAGE_HELP_EVENTS,
-  GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS,
-  GUILD_COOKIE_PAGE_HELP_STATUS,
-  GUILD_COOKIE_PAGE_HELP_WIDTH,
-} from '@tk-crawler/main-client-shared';
 import { RESPONSE_CODE, sleep } from '@tk-crawler/shared';
 import { globalShortcut, ipcMain, WebContentsView } from 'electron';
-import { isDevelopment, RENDERER_DIST, VITE_DEV_SERVER_URL } from '../../env';
-import { logger } from '../../infra/logger';
-import { startTKGuildUserAccount } from '../../requests/tk-guild-user';
-import { getToken } from '../services/token';
 
-const DEMO_ANCHOR = 'arxigosvstiktok';
+const DEMO_ANCHOR = 'amyna.bou.sonko';
 
-export class CookiePageView implements IView {
+type StartTKGuildUserAccount = (
+  params: Omit<StartTKLiveAdminAccountRequest, 'faction_id' | 'area'>,
+) => Promise<StartTKLiveAdminAccountResponse>;
+
+export class GuildCookiePageView implements IView {
   private _parentWindow: BaseWindow;
 
   private _thirdPartyView: WebContentsView | null = null;
@@ -49,13 +54,32 @@ export class CookiePageView implements IView {
 
   private _activateSuccessCheckInterval: NodeJS.Timeout | null = null;
 
+  private _logger: Logger;
+
+  private _isDevelopment: boolean;
+
+  private _helpPageUrl: string;
+
   private _removeResizeListener: (() => void) | null = null;
 
   private _backToMainView: () => void;
 
-  constructor(props: { parentWindow: BaseWindow; backToMainView: () => void }) {
+  private _startTKGuildUserAccount: StartTKGuildUserAccount;
+
+  constructor(props: {
+    parentWindow: BaseWindow;
+    backToMainView: () => void;
+    logger: Logger;
+    isDevelopment: boolean;
+    helpPageUrl: string;
+    startTKGuildUserAccount: StartTKGuildUserAccount;
+  }) {
     this._parentWindow = props.parentWindow;
     this._backToMainView = props.backToMainView;
+    this._logger = props.logger;
+    this._isDevelopment = props.isDevelopment;
+    this._helpPageUrl = props.helpPageUrl;
+    this._startTKGuildUserAccount = props.startTKGuildUserAccount;
   }
 
   private _clearActivateSuccessInterval() {
@@ -73,7 +97,7 @@ export class CookiePageView implements IView {
       return;
     }
     this._activateSuccessCheckInterval = setInterval(async () => {
-      logger.info('[cookie-page-view] _setActivateSuccessInterval');
+      this._logger.info('[cookie-page-view] _setActivateSuccessInterval');
       if (this.isClosed) {
         this._clearActivateSuccessInterval();
         return;
@@ -130,21 +154,13 @@ export class CookiePageView implements IView {
         },
       });
       try {
-        if (VITE_DEV_SERVER_URL) {
-          await this._helpView.webContents.loadURL(
-            `${VITE_DEV_SERVER_URL}guild-cookie-page-help.html`,
-          );
-        } else {
-          await this._helpView.webContents.loadFile(
-            path.join(RENDERER_DIST, 'guild-cookie-page-help.html'),
-          );
-        }
+        await this._helpView.webContents.loadURL(this._helpPageUrl);
       } catch (error) {
-        logger.error('Failed to load URL:', error);
+        this._logger.error('Failed to load URL:', error);
         this._helpView.webContents.close();
         throw error;
       }
-      if (isDevelopment) {
+      if (this._isDevelopment) {
         if (this._helpView?.webContents) {
           this._helpView.webContents.openDevTools({
             mode: 'bottom',
@@ -165,7 +181,7 @@ export class CookiePageView implements IView {
       this._thirdPartyView,
       (cookies: string) => {
         this._cookies = cookies;
-        logger.info(
+        this._logger.info(
           '[cookie-page-view] catchBatchCheckAnchorRequestCookies:',
           cookies,
         );
@@ -195,7 +211,7 @@ export class CookiePageView implements IView {
       return;
     }
     this._runningStatus = GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS.unknown;
-    logger.info('[cookie-page-view] Unknown running status');
+    this._logger.info('[cookie-page-view] Unknown running status');
   }
 
   private async _openThirdPartyPageView(): Promise<void> {
@@ -210,7 +226,7 @@ export class CookiePageView implements IView {
       const maxRetries = 3;
       let retryCount = 0;
       while (retryCount < maxRetries) {
-        logger.info('Loading TIKTOK_LIVE_ADMIN_URL URL:', {
+        this._logger.info('Loading TIKTOK_LIVE_ADMIN_URL URL:', {
           retryCount,
         });
         try {
@@ -225,9 +241,13 @@ export class CookiePageView implements IView {
           await this._thirdPartyView.webContents.loadURL(TIKTOK_LIVE_ADMIN_URL);
           break;
         } catch (error) {
-          logger.error('Failed to load TIKTOK_LIVE_ADMIN_URL URL:', error, {
-            retryCount,
-          });
+          this._logger.error(
+            'Failed to load TIKTOK_LIVE_ADMIN_URL URL:',
+            error,
+            {
+              retryCount,
+            },
+          );
           this._closeView(this._thirdPartyView!);
           retryCount++;
           if (retryCount >= maxRetries) {
@@ -240,7 +260,7 @@ export class CookiePageView implements IView {
         // 已过时
         return;
       }
-      if (isDevelopment) {
+      if (this._isDevelopment) {
         if (this._thirdPartyView?.webContents) {
           this._thirdPartyView.webContents.openDevTools({
             mode: 'right',
@@ -273,10 +293,10 @@ export class CookiePageView implements IView {
       }
     } catch (error) {
       if ((error as any)?.code === 'ERR_CONNECTION_TIMED_OUT') {
-        logger.error('Open cookie page timeout:', error);
+        this._logger.error('Open cookie page timeout:', error);
         this._setStatus(GUILD_COOKIE_PAGE_HELP_STATUS.timeout);
       } else {
-        logger.error('Open cookie page error:', error);
+        this._logger.error('Open cookie page error:', error);
         this._setStatus(GUILD_COOKIE_PAGE_HELP_STATUS.fail);
       }
     }
@@ -342,7 +362,7 @@ export class CookiePageView implements IView {
     this._addEventHandler(
       GUILD_COOKIE_PAGE_HELP_EVENTS.RETRY_OPEN_PAGE,
       async () => {
-        await initProxy(logger);
+        await initProxy(this._logger);
         await this._reopenThirdPartyPageView();
       },
     );
@@ -433,7 +453,7 @@ export class CookiePageView implements IView {
         }
       })();
     `);
-    logger.info('[cookie-page-view] tryLogin:', operationResult);
+    this._logger.info('[cookie-page-view] tryLogin:', operationResult);
     if (!operationResult.success) {
       return;
     }
@@ -525,7 +545,10 @@ export class CookiePageView implements IView {
         }
       })();
     `);
-    logger.info('[cookie-page-view] handleLoginSuccess:', operationResult);
+    this._logger.info(
+      '[cookie-page-view] handleLoginSuccess:',
+      operationResult,
+    );
     if (!operationResult.success) {
       return;
     }
@@ -556,13 +579,13 @@ export class CookiePageView implements IView {
 
   private async _getCookies(): Promise<string> {
     if (!this._thirdPartyView) {
-      logger.error('[cookie-page-view] _getCookies: No third party view');
+      this._logger.error('[cookie-page-view] _getCookies: No third party view');
       return '';
     }
     if (this._cookies) {
       return this._cookies;
     } else {
-      logger.warn('[cookie-page-view] _getCookies: No cookies catch');
+      this._logger.warn('[cookie-page-view] _getCookies: No cookies catch');
     }
     const session = this._thirdPartyView.webContents.session;
     try {
@@ -581,22 +604,20 @@ export class CookiePageView implements IView {
     this._isActivating = true;
     try {
       const cookies = await this._getCookies();
-      logger.info('[cookie-page-view] finishActivate cookies:', cookies);
-      const token = getToken();
-      if (!token) {
-        logger.error('[cookie-page-view] finishActivate: Token is not found');
-        return;
-      }
-      await initProxy(logger); // 保险一点
-      const response = await startTKGuildUserAccount(
-        {
-          user_id: this._guildUser!.id,
-          cookie: cookies,
-        },
-        token,
-      );
+      this._logger.info('[cookie-page-view] finishActivate cookies:', cookies);
+      // if (!token) {
+      //   this._logger.error(
+      //     '[cookie-page-view] finishActivate: Token is not found',
+      //   );
+      //   return;
+      // }
+      await initProxy(this._logger); // 保险一点
+      const response = await this._startTKGuildUserAccount({
+        user_id: this._guildUser!.id,
+        cookie: cookies,
+      });
       if (response.status_code !== RESPONSE_CODE.SUCCESS) {
-        logger.error(
+        this._logger.error(
           '[cookie-page-view] startTKGuildUserAccount business error:',
           response,
         );
@@ -608,7 +629,10 @@ export class CookiePageView implements IView {
         this._backToMainView();
       }
     } catch (error) {
-      logger.error('[cookie-page-view] startTKGuildUserAccount error:', error);
+      this._logger.error(
+        '[cookie-page-view] startTKGuildUserAccount error:',
+        error,
+      );
       this._helpView?.webContents.send(
         GUILD_COOKIE_PAGE_HELP_EVENTS.REQUEST_ERROR,
         `保存失败: ${(error as any).message}`,

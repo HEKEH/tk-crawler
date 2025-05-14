@@ -1,13 +1,36 @@
-import type { TKGuildUser } from '@tk-crawler/biz-shared';
-import type { MessageCenter } from '@tk-crawler/shared';
+import type {
+  StartTKLiveAdminAccountRequest,
+  TKGuildUser,
+} from '@tk-crawler/biz-shared';
 import type { Subscription } from 'rxjs';
 import type { IView } from './types';
 import path from 'node:path';
 import process from 'node:process';
+import { GuildCookiePageView } from '@tk-crawler/electron-biz-shared/main';
 import { MAIN_APP_PRODUCT_NAME } from '@tk-crawler/main-client-shared';
+import { type MessageCenter, RESPONSE_CODE } from '@tk-crawler/shared';
 import { app, BaseWindow } from 'electron';
-import { CookiePageView } from './cookie-page-view';
+import config from '../../config';
+import { isDevelopment } from '../../env';
+import { logger } from '../../infra/logger';
+import { startTKGuildUserAccount } from '../../requests/tk-guild-user';
+import { getToken } from '../services/token';
+// import { CookiePageView } from './cookie-page-view';
 import { MainView } from './main-view';
+
+async function activateTKGuildUserAccount(
+  params: Omit<StartTKLiveAdminAccountRequest, 'faction_id' | 'area'>,
+) {
+  const token = getToken();
+  if (!token) {
+    logger.error('[cookie-page-view] finishActivate: Token is not found');
+    return {
+      status_code: RESPONSE_CODE.BIZ_ERROR,
+      message: 'Token is not found',
+    };
+  }
+  return startTKGuildUserAccount(params, token);
+}
 
 export class ViewsManager {
   private _baseWindow: BaseWindow | null = null;
@@ -16,7 +39,7 @@ export class ViewsManager {
 
   private _mainView: MainView | null = null;
 
-  private _cookiePageView: CookiePageView | null = null;
+  private _cookiePageView: GuildCookiePageView | null = null;
 
   private _messageCenter: MessageCenter;
 
@@ -50,11 +73,15 @@ export class ViewsManager {
       parentWindow: this._baseWindow,
       messageCenter: this._messageCenter,
     });
-    this._cookiePageView = new CookiePageView({
+    this._cookiePageView = new GuildCookiePageView({
       parentWindow: this._baseWindow,
       backToMainView: () => {
         this._toMainView();
       },
+      logger,
+      isDevelopment,
+      helpPageUrl: `${config.mainWebUrl}guild-cookie-page-help.html`,
+      startTKGuildUserAccount: activateTKGuildUserAccount,
     });
     this._baseWindow.on('close', this._onClose);
   }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { GUILD_COOKIE_PAGE_HELP_EVENTS } from '@tk-crawler/main-client-shared';
+import { GUILD_COOKIE_PAGE_HELP_EVENTS } from '@tk-crawler/biz-shared';
 import { ElButton, ElImage } from 'element-plus';
 
 defineOptions({

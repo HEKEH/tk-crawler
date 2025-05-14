@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { IpcRendererEvent } from 'electron';
 import { ArrowLeftBold } from '@element-plus/icons-vue';
-import { ElectronRenderListeners } from '@tk-crawler/electron-utils/render';
 import {
   GUILD_COOKIE_PAGE_HELP_EVENTS,
   GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS,
-} from '@tk-crawler/main-client-shared';
+} from '@tk-crawler/biz-shared';
+import { ElectronRenderListeners } from '@tk-crawler/electron-utils/render';
 import { MessageQueue } from '@tk-crawler/view-shared';
 import { ElButton, ElIcon } from 'element-plus';
 import { onBeforeUnmount, ref } from 'vue';

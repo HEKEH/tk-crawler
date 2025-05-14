@@ -14,6 +14,7 @@ interface BackupOptions {
   tables?: string[] | 'all';
   outputDir?: string;
   compress?: boolean;
+  onlyScript?: boolean;
 }
 
 interface BackupMetadata {
@@ -30,8 +31,9 @@ export async function backupDatabase(options?: BackupOptions) {
   const {
     strategy = 'full',
     tables = 'all',
-    outputDir = path.join(process.cwd(), 'backups-mysql'),
+    outputDir = './backups-mysql-files',
     compress = true,
+    onlyScript = false,
   } = options || {};
 
   // Create backup directory if it doesn't exist
@@ -168,6 +170,10 @@ export async function backupDatabase(options?: BackupOptions) {
     }
 
     console.log(backupCommand);
+
+    if (onlyScript) {
+      return;
+    }
 
     // Execute backup command
     await execAsync(backupCommand);

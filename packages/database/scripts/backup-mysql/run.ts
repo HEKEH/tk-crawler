@@ -6,6 +6,9 @@ async function main() {
   const args = process.argv.slice(2);
   const strategy =
     args.find(arg => arg.startsWith('--strategy='))?.split('=')[1] || 'full';
+  const onlyScript =
+    args.find(arg => arg.startsWith('--only-script='))?.split('=')[1] ===
+      'true' || true;
 
   if (strategy !== 'full' && strategy !== 'incremental') {
     console.error('Invalid strategy. Must be either "full" or "incremental"');
@@ -13,8 +16,8 @@ async function main() {
   }
 
   try {
-    await backupDatabase({ strategy });
-    console.log(`Backup completed successfully with ${strategy} strategy`);
+    await backupDatabase({ strategy, onlyScript });
+    // console.log(`Backup completed successfully with ${strategy} strategy`);
   } catch (error) {
     console.error('Backup failed:', error);
     process.exit(1);

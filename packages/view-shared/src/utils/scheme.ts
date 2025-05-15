@@ -1,5 +1,5 @@
 /** 这个方法只要scheme格式正确，其实没什么用 */
-export function openScheme(scheme: string, timeout = 2000) {
+export function openScheme(scheme: string, timeout = 5000) {
   return new Promise<void>((resolve, reject) => {
     try {
       const handleBlur = () => {
@@ -21,7 +21,8 @@ export function openScheme(scheme: string, timeout = 2000) {
       }, 1);
       setTimeout(() => {
         window.removeEventListener('blur', handleBlur);
-        reject(new Error('打开链接失败或超时'));
+        resolve();
+        // reject(new Error('打开链接失败或超时'));
       }, timeout);
     } catch (e) {
       reject(e);

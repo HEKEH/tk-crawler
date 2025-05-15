@@ -15,7 +15,10 @@ export default class AnchorController {
     const { org_info } = ctx.clientInfo!;
     const data = ctx.getRequestData<GetAnchorListRequest>();
     ctx.logger.info('[Get Anchor List] request', ctx.clientInfo, data);
-    const result = await getAnchorList({ ...data, org_id: org_info.id });
+    const result = await getAnchorList(
+      { ...data, org_id: org_info.id },
+      ctx.logger,
+    );
     ctx.logger.info('[Get Anchor List] success', ctx.clientInfo, {
       length: result.list?.length,
     });

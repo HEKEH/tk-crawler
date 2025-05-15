@@ -37,12 +37,15 @@ export default class MobileController {
   static async getAssignedAnchorList(ctx: Context, next: Next) {
     const { org_info, user_info, device_id: token_device_id } = ctx.clientInfo!;
     const data = ctx.getRequestData<MobileGetAssignedAnchorListRequest>();
-    ctx.body = await mobileGetAssignedAnchorList({
-      ...data,
-      org_id: org_info.id,
-      org_member_id: user_info.id,
-      token_device_id,
-    });
+    ctx.body = await mobileGetAssignedAnchorList(
+      {
+        ...data,
+        org_id: org_info.id,
+        org_member_id: user_info.id,
+        token_device_id,
+      },
+      ctx.logger,
+    );
     await next();
   }
 

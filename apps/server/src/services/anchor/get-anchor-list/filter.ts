@@ -117,6 +117,7 @@ export function transformAnchorListFilterValues(
 
   if (area) {
     filter.area = area;
+    anchorFilter.area = area;
   }
 
   if (invite_type !== undefined) {

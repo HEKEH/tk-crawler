@@ -3,7 +3,7 @@ import type {
   MobileGetAssignedAnchorListRequest,
   MobileGetAssignedAnchorListResponse,
 } from '@tk-crawler/biz-shared';
-import { logger } from '../../infra/logger';
+import type { Logger } from '@tk-crawler/shared';
 import { BusinessError } from '../../utils';
 import { getAnchorList } from '../anchor/get-anchor-list';
 
@@ -13,6 +13,7 @@ export async function mobileGetAssignedAnchorList(
     org_member_id: string;
     token_device_id: string | undefined;
   },
+  logger: Logger,
 ): Promise<MobileGetAssignedAnchorListResponse['data']> {
   logger.info('[Mobile Get Assigned Anchor List]', request);
 
@@ -41,16 +42,19 @@ export async function mobileGetAssignedAnchorList(
     contacted_by: 'not_contacted',
   };
 
-  const result = await getAnchorList({
-    page_num,
-    page_size,
-    filter,
-    order_by: {
-      // checked_at: 'desc',
-      crawled_at: 'desc',
+  const result = await getAnchorList(
+    {
+      page_num,
+      page_size,
+      filter,
+      order_by: {
+        // checked_at: 'desc',
+        crawled_at: 'desc',
+      },
+      org_id,
     },
-    org_id,
-  });
+    logger,
+  );
 
   return result;
 }

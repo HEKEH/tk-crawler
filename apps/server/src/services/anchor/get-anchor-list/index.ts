@@ -7,9 +7,9 @@ import type {
   OrgMemberItem,
   Region,
 } from '@tk-crawler/biz-shared';
+import type { Logger } from '@tk-crawler/shared';
 import assert from 'node:assert';
 import { mysqlClient, redisClient } from '@tk-crawler/database';
-import { logger } from '../../../infra/logger';
 import { transformAnchorListFilterValues } from './filter';
 import { transformAnchorListOrderBy } from './order-by';
 
@@ -27,6 +27,7 @@ export async function clearAnchorListCache(org_id: string) {
 
 export async function getAnchorList(
   request: GetAnchorListRequest & { org_id: string },
+  logger: Logger,
 ): Promise<GetAnchorListResponseData> {
   assert(request.org_id, '机构ID不能为空');
   assert(request.page_num, '页码不能为空');
@@ -55,6 +56,7 @@ export async function getAnchorList(
     return JSON.parse(cachedData);
   }
 
+  const startTime = Date.now();
   const where = transformAnchorListFilterValues(filter, org_id);
   const orderBy = transformAnchorListOrderBy(order_by);
 
@@ -131,6 +133,9 @@ export async function getAnchorList(
       where,
     }),
   ]);
+
+  const endTime = Date.now();
+  logger.info(`[Get Anchor List] sql time cost: ${endTime - startTime}ms`);
 
   function transUserProps(
     user: (typeof anchorInviteChecks)[number]['assigned_user'] | null,

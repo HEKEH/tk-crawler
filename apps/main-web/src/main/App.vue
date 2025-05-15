@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type GlobalStore from './domain/global-store';
 import { Refresh, Warning } from '@element-plus/icons-vue';
+import { provideVConsole, RequestError } from '@tk-crawler/view-shared';
 import {
   ElButton,
   ElConfigProvider,
@@ -9,13 +10,16 @@ import {
   ElResult,
 } from 'element-plus';
 import zhCn from 'element-plus/es/locale/lang/zh-cn';
-import { computed, onBeforeUnmount, onErrorCaptured } from 'vue';
 
+import { computed, onBeforeUnmount, onErrorCaptured } from 'vue';
 import { useRouter } from 'vue-router';
 import Homepage from './sections/homepage.vue';
 import { provideGlobalStore } from './utils';
-import { RequestError } from '@tk-crawler/view-shared';
 // import { CrawlerViewMessage } from './constants';
+
+provideVConsole({
+  defaultOpen: false,
+});
 
 const globalStore: GlobalStore = provideGlobalStore();
 

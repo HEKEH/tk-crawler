@@ -10,7 +10,7 @@ import { useQueryClient } from '@tanstack/vue-query';
 import { KeyIcon } from '@tk-crawler/assets';
 import { OrgMemberRole } from '@tk-crawler/biz-shared';
 import { RESPONSE_CODE } from '@tk-crawler/shared';
-import { useIsWebSize } from '@tk-crawler/view-shared';
+import { useIsWebSize, useVConsole } from '@tk-crawler/view-shared';
 import {
   ElDivider,
   ElDropdown,
@@ -19,10 +19,10 @@ import {
   ElIcon,
   ElMessage,
   ElMessageBox,
+  ElSwitch,
   ElTag,
 } from 'element-plus';
 import { computed, ref } from 'vue';
-import { useRouter } from 'vue-router';
 import { Avatar } from '../../../components';
 import { MembershipStatus } from '../../../domain/user-profile';
 import { changePassword } from '../../../requests';
@@ -57,19 +57,20 @@ async function handlePasswordChange(data: OrgMemberChangePasswordRequest) {
     passwordChangeDialogVisible.value = false;
   }
 }
-const isWeb = useIsWebSize();
+const isWebSize = useIsWebSize();
+const { vConsoleOpen, toggleVConsoleOpen } = useVConsole();
 </script>
 
 <template>
   <ElDropdown trigger="hover" popper-class="avatar-dropdown-menu">
     <div class="avatar-wrapper">
-      <Avatar :size="isWeb ? 32 : 20" />
+      <Avatar :size="isWebSize ? 32 : 20" />
     </div>
 
     <template #dropdown>
       <div class="dropdown-content">
         <div class="user-info">
-          <Avatar :size="isWeb ? 36 : 24" />
+          <Avatar :size="isWebSize ? 36 : 24" />
           <div class="user-details">
             <div class="username">{{ userInfo.display_name }}</div>
             <div class="role">
@@ -153,6 +154,15 @@ const isWeb = useIsWebSize();
             <span>退出登录</span>
           </ElDropdownItem>
         </ElDropdownMenu>
+        <ElDivider />
+        <div class="info-item">
+          <span>调试模式</span>
+          <ElSwitch
+            :model-value="vConsoleOpen"
+            :size="isWebSize ? 'default' : 'small'"
+            @update:model-value="toggleVConsoleOpen"
+          />
+        </div>
       </div>
     </template>
   </ElDropdown>

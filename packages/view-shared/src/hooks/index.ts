@@ -5,4 +5,5 @@ export * from './use-is-component-active';
 export * from './use-is-window-active';
 export * from './use-table-multi-select';
 export * from './use-table-sort';
+export * from './use-v-console';
 export * from './use-visible-column-list';

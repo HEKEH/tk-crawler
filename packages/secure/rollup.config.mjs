@@ -78,7 +78,7 @@ export default [
           transformObjectKeys: true,
           renameGlobals: true, // 注意兼容性
           selfDefending: true,
-          disableConsoleOutput: true,
+          disableConsoleOutput: false,
           numbersToExpressions: true,
           simplify: false,
           // 你可以根据需要调整

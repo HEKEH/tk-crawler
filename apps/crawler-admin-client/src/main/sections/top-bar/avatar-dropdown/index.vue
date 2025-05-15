@@ -5,6 +5,7 @@ import { useQueryClient } from '@tanstack/vue-query';
 // import { useRouter } from 'vue-router';
 import { KeyIcon } from '@tk-crawler/assets';
 import { RESPONSE_CODE } from '@tk-crawler/shared';
+import { useIsWebSize, useVConsole } from '@tk-crawler/view-shared';
 import {
   ElDivider,
   ElDropdown,
@@ -13,6 +14,7 @@ import {
   ElIcon,
   ElMessage,
   ElMessageBox,
+  ElSwitch,
 } from 'element-plus';
 import { computed, ref } from 'vue';
 import { Avatar } from '../../../components';
@@ -49,6 +51,8 @@ async function handlePasswordChange(data: OrgMemberChangePasswordRequest) {
     passwordChangeDialogVisible.value = false;
   }
 }
+const isWebSize = useIsWebSize();
+const { vConsoleOpen, toggleVConsoleOpen } = useVConsole();
 </script>
 
 <template>
@@ -77,6 +81,15 @@ async function handlePasswordChange(data: OrgMemberChangePasswordRequest) {
             <span>退出登录</span>
           </ElDropdownItem>
         </ElDropdownMenu>
+        <ElDivider />
+        <div class="info-item">
+          <span class="mr-1">调试模式</span>
+          <ElSwitch
+            :model-value="vConsoleOpen"
+            :size="isWebSize ? 'default' : 'small'"
+            @update:model-value="toggleVConsoleOpen"
+          />
+        </div>
       </div>
     </template>
   </ElDropdown>
@@ -87,7 +100,7 @@ async function handlePasswordChange(data: OrgMemberChangePasswordRequest) {
   />
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .avatar-wrapper {
   cursor: pointer;
   transition: all 0.3s ease;
@@ -99,30 +112,57 @@ async function handlePasswordChange(data: OrgMemberChangePasswordRequest) {
   transform: scale(1.2);
 }
 
+:global(.avatar-dropdown-menu .el-popper__arrow) {
+  display: none !important;
+}
+:global(.avatar-dropdown-menu .el-divider--horizontal) {
+  margin: 12px 0;
+  border-top: 1px solid var(--el-border-color-lighter);
+}
+:global(.avatar-dropdown-menu .el-dropdown-menu__item) {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 0;
+  font-size: 14px;
+}
+
+:global(.avatar-dropdown-menu .el-dropdown-menu__item:hover) {
+  background-color: var(--el-dropdown-menuItem-hover-fill);
+  color: var(--el-color-primary);
+}
+
+:global(.avatar-dropdown-menu .el-dropdown-menu__item .el-icon) {
+  font-size: 16px;
+  margin-right: 4px;
+}
+
 .avatar-dropdown-menu {
-  :global(.el-popper__arrow) {
-    display: none !important;
-  }
-  :global(.el-divider--horizontal) {
-    margin: 12px 0;
-    border-top: 1px solid var(--el-border-color-lighter);
-  }
-  :global(.el-dropdown-menu__item) {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 0;
-    font-size: 14px;
-  }
+  .dropdown-content {
+    --font-size: 14px;
 
-  :global(.el-dropdown-menu__item:hover) {
-    background-color: var(--el-dropdown-menuItem-hover-fill);
-    color: var(--el-color-primary);
-  }
+    .info-item {
+      align-items: center;
+      color: var(--el-text-color-regular);
+      display: flex;
+      font-size: var(--font-size);
+      line-height: 22px;
+      list-style: none;
+      margin: 0;
+      outline: none;
+      padding: 5px 0;
+      white-space: nowrap;
+      transition: all 0.3s ease;
+      gap: 8px;
+      .el-icon {
+        font-size: var(--font-size);
+        margin-right: 4px;
+      }
+    }
 
-  :global(.el-dropdown-menu__item .el-icon) {
-    font-size: 16px;
-    margin-right: 4px;
+    .info-item:hover {
+      color: var(--el-text-color-primary);
+    }
   }
 }
 

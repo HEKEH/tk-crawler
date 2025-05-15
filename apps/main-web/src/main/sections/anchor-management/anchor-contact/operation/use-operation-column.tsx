@@ -67,8 +67,13 @@ export function useOperationColumn(props: {
     }
   }
 
+  const anchorTryToContact = ref<string>();
   async function onContactAnchor(anchor: DisplayedAnchorItem) {
+    if (anchorTryToContact.value === anchor.id) {
+      return;
+    }
     try {
+      anchorTryToContact.value = anchor.id;
       const isSuccess = await gotoTKPage(anchor);
       if (isSuccess) {
         await handleContactAnchor([anchor]);
@@ -76,6 +81,8 @@ export function useOperationColumn(props: {
     } catch (e) {
       ElMessage.error((e as Error)?.message);
       console.error(e);
+    } finally {
+      anchorTryToContact.value = undefined;
     }
   }
 
@@ -104,7 +111,7 @@ export function useOperationColumn(props: {
   const column = computed<VirtualizedTableColumn<DisplayedAnchorItem>>(() => ({
     key: 'operation',
     title: '操作',
-    width: 150,
+    width: 160,
     fixed: isWeb.value ? ('left' as any) : undefined,
     cellRenderer: ({ rowData }: { rowData: DisplayedAnchorItem }) => (
       <div class="operation-buttons">
@@ -114,10 +121,13 @@ export function useOperationColumn(props: {
             size="small"
             type="primary"
             onClick={() => onContactAnchor(rowData)}
+            loading={anchorTryToContact.value === rowData.id}
           >
-            <ElIcon>
-              <StarFilled />
-            </ElIcon>
+            {anchorTryToContact.value !== rowData.id && (
+              <ElIcon>
+                <StarFilled />
+              </ElIcon>
+            )}
             建联
           </ElButton>
         ) : rowData.contacted_user ? (

@@ -1,12 +1,13 @@
 import type { AliasOptions, UserConfig } from 'vite';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
+import process from 'node:process';
 import {
   CommonTerserOptions,
   getCommonVitePlugins,
 } from '@tk-crawler/build-and-deploy/index.mjs';
 import { getCommonPackageAlias } from '@tk-crawler/build-and-deploy/package-alias.js';
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 import { createHtmlPlugin } from 'vite-plugin-html';
 
 // https://vitejs.dev/config/

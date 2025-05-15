@@ -29,7 +29,7 @@
     "prisma:migrate": "cross-env dotenv -e ../../.env.development -- ts-node $npm_package_config_tsNodeConfig ./scripts/prisma/migrate.ts",
     "prisma:seed": "cross-env dotenv -e ../../.env.development -- ts-node $npm_package_config_tsNodeConfig ./scripts/prisma/seed.ts",
     "prisma:deploy:prod": "cross-env dotenv -e ../../.env.production -- ts-node $npm_package_config_tsNodeConfig ./scripts/prisma/deploy.ts",
-    "prisma:deploy:local": "cross-env dotenv -e ../../.env.local.production -- ts-node $npm_package_config_tsNodeConfig ./scripts/prisma/deploy.ts",
+    "prisma:deploy:local": "cross-env dotenv -e ../../.env.local-production -- ts-node $npm_package_config_tsNodeConfig ./scripts/prisma/deploy.ts",
     "backup:mysql": "cross-env dotenv -e ../../.env.production -- ts-node $npm_package_config_tsNodeConfig ./scripts/backup-mysql/run.ts",
     "backup:mysql:dev": "cross-env dotenv -e ../../.env.development -- ts-node $npm_package_config_tsNodeConfig ./scripts/backup-mysql/run.ts",
     "debug:env": "cross-env dotenv -e ../../.env.development -- node -e \"console.log(process.env.MYSQL_DATABASE_URL)\""

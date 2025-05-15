@@ -23,7 +23,7 @@
     "prod:log": "cross-env NODE_ENV=production pm2 logs",
     "prod:flush": "cross-env NODE_ENV=production pm2 flush",
     "docker:build": "./scripts/docker/build-docker-image.sh && pnpm docker:output",
-    "docker:build:local": "./scripts/docker/build-docker-image.sh -e ./.env.local.production -i tk-crawler-crawl-server-local",
+    "docker:build:local": "./scripts/docker/build-docker-image.sh -e ./.env.local-production -i tk-crawler-crawl-server-local",
     "docker:output": "mkdir -p ./docker-images && docker save -o ./docker-images/tk-crawler-crawl-server-$npm_package_version.tar tk-crawler-crawl-server:$npm_package_version",
     "lint": "eslint",
     "preinstall": "npx only-allow pnpm"

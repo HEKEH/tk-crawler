@@ -25,7 +25,8 @@ dist-ssr
 backup
 
 .env.production
-.env.local.production
+.env.local-production
+.env.test-production
 
 certs/production
 

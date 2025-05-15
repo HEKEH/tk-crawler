@@ -5,11 +5,12 @@
   "author": "Will Ho",
   "scripts": {
     "dev": "vite",
+    "dev:prod:test": "vite --mode test-production",
     "build": "vue-tsc && vite build",
     "preview": "vite preview",
     "prod:flush": "cross-env pm2 flush",
     "docker:build": "./scripts/docker/build-docker-image.sh && pnpm docker:output",
-    "docker:build:local": "./scripts/docker/build-docker-image.sh -e ./.env.local.production -i tk-crawler-main-web-local",
+    "docker:build:local": "./scripts/docker/build-docker-image.sh -e ./.env.local-production -i tk-crawler-main-web-local",
     "docker:output": "mkdir -p ./docker-images && docker save -o ./docker-images/tk-crawler-main-web-$npm_package_version.tar tk-crawler-main-web:$npm_package_version"
   },
   "devDependencies": {

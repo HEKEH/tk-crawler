@@ -21,7 +21,7 @@ import { ElButton, ElIcon, ElInput, ElOption, ElSelect } from 'element-plus';
 import { cloneDeep } from 'lodash';
 import { computed, ref, watch } from 'vue';
 import { OrgMemberSelectSingle } from '../../../components';
-import '../../../styles/table-header-filter.scss';
+import '@tk-crawler/styles/table-header-filter.scss';
 
 const props = defineProps<{
   modelValue: FilterViewValues;

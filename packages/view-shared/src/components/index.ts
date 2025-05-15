@@ -6,6 +6,7 @@ import CopyIcon from './copy-icon.vue';
 import MenuSelect from './menu-select.vue';
 import RefreshButton from './refresh-button.vue';
 import RegionSelect from './region-select.vue';
+import VisiblePassword from './visible-password.vue';
 
 export * from './column-visible-setting';
 export * from './range';
@@ -21,4 +22,5 @@ export {
   MenuSelect,
   RefreshButton,
   RegionSelect,
+  VisiblePassword,
 };

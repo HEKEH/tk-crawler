@@ -3,14 +3,16 @@ import { getBodyHeight } from '@tk-crawler/electron-utils/render';
 import { computed } from 'vue';
 import { Page } from '../types';
 import { useGlobalStore } from '../utils';
-import ClientManage from './client-manage/index.vue';
-import CrawlerManage from './crawler-manage/index.vue';
+import { ClientManage } from './client-manage';
+import { CrawlerManage } from './crawler-manage';
+import { GuildManagement } from './guild-management';
 import Login from './login/index.vue';
 import TopBar from './top-bar/index.vue';
 
 defineOptions({
   name: 'Homepage',
 });
+
 const globalStore = useGlobalStore();
 
 const bodyHeight = getBodyHeight();
@@ -30,6 +32,9 @@ const currentPage = computed(() => {
       </KeepAlive>
       <KeepAlive>
         <ClientManage v-if="currentPage === Page.Client" />
+      </KeepAlive>
+      <KeepAlive>
+        <GuildManagement v-if="currentPage === Page.GuildManage" />
       </KeepAlive>
     </div>
   </div>

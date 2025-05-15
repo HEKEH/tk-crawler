@@ -1,41 +1,24 @@
 <script setup lang="tsx">
 import type {
   Area,
-  CreateTKGuildUserRequest,
-  CreateTKGuildUserResponse,
-  GetTKGuildUserListResponseData,
+  GetAllTKGuildUserListResponseData,
   TKGuildUser,
-  UpdateTKGuildUserResponse,
 } from '@tk-crawler/biz-shared';
 import type { TableColumnCtx } from 'element-plus';
-// import { InfoFilled } from '@element-plus/icons-vue';
 import { useQuery } from '@tanstack/vue-query';
-import { AREA_NAME_MAP, TIKTOK_LIVE_ADMIN_URL } from '@tk-crawler/biz-shared';
+import { AREA_NAME_MAP } from '@tk-crawler/biz-shared';
 import { formatDateTime, RESPONSE_CODE } from '@tk-crawler/shared';
 import {
   AreaTooltipIcon,
+  CopyIcon,
   onKeepAliveActivated,
   RefreshButton,
   useIsWebSize,
   VisiblePassword,
 } from '@tk-crawler/view-shared';
-import {
-  ElButton,
-  ElLink,
-  ElMessage,
-  ElMessageBox,
-  ElPagination,
-  ElTable,
-  ElTableColumn,
-  ElTooltip,
-} from 'element-plus';
-import { computed, ref } from 'vue';
-import {
-  createTKGuildUser,
-  deleteTKGuildUser,
-  getTKGuildUserList,
-  updateTKGuildUser,
-} from '../../../requests';
+import { ElButton, ElPagination, ElTable, ElTableColumn } from 'element-plus';
+import { ref } from 'vue';
+import { getAllTKGuildUserList } from '../../../requests';
 import { useGlobalStore } from '../../../utils/vue';
 import {
   DefaultFilterViewValues,
@@ -43,7 +26,6 @@ import {
   transformFilterViewValuesToFilterValues,
 } from './filter';
 import TKGuildUserFilter from './guild-user-filter.vue';
-import FormDialog from './guild-user-form-dialog.vue';
 import StartStopButtonColumn from './start-stop-button-column.vue';
 import StatusTag from './status-tag.vue';
 
@@ -51,7 +33,7 @@ defineOptions({
   name: 'TKGuildUserTable',
 });
 
-type TKGuildUserRow = GetTKGuildUserListResponseData['list'][number];
+type TKGuildUserRow = GetAllTKGuildUserListResponseData['list'][number];
 
 interface ScopeType {
   row: TKGuildUserRow;
@@ -83,7 +65,7 @@ function handleFilterReset() {
 }
 
 const { data, isFetching, refetch } = useQuery<
-  GetTKGuildUserListResponseData | undefined
+  GetAllTKGuildUserListResponseData | undefined
 >({
   queryKey: [
     'tk-guild-users',
@@ -100,7 +82,7 @@ const { data, isFetching, refetch } = useQuery<
     const orderBy = sortField.value
       ? { [sortField.value]: sortOrder.value === 'ascending' ? 'asc' : 'desc' }
       : undefined;
-    const response = await getTKGuildUserList(
+    const response = await getAllTKGuildUserList(
       {
         page_num: pageNum.value,
         page_size: pageSize.value,
@@ -127,7 +109,7 @@ const { data, isFetching, refetch } = useQuery<
 
 function refresh() {
   refetch();
-  globalStore.guildAccountsManage.checkIsAnyAccountError();
+  // globalStore.guildAccountsManage.checkIsAnyAccountError();
 }
 
 // 处理排序变化
@@ -148,35 +130,6 @@ function resetSort() {
   sortOrder.value = undefined;
 }
 
-// 删除用户
-async function deleteUser(user: TKGuildUserRow) {
-  try {
-    await ElMessageBox.confirm(`确定要删除用户 ${user.username} 吗？`, {
-      type: 'warning',
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-    });
-  } catch {
-    return;
-  }
-
-  const response = await deleteTKGuildUser(
-    { ids: [user.id] },
-    globalStore.token,
-  );
-
-  if (response.status_code === RESPONSE_CODE.SUCCESS) {
-    ElMessage.success({ message: '删除成功', type: 'success', duration: 2000 });
-    await refresh();
-  } else {
-    ElMessage.error({
-      message: response.message || '删除失败',
-      type: 'error',
-      duration: 2000,
-    });
-  }
-}
-
 function handlePageNumChange(_pageNum: number) {
   pageNum.value = _pageNum;
 }
@@ -190,90 +143,6 @@ const selectedRows = ref<TKGuildUser[]>([]);
 // 处理选择变化
 function handleSelectionChange(rows: TKGuildUser[]) {
   selectedRows.value = rows;
-}
-const hasSelectedRows = computed(() => selectedRows.value.length > 0);
-
-// 批量删除
-async function handleBatchDelete() {
-  try {
-    await ElMessageBox.confirm(
-      `确定要删除 ${selectedRows.value.length} 个查询账号吗？`,
-      {
-        type: 'warning',
-        confirmButtonText: '确定',
-        confirmButtonClass: 'el-button--danger',
-        cancelButtonText: '取消',
-      },
-    );
-  } catch {
-    return;
-  }
-
-  const response = await deleteTKGuildUser(
-    { ids: selectedRows.value.map(user => user.id) },
-    globalStore.token,
-  );
-
-  if (response.status_code === RESPONSE_CODE.SUCCESS) {
-    ElMessage.success({
-      message: `共删除 ${response.data?.deleted_count} 个用户`,
-      type: 'success',
-      duration: 2000,
-    });
-    await refresh();
-  } else {
-    ElMessage.error({
-      message: response.message || '删除失败',
-      type: 'error',
-      duration: 2000,
-    });
-  }
-}
-
-const formDialogVisible = ref(false);
-const formData = ref<Partial<TKGuildUser>>();
-const formMode = ref<'create' | 'edit'>('create');
-
-function onAddItem() {
-  formData.value = undefined;
-  formMode.value = 'create';
-  formDialogVisible.value = true;
-}
-function onEditItem(item: TKGuildUserRow) {
-  formData.value = item;
-  formMode.value = 'edit';
-  formDialogVisible.value = true;
-}
-function onCloseFormDialog() {
-  formDialogVisible.value = false;
-  formData.value = undefined;
-  formMode.value = 'create';
-}
-async function handleSubmitCreateOrEdit(data: Partial<TKGuildUser>) {
-  let result: CreateTKGuildUserResponse | UpdateTKGuildUserResponse;
-  const org_id = globalStore.userProfile.orgInfo!.id;
-  if (formMode.value === 'create') {
-    result = await createTKGuildUser(
-      {
-        ...data,
-        org_id,
-      } as CreateTKGuildUserRequest,
-      globalStore.token,
-    );
-  } else {
-    result = await updateTKGuildUser(
-      {
-        data: { id: formData.value!.id!, org_id, ...data },
-      },
-      globalStore.token,
-    );
-  }
-  if (result.status_code !== RESPONSE_CODE.SUCCESS) {
-    return;
-  }
-  await refresh();
-  onCloseFormDialog();
-  ElMessage.success('保存成功');
 }
 
 function onFinishOperation() {
@@ -291,48 +160,13 @@ onKeepAliveActivated(refresh);
     <div class="filter-row">
       <TKGuildUserFilter
         :model-value="filters"
-        :areas="globalStore.userProfile.orgInfo?.areas ?? []"
         @change="handleFilterChange"
         @reset="handleFilterReset"
       />
     </div>
     <div class="header-row">
-      <div class="left-part">
-        <ElTooltip
-          popper-style="max-width: 320px;"
-          placement="top"
-          effect="dark"
-        >
-          <template #content>
-            <span>
-              请添加
-              <ElLink
-                type="primary"
-                style="vertical-align: baseline"
-                :href="TIKTOK_LIVE_ADMIN_URL"
-                target="_blank"
-                >{{ TIKTOK_LIVE_ADMIN_URL }}</ElLink
-              >
-              网站的账号。添加查询账号越多，查询速度越快
-            </span>
-          </template>
-          <ElButton type="primary" size="small" @click="onAddItem">
-            添加账号
-            <!-- <ElIcon style="font-size: 14px; margin-left: 0.25rem">
-                <InfoFilled />
-              </ElIcon> -->
-          </ElButton>
-        </ElTooltip>
-      </div>
+      <div class="left-part"></div>
       <div class="right-part">
-        <ElButton
-          :disabled="!hasSelectedRows"
-          type="danger"
-          size="small"
-          @click="handleBatchDelete"
-        >
-          批量删除
-        </ElButton>
         <ElButton type="default" size="small" @click="resetSort">
           重置排序
         </ElButton>
@@ -381,6 +215,17 @@ onKeepAliveActivated(refresh);
         </template>
       </ElTableColumn>
       <ElTableColumn
+        prop="org_id"
+        label="机构ID"
+        sortable="custom"
+        :min-width="isWeb ? 100 : 80"
+      />
+      <ElTableColumn
+        prop="org_name"
+        label="机构名称"
+        :min-width="isWeb ? 140 : 100"
+      />
+      <ElTableColumn
         prop="area"
         label="分区"
         sortable="custom"
@@ -428,16 +273,6 @@ onKeepAliveActivated(refresh);
         sortable="custom"
       />
       <ElTableColumn
-        prop="current_query_per_day"
-        label="当天查询次数"
-        :min-width="isWeb ? 160 : 120"
-      />
-      <ElTableColumn
-        prop="current_query_per_hour"
-        label="当前小时查询次数"
-        :min-width="isWeb ? 180 : 140"
-      />
-      <ElTableColumn
         prop="created_at"
         label="创建时间"
         :min-width="isWeb ? 205 : 170"
@@ -457,31 +292,11 @@ onKeepAliveActivated(refresh);
           {{ formatDateTime(scope.row.updated_at) }}
         </template>
       </ElTableColumn>
-      <!-- <ElTableColumn prop="cookie" label="Cookie" min-width="200">
-          <template #default="scope: ScopeType">
-            <div v-if="scope.row.cookie" class="cookie">
-              <span class="cookie-text">{{ scope.row.cookie }}</span>
-              <CopyIcon tooltip="复制Cookie" :copy-content="scope.row.cookie" />
-            </div>
-          </template>
-        </ElTableColumn> -->
-      <ElTableColumn
-        label="操作"
-        min-width="140"
-        :fixed="isWeb ? 'right' : false"
-      >
+      <ElTableColumn prop="cookie" label="Cookie" min-width="200">
         <template #default="scope: ScopeType">
-          <div class="operation-buttons">
-            <ElButton
-              size="small"
-              type="primary"
-              @click="onEditItem(scope.row)"
-            >
-              编辑
-            </ElButton>
-            <ElButton size="small" type="danger" @click="deleteUser(scope.row)">
-              删除
-            </ElButton>
+          <div v-if="scope.row.cookie" class="cookie">
+            <span class="cookie-text">{{ scope.row.cookie }}</span>
+            <CopyIcon tooltip="复制Cookie" :copy-content="scope.row.cookie" />
           </div>
         </template>
       </ElTableColumn>
@@ -500,15 +315,6 @@ onKeepAliveActivated(refresh);
         @current-change="handlePageNumChange"
       />
     </div>
-
-    <!-- 创建用户对话框 -->
-    <FormDialog
-      :visible="formDialogVisible"
-      :mode="formMode"
-      :initial-data="formData"
-      :submit="handleSubmitCreateOrEdit"
-      @close="onCloseFormDialog"
-    />
   </div>
 </template>
 

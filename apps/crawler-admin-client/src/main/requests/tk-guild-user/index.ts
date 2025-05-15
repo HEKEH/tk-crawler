@@ -1,9 +1,9 @@
 import type {
   GetAllTKGuildUserListRequest,
+  GetAllTKGuildUserListResponse,
   StartTKLiveAdminAccountRequest,
   StartTKLiveAdminAccountResponse,
   StopTKLiveAdminAccountRequest,
-  SystemCrawlStatisticsResponse,
 } from '@tk-crawler/biz-shared';
 import { SYSTEM_TOKEN_HEADER_KEY } from '@tk-crawler/biz-shared';
 import {
@@ -13,14 +13,15 @@ import {
   SystemStartTKGuildUserAccount,
   SystemStopTKGuildUserAccount,
 } from '@tk-crawler/secure';
+import { RESPONSE_CODE, simpleDecrypt } from '@tk-crawler/shared';
 import { commonRequest } from '@tk-crawler/view-shared';
 import config from '../../config';
 
-export function getAllTKGuildUserList(
+export async function getAllTKGuildUserList(
   params: GetAllTKGuildUserListRequest,
   token: string,
 ) {
-  return commonRequest<SystemCrawlStatisticsResponse>({
+  const response = await commonRequest<GetAllTKGuildUserListResponse>({
     baseURL: config[OwnServerUrl],
     method: Post,
     path: SystemGetAllTKGuildUserList,
@@ -30,6 +31,16 @@ export function getAllTKGuildUserList(
       [SYSTEM_TOKEN_HEADER_KEY]: token,
     },
   });
+  if (response.status_code === RESPONSE_CODE.SUCCESS && response.data) {
+    response.data = {
+      ...response.data,
+      list: response.data?.list.map(item => ({
+        ...item,
+        password: simpleDecrypt(item.password, config.simplePasswordKey),
+      })),
+    };
+  }
+  return response;
 }
 
 export function startTKGuildUserAccount(

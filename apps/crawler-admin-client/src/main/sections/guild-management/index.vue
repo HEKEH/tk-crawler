@@ -1,9 +1,6 @@
 <script setup lang="ts">
 import { MenuSelect } from '@tk-crawler/view-shared';
-import { computed } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import { useGlobalStore } from '../../utils';
-import AnchorSearchPoliciesSetting from './anchor-search-policies';
+import { ref } from 'vue';
 import TKGuildUserManage from './tk-guild-user-manage';
 
 defineOptions({
@@ -12,35 +9,22 @@ defineOptions({
 
 enum MenuType {
   TK_GUILD_USER = 'tk-guild-user',
-  ANCHOR_SEARCH_POLICIES = 'anchor-search-policies',
 }
-const route = useRoute();
-const router = useRouter();
-const globalStore = useGlobalStore();
-const hasPrivilege = computed(() => globalStore.userProfile.isAdmin);
 const MenuList = [
   {
     value: MenuType.TK_GUILD_USER,
     label: '查询账号管理',
   },
-  {
-    value: MenuType.ANCHOR_SEARCH_POLICIES,
-    label: '采集策略设置',
-  },
 ];
-const currentMenu = computed(() => {
-  return (route.params.subMenu || MenuList[0]?.value) as MenuType | undefined;
-});
+const currentMenu = ref(MenuList[0]?.value);
 
 function handleSelectMenu(key: string) {
-  router.push({
-    path: `/guild-management/${key as MenuType}`,
-  });
+  currentMenu.value = key as MenuType;
 }
 </script>
 
 <template>
-  <div v-if="hasPrivilege" class="outer-container">
+  <div class="outer-container">
     <div class="menu-part">
       <MenuSelect
         :menus="MenuList"
@@ -52,9 +36,6 @@ function handleSelectMenu(key: string) {
       <KeepAlive>
         <TKGuildUserManage v-if="currentMenu === MenuType.TK_GUILD_USER" />
       </KeepAlive>
-      <AnchorSearchPoliciesSetting
-        v-if="currentMenu === MenuType.ANCHOR_SEARCH_POLICIES"
-      />
     </div>
   </div>
 </template>

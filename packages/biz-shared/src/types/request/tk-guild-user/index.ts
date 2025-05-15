@@ -77,7 +77,7 @@ export type GetAllTKGuildUserListRequest = GetTKGuildUserListRequest;
 export interface GetAllTKGuildUserListResponseData {
   list: (Omit<
     TKGuildUser,
-    'cookie' | 'current_query_per_hour' | 'current_query_per_day'
+    'current_query_per_hour' | 'current_query_per_day'
   > & {
     org_name: string;
   })[];

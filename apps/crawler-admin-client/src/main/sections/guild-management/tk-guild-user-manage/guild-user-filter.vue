@@ -1,21 +1,19 @@
 <script setup lang="ts">
-import type { Area } from '@tk-crawler/biz-shared';
 import type { FilterViewValues } from './filter';
 import { Refresh, Search } from '@element-plus/icons-vue';
 import { DoubleDownIcon, DoubleUpIcon } from '@tk-crawler/assets';
 
-import { AREA_OPTIONS, TKGuildUserStatusList } from '@tk-crawler/biz-shared';
+import { TKGuildUserStatusList } from '@tk-crawler/biz-shared';
 import { AreaSelectSingle, useIsMobileSize } from '@tk-crawler/view-shared';
 
 import { ElButton, ElIcon, ElInput, ElOption, ElSelect } from 'element-plus';
 import { debounce } from 'lodash';
-import { computed, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 import { getStatusText } from './utils';
 import '@tk-crawler/styles/table-header-filter.scss';
 
 const props = defineProps<{
   modelValue: FilterViewValues;
-  areas: Area[];
 }>();
 
 const emit = defineEmits<{
@@ -52,11 +50,6 @@ function handleSearchChange() {
   handleFilterChange();
 }
 const debounceSearchChange = debounce(handleSearchChange, 500);
-
-const areaOptions = computed(() => {
-  const areaSet = new Set(props.areas);
-  return AREA_OPTIONS.filter(area => areaSet.has(area.value));
-});
 
 const isMobile = useIsMobileSize();
 
@@ -112,7 +105,6 @@ function toggleExpand() {
         <label class="filter-label">分区</label>
         <AreaSelectSingle
           v-model="filters.area"
-          :options="areaOptions"
           show-all
           size="small"
           @change="handleFilterChange"

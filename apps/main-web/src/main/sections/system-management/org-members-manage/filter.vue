@@ -7,7 +7,7 @@ import { useIsMobileSize } from '@tk-crawler/view-shared';
 import { ElButton, ElIcon, ElInput, ElOption, ElSelect } from 'element-plus';
 import { debounce } from 'lodash';
 import { ref, watch } from 'vue';
-import '../../../styles/table-header-filter.scss';
+import '@tk-crawler/styles/table-header-filter.scss';
 
 const props = defineProps<{
   modelValue: FilterViewValues;

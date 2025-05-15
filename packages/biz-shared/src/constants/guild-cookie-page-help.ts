@@ -7,6 +7,7 @@ export const GUILD_COOKIE_PAGE_HELP_EVENTS = {
   CHECK_IF_LOGIN_SUCCESS: 'guild-cookie:check-if-login-success',
   FINISH: 'guild-cookie:finish',
   REQUEST_ERROR: 'guild-cookie:request-error',
+  GO_TO_GUILD_COOKIE_PAGE: 'go-to-guild-cookie-page',
 };
 
 export enum GUILD_COOKIE_PAGE_HELP_STATUS {

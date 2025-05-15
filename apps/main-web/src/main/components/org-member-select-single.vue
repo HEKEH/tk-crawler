@@ -4,11 +4,11 @@ import {
   OrgMemberRole,
   OrgMemberStatus,
 } from '@tk-crawler/biz-shared';
+import { useIsWebSize } from '@tk-crawler/view-shared';
 import { ElOption, ElSelect, ElTag } from 'element-plus';
 import { computed, ref } from 'vue';
 import { useGetOrgMemberList } from '../hooks';
 import { useGlobalStore } from '../utils';
-import { useIsWebSize } from '@tk-crawler/view-shared';
 
 defineOptions({
   name: 'OrgMemberSelectSingle',

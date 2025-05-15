@@ -1,6 +1,9 @@
 import type { TKGuildUser } from '@tk-crawler/biz-shared';
 import type { ViewsManager } from '../views';
-import { TIKTOK_LIVE_ADMIN_URL } from '@tk-crawler/biz-shared';
+import {
+  GUILD_COOKIE_PAGE_HELP_EVENTS,
+  TIKTOK_LIVE_ADMIN_URL,
+} from '@tk-crawler/biz-shared';
 import {
   CheckNetworkResultType,
   CUSTOM_EVENTS,
@@ -60,7 +63,7 @@ export class Services {
 
   init() {
     this._addEventHandler(
-      CUSTOM_EVENTS.GO_TO_GUILD_COOKIE_PAGE,
+      GUILD_COOKIE_PAGE_HELP_EVENTS.GO_TO_GUILD_COOKIE_PAGE,
       async (
         _: Electron.IpcMainInvokeEvent,
         data: { guildUser: TKGuildUser },

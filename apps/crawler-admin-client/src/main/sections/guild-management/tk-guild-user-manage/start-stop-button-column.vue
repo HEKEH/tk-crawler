@@ -7,11 +7,6 @@ import {
   VALID_GUILD_USER_STATUS_LIST,
 } from '@tk-crawler/biz-shared';
 import { isInElectronApp } from '@tk-crawler/electron-utils/render';
-import {
-  MAIN_APP_ID,
-  MAIN_APP_PRODUCT_NAME,
-  MAIN_APP_PUBLISH_URL,
-} from '@tk-crawler/main-client-shared';
 import { RESPONSE_CODE } from '@tk-crawler/shared';
 import {
   getPlatform,
@@ -26,6 +21,7 @@ import {
   ElTableColumn,
 } from 'element-plus';
 import { toRaw } from 'vue';
+import { APP_ID, PRODUCT_NAME, PUBLISH_URL } from '../../../constants';
 import { stopTKGuildUserAccount } from '../../../requests';
 import { useGlobalStore } from '../../../utils/vue';
 
@@ -101,7 +97,7 @@ async function onStart(item: TKGuildUserRow) {
                   fontWeight: 'bold',
                 }}
               >
-                {`「${MAIN_APP_PRODUCT_NAME}」`}
+                {`「${PRODUCT_NAME}」`}
               </span>
               中尝试。
             </div>
@@ -120,8 +116,8 @@ async function onStart(item: TKGuildUserRow) {
                 }}
                 href={
                   platform === 'Mac'
-                    ? `${MAIN_APP_PUBLISH_URL}/${MAIN_APP_PRODUCT_NAME}-Mac-Installer.dmg`
-                    : `${MAIN_APP_PUBLISH_URL}/${MAIN_APP_PRODUCT_NAME}-Windows-Installer.exe`
+                    ? `${PUBLISH_URL}/${PRODUCT_NAME}-Mac-Installer.dmg`
+                    : `${PUBLISH_URL}/${PRODUCT_NAME}-Windows-Installer.exe`
                 }
                 target="_blank"
                 type="primary"
@@ -140,15 +136,11 @@ async function onStart(item: TKGuildUserRow) {
       return;
     }
     try {
-      await openScheme(`${MAIN_APP_ID}://`);
+      await openScheme(`${APP_ID}://`);
     } catch {
       ElMessage.error('打开客户端失败，请手动打开');
       return;
     }
-    return;
-  }
-  if (!globalStore.userProfile.hasMembership) {
-    ElMessage.warning('您没有权限进行修改，请先开通会员');
     return;
   }
   await window.ipcRenderer.invoke(

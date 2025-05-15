@@ -29,9 +29,6 @@ export async function getAllTKGuildUserList(
       skip: (data.page_num - 1) * data.page_size,
       take: data.page_size,
       orderBy: _orderBy,
-      omit: {
-        cookie: true,
-      },
       include: {
         organization: {
           select: {

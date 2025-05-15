@@ -128,8 +128,15 @@ export default class GlobalStore {
             key: Page.Client,
             name: '客户管理',
           },
+          {
+            key: Page.GuildManage,
+            name: '公会管理',
+          },
         ]
-      : [{ key: Page.Client, name: '客户管理' }];
+      : [
+          { key: Page.Client, name: '客户管理' },
+          { key: Page.GuildManage, name: '公会管理' },
+        ];
   }
 
   async login(params: SystemUserLoginRequest) {

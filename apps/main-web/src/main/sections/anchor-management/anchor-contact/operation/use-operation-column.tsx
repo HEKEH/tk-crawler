@@ -28,9 +28,16 @@ export function useOperationColumn(props: {
 
   const globalStore = useGlobalStore();
 
+  const log = (...args: any[]) => {
+    // TODO: close
+    console.log(...args);
+  };
+
   async function gotoTKPage(anchor: DisplayedAnchorItem): Promise<boolean> {
+    log('尝试打开TK页面');
     try {
       if (!isMobilePlatform()) {
+        log('不是移动端');
         try {
           await ElMessageBox.alert('该操作需要在手机端进行！', {
             type: 'warning',
@@ -52,9 +59,12 @@ export function useOperationColumn(props: {
         localStorageStore.setItem('has_notified_TK_install', '1');
       }
       const scheme = getTiktokAnchorLink(anchor, true);
+      log('获取跳转链接', scheme);
       try {
+        log('尝试打开TK链接');
         await openScheme(scheme);
       } catch (e) {
+        console.error(e);
         ElMessage.error((e as Error)?.message);
         // ElMessage.error('打开TK失败，请确保手机已安装TK');
         return false;
@@ -72,6 +82,7 @@ export function useOperationColumn(props: {
     if (anchorTryToContact.value === anchor.id) {
       return;
     }
+    console.log('建联开始');
     try {
       anchorTryToContact.value = anchor.id;
       const isSuccess = await gotoTKPage(anchor);

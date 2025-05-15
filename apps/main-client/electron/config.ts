@@ -1,5 +1,5 @@
 import process from 'node:process';
-import { logger } from './infra/logger';
+import { logger } from './infra';
 
 // @ts-expect-error vite使用
 export const CLIENT_OWN_SERVER_URL = import.meta.env.CLIENT_OWN_SERVER_URL;

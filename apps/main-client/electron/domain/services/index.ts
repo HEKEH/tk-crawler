@@ -8,7 +8,7 @@ import {
 } from '@tk-crawler/main-client-shared';
 import { checkNetwork, type MessageCenter } from '@tk-crawler/shared';
 import { ipcMain } from 'electron';
-import { logger } from '../../infra/logger';
+import { logger } from '../../infra';
 import { getToken, removeToken, saveToken } from './token';
 
 export class Services {

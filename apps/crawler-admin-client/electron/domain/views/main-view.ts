@@ -13,7 +13,7 @@ import { globalShortcut, WebContentsView } from 'electron';
 import config from '../../config';
 import { CRAWL_EVENTS, CUSTOM_EVENTS } from '../../constants';
 import { isDevelopment } from '../../env';
-import { logger } from '../../infra/logger';
+import { logger } from '../../infra';
 
 export class MainView implements IView {
   private _parentWindow: BaseWindow;

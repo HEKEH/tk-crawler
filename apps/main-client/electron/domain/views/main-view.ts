@@ -7,7 +7,7 @@ import { bindViewToWindowBounds } from '@tk-crawler/electron-utils/main';
 import { globalShortcut, WebContentsView } from 'electron';
 import config from '../../config';
 import { isDevelopment } from '../../env';
-import { logger } from '../../infra/logger';
+import { logger } from '../../infra';
 
 export class MainView implements IView {
   private _parentWindow: BaseWindow;

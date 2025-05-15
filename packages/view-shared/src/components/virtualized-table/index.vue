@@ -85,17 +85,6 @@ watch(
   { immediate: true },
 );
 
-// 监听selectedRows变化
-watch(
-  () => props.selectedRows,
-  newVal => {
-    if (newVal) {
-      selectedRows.value = newVal;
-    }
-  },
-  { immediate: true },
-);
-
 // 监听selectedRows变化并触发事件
 watch(selectedRows, newVal => {
   emit('update:selectedRows', newVal);

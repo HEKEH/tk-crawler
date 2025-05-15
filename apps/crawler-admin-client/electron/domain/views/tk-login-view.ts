@@ -10,7 +10,7 @@ import { initProxy } from '@tk-crawler/electron-utils/main';
 import { ipcMain, WebContentsView } from 'electron';
 import config from '../../config';
 import { isDevelopment } from '../../env';
-import { logger } from '../../infra/logger';
+import { logger } from '../../infra';
 import { transformCookieString } from '../services/cookie';
 
 const TK_LOGIN_PAGE_URL = 'https://www.tiktok.com/login';

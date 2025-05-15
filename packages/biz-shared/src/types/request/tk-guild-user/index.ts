@@ -72,6 +72,24 @@ export interface GetTKGuildUserListResponse {
   message?: string;
 }
 
+export type GetAllTKGuildUserListRequest = GetTKGuildUserListRequest;
+
+export interface GetAllTKGuildUserListResponseData {
+  list: (Omit<
+    TKGuildUser,
+    'cookie' | 'current_query_per_hour' | 'current_query_per_day'
+  > & {
+    org_name: string;
+  })[];
+  total: number;
+}
+
+export interface GetAllTKGuildUserListResponse {
+  status_code: RESPONSE_CODE;
+  data?: GetAllTKGuildUserListResponseData;
+  message?: string;
+}
+
 // 获取单个用户详情请求和响应
 export interface GetTKGuildUserDetailRequest {
   id: string;

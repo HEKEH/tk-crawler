@@ -98,7 +98,14 @@ export default defineConfig(({ mode }) => {
         //   }),
         // ],
       },
-      terserOptions: CommonTerserOptions,
+      terserOptions: {
+        ...CommonTerserOptions,
+        compress: {
+          ...CommonTerserOptions.compress,
+          drop_console: false,
+          pure_funcs: [],
+        },
+      },
       target: 'es2015',
       sourcemap: !isProduction,
     },

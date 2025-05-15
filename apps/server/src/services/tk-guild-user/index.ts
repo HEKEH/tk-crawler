@@ -274,6 +274,8 @@ export async function deleteTKGuildUser(
   return resp;
 }
 
+export * from './get-all-guild-user-list';
+
 export * from './is-some-accounts-error';
 
 export * from './start-or-stop-account';

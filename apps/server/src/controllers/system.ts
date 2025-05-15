@@ -1,4 +1,7 @@
 import type {
+  GetAllTKGuildUserListRequest,
+  StartTKLiveAdminAccountRequest,
+  StopTKLiveAdminAccountRequest,
   SystemAdminUser,
   SystemCrawlStatisticsRequest,
   SystemUserChangePasswordRequest,
@@ -7,7 +10,10 @@ import type {
 import type { Context, Next } from 'koa';
 import {
   changeSystemUserPassword,
+  getAllTKGuildUserList,
   getCrawlStatistics,
+  startLiveAdminAccount,
+  stopLiveAdminAccount,
   systemUserLogin,
 } from '../services';
 
@@ -42,6 +48,27 @@ export default class SystemController {
   static async getCrawlStatistics(ctx: Context, next: Next) {
     const request = ctx.getRequestData<SystemCrawlStatisticsRequest>();
     const resp = await getCrawlStatistics(request);
+    ctx.body = resp;
+    await next();
+  }
+
+  static async getAllTKGuildUserList(ctx: Context, next: Next) {
+    const request = ctx.getRequestData<GetAllTKGuildUserListRequest>();
+    const resp = await getAllTKGuildUserList(request, ctx.logger);
+    ctx.body = resp;
+    await next();
+  }
+
+  static async startTKGuildUserAccount(ctx: Context, next: Next) {
+    const request = ctx.getRequestData<StartTKLiveAdminAccountRequest>();
+    const resp = await startLiveAdminAccount(request);
+    ctx.body = resp;
+    await next();
+  }
+
+  static async stopTKGuildUserAccount(ctx: Context, next: Next) {
+    const request = ctx.getRequestData<StopTKLiveAdminAccountRequest>();
+    const resp = await stopLiveAdminAccount(request);
     ctx.body = resp;
     await next();
   }

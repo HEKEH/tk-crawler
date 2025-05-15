@@ -2,7 +2,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { setTiktokCookie } from '@tk-crawler/tk-requests';
 import { getTiktokCookiePath } from '../../constants';
-import { logger } from '../../infra/logger';
+import { logger } from '../../infra';
 
 /** 把 cookie 同步到core */
 

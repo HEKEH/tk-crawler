@@ -1,5 +1,5 @@
 import process from 'node:process';
-import { logger } from './infra/logger';
+import { logger } from './infra';
 
 // @ts-expect-error vite使用
 const crawlerInterval = import.meta.env.CLIENT_CRAWLER_INTERVAL;

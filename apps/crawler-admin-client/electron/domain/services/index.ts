@@ -1,5 +1,4 @@
-import type {
-  IsCookieValidResult } from '@tk-crawler-admin-client/shared';
+import type { IsCookieValidResult } from '@tk-crawler-admin-client/shared';
 import type { CommonResult, MessageCenter } from '@tk-crawler/shared';
 import type { Crawler } from '../crawler';
 import type { ViewsManager } from '../views';
@@ -16,7 +15,7 @@ import {
 } from '@tk-crawler/tk-requests';
 import { ipcMain } from 'electron';
 import { CUSTOM_EVENTS } from '../../constants';
-import { logger } from '../../infra/logger';
+import { logger } from '../../infra';
 import {
   clearTiktokCookie,
   getTiktokCookie,

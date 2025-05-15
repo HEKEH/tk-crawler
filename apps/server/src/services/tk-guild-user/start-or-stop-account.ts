@@ -50,7 +50,7 @@ import { BusinessError } from '../../utils';
 // }
 
 export async function startLiveAdminAccount(
-  data: StartTKLiveAdminAccountRequest & { org_id: string },
+  data: StartTKLiveAdminAccountRequest & { org_id?: string },
 ): Promise<void> {
   const { user_id, org_id, cookie, faction_id, area } = data;
   assert(user_id, '用户ID不能为空');
@@ -60,11 +60,13 @@ export async function startLiveAdminAccount(
   const user = await mysqlClient.prismaClient.liveAdminUser.findUnique({
     where: {
       id: BigInt(user_id),
-      org_id: BigInt(org_id),
+      org_id: org_id ? BigInt(org_id) : undefined,
     },
-    include: {
+    select: {
+      status: true,
       organization: {
-        include: {
+        select: {
+          id: true,
           areas: {
             select: {
               area: true,
@@ -105,7 +107,7 @@ export async function startLiveAdminAccount(
     type: 'update',
     data: {
       id: user_id,
-      org_id,
+      org_id: user.organization?.id.toString(),
       ...omit(updateData, 'started_at', 'error_at'),
     },
   };
@@ -116,14 +118,22 @@ export async function startLiveAdminAccount(
 }
 
 export async function stopLiveAdminAccount(
-  data: StopTKLiveAdminAccountRequest & { org_id: string },
+  data: StopTKLiveAdminAccountRequest & { org_id?: string },
 ): Promise<void> {
   const { user_id, org_id } = data;
   assert(user_id, '用户ID不能为空');
   const user = await mysqlClient.prismaClient.liveAdminUser.findUnique({
     where: {
       id: BigInt(user_id),
-      org_id: BigInt(org_id),
+      org_id: org_id ? BigInt(org_id) : undefined,
+    },
+    select: {
+      status: true,
+      organization: {
+        select: {
+          id: true,
+        },
+      },
     },
   });
 
@@ -154,7 +164,7 @@ export async function stopLiveAdminAccount(
     type: 'update',
     data: {
       id: user_id,
-      org_id,
+      org_id: user.organization?.id.toString(),
       ...omit(updateData, 'started_at', 'error_at'),
     },
   };

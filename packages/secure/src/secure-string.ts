@@ -30,3 +30,10 @@ export const ClaimTask = '/client/task/claim';
 export const CancelClaimTask = '/client/task/cancel-claim';
 export const AnchorContacted = '/client/task/anchor-contacted';
 export const CancelAnchorContact = '/client/task/cancel-anchor-contact';
+
+export const SystemGetAllTKGuildUserList = '/system/all-tk-guild-user-list';
+export const SystemStartTKGuildUserAccount =
+  '/system/start-tk-guild-user-account';
+
+export const SystemStopTKGuildUserAccount =
+  '/system/stop-tk-guild-user-account';

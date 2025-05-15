@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { getTokenPath } from '../../constants';
-import { logger } from '../../infra/logger';
+import { logger } from '../../infra';
 
 export function getToken() {
   const tokenPath = getTokenPath();

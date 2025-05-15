@@ -20,7 +20,7 @@ import {
 } from '@tk-crawler/electron-utils/main';
 import { app, BaseWindow } from 'electron';
 import { GlobalManager } from './domain';
-import { logger } from './infra/logger';
+import { logger } from './infra';
 
 // const require = createRequire(import.meta.url)
 // const __dirname = path.dirname(fileURLToPath(import.meta.url));

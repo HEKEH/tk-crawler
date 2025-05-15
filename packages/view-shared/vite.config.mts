@@ -18,7 +18,7 @@ export default defineConfig({
     lib: {
       entry: resolve(__dirname, 'src/components/virtualized-table/index.ts'),
       name: 'VirtualizedTable',
-      fileName: format => `virtualized-table.${format}.js`,
+      fileName: (format: any) => `virtualized-table.${format}.js`,
     },
     rollupOptions: {
       external: ['vue', 'element-plus', 'vxe-table', '@vueuse/core'],

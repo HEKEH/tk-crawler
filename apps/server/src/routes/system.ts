@@ -26,4 +26,25 @@ systemRouter.post(
   SystemController.getCrawlStatistics,
 );
 
+systemRouter.post(
+  '/all-tk-guild-user-list',
+  isRequestSecureMiddleware(),
+  systemTokenAuthMiddleware(),
+  SystemController.getAllTKGuildUserList,
+);
+
+systemRouter.post(
+  '/start-tk-guild-user-account',
+  isRequestSecureMiddleware(),
+  systemTokenAuthMiddleware(),
+  SystemController.startTKGuildUserAccount,
+);
+
+systemRouter.post(
+  '/stop-tk-guild-user-account',
+  isRequestSecureMiddleware(),
+  systemTokenAuthMiddleware(),
+  SystemController.stopTKGuildUserAccount,
+);
+
 export default systemRouter;

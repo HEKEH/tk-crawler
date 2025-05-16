@@ -357,7 +357,8 @@ onKeepAliveActivated(refresh);
       <ElTableColumn
         prop="username"
         label="后台查询账号"
-        :fixed="isWeb ? undefined : 'left'"
+        sortable="custom"
+        fixed="left"
         :min-width="isWeb ? 200 : 140"
       />
       <StartStopButtonColumn @finish-operation="onFinishOperation" />

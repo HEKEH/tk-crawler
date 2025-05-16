@@ -3,7 +3,7 @@ import type {
   DeleteTKGuildUserRequest,
   GetTKGuildUserDetailRequest,
   GetTKGuildUserListRequest,
-  IsAnyAccountErrorRequest,
+  IsAnyGuildAccountErrorRequest,
   StartTKLiveAdminAccountRequest,
   StopTKLiveAdminAccountRequest,
   UpdateTKGuildUserRequest,
@@ -14,7 +14,7 @@ import {
   deleteTKGuildUser,
   getTKGuildUserDetail,
   getTKGuildUserList,
-  isAnyAccountError,
+  isAnyGuildAccountError,
   startLiveAdminAccount,
   stopLiveAdminAccount,
   updateTKGuildUser,
@@ -132,12 +132,12 @@ export default class TKGuildUserController {
 
   static async isAnyAccountError(ctx: Context, next: Next) {
     const { org_info } = ctx.clientInfo!;
-    const data = ctx.getRequestData<IsAnyAccountErrorRequest>();
+    const data = ctx.getRequestData<IsAnyGuildAccountErrorRequest>();
     const requestWithOrgId = {
       ...data,
       org_id: org_info.id,
     };
-    ctx.body = await isAnyAccountError(requestWithOrgId);
+    ctx.body = await isAnyGuildAccountError(requestWithOrgId, ctx.logger);
     await next();
   }
 }

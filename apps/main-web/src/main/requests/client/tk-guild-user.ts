@@ -7,8 +7,8 @@ import type {
   GetTKGuildUserDetailResponse,
   GetTKGuildUserListRequest,
   GetTKGuildUserListResponse,
-  IsAnyAccountErrorRequest,
-  IsAnyAccountErrorResponse,
+  IsAnyGuildAccountErrorRequest,
+  IsAnyGuildAccountErrorResponse,
   StartTKLiveAdminAccountRequest,
   StartTKLiveAdminAccountResponse,
   StopTKLiveAdminAccountRequest,
@@ -203,10 +203,10 @@ export function stopTKGuildUserAccount(
 
 // Is Any TK Guild User Account Error
 export function isAnyGuildUserAccountError(
-  params: IsAnyAccountErrorRequest,
+  params: IsAnyGuildAccountErrorRequest,
   token: string,
 ) {
-  return commonRequest<IsAnyAccountErrorResponse>({
+  return commonRequest<IsAnyGuildAccountErrorResponse>({
     baseURL: config[OwnServerUrl],
     method: Post,
     path: IsAnyAccountError,

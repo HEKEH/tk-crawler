@@ -47,4 +47,9 @@ systemRouter.post(
   SystemController.stopTKGuildUserAccount,
 );
 
+systemRouter.post(
+  '/is-any-guild-account-error',
+  systemTokenAuthMiddleware(),
+  SystemController.isAnyGuildAccountError,
+);
 export default systemRouter;

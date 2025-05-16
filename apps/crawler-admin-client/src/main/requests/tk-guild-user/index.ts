@@ -1,6 +1,8 @@
 import type {
   GetAllTKGuildUserListRequest,
   GetAllTKGuildUserListResponse,
+  IsAnyGuildAccountErrorRequest,
+  IsAnyGuildAccountErrorResponse,
   StartTKLiveAdminAccountRequest,
   StartTKLiveAdminAccountResponse,
   StopTKLiveAdminAccountRequest,
@@ -10,6 +12,7 @@ import {
   OwnServerUrl,
   Post,
   SystemGetAllTKGuildUserList,
+  SystemIsAnyGuildAccountError,
   SystemStartTKGuildUserAccount,
   SystemStopTKGuildUserAccount,
 } from '@tk-crawler/secure';
@@ -69,6 +72,21 @@ export function stopTKGuildUserAccount(
     path: SystemStopTKGuildUserAccount,
     params,
     secure: true,
+    headers: {
+      [SYSTEM_TOKEN_HEADER_KEY]: token,
+    },
+  });
+}
+
+export function isAnyGuildAccountError(
+  params: IsAnyGuildAccountErrorRequest,
+  token: string,
+) {
+  return commonRequest<IsAnyGuildAccountErrorResponse>({
+    baseURL: config[OwnServerUrl],
+    method: Post,
+    path: SystemIsAnyGuildAccountError,
+    params,
     headers: {
       [SYSTEM_TOKEN_HEADER_KEY]: token,
     },

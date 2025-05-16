@@ -1,5 +1,6 @@
 import type {
   GetAllTKGuildUserListRequest,
+  IsAnyGuildAccountErrorRequest,
   StartTKLiveAdminAccountRequest,
   StopTKLiveAdminAccountRequest,
   SystemAdminUser,
@@ -12,6 +13,7 @@ import {
   changeSystemUserPassword,
   getAllTKGuildUserList,
   getCrawlStatistics,
+  isAnyGuildAccountError,
   startLiveAdminAccount,
   stopLiveAdminAccount,
   systemUserLogin,
@@ -61,14 +63,21 @@ export default class SystemController {
 
   static async startTKGuildUserAccount(ctx: Context, next: Next) {
     const request = ctx.getRequestData<StartTKLiveAdminAccountRequest>();
-    const resp = await startLiveAdminAccount(request);
-    ctx.body = resp;
+    await startLiveAdminAccount(request);
+    ctx.body = ctx.t('Success');
     await next();
   }
 
   static async stopTKGuildUserAccount(ctx: Context, next: Next) {
     const request = ctx.getRequestData<StopTKLiveAdminAccountRequest>();
-    const resp = await stopLiveAdminAccount(request);
+    await stopLiveAdminAccount(request);
+    ctx.body = ctx.t('Success');
+    await next();
+  }
+
+  static async isAnyGuildAccountError(ctx: Context, next: Next) {
+    const request = ctx.getRequestData<IsAnyGuildAccountErrorRequest>();
+    const resp = await isAnyGuildAccountError(request, ctx.logger);
     ctx.body = resp;
     await next();
   }

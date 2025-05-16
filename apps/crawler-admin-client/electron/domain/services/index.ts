@@ -1,4 +1,5 @@
 import type { IsCookieValidResult } from '@tk-crawler-admin-client/shared';
+import type { TKGuildUser } from '@tk-crawler/biz-shared';
 import type { CommonResult, MessageCenter } from '@tk-crawler/shared';
 import type { Crawler } from '../crawler';
 import type { ViewsManager } from '../views';
@@ -7,7 +8,10 @@ import {
   IsCookieValidResultStatus,
   TOKEN_EVENTS,
 } from '@tk-crawler-admin-client/shared';
-import { getVerifyFp } from '@tk-crawler/biz-shared';
+import {
+  getVerifyFp,
+  GUILD_COOKIE_PAGE_HELP_EVENTS,
+} from '@tk-crawler/biz-shared';
 import { initProxy } from '@tk-crawler/electron-utils/main';
 import {
   checkTiktokCookieValid,
@@ -129,6 +133,16 @@ export class Services {
           };
         }
       };
+    this._addEventHandler(
+      GUILD_COOKIE_PAGE_HELP_EVENTS.GO_TO_GUILD_COOKIE_PAGE,
+      async (
+        _: Electron.IpcMainInvokeEvent,
+        data: { guildUser: TKGuildUser },
+      ) => {
+        logger.info('[GO TO GUILD COOKIE PAGE]', data);
+        return this._viewManager.openCookiePage(data);
+      },
+    );
     this._addEventHandler(CUSTOM_EVENTS.CHECK_COOKIE_VALIDITY, () => {
       return checkTiktokCookieValidHandler();
     });

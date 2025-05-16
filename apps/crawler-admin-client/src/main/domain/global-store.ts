@@ -3,6 +3,7 @@ import type {
   SystemUserLoginSuccessData,
 } from '@tk-crawler/biz-shared';
 import type { Subscription } from 'rxjs';
+import type { GuildAccountsManageContext } from './guild-accounts-manage';
 import { CRAWL_EVENTS } from '@tk-crawler-admin-client/shared';
 import { isInElectronApp } from '@tk-crawler/electron-utils/render';
 import {
@@ -17,12 +18,16 @@ import { Page } from '../types';
 import { getToken, removeToken, setToken } from '../utils';
 import ClientManage from './client-manage';
 import CrawlerManage from './crawler-manage';
+import { GuildAccountsManage } from './guild-accounts-manage';
 import { UserProfile } from './user-profile';
 
-export default class GlobalStore {
+export default class GlobalStore implements GuildAccountsManageContext {
   private _crawlerManage: CrawlerManage;
 
   private _clientManage: ClientManage;
+
+  private _guildAccountsManage: GuildAccountsManage;
+
   private _currentPage: Page | null = null;
 
   private _userProfile = new UserProfile();
@@ -41,6 +46,10 @@ export default class GlobalStore {
 
   get clientManage() {
     return this._clientManage;
+  }
+
+  get guildAccountsManage() {
+    return this._guildAccountsManage;
   }
 
   get currentPage() {
@@ -66,11 +75,13 @@ export default class GlobalStore {
   constructor() {
     this._crawlerManage = new CrawlerManage();
     this._clientManage = new ClientManage();
+    this._guildAccountsManage = new GuildAccountsManage(this);
   }
 
   private _handleLoginSuccess(data: SystemUserLoginSuccessData) {
     this._userProfile.initAfterLoginSuccess(data);
     this._currentPage = this.allPages[0].key;
+    this._guildAccountsManage.start();
   }
 
   private _subscribeTokenInvalid() {
@@ -87,6 +98,14 @@ export default class GlobalStore {
   private _gotoLoginPage() {
     this._userProfile.clear();
     this._currentPage = Page.Login;
+  }
+
+  goToPage(page: Page) {
+    if (page === Page.Login) {
+      this._gotoLoginPage();
+      return;
+    }
+    this._currentPage = page;
   }
 
   private async _loginByToken() {
@@ -183,6 +202,7 @@ export default class GlobalStore {
 
   async clear() {
     this.messageCenter.clear();
+    this._guildAccountsManage.clear();
     this._userProfile.clear();
     await this.crawlerManage.destroy();
   }

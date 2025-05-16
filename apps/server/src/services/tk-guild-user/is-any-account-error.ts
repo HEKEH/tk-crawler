@@ -1,20 +1,21 @@
+import type { Logger } from '@tk-crawler/shared';
 import {
-  type IsAnyAccountErrorRequest,
-  type IsAnyAccountErrorResponseData,
+  type IsAnyGuildAccountErrorRequest,
+  type IsAnyGuildAccountErrorResponseData,
   TKGuildUserStatus,
 } from '@tk-crawler/biz-shared';
 import { mysqlClient } from '@tk-crawler/database';
-import { logger } from '../../infra/logger';
 
-export async function isAnyAccountError(
-  data: IsAnyAccountErrorRequest & {
-    org_id: string;
+export async function isAnyGuildAccountError(
+  data: IsAnyGuildAccountErrorRequest & {
+    org_id?: string;
   },
-): Promise<IsAnyAccountErrorResponseData> {
+  logger: Logger,
+): Promise<IsAnyGuildAccountErrorResponseData> {
   const hasError = Boolean(
     await mysqlClient.prismaClient.liveAdminUser.findFirst({
       where: {
-        org_id: BigInt(data.org_id),
+        org_id: data.org_id ? BigInt(data.org_id) : undefined,
         status: {
           in: [TKGuildUserStatus.ERROR, TKGuildUserStatus.COOKIE_EXPIRED],
         },

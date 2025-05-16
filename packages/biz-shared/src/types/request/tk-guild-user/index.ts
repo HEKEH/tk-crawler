@@ -133,14 +133,14 @@ export interface StopTKLiveAdminAccountResponse {
   message?: string;
 }
 
-export interface IsAnyAccountErrorRequest {}
+export interface IsAnyGuildAccountErrorRequest {}
 
-export interface IsAnyAccountErrorResponseData {
+export interface IsAnyGuildAccountErrorResponseData {
   has_error: boolean;
 }
 
-export interface IsAnyAccountErrorResponse {
+export interface IsAnyGuildAccountErrorResponse {
   status_code: RESPONSE_CODE;
-  data?: IsAnyAccountErrorResponseData;
+  data?: IsAnyGuildAccountErrorResponseData;
   message?: string;
 }

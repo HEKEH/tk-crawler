@@ -1,17 +1,17 @@
 import type { UserProfile } from './user-profile';
 import { RESPONSE_CODE } from '@tk-crawler/shared';
-import { ElMessage, ElMessageBox } from 'element-plus';
-import { isAnyGuildUserAccountError } from '../requests';
-import router from '../router';
-import { GuildManagementRouteRecord } from '../router/route-records';
+import { ElMessageBox } from 'element-plus';
+import { isAnyGuildAccountError } from '../requests';
+import { Page } from '../types';
 import { localStorageStore } from '../utils';
 
 export interface GuildAccountsManageContext {
   readonly token: string | undefined;
   readonly userProfile: UserProfile;
+  readonly goToPage: (page: Page) => void;
 }
 
-const IGNORE_ERROR_KEY = 'guild-accounts-manage-ignore-error';
+const IGNORE_ERROR_KEY = 'system-guild-accounts-manage-ignore-error';
 
 export class GuildAccountsManage {
   private _context: GuildAccountsManageContext;
@@ -40,7 +40,7 @@ export class GuildAccountsManage {
       return;
     }
 
-    const response = await isAnyGuildUserAccountError({}, this._context.token);
+    const response = await isAnyGuildAccountError({}, this._context.token);
     if (response.status_code === RESPONSE_CODE.SUCCESS) {
       this._isAnyAccountError = response.data!.has_error;
       if (!this._isAnyAccountError) {
@@ -53,32 +53,25 @@ export class GuildAccountsManage {
 
   private async _handleIsAnyAccountErrorOrStart() {
     if (this._isAnyAccountError) {
-      if (this._context.userProfile.isAdmin) {
-        if (localStorageStore.getItem(IGNORE_ERROR_KEY) === 1) {
-          return;
-        }
-        try {
-          await ElMessageBox.confirm(
-            '某些公会账号登录已过期或出错，请及时处理!',
-            {
-              title: '警告',
-              type: 'warning',
-              confirmButtonText: '去处理',
-              cancelButtonText: '忽略',
-              showClose: false,
-              closeOnClickModal: false,
-              closeOnPressEscape: false,
-            },
-          );
-          router.push(
-            GuildManagementRouteRecord.jumpTo ??
-              GuildManagementRouteRecord.path,
-          );
-        } catch {
-          localStorageStore.setItem(IGNORE_ERROR_KEY, 1);
-        }
-      } else {
-        ElMessage.warning('某些公会账号登录已过期或出错，请及时联系管理员处理');
+      if (localStorageStore.getItem(IGNORE_ERROR_KEY) === 1) {
+        return;
+      }
+      try {
+        await ElMessageBox.confirm(
+          '某些公会账号登录已过期或出错，请及时处理!',
+          {
+            title: '警告',
+            type: 'warning',
+            confirmButtonText: '去处理',
+            cancelButtonText: '忽略',
+            showClose: false,
+            closeOnClickModal: false,
+            closeOnPressEscape: false,
+          },
+        );
+        this._context.goToPage(Page.GuildManage);
+      } catch {
+        localStorageStore.setItem(IGNORE_ERROR_KEY, 1);
       }
     }
   }
@@ -89,7 +82,7 @@ export class GuildAccountsManage {
       () => {
         this.checkIsAnyAccountError();
       },
-      1000 * 60 * 5, // 5 minutes
+      1000 * 60 * 2, // 2 minutes
     );
     await this.checkIsAnyAccountError();
     this._handleIsAnyAccountErrorOrStart();

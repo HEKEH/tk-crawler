@@ -3,6 +3,7 @@ import { computed } from 'vue';
 import { useGlobalStore } from '../../utils';
 import AvatarDropdown from './avatar-dropdown/index.vue';
 import ErrorReminder from './error-reminder.vue';
+
 defineOptions({
   name: 'RightPart',
 });

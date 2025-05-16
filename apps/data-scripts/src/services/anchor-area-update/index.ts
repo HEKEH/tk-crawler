@@ -9,41 +9,52 @@ export interface UpdateAnchorAreaData {
   updated_at: Date;
 }
 
-const LIMIT = 1000;
+const LIMIT = 3000;
 
 export async function updateAnchorArea(region: Region) {
   try {
-    const result = await mysqlClient.prismaClient.$transaction(async tx => {
-      const anchors = await tx.anchor.findMany({
-        where: {
-          area: null,
-          region,
-        },
-        select: {
-          user_id: true,
-          region: true,
-          updated_at: true,
-        },
-        take: LIMIT,
-      });
-      logger.info('[UpdateAnchorArea]', `${anchors.length}条`);
-      logger.info([anchors[0], '...']);
-      if (anchors.length === 0) {
-        return {
-          count: 0,
-        };
-      }
-      const area = getAreaByRegion(region);
-      const res = await tx.$executeRaw`
+    const result = await mysqlClient.prismaClient.$transaction(
+      async tx => {
+        const anchors = await tx.anchor.findMany({
+          where: {
+            area: null,
+            region,
+          },
+          select: {
+            user_id: true,
+            region: true,
+            updated_at: true,
+          },
+          take: LIMIT,
+        });
+        logger.info(
+          `[UpdateAnchorArea] region: ${region}, count: ${anchors.length}`,
+        );
+        if (anchors[0]) {
+          logger.info([anchors[0], '...']);
+        } else {
+          logger.info('No anchors found');
+        }
+        if (anchors.length === 0) {
+          return {
+            count: 0,
+          };
+        }
+        const area = getAreaByRegion(region);
+        const res = await tx.$executeRaw`
         UPDATE Anchor
         SET area = ${area}
         WHERE user_id IN (${Prisma.join(anchors.map(a => a.user_id))})
       `;
-      logger.info('[UpdateAnchorArea Result]', res);
-      return {
-        count: anchors.length,
-      };
-    });
+        logger.info('[UpdateAnchorArea Result]', res);
+        return {
+          count: anchors.length,
+        };
+      },
+      {
+        timeout: 20000,
+      },
+    );
     logger.info('[UpdateAnchorArea Result]', result);
     return result;
   } catch (error) {

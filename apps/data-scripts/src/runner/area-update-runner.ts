@@ -72,10 +72,13 @@ export class AreaUpdateRunner implements Runner {
       return { success: true, end: true };
     }
     if (error) {
-      logger.error('UpdateArea is running error', this._errorCount);
+      logger.error('UpdateArea is running error:', {
+        errorCount: this._errorCount,
+      });
       if (this._errorCount > 20) {
         return { success: false, end: true };
       }
+      await new Promise(resolve => setTimeout(resolve, 20000)); // 10s之后再重试
       return { success: false, end: false };
     }
     this._errorCount = 0;

@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `SystemAdminUser` ADD COLUMN `role_id` INTEGER UNSIGNED NOT NULL DEFAULT 5;

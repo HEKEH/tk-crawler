@@ -3,14 +3,14 @@ import type { Area, AreaOption } from '@tk-crawler/biz-shared';
 import { AREA_OPTIONS } from '@tk-crawler/biz-shared';
 import { ElOption, ElSelect } from 'element-plus';
 import { computed, ref } from 'vue';
-import AreaTooltipIcon from './area-tooltip-icon.vue';
 import { useIsWebSize } from '../hooks';
+import AreaTooltipIcon from './area-tooltip-icon.vue';
 
 type AreaPropsValue = Area[] | 'all';
 type SelectValue = (Area | 'all')[];
 
 defineOptions({
-  name: 'AreaSelect',
+  name: 'AreaSelectMultiple',
 });
 
 const props = withDefaults(

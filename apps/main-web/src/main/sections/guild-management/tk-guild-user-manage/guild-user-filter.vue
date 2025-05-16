@@ -4,13 +4,12 @@ import type { FilterViewValues } from './filter';
 import { Refresh, Search } from '@element-plus/icons-vue';
 import { DoubleDownIcon, DoubleUpIcon } from '@tk-crawler/assets';
 
-import { AREA_OPTIONS, TKGuildUserStatusList } from '@tk-crawler/biz-shared';
+import { AREA_OPTIONS, TKGuildUserStatusOptions } from '@tk-crawler/biz-shared';
 import { AreaSelectSingle, useIsMobileSize } from '@tk-crawler/view-shared';
 
 import { ElButton, ElIcon, ElInput, ElOption, ElSelect } from 'element-plus';
 import { debounce } from 'lodash';
 import { computed, ref, watch } from 'vue';
-import { getStatusText } from './utils';
 import '@tk-crawler/styles/table-header-filter.scss';
 
 const props = defineProps<{
@@ -101,10 +100,10 @@ function toggleExpand() {
         >
           <ElOption label="全部" value="all" />
           <ElOption
-            v-for="status in TKGuildUserStatusList"
-            :key="status"
-            :label="getStatusText(status)"
-            :value="status"
+            v-for="item in TKGuildUserStatusOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
           />
         </ElSelect>
       </div>

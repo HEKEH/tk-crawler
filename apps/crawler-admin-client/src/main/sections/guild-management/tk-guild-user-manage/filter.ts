@@ -1,13 +1,10 @@
-import type {
-  Area,
-  TKGuildUserListFilter,
-  TKGuildUserStatus,
-} from '@tk-crawler/biz-shared';
+import type { Area, TKGuildUserListFilter } from '@tk-crawler/biz-shared';
+import { TKGuildUserStatus } from '@tk-crawler/biz-shared';
 
 export interface FilterViewValues {
   search: string;
   area: Area | 'all';
-  status: TKGuildUserStatus | 'all';
+  status: TKGuildUserStatus[] | 'all';
 }
 
 export function transformFilterViewValuesToFilterValues(
@@ -19,15 +16,21 @@ export function transformFilterViewValuesToFilterValues(
     }
     return value;
   }
+  let status: { in: TKGuildUserStatus[] } | undefined;
+  if (filterViewValues.status !== 'all') {
+    status = {
+      in: filterViewValues.status,
+    };
+  }
   return {
     search: filterViewValues.search,
     area: transValue(filterViewValues.area),
-    status: transValue(filterViewValues.status),
+    status,
   };
 }
 
 export const DefaultFilterViewValues: FilterViewValues = {
   search: '',
   area: 'all',
-  status: 'all',
+  status: [TKGuildUserStatus.COOKIE_EXPIRED, TKGuildUserStatus.ERROR],
 };

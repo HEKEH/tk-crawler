@@ -3,13 +3,15 @@ import type { FilterViewValues } from './filter';
 import { Refresh, Search } from '@element-plus/icons-vue';
 import { DoubleDownIcon, DoubleUpIcon } from '@tk-crawler/assets';
 
-import { TKGuildUserStatusList } from '@tk-crawler/biz-shared';
-import { AreaSelectSingle, useIsMobileSize } from '@tk-crawler/view-shared';
+import {
+  AreaSelectSingle,
+  GuildUserStatusSelectMultiple,
+  useIsMobileSize,
+} from '@tk-crawler/view-shared';
 
-import { ElButton, ElIcon, ElInput, ElOption, ElSelect } from 'element-plus';
+import { ElButton, ElIcon, ElInput } from 'element-plus';
 import { debounce } from 'lodash';
 import { ref, watch } from 'vue';
-import { getStatusText } from './utils';
 import '@tk-crawler/styles/table-header-filter.scss';
 
 const props = defineProps<{
@@ -85,21 +87,14 @@ function toggleExpand() {
           </template>
         </ElInput>
       </div>
-      <div class="filter-item">
+      <div class="filter-item md:!w-60">
         <label class="filter-label">状态</label>
-        <ElSelect
+        <GuildUserStatusSelectMultiple
           v-model="filters.status"
+          show-all
           size="small"
           @change="handleFilterChange"
-        >
-          <ElOption label="全部" value="all" />
-          <ElOption
-            v-for="status in TKGuildUserStatusList"
-            :key="status"
-            :label="getStatusText(status)"
-            :value="status"
-          />
-        </ElSelect>
+        />
       </div>
       <div class="filter-item">
         <label class="filter-label">分区</label>

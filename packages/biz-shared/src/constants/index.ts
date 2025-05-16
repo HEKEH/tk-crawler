@@ -1,5 +1,6 @@
 export * from './area';
 export * from './guild-cookie-page-help';
+export * from './guild-user';
 // export * from './crawl';
 export * from './live-admin';
 export * from './region';

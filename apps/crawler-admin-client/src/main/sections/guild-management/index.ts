@@ -1,10 +1,3 @@
-import { ElLoading } from 'element-plus';
-import { defineAsyncComponent } from 'vue';
-
-const GuildManagement = defineAsyncComponent({
-  loader: () => import('./index.vue'),
-  timeout: 3000,
-  loadingComponent: () => ElLoading,
-});
+import GuildManagement from './index.vue';
 
 export { GuildManagement };

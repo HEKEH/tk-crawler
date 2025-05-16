@@ -700,6 +700,9 @@ importers:
 
   packages/electron-utils:
     dependencies:
+      '@tk-crawler/secure':
+        specifier: workspace:*
+        version: link:../secure
       electron:
         specifier: ^35.2.1
         version: 35.2.1

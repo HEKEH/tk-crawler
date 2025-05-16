@@ -5,9 +5,13 @@ export function getCommonPackageAlias(isProduction: boolean) {
     '@tk-crawler/shared': resolve(__dirname, '../../shared/src'),
     '@tk-crawler/biz-shared': resolve(__dirname, '../../biz-shared/src'),
     '@tk-crawler/view-shared': resolve(__dirname, '../../view-shared/src'),
-    '@tk-crawler/electron-utils': resolve(
+    '@tk-crawler/electron-utils/main': resolve(
       __dirname,
-      '../../electron-utils/src',
+      '../../electron-utils/src/main',
+    ),
+    '@tk-crawler/electron-utils/render': resolve(
+      __dirname,
+      '../../electron-utils/src/render',
     ),
     '@tk-crawler/electron-biz-shared': resolve(
       __dirname,

@@ -37,3 +37,6 @@ export const SystemStartTKGuildUserAccount =
 
 export const SystemStopTKGuildUserAccount =
   '/system/stop-tk-guild-user-account';
+
+export const SystemIsAnyGuildAccountError =
+  '/system/is-any-guild-account-error';

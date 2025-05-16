@@ -9,7 +9,7 @@ export function transformTKGuildUserFilterValues(
   filterValues: TKGuildUserListFilter | undefined,
   orgId?: string,
 ): TKGuildUserWhereInput {
-  const { search, ...restFilter } = filterValues ?? {};
+  const { search, has_membership, ...restFilter } = filterValues ?? {};
   const filter: TKGuildUserWhereInput = restFilter;
   if (orgId) {
     filter.org_id = BigInt(orgId);
@@ -19,6 +19,15 @@ export function transformTKGuildUserFilterValues(
   if (search) {
     filter.username = {
       contains: xss(search),
+    };
+  }
+
+  if (has_membership) {
+    if (!filter.organization) {
+      filter.organization = {};
+    }
+    filter.organization.membership_expire_at = {
+      gt: new Date(),
     };
   }
 

@@ -15,6 +15,7 @@ export async function isAnyGuildAccountError(
   const hasError = Boolean(
     await mysqlClient.prismaClient.liveAdminUser.findFirst({
       where: {
+        ...data.filter,
         org_id: data.org_id ? BigInt(data.org_id) : undefined,
         status: {
           in: [TKGuildUserStatus.ERROR, TKGuildUserStatus.COOKIE_EXPIRED],

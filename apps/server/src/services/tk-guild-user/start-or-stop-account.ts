@@ -50,9 +50,12 @@ import { BusinessError } from '../../utils';
 // }
 
 export async function startLiveAdminAccount(
-  data: StartTKLiveAdminAccountRequest & { org_id?: string },
+  data: StartTKLiveAdminAccountRequest & {
+    org_id?: string;
+    started_by?: string;
+  },
 ): Promise<void> {
-  const { user_id, org_id, cookie, faction_id, area } = data;
+  const { user_id, org_id, cookie, faction_id, area, started_by } = data;
   assert(user_id, '用户ID不能为空');
   assert(cookie, 'Cookie不能为空');
   assert(faction_id, '分区ID不能为空');
@@ -101,7 +104,7 @@ export async function startLiveAdminAccount(
     where: {
       id: BigInt(user_id),
     },
-    data: updateData,
+    data: { ...updateData, started_by },
   });
   const message: BroadcastGuildUserUpdateMessage = {
     type: 'update',
@@ -151,6 +154,7 @@ export async function stopLiveAdminAccount(
     status: TKGuildUserStatus.STOPPED,
     warning_count: 0,
     started_at: null,
+    started_by: null,
     error_at: null,
   };
 
@@ -165,7 +169,7 @@ export async function stopLiveAdminAccount(
     data: {
       id: user_id,
       org_id: user.organization?.id.toString(),
-      ...omit(updateData, 'started_at', 'error_at'),
+      ...omit(updateData, 'started_at', 'error_at', 'started_by'),
     },
   };
   redisMessageBus.publish(

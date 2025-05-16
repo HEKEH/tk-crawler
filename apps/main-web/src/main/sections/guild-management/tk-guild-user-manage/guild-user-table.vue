@@ -407,6 +407,16 @@ onKeepAliveActivated(refresh);
         </template>
       </ElTableColumn>
       <ElTableColumn
+        prop="started_by"
+        label="启动操作者"
+        :min-width="isWeb ? 205 : 170"
+        sortable="custom"
+      >
+        <template #default="scope: ScopeType">
+          {{ scope.row.started_by || '-' }}
+        </template>
+      </ElTableColumn>
+      <ElTableColumn
         prop="error_at"
         label="账号过期时间"
         :min-width="isWeb ? 205 : 170"

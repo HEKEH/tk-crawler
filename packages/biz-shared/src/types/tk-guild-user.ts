@@ -7,6 +7,7 @@ export interface TKGuildUser {
   password: string;
   org_id: string;
   status: TKGuildUserStatus;
+  started_by: string | null;
   max_query_per_hour: number;
   max_query_per_day: number;
   current_query_per_hour?: number;

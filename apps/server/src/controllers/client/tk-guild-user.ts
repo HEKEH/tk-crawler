@@ -111,6 +111,7 @@ export default class TKGuildUserController {
     const requestWithOrgId = {
       ...data,
       org_id: org_info.id,
+      started_by: ctx.clientInfo?.user_info.username,
     };
     await startLiveAdminAccount(requestWithOrgId);
     ctx.body = ctx.t('Success');

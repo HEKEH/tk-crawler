@@ -44,6 +44,7 @@ export interface DeleteTKGuildUserResponse {
 export type TKGuildUserWhereInput = Prisma.LiveAdminUserWhereInput;
 
 export type TKGuildUserListFilter = TKGuildUserWhereInput & {
+  has_membership?: boolean;
   search?: string;
 };
 
@@ -133,7 +134,9 @@ export interface StopTKLiveAdminAccountResponse {
   message?: string;
 }
 
-export interface IsAnyGuildAccountErrorRequest {}
+export interface IsAnyGuildAccountErrorRequest {
+  filter?: Prisma.LiveAdminUserWhereInput;
+}
 
 export interface IsAnyGuildAccountErrorResponseData {
   has_error: boolean;

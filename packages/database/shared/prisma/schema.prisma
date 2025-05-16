@@ -65,6 +65,7 @@ model LiveAdminUser {
   cookie              String?             @db.Text
   is_cookie_valid     Boolean?
   started_at          DateTime?           @db.DateTime(3)
+  started_by          String?             @db.VarChar(24) // 启动者，orgUser或者后台
   error_at            DateTime?           @db.DateTime(3)
   created_at          DateTime            @default(now()) @db.DateTime(3)
   updated_at          DateTime            @updatedAt @db.DateTime(3)

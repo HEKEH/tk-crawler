@@ -1,14 +1,16 @@
-import type {
-  GetAllTKGuildUserListRequest,
-  IsAnyGuildAccountErrorRequest,
-  StartTKLiveAdminAccountRequest,
-  StopTKLiveAdminAccountRequest,
-  SystemAdminUser,
-  SystemCrawlStatisticsRequest,
-  SystemUserChangePasswordRequest,
-  SystemUserLoginRequest,
-} from '@tk-crawler/biz-shared';
+import type { Prisma } from '@tk-crawler/database/mysql';
 import type { Context, Next } from 'koa';
+import {
+  type GetAllTKGuildUserListRequest,
+  type IsAnyGuildAccountErrorRequest,
+  OrganizationStatus,
+  type StartTKLiveAdminAccountRequest,
+  type StopTKLiveAdminAccountRequest,
+  type SystemAdminUser,
+  type SystemCrawlStatisticsRequest,
+  type SystemUserChangePasswordRequest,
+  type SystemUserLoginRequest,
+} from '@tk-crawler/biz-shared';
 import {
   changeSystemUserPassword,
   getAllTKGuildUserList,
@@ -55,7 +57,21 @@ export default class SystemController {
   }
 
   static async getAllTKGuildUserList(ctx: Context, next: Next) {
-    const request = ctx.getRequestData<GetAllTKGuildUserListRequest>();
+    let request = ctx.getRequestData<GetAllTKGuildUserListRequest>();
+    const organizationFilter: Prisma.OrganizationWhereInput = {
+      ...request.filter?.organization,
+      status: OrganizationStatus.normal,
+      membership_expire_at: {
+        gt: new Date(),
+      },
+    };
+    request = {
+      ...request,
+      filter: {
+        ...request.filter,
+        organization: organizationFilter,
+      },
+    };
     const resp = await getAllTKGuildUserList(request, ctx.logger);
     ctx.body = resp;
     await next();
@@ -63,7 +79,10 @@ export default class SystemController {
 
   static async startTKGuildUserAccount(ctx: Context, next: Next) {
     const request = ctx.getRequestData<StartTKLiveAdminAccountRequest>();
-    await startLiveAdminAccount(request);
+    await startLiveAdminAccount({
+      ...request,
+      started_by: '后台人员',
+    });
     ctx.body = ctx.t('Success');
     await next();
   }
@@ -76,7 +95,21 @@ export default class SystemController {
   }
 
   static async isAnyGuildAccountError(ctx: Context, next: Next) {
-    const request = ctx.getRequestData<IsAnyGuildAccountErrorRequest>();
+    let request = ctx.getRequestData<IsAnyGuildAccountErrorRequest>();
+    const organizationFilter: Prisma.OrganizationWhereInput = {
+      ...request.filter?.organization,
+      status: OrganizationStatus.normal,
+      membership_expire_at: {
+        gt: new Date(),
+      },
+    };
+    request = {
+      ...request,
+      filter: {
+        ...request.filter,
+        organization: organizationFilter,
+      },
+    };
     const resp = await isAnyGuildAccountError(request, ctx.logger);
     ctx.body = resp;
     await next();

@@ -97,7 +97,6 @@ export async function startLiveAdminAccount(
     faction_id,
     area,
     started_at: new Date(),
-    error_at: null,
     warning_count: 0,
   };
   await mysqlClient.prismaClient.liveAdminUser.update({

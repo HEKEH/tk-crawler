@@ -14,7 +14,7 @@ import {
   useIsWebSize,
 } from '@tk-crawler/view-shared';
 import { ElIcon, ElLink, ElTag, ElTooltip } from 'element-plus';
-import { computed } from 'vue';
+import { computed, toRaw } from 'vue';
 import './anchor-table-columns.scss';
 
 export interface CustomColumnConfig
@@ -41,7 +41,7 @@ function DisplayIdCellRenderer(
       <ElLink
         type="primary"
         class="display-id-link"
-        href={getTiktokAnchorLink(props.rowData, isInMobile)}
+        href={getTiktokAnchorLink(toRaw(props.rowData), isInMobile)}
         target="_blank"
       >
         {props.rowData.display_id}

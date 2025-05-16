@@ -193,42 +193,42 @@ function handleSelectionChange(rows: TKGuildUser[]) {
 }
 const hasSelectedRows = computed(() => selectedRows.value.length > 0);
 
-// 批量删除
-async function handleBatchDelete() {
-  try {
-    await ElMessageBox.confirm(
-      `确定要删除 ${selectedRows.value.length} 个查询账号吗？`,
-      {
-        type: 'warning',
-        confirmButtonText: '确定',
-        confirmButtonClass: 'el-button--danger',
-        cancelButtonText: '取消',
-      },
-    );
-  } catch {
-    return;
-  }
+// // 批量删除
+// async function handleBatchDelete() {
+//   try {
+//     await ElMessageBox.confirm(
+//       `确定要删除 ${selectedRows.value.length} 个查询账号吗？`,
+//       {
+//         type: 'warning',
+//         confirmButtonText: '确定',
+//         confirmButtonClass: 'el-button--danger',
+//         cancelButtonText: '取消',
+//       },
+//     );
+//   } catch {
+//     return;
+//   }
 
-  const response = await deleteTKGuildUser(
-    { ids: selectedRows.value.map(user => user.id) },
-    globalStore.token,
-  );
+//   const response = await deleteTKGuildUser(
+//     { ids: selectedRows.value.map(user => user.id) },
+//     globalStore.token,
+//   );
 
-  if (response.status_code === RESPONSE_CODE.SUCCESS) {
-    ElMessage.success({
-      message: `共删除 ${response.data?.deleted_count} 个用户`,
-      type: 'success',
-      duration: 2000,
-    });
-    await refresh();
-  } else {
-    ElMessage.error({
-      message: response.message || '删除失败',
-      type: 'error',
-      duration: 2000,
-    });
-  }
-}
+//   if (response.status_code === RESPONSE_CODE.SUCCESS) {
+//     ElMessage.success({
+//       message: `共删除 ${response.data?.deleted_count} 个用户`,
+//       type: 'success',
+//       duration: 2000,
+//     });
+//     await refresh();
+//   } else {
+//     ElMessage.error({
+//       message: response.message || '删除失败',
+//       type: 'error',
+//       duration: 2000,
+//     });
+//   }
+// }
 
 const formDialogVisible = ref(false);
 const formData = ref<Partial<TKGuildUser>>();
@@ -325,14 +325,14 @@ onKeepAliveActivated(refresh);
         </ElTooltip>
       </div>
       <div class="right-part">
-        <ElButton
+        <!-- <ElButton
           :disabled="!hasSelectedRows"
           type="danger"
           size="small"
           @click="handleBatchDelete"
         >
           批量删除
-        </ElButton>
+        </ElButton> -->
         <ElButton type="default" size="small" @click="resetSort">
           重置排序
         </ElButton>
@@ -418,7 +418,7 @@ onKeepAliveActivated(refresh);
       </ElTableColumn>
       <ElTableColumn
         prop="error_at"
-        label="账号过期时间"
+        label="上次账号过期时间"
         :min-width="isWeb ? 205 : 170"
         sortable="custom"
       >

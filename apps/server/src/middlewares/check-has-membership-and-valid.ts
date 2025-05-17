@@ -8,9 +8,10 @@ export async function checkHasMembershipAndValid(ctx: Context, next: Next) {
     throw new BusinessError('您的机构已被禁用，请联系管理员');
   }
   if (!org_info.if_membership_valid) {
-    throw new BusinessError(
-      '您的机构不是会员或者会员已过期，请先创建或续费会员',
-    );
+    if (org_info.membership_expire_at) {
+      throw new BusinessError('您的机构会员已过期，请及时续费会员');
+    }
+    throw new BusinessError('您的机构不是会员，请先创建会员');
   }
   await next();
 }

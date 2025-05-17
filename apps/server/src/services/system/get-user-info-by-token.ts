@@ -1,9 +1,12 @@
-import type { SystemAdminUser } from '@tk-crawler/biz-shared';
+import {
+  getAdminPrivilegesByRole,
+  type SystemAdminUser,
+} from '@tk-crawler/biz-shared';
 import { mysqlClient } from '@tk-crawler/database';
 import { BusinessError, parseToken, TokenInvalidError } from '../../utils';
 
 /** jwt token登录 */
-export async function getSystemUserInfoByToken(
+export async function getSystemAdminUserInfoByToken(
   token: string | any | undefined,
   options?: {
     fetchPassword?: boolean;
@@ -45,6 +48,8 @@ export async function getSystemUserInfoByToken(
       id: user.id.toString(),
       username: user.username,
       password: user.password,
+      role_id: user.role_id,
+      privileges: getAdminPrivilegesByRole(user.role_id),
     },
   };
 }

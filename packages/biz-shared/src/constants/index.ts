@@ -1,3 +1,4 @@
+export * from './admin-auth';
 export * from './area';
 export * from './guild-cookie-page-help';
 export * from './guild-user';
@@ -6,6 +7,5 @@ export * from './live-admin';
 export * from './region';
 export * from './request-setting';
 export * from './requests';
-export * from './system-auth';
 export * from './url';
 export * from './user-agent';

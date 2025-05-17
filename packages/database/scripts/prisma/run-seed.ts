@@ -1,7 +1,7 @@
 import { resolve } from 'node:path';
 import process from 'node:process';
 import { PrismaClient } from '@prisma/client';
-import { SystemUserRole } from '@tk-crawler/biz-shared';
+import { AdminUserRole } from '@tk-crawler/biz-shared';
 import { hashPassword } from '@tk-crawler/server-shared';
 import { loadPrismaEnv } from '../../shared/prisma/load-prisma-env';
 
@@ -37,7 +37,7 @@ export async function runSeed() {
         create: {
           username: systemAdminUsername,
           password: await hashPassword(systemAdminPassword),
-          role_id: SystemUserRole.ADMIN,
+          role_id: AdminUserRole.ADMIN,
         },
       }),
     ]);

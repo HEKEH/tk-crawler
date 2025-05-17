@@ -1,6 +1,6 @@
 import type {
   OrgMemberUserInfoWithOrgInfo,
-  SystemUserInfo,
+  SystemAdminUserInfo,
 } from '@tk-crawler/biz-shared';
 import type { I18N_LANGUAGE, Logger } from '@tk-crawler/shared';
 import type { TOptions } from 'i18next';
@@ -14,7 +14,7 @@ interface CustomContext {
   logger: Logger;
 
   readonly clientInfo?: OrgMemberUserInfoWithOrgInfo;
-  readonly systemUserInfo?: SystemUserInfo;
+  readonly systemUserInfo?: SystemAdminUserInfo;
 }
 
 declare module 'koa' {

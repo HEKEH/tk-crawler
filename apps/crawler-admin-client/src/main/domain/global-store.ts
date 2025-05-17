@@ -1,10 +1,11 @@
-import type {
-  SystemUserLoginRequest,
-  SystemUserLoginSuccessData,
-} from '@tk-crawler/biz-shared';
 import type { Subscription } from 'rxjs';
 import type { GuildAccountsManageContext } from './guild-accounts-manage';
 import { CRAWL_EVENTS } from '@tk-crawler-admin-client/shared';
+import {
+  AdminPrivilege,
+  type SystemUserLoginRequest,
+  type SystemUserLoginSuccessData,
+} from '@tk-crawler/biz-shared';
 import { isInElectronApp } from '@tk-crawler/electron-utils/render';
 import {
   InitializationState,
@@ -137,25 +138,35 @@ export default class GlobalStore implements GuildAccountsManageContext {
         },
       ];
     }
-    return isInElectronApp()
-      ? [
-          {
-            key: Page.Crawler,
-            name: '爬虫管理',
-          },
-          {
-            key: Page.Client,
-            name: '客户管理',
-          },
-          {
-            key: Page.GuildManage,
-            name: '公会管理',
-          },
-        ]
-      : [
-          { key: Page.Client, name: '客户管理' },
-          { key: Page.GuildManage, name: '公会管理' },
-        ];
+    let pageList: {
+      key: Page;
+      name: string;
+      privilege: AdminPrivilege;
+      onlyApp?: boolean;
+    }[] = [
+      {
+        key: Page.Crawler,
+        name: '爬虫管理',
+        privilege: AdminPrivilege.CRAWLER_MANAGEMENT,
+        onlyApp: true,
+      },
+      {
+        key: Page.Client,
+        name: '客户管理',
+        privilege: AdminPrivilege.CLIENT_MANAGEMENT,
+      },
+      {
+        key: Page.GuildManage,
+        name: '公会管理',
+        privilege: AdminPrivilege.GUILD_MANAGEMENT,
+      },
+    ];
+    if (!isInElectronApp()) {
+      pageList = pageList.filter(page => !page.onlyApp);
+    }
+    return pageList.filter(page =>
+      this.userProfile.hasPrivilege(page.privilege),
+    );
   }
 
   async login(params: SystemUserLoginRequest) {

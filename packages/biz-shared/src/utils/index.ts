@@ -1,3 +1,4 @@
+export * from './admin-auth';
 export * from './error';
 export * from './guild-user';
 export * from './password';

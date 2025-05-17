@@ -1,3 +1,4 @@
+import type { AdminPrivilege, AdminUserRole } from '@tk-crawler/biz-shared';
 import type { RESPONSE_CODE } from '@tk-crawler/shared';
 
 export interface SystemUserLoginRequest {
@@ -9,6 +10,8 @@ export interface SystemAdminUserInfo {
   id: string;
   username: string;
   password?: string;
+  role_id: AdminUserRole;
+  privileges: AdminPrivilege[] | 'all';
 }
 
 export interface SystemAdminUser {

@@ -18,13 +18,13 @@ import {
   isAnyGuildAccountError,
   startLiveAdminAccount,
   stopLiveAdminAccount,
-  systemUserLogin,
+  systemAdminUserLogin,
 } from '../services';
 
 export default class SystemController {
   static async login(ctx: Context, next: Next) {
     const data = ctx.getRequestData<SystemUserLoginRequest>();
-    const resp = await systemUserLogin(data);
+    const resp = await systemAdminUserLogin(data);
     ctx.logger.info(`[System User Login]`, resp);
     ctx.body = resp;
     await next();

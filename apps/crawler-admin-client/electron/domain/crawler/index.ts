@@ -7,7 +7,7 @@ import config from '../../config';
 export class Crawler {
   private _liveAnchorCrawler: LiveAnchorCrawler;
 
-  private _messageCenter: MessageCenter;
+  // private _messageCenter: MessageCenter;
 
   get crawlArea() {
     return this._liveAnchorCrawler.crawlArea;
@@ -32,7 +32,7 @@ export class Crawler {
   }
 
   constructor(props: { messageCenter: MessageCenter }) {
-    this._messageCenter = props.messageCenter;
+    // this._messageCenter = props.messageCenter;
     this._liveAnchorCrawler = new LiveAnchorCrawler({
       crawlerInterval: config.crawlerInterval,
       messageCenter: props.messageCenter,

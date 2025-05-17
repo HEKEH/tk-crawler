@@ -114,7 +114,7 @@ export class LiveAnchorCrawler {
     this._messageCenter = props.messageCenter;
     this._anchorPool = new AnchorPool({
       messageCenter: this._messageCenter,
-      onAnchorUpdated: _ => {
+      onAnchorUpdated: () => {
         this._onAnchorUpdated();
       },
     });

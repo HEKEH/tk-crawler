@@ -1,4 +1,4 @@
-import { AdminUserRole } from './roles';
+import { SystemAdminUserRole } from './roles';
 
 export enum AdminPrivilege {
   // 爬虫管理
@@ -11,14 +11,17 @@ export enum AdminPrivilege {
   GUILD_MANAGEMENT = 'guild_management',
 }
 
-const ROLE_TO_PRIVILEGE_MAP: Record<AdminUserRole, AdminPrivilege[] | 'all'> = {
-  [AdminUserRole.ADMIN]: 'all',
-  [AdminUserRole.USER]: [
+const ROLE_TO_PRIVILEGE_MAP: Record<
+  SystemAdminUserRole,
+  AdminPrivilege[] | 'all'
+> = {
+  [SystemAdminUserRole.ADMIN]: 'all',
+  [SystemAdminUserRole.USER]: [
     AdminPrivilege.CRAWLER_MANAGEMENT,
     AdminPrivilege.GUILD_MANAGEMENT,
   ],
 };
 
-export function getAdminPrivilegesByRole(role: AdminUserRole) {
+export function getAdminPrivilegesByRole(role: SystemAdminUserRole) {
   return ROLE_TO_PRIVILEGE_MAP[role];
 }

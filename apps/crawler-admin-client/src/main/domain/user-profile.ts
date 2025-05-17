@@ -2,6 +2,7 @@ import {
   type AdminPrivilege,
   hasAdminPrivilege,
   type SystemAdminUserInfo,
+  SystemAdminUserRole,
   type SystemUserLoginSuccessData,
 } from '@tk-crawler/biz-shared';
 
@@ -10,6 +11,14 @@ export class UserProfile {
 
   constructor() {
     this._userInfo = null;
+  }
+
+  get userId() {
+    return this._userInfo?.id;
+  }
+
+  get isAdmin() {
+    return this._userInfo?.role_id === SystemAdminUserRole.ADMIN;
   }
 
   hasPrivilege(privilege: AdminPrivilege) {

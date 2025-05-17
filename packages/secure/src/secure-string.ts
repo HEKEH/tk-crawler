@@ -40,3 +40,8 @@ export const SystemStopTKGuildUserAccount =
 
 export const SystemIsAnyGuildAccountError =
   '/system/is-any-guild-account-error';
+
+export const SystemGetAdminUserList = '/system/get-admin-user-list';
+export const SystemUpdateAdminUser = '/system/update-admin-user';
+export const SystemCreateAdminUser = '/system/create-admin-user';
+export const SystemDeleteAdminUser = '/system/delete-admin-user';

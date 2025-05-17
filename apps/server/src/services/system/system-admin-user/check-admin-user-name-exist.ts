@@ -1,9 +1,9 @@
 import { mysqlClient } from '@tk-crawler/database';
 
-export async function checkOrgMemberNameExist(
+export async function checkAdminUserNameExist(
   username: string,
 ): Promise<boolean> {
-  const user = await mysqlClient.prismaClient.orgUser.findUnique({
+  const user = await mysqlClient.prismaClient.systemAdminUser.findUnique({
     select: { id: true },
     where: { username },
   });

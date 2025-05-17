@@ -1,4 +1,8 @@
-import type { AdminPrivilege, AdminUserRole } from '@tk-crawler/biz-shared';
+import type {
+  AdminPrivilege,
+  SystemAdminUserRole,
+} from '@tk-crawler/biz-shared';
+import type { Prisma } from '@tk-crawler/database';
 import type { RESPONSE_CODE } from '@tk-crawler/shared';
 
 export interface SystemUserLoginRequest {
@@ -10,8 +14,10 @@ export interface SystemAdminUserInfo {
   id: string;
   username: string;
   password?: string;
-  role_id: AdminUserRole;
+  role_id: SystemAdminUserRole;
   privileges: AdminPrivilege[] | 'all';
+  created_at: Date;
+  updated_at: Date;
 }
 
 export interface SystemAdminUser {
@@ -70,5 +76,59 @@ export interface SystemCrawlStatisticsResponseData {
 export interface SystemCrawlStatisticsResponse {
   status_code: RESPONSE_CODE;
   data?: SystemCrawlStatisticsResponseData;
+  message?: string;
+}
+
+export type CreateSystemAdminUserRequest = Omit<
+  SystemAdminUserInfo,
+  'id' | 'privileges'
+>;
+
+export interface CreateSystemAdminUserResponse {
+  status_code: RESPONSE_CODE;
+  message?: string;
+}
+
+export interface UpdateSystemAdminUserRequest {
+  data: Partial<Omit<CreateSystemAdminUserRequest, 'org_id'>> &
+    Pick<SystemAdminUserInfo, 'id'>;
+}
+
+export interface UpdateSystemAdminUserResponse {
+  status_code: RESPONSE_CODE;
+  message?: string;
+}
+
+export interface DeleteSystemAdminUserRequest {
+  id: string;
+}
+
+export interface DeleteSystemAdminUserResponse {
+  status_code: RESPONSE_CODE;
+  message?: string;
+}
+
+export interface GetSystemAdminUserListFilter {
+  username?: string;
+  role_id?: SystemAdminUserRole;
+}
+
+export type SystemAdminUserWhereInput = Prisma.SystemAdminUserWhereInput;
+
+export interface GetSystemAdminUserListRequest {
+  page_num: number;
+  page_size: number;
+  filter?: GetSystemAdminUserListFilter;
+  order_by?: Prisma.SystemAdminUserOrderByWithRelationInput;
+}
+
+export interface GetSystemAdminUserListResponseData {
+  list: Omit<SystemAdminUserInfo, 'password' | 'privileges'>[];
+  total: number;
+}
+
+export interface GetSystemAdminUserListResponse {
+  status_code: RESPONSE_CODE;
+  data?: GetSystemAdminUserListResponseData;
   message?: string;
 }

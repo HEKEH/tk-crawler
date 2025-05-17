@@ -151,6 +151,11 @@ export default class GlobalStore implements GuildAccountsManageContext {
         onlyApp: true,
       },
       {
+        key: Page.System,
+        name: '系统管理',
+        privilege: AdminPrivilege.SYSTEM_MANAGEMENT,
+      },
+      {
         key: Page.Client,
         name: '客户管理',
         privilege: AdminPrivilege.CLIENT_MANAGEMENT,
@@ -184,7 +189,9 @@ export default class GlobalStore implements GuildAccountsManageContext {
   async logout() {
     await removeToken();
     await this.clear();
-    await window.ipcRenderer.invoke(CRAWL_EVENTS.CLEAR_TIKTOK_COOKIE);
+    if (isInElectronApp()) {
+      await window.ipcRenderer.invoke(CRAWL_EVENTS.CLEAR_TIKTOK_COOKIE);
+    }
     this._gotoLoginPage();
   }
 

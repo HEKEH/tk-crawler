@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 import {
-  type AdminUserRole,
   getAdminPrivilegesByRole,
+  type SystemAdminUserRole,
   type SystemUserLoginRequest,
   type SystemUserLoginResponseData,
 } from '@tk-crawler/biz-shared';
@@ -41,7 +41,7 @@ export async function systemAdminUserLogin(
     user_info: {
       ...rest,
       id: rest.id.toString(),
-      role_id: role_id as AdminUserRole,
+      role_id: role_id as SystemAdminUserRole,
       privileges: getAdminPrivilegesByRole(role_id),
     },
     token,

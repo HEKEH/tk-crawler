@@ -68,4 +68,45 @@ systemRouter.post(
   systemAdminTokenAuthMiddleware(),
   SystemController.isAnyGuildAccountError,
 );
+
+systemRouter.post(
+  '/create-admin-user',
+  isRequestSecureMiddleware(),
+  systemAdminTokenAuthMiddleware(),
+  systemAdminHasPrivilegeMiddleware({
+    privilege: AdminPrivilege.SYSTEM_MANAGEMENT,
+  }),
+  SystemController.createSystemAdminUser,
+);
+
+systemRouter.post(
+  '/update-admin-user',
+  isRequestSecureMiddleware(),
+  systemAdminTokenAuthMiddleware(),
+  systemAdminHasPrivilegeMiddleware({
+    privilege: AdminPrivilege.SYSTEM_MANAGEMENT,
+  }),
+  SystemController.updateSystemAdminUser,
+);
+
+systemRouter.post(
+  '/delete-admin-user',
+  isRequestSecureMiddleware(),
+  systemAdminTokenAuthMiddleware(),
+  systemAdminHasPrivilegeMiddleware({
+    privilege: AdminPrivilege.SYSTEM_MANAGEMENT,
+  }),
+  SystemController.deleteSystemAdminUser,
+);
+
+systemRouter.post(
+  '/get-admin-user-list',
+  isRequestSecureMiddleware(),
+  systemAdminTokenAuthMiddleware(),
+  systemAdminHasPrivilegeMiddleware({
+    privilege: AdminPrivilege.SYSTEM_MANAGEMENT,
+  }),
+  SystemController.getSystemAdminUserList,
+);
+
 export default systemRouter;

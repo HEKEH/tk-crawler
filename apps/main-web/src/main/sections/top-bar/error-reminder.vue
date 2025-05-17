@@ -16,6 +16,12 @@ const isAdmin = computed(() => {
 
 const router = useRouter();
 
+function jumpToGuildManagement() {
+  router.push(
+    GuildManagementRouteRecord.jumpTo ?? GuildManagementRouteRecord.path,
+  );
+}
+
 const errorMessage = computed<{
   title: string | VNode;
 } | null>(() => {
@@ -28,12 +34,7 @@ const errorMessage = computed<{
             <ElLink
               class="mx-1 text-xs"
               type="primary"
-              onClick={() =>
-                router.push(
-                  GuildManagementRouteRecord.jumpTo ??
-                    GuildManagementRouteRecord.path,
-                )
-              }
+              onClick={jumpToGuildManagement}
             >
               公会管理
             </ElLink>

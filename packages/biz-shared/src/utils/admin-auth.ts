@@ -1,12 +1,9 @@
-import type { AdminUserRole } from '../constants';
-import type {
-  AdminPrivilege } from '../constants/admin-auth/privileges';
-import {
-  getAdminPrivilegesByRole,
-} from '../constants/admin-auth/privileges';
+import type { SystemAdminUserRole } from '../constants';
+import type { AdminPrivilege } from '../constants/admin-auth/privileges';
+import { getAdminPrivilegesByRole } from '../constants/admin-auth/privileges';
 
 export function hasAdminPrivilege(
-  role: AdminUserRole,
+  role: SystemAdminUserRole,
   privilege: AdminPrivilege,
 ) {
   const privileges = getAdminPrivilegesByRole(role);

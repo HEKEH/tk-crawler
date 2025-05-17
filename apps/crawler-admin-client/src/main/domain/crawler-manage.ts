@@ -4,7 +4,10 @@ import {
   IsCookieValidResultStatus,
 } from '@tk-crawler-admin-client/shared';
 import { CrawlStatus } from '@tk-crawler/biz-shared';
-import { ElectronRenderListeners } from '@tk-crawler/electron-utils/render';
+import {
+  ElectronRenderListeners,
+  isInElectronApp,
+} from '@tk-crawler/electron-utils/render';
 import { ElNotification } from 'element-plus';
 import { markRaw } from 'vue';
 import { CUSTOM_EVENTS } from '../constants';
@@ -161,9 +164,11 @@ export default class CrawlerManage {
   }
 
   async stop() {
-    const result = await stopLiveAnchorCrawl();
-    if (!result.success) {
-      throw new Error(result.message);
+    if (isInElectronApp()) {
+      const result = await stopLiveAnchorCrawl();
+      if (!result.success) {
+        throw new Error(result.message);
+      }
     }
     this.clearSimpleCrawlStatistics();
   }
@@ -175,6 +180,7 @@ export default class CrawlerManage {
       clearInterval(this._crawlStatusInterval);
       this._crawlStatusInterval = null;
     }
+    this._tiktokCookieValidStatus = IsCookieValidResultStatus.STATELESS;
     this._isInitialized = false;
   }
 }

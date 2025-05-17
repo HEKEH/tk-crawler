@@ -1,20 +1,32 @@
 import type {
+  CreateSystemAdminUserRequest,
+  CreateSystemAdminUserResponse,
+  DeleteSystemAdminUserRequest,
+  DeleteSystemAdminUserResponse,
   GetAllTKGuildUserListRequest,
   GetAllTKGuildUserListResponse,
+  GetSystemAdminUserListRequest,
+  GetSystemAdminUserListResponse,
   IsAnyGuildAccountErrorRequest,
   IsAnyGuildAccountErrorResponse,
   StartTKLiveAdminAccountRequest,
   StartTKLiveAdminAccountResponse,
   StopTKLiveAdminAccountRequest,
+  UpdateSystemAdminUserRequest,
+  UpdateSystemAdminUserResponse,
 } from '@tk-crawler/biz-shared';
 import { SYSTEM_TOKEN_HEADER_KEY } from '@tk-crawler/biz-shared';
 import {
   OwnServerUrl,
   Post,
+  SystemCreateAdminUser,
+  SystemDeleteAdminUser,
+  SystemGetAdminUserList,
   SystemGetAllTKGuildUserList,
   SystemIsAnyGuildAccountError,
   SystemStartTKGuildUserAccount,
   SystemStopTKGuildUserAccount,
+  SystemUpdateAdminUser,
 } from '@tk-crawler/secure';
 import { RESPONSE_CODE, simpleDecrypt } from '@tk-crawler/shared';
 import { commonRequest } from '@tk-crawler/view-shared';
@@ -87,6 +99,70 @@ export function isAnyGuildAccountError(
     method: Post,
     path: SystemIsAnyGuildAccountError,
     params,
+    headers: {
+      [SYSTEM_TOKEN_HEADER_KEY]: token,
+    },
+  });
+}
+
+export function getSystemAdminUserList(
+  params: GetSystemAdminUserListRequest,
+  token: string,
+) {
+  return commonRequest<GetSystemAdminUserListResponse>({
+    baseURL: config[OwnServerUrl],
+    method: Post,
+    path: SystemGetAdminUserList,
+    params,
+    secure: true,
+    headers: {
+      [SYSTEM_TOKEN_HEADER_KEY]: token,
+    },
+  });
+}
+
+export function createSystemAdminUser(
+  params: CreateSystemAdminUserRequest,
+  token: string,
+) {
+  return commonRequest<CreateSystemAdminUserResponse>({
+    baseURL: config[OwnServerUrl],
+    method: Post,
+    path: SystemCreateAdminUser,
+    params,
+    secure: true,
+    headers: {
+      [SYSTEM_TOKEN_HEADER_KEY]: token,
+    },
+  });
+}
+
+export function updateSystemAdminUser(
+  params: UpdateSystemAdminUserRequest,
+  token: string,
+) {
+  return commonRequest<UpdateSystemAdminUserResponse>({
+    baseURL: config[OwnServerUrl],
+    method: Post,
+    path: SystemUpdateAdminUser,
+    params,
+    secure: true,
+    headers: {
+      [SYSTEM_TOKEN_HEADER_KEY]: token,
+    },
+  });
+}
+
+export function deleteSystemAdminUser(
+  params: DeleteSystemAdminUserRequest,
+  token: string,
+) {
+  return commonRequest<DeleteSystemAdminUserResponse>({
+    baseURL: config[OwnServerUrl],
+    method: Post,
+    path: SystemDeleteAdminUser,
+    params,
+    secure: true,
     headers: {
       [SYSTEM_TOKEN_HEADER_KEY]: token,
     },

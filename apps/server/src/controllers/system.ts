@@ -1,24 +1,33 @@
-import type { Prisma } from '@tk-crawler/database/mysql';
-import type { Context, Next } from 'koa';
-import {
-  type GetAllTKGuildUserListRequest,
-  type IsAnyGuildAccountErrorRequest,
-  OrganizationStatus,
-  type StartTKLiveAdminAccountRequest,
-  type StopTKLiveAdminAccountRequest,
-  type SystemAdminUser,
-  type SystemCrawlStatisticsRequest,
-  type SystemUserChangePasswordRequest,
-  type SystemUserLoginRequest,
+import type {
+  CreateSystemAdminUserRequest,
+  DeleteSystemAdminUserRequest,
+  GetAllTKGuildUserListRequest,
+  GetSystemAdminUserListRequest,
+  IsAnyGuildAccountErrorRequest,
+  StartTKLiveAdminAccountRequest,
+  StopTKLiveAdminAccountRequest,
+  SystemAdminUser,
+  SystemCrawlStatisticsRequest,
+  SystemUserChangePasswordRequest,
+  SystemUserLoginRequest,
+  UpdateSystemAdminUserRequest,
 } from '@tk-crawler/biz-shared';
+import type { Prisma } from '@tk-crawler/database';
+import type { Context, Next } from 'koa';
+import { OrganizationStatus } from '@tk-crawler/biz-shared';
+
 import {
   changeSystemUserPassword,
+  createSystemAdminUser,
+  deleteSystemAdminUser,
   getAllTKGuildUserList,
   getCrawlStatistics,
+  getSystemAdminUserList,
   isAnyGuildAccountError,
   startLiveAdminAccount,
   stopLiveAdminAccount,
   systemAdminUserLogin,
+  updateSystemAdminUser,
 } from '../services';
 
 export default class SystemController {
@@ -111,6 +120,37 @@ export default class SystemController {
       },
     };
     const resp = await isAnyGuildAccountError(request, ctx.logger);
+    ctx.body = resp;
+    await next();
+  }
+
+  static async createSystemAdminUser(ctx: Context, next: Next) {
+    const data = ctx.getRequestData<CreateSystemAdminUserRequest>();
+    await createSystemAdminUser(data, ctx.logger);
+    ctx.logger.info('[Create System Admin User success]');
+    ctx.body = ctx.t('Success');
+    await next();
+  }
+
+  static async updateSystemAdminUser(ctx: Context, next: Next) {
+    const data = ctx.getRequestData<UpdateSystemAdminUserRequest>();
+    await updateSystemAdminUser(data, ctx.logger);
+    ctx.logger.info('[Update System Admin User success]');
+    ctx.body = ctx.t('Success');
+    await next();
+  }
+
+  static async deleteSystemAdminUser(ctx: Context, next: Next) {
+    const data = ctx.getRequestData<DeleteSystemAdminUserRequest>();
+    await deleteSystemAdminUser(data, ctx.logger);
+    ctx.logger.info('[Delete System Admin User success]');
+    ctx.body = ctx.t('Success');
+    await next();
+  }
+
+  static async getSystemAdminUserList(ctx: Context, next: Next) {
+    const data = ctx.getRequestData<GetSystemAdminUserListRequest>();
+    const resp = await getSystemAdminUserList(data, ctx.logger);
     ctx.body = resp;
     await next();
   }

@@ -49,6 +49,8 @@ export async function getSystemAdminUserInfoByToken(
       username: user.username,
       password: user.password,
       role_id: user.role_id,
+      created_at: user.created_at,
+      updated_at: user.updated_at,
       privileges: getAdminPrivilegesByRole(user.role_id),
     },
   };

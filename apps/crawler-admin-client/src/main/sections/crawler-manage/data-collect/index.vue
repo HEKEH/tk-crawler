@@ -63,8 +63,9 @@ onBeforeUnmount(() => {
   messageQueue.destroy();
 });
 
-onKeepAliveActivated(() => {
+onKeepAliveActivated(async () => {
   electronRenderListeners.on(CRAWL_EVENTS.ANCHOR_UPDATED, handleAnchorCrawled);
+  await crawlerManage.value.init();
 });
 
 onDeactivated(() => {

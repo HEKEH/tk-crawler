@@ -20,10 +20,21 @@ import {
   initProxy,
   InputEventFunctionStr,
 } from '@tk-crawler/electron-utils/main';
-import { RESPONSE_CODE, sleep } from '@tk-crawler/shared';
+import {
+  getRandomArrayElement,
+  RESPONSE_CODE,
+  sleep,
+} from '@tk-crawler/shared';
 import { globalShortcut, ipcMain, WebContentsView } from 'electron';
 
-const DEMO_ANCHOR = 'amyna.bou.sonko';
+const DEMO_ANCHOR = [
+  'amyna.bou.sonko',
+  'gracekelly_mcguire',
+  'sephoratshalamukendi',
+  'ainhoatoga0',
+  'kadirlalgerien',
+  'iaempresa',
+];
 
 type StartTKGuildUserAccount = (
   params: Omit<StartTKLiveAdminAccountRequest, 'faction_id' | 'area'>,
@@ -232,7 +243,8 @@ export class GuildCookiePageView implements IView {
         try {
           this._thirdPartyView = new WebContentsView({
             webPreferences: {
-              partition: `persist:tk-live-admin-user-${this._guildUser.username}`,
+              // partition: `persist:tk-live-admin-user-${this._guildUser.username}`,
+              partition: `temp:tk-live-admin-user-${this._guildUser.username}`,
             },
           });
           this._thirdPartyView.webContents.setUserAgent(
@@ -530,7 +542,7 @@ export class GuildCookiePageView implements IView {
           if (!inviteHostTextArea) {
             return { success: false, error: 'inviteHostTextArea not found' };
           }
-          inputEvent(inviteHostTextArea, '${DEMO_ANCHOR}');
+          inputEvent(inviteHostTextArea, '${getRandomArrayElement(DEMO_ANCHOR)}');
           await sleep(200);
           const nextButton = document.querySelector('button[data-id="invite-host-next"]');
           if (!nextButton) {

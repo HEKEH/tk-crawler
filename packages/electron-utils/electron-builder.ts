@@ -16,7 +16,7 @@ export function getElectronBuilderConfig(props: {
     productName,
     protocolName,
     publishUrl,
-    files = ['dist', 'dist-electron'],
+    files = ['dist', 'dist-electron', 'assets'],
   } = props;
   const config: Configuration = {
     appId,

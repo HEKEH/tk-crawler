@@ -16,9 +16,11 @@ import {
   bindShowWindowEvents,
   getAppInstallUrl,
   initProxy,
+  initTray,
   setElectronLang,
 } from '@tk-crawler/electron-utils/main';
 import { app, BaseWindow } from 'electron';
+import { join } from 'node:path';
 import { GlobalManager } from './domain';
 import { logger } from './infra';
 
@@ -55,6 +57,17 @@ async function main() {
     getAppInstallUrl(PRODUCT_NAME, PUBLISH_URL),
   );
   await app.whenReady();
+
+  const iconPath =
+    process.platform === 'win32'
+      ? join(__dirname, '../assets/tray-icon.ico') // Windows 使用 .ico
+      : join(__dirname, '../assets/tray-icon.png'); // macOS 使用 .png
+  const tray = await initTray({
+    logger,
+    iconPath,
+    projectName: PRODUCT_NAME,
+  });
+
   await initProxy(logger);
   let proxyInterval: NodeJS.Timeout | undefined = setInterval(
     () => initProxy(logger),
@@ -87,6 +100,7 @@ async function main() {
   });
   app.on('will-quit', () => {
     logger.info('will-quit');
+    tray.destroy();
     globalManager.destroy();
     if (proxyInterval) {
       clearInterval(proxyInterval);

@@ -86,7 +86,7 @@ class TrayManager {
     }
     this._status = 'warning';
     this._logger.info('showWarning');
-    if (!this._tray || !this._warningIconPath) {
+    if (!this._tray || this._tray.isDestroyed() || !this._warningIconPath) {
       return;
     }
     this._tray.setImage(this._warningIconPath);
@@ -98,7 +98,7 @@ class TrayManager {
     }
     this._status = 'normal';
     this._logger.info('showNormal');
-    if (!this._tray || !this._iconPath) {
+    if (!this._tray || this._tray.isDestroyed() || !this._iconPath) {
       return;
     }
     this._tray.setImage(this._iconPath);

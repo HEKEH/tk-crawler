@@ -220,7 +220,7 @@ export default class GlobalStore implements GuildAccountsManageContext {
 
   async clear() {
     this.messageCenter.clear();
-    this._guildAccountsManage.clear();
+    await this._guildAccountsManage.clear();
     this._userProfile.clear();
     await this.crawlerManage.destroy();
   }

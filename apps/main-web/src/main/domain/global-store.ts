@@ -199,18 +199,18 @@ export default class GlobalStore implements GuildAccountsManageContext {
     }
   }
 
-  private _clear() {
+  private async _clear() {
     this._token = '';
+    await this._guildAccountsManage.clear();
     this._userProfile.clear();
-    this._guildAccountsManage.clear();
     // this._removeEventListeners();
   }
 
-  destroy() {
+  async destroy() {
     if (this._tokenInvalidSubscription) {
       this._tokenInvalidSubscription.unsubscribe();
       this._tokenInvalidSubscription = null;
     }
-    this._clear();
+    await this._clear();
   }
 }

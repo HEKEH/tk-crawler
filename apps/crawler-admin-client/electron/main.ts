@@ -62,9 +62,14 @@ async function main() {
     process.platform === 'win32'
       ? join(__dirname, '../assets/tray-icon.ico') // Windows 使用 .ico
       : join(__dirname, '../assets/tray-icon@2x.png'); // macOS 使用 .png
+  const warningIconPath =
+    process.platform === 'win32'
+      ? join(__dirname, '../assets/tray-icon-warning.ico') // Windows 使用 .ico
+      : join(__dirname, '../assets/tray-icon-warning@2x.png'); // macOS 使用 .png
   const trayManager = createTrayManager({
     logger,
     iconPath,
+    warningIconPath,
     projectName: PRODUCT_NAME,
   });
   trayManager.init();

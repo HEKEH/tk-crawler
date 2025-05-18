@@ -1,4 +1,5 @@
 import type { UserProfile } from './user-profile';
+import { TK_GUILD_USER_EVENTS } from '@tk-crawler/biz-shared';
 import { RESPONSE_CODE } from '@tk-crawler/shared';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { isAnyGuildUserAccountError } from '../requests';
@@ -34,15 +35,29 @@ export class GuildAccountsManage {
     }
   }
 
+  private async _setIsAnyAccountError(isAnyAccountError: boolean) {
+    this._isAnyAccountError = isAnyAccountError;
+    if (window.ipcRenderer) {
+      try {
+        await window.ipcRenderer.invoke(
+          TK_GUILD_USER_EVENTS.IS_ANY_GUILD_USER_ERROR,
+          isAnyAccountError,
+        );
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  }
+
   async checkIsAnyAccountError() {
     if (!this._context.userProfile.hasLoggedIn || !this._context.token) {
-      this._isAnyAccountError = false;
+      await this._setIsAnyAccountError(false);
       return;
     }
 
     const response = await isAnyGuildUserAccountError({}, this._context.token);
     if (response.status_code === RESPONSE_CODE.SUCCESS) {
-      this._isAnyAccountError = response.data!.has_error;
+      await this._setIsAnyAccountError(response.data!.has_error);
       if (!this._isAnyAccountError) {
         localStorageStore.removeItem(IGNORE_ERROR_KEY);
       }
@@ -95,8 +110,8 @@ export class GuildAccountsManage {
     this._handleIsAnyAccountErrorOrStart();
   }
 
-  clear() {
-    this._isAnyAccountError = false;
+  async clear() {
+    await this._setIsAnyAccountError(false);
     this._clearCheckInterval();
   }
 }

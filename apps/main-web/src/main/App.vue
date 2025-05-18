@@ -51,8 +51,8 @@ const hasInitializeError = computed(() => {
   return globalStore.hasInitializeError;
 });
 
-onBeforeUnmount(() => {
-  globalStore.destroy();
+onBeforeUnmount(async () => {
+  await globalStore.destroy();
 });
 onErrorCaptured(e => {
   if (e instanceof RequestError) {

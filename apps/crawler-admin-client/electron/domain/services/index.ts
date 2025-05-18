@@ -11,8 +11,9 @@ import {
 import {
   getVerifyFp,
   GUILD_COOKIE_PAGE_HELP_EVENTS,
+  TK_GUILD_USER_EVENTS,
 } from '@tk-crawler/biz-shared';
-import { initProxy } from '@tk-crawler/electron-utils/main';
+import { getTrayManager, initProxy } from '@tk-crawler/electron-utils/main';
 import {
   checkTiktokCookieValid,
   getMsTokenFromCookie,
@@ -184,6 +185,17 @@ export class Services {
     this._addEventHandler(CRAWL_EVENTS.GET_SIMPLE_CRAWL_STATISTICS, () => {
       return this._crawler.simpleCrawlStatistics;
     });
+    this._addEventHandler(
+      TK_GUILD_USER_EVENTS.IS_ANY_GUILD_USER_ERROR,
+      (_, hasError: boolean) => {
+        const trayManager = getTrayManager();
+        if (hasError) {
+          trayManager.showWarning();
+        } else {
+          trayManager.showNormal();
+        }
+      },
+    );
   }
 
   destroy() {

@@ -3,7 +3,9 @@ import type { ViewsManager } from '../views';
 import {
   GUILD_COOKIE_PAGE_HELP_EVENTS,
   TIKTOK_LIVE_ADMIN_URL,
+  TK_GUILD_USER_EVENTS,
 } from '@tk-crawler/biz-shared';
+import { getTrayManager } from '@tk-crawler/electron-utils/main';
 import {
   CheckNetworkResultType,
   CUSTOM_EVENTS,
@@ -85,6 +87,17 @@ export class Services {
       saveToken(token),
     );
     this._addEventHandler(TOKEN_EVENTS.REMOVE_TOKEN, removeToken);
+    this._addEventHandler(
+      TK_GUILD_USER_EVENTS.IS_ANY_GUILD_USER_ERROR,
+      (_, hasError: boolean) => {
+        const trayManager = getTrayManager();
+        if (hasError) {
+          trayManager.showWarning();
+        } else {
+          trayManager.showNormal();
+        }
+      },
+    );
   }
 
   destroy() {

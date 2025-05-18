@@ -15,3 +15,7 @@ export const TKGuildUserStatusOptions = TKGuildUserStatusList.map(status => ({
   value: status,
   label: getGuildUserStatusText(status),
 }));
+
+export const TK_GUILD_USER_EVENTS = {
+  IS_ANY_GUILD_USER_ERROR: 'guild-user:is-any-error',
+};

@@ -25,7 +25,7 @@ const props = withDefaults(
     }[];
   }>(),
   {
-    placeholder: '请选择区域，可多选',
+    placeholder: '请选择状态，可多选',
     showAll: false,
     options: () => TKGuildUserStatusOptions,
   },

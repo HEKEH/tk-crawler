@@ -25,7 +25,7 @@ export async function initTray({
     },
     { type: 'separator' },
     {
-      label: process.platform === 'win32' ? '退出' : '退出应用',
+      label: '退出应用',
       click: () => {
         app.quit();
       },

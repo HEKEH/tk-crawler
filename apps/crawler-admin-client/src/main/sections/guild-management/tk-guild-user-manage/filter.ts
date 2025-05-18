@@ -17,7 +17,7 @@ export function transformFilterViewValuesToFilterValues(
     return value;
   }
   let status: { in: TKGuildUserStatus[] } | undefined;
-  if (filterViewValues.status !== 'all') {
+  if (filterViewValues.status !== 'all' && filterViewValues.status?.length) {
     status = {
       in: filterViewValues.status,
     };

@@ -63,7 +63,7 @@ async function main() {
   const iconPath =
     process.platform === 'win32'
       ? join(__dirname, '../assets/tray-icon.ico') // Windows 使用 .ico
-      : join(__dirname, '../assets/tray-icon.png'); // macOS 使用 .png
+      : join(__dirname, '../assets/tray-icon@2x.png'); // macOS 使用 .png
   const tray = await initTray({
     logger,
     iconPath,

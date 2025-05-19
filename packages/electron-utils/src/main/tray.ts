@@ -8,6 +8,7 @@ let trayManager: TrayManager | null = null;
 interface TrayManagerProps {
   logger: Logger;
   iconPath: string;
+  transparentIconPath?: string;
   warningIconPath?: string;
   projectName: string;
   contextMenuOptions?: Array<
@@ -19,6 +20,7 @@ class TrayManager {
   private _tray!: Tray;
   private _iconPath: string;
   private _warningIconPath?: string;
+  private _transparentIconPath?: string;
   private _currentIconPath?: string;
   private _logger: Logger;
   private _projectName: string;
@@ -33,6 +35,7 @@ class TrayManager {
     this._logger = props.logger;
     this._iconPath = props.iconPath;
     this._warningIconPath = props.warningIconPath;
+    this._transparentIconPath = props.transparentIconPath;
     this._projectName = props.projectName;
     this._contextMenuOptions = props.contextMenuOptions;
   }
@@ -104,16 +107,16 @@ class TrayManager {
     if (!this._tray || this._tray.isDestroyed() || !this._iconPath) {
       return;
     }
-    if (!this._warningIconPath) {
-      throw new Error('warningIconPath is not set');
+    if (!this._transparentIconPath) {
+      throw new Error('transparentIconPath is not set');
     }
     this._shiningInterval = setInterval(() => {
       this._setCurrentIconPath(
         this._iconPath === this._currentIconPath
-          ? this._warningIconPath!
+          ? this._transparentIconPath!
           : this._iconPath,
       );
-    }, 800);
+    }, 600);
   }
 
   showWarning() {

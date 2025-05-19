@@ -65,14 +65,14 @@ async function main() {
     process.platform === 'win32'
       ? join(appPath, 'assets/tray-icon.ico') // Windows 使用 .ico
       : join(appPath, 'assets/tray-icon@2x.png'); // macOS 使用 .png
-  const warningIconPath =
+  const transparentIconPath =
     process.platform === 'win32'
-      ? join(appPath, 'assets/tray-icon-warning.ico') // Windows 使用 .ico
-      : join(appPath, 'assets/tray-icon-warning@2x.png'); // macOS 使用 .png
+      ? join(appPath, 'assets/transparent-icon.ico') // Windows 使用 .ico
+      : join(appPath, 'assets/transparent-icon.png'); // macOS 使用 .png
   const trayManager = createTrayManager({
     logger,
     iconPath,
-    warningIconPath,
+    transparentIconPath,
     projectName: MAIN_APP_PRODUCT_NAME,
   });
   trayManager.init();

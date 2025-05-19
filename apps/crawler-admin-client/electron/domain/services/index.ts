@@ -192,8 +192,8 @@ export class Services {
     });
     this._addEventHandler(
       TK_GUILD_USER_EVENTS.IS_ANY_GUILD_USER_ERROR,
-      (_, hasError: boolean) => {
-        this._errorManager.setHasGuildUserError(hasError);
+      (_, hasError: boolean, errorSoundTime: [number, number] | undefined) => {
+        this._errorManager.setHasGuildUserError(hasError, errorSoundTime);
       },
     );
   }

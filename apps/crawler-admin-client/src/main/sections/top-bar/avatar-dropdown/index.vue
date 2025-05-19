@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { OrgMemberChangePasswordRequest } from '@tk-crawler/biz-shared';
-import { SwitchButton } from '@element-plus/icons-vue';
+import type { SettingFormValues } from './setting-dialog/setting-form.vue';
+import { Setting, SwitchButton } from '@element-plus/icons-vue';
 import { useQueryClient } from '@tanstack/vue-query';
 // import { useRouter } from 'vue-router';
 import { KeyIcon } from '@tk-crawler/assets';
@@ -21,6 +22,9 @@ import { Avatar } from '../../../components';
 import { changePassword } from '../../../requests';
 import { useGlobalStore } from '../../../utils';
 import PasswordChangeDialog from './password-change-dialog/index.vue';
+import SettingDialog from './setting-dialog/index.vue';
+import { Settings, useSettings } from '../../../hooks';
+import { isInElectronApp } from '@tk-crawler/electron-utils/render';
 
 const globalStore = useGlobalStore();
 const userProfile = computed(() => globalStore.userProfile);
@@ -44,6 +48,7 @@ async function handleLogout() {
   // router.push('/login');
 }
 const passwordChangeDialogVisible = ref(false);
+const settingDialogVisible = ref(false);
 async function handlePasswordChange(data: OrgMemberChangePasswordRequest) {
   const result = await changePassword(data, globalStore.token);
   if (result.status_code === RESPONSE_CODE.SUCCESS) {
@@ -51,8 +56,14 @@ async function handlePasswordChange(data: OrgMemberChangePasswordRequest) {
     passwordChangeDialogVisible.value = false;
   }
 }
+const settings = useSettings();
+function handleSetting(data: Settings) {
+  settings.value = data;
+  settingDialogVisible.value = false;
+}
 const isWebSize = useIsWebSize();
 const { vConsoleOpen, toggleVConsoleOpen } = useVConsole();
+const inElectronApp = isInElectronApp();
 </script>
 
 <template>
@@ -72,6 +83,13 @@ const { vConsoleOpen, toggleVConsoleOpen } = useVConsole();
 
         <ElDivider />
         <ElDropdownMenu>
+          <ElDropdownItem
+            v-if="inElectronApp"
+            @click="settingDialogVisible = true"
+          >
+            <ElIcon><Setting /></ElIcon>
+            <span>设置</span>
+          </ElDropdownItem>
           <ElDropdownItem @click="passwordChangeDialogVisible = true">
             <ElIcon><KeyIcon /></ElIcon>
             <span>修改密码</span>
@@ -97,6 +115,12 @@ const { vConsoleOpen, toggleVConsoleOpen } = useVConsole();
     :visible="passwordChangeDialogVisible"
     :submit="handlePasswordChange"
     @close="passwordChangeDialogVisible = false"
+  />
+  <SettingDialog
+    :visible="settingDialogVisible"
+    :initial-values="settings"
+    :submit="handleSetting"
+    @close="settingDialogVisible = false"
   />
 </template>
 

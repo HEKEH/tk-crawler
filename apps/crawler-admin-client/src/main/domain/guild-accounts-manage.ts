@@ -2,6 +2,7 @@ import type { UserProfile } from './user-profile';
 import { TK_GUILD_USER_EVENTS } from '@tk-crawler/biz-shared';
 import { RESPONSE_CODE } from '@tk-crawler/shared';
 import { ElMessageBox } from 'element-plus';
+import { getSettings } from '../hooks';
 import { isAnyGuildAccountError } from '../requests';
 import { Page } from '../types';
 import { localStorageStore } from '../utils';
@@ -42,6 +43,7 @@ export class GuildAccountsManage {
         await window.ipcRenderer.invoke(
           TK_GUILD_USER_EVENTS.IS_ANY_GUILD_USER_ERROR,
           isAnyAccountError,
+          getSettings().error_sound_time,
         );
       } catch (error) {
         console.error(error);

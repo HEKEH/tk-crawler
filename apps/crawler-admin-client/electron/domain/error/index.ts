@@ -12,9 +12,27 @@ export class ErrorManager {
 
   constructor() {}
 
+  private _shouldErrorSoundPlay(errorSoundTime: [number, number] | undefined) {
+    if (!errorSoundTime) {
+      return false;
+    }
+    const now = new Date();
+    const beijingTime = new Date(
+      now.toLocaleString('en-US', { timeZone: 'Asia/Shanghai' }),
+    );
+    const hour = beijingTime.getHours();
+    if (errorSoundTime[0] < errorSoundTime[1]) {
+      return hour >= errorSoundTime[0] && hour < errorSoundTime[1];
+    }
+    return hour >= errorSoundTime[0] || hour <= errorSoundTime[1];
+  }
+
   init() {}
 
-  setHasGuildUserError(hasError: boolean) {
+  setHasGuildUserError(
+    hasError: boolean,
+    errorSoundTime: [number, number] | undefined,
+  ) {
     if (this._hasGuildUserError === hasError) {
       return;
     }
@@ -25,7 +43,7 @@ export class ErrorManager {
     } else {
       trayManager.showNormal();
     }
-    if (hasError) {
+    if (hasError && this._shouldErrorSoundPlay(errorSoundTime)) {
       const soundPath = join(
         getExtraResourcesPath(isDevelopment),
         'sounds',
@@ -34,6 +52,7 @@ export class ErrorManager {
       SoundPlayer.getInstance().play({
         soundPath,
         logger,
+        times: 3,
       });
     }
   }

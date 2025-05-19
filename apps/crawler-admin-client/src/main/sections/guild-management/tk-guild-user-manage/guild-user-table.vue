@@ -109,7 +109,7 @@ const { data, isFetching, refetch } = useQuery<
 
 function refresh() {
   refetch();
-  // globalStore.guildAccountsManage.checkIsAnyAccountError();
+  globalStore.guildAccountsManage.checkIsAnyAccountError();
 }
 
 // 处理排序变化

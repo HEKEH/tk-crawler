@@ -19,13 +19,18 @@ export class SoundPlayer {
     soundPath,
     logger,
     volume,
+    times = 1,
   }: {
     soundPath: string;
     logger?: Logger;
     volume?: number;
+    times?: number;
   }) {
     try {
-      await play(soundPath, volume ?? this._volume);
+      while (times > 0) {
+        await play(soundPath, volume ?? this._volume);
+        times--;
+      }
     } catch (error) {
       logger?.error('Error play:', error);
     }

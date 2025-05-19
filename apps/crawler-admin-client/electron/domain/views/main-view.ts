@@ -81,6 +81,7 @@ export class MainView implements IView {
     this._view = new WebContentsView({
       webPreferences: {
         preload: path.join(__dirname, 'preload.js'),
+        partition: 'persist:admin-main-view',
       },
     });
 

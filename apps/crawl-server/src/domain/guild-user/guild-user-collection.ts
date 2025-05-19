@@ -8,7 +8,7 @@ import type {
 } from '@tk-crawler/biz-shared';
 import { TKGuildUserStatus } from '@tk-crawler/biz-shared';
 import { getAnchorCheckCount } from '@tk-crawler/server-shared';
-import { getMinArrayValueIndex } from '@tk-crawler/shared';
+import { getMinArrayValueIndex, getRandomInt } from '@tk-crawler/shared';
 import { ANCHORS_CHECK_NUMBER } from '../../constants';
 import { logger } from '../../infra/logger';
 import { searchAnchorsNeedCheck } from '../../services';
@@ -24,10 +24,13 @@ export interface GuildUserCollectionContext {
   readonly anchorSearchPolicies: OrgAnchorSearchPolicies;
 }
 
-// 每次的主播检测数量
+// 每次的主播搜索数量
+const ANCHORS_SEARCH_NUMBER_EACH_TIME = 300;
 
 export class GuildUserCollection {
   private _guildUsers: GuildUserModel[] = [];
+
+  private _anchorsSearchCache: BroadcastAnchorMessageData[] = [];
 
   private _context: GuildUserCollectionContext;
 
@@ -308,18 +311,28 @@ export class GuildUserCollection {
 
   private async _checkAnchorsOfArea(area: Area) {
     logger.info(`[guild-user] check anchors of area: ${area}`);
-    let anchors: BroadcastAnchorMessageData[] = [];
     try {
       const now = Date.now();
-      anchors = await searchAnchorsTaskQueue.addTask(() =>
-        searchAnchorsNeedCheck({
-          area,
-          take: ANCHORS_CHECK_NUMBER,
-          org_id: this._context.orgId,
-          org_name: this._context.orgName,
-          anchor_search_policies: this._context.anchorSearchPolicies,
-        }),
-      );
+      if (this._anchorsSearchCache.length < ANCHORS_CHECK_NUMBER) {
+        let anchors = await searchAnchorsTaskQueue.addTask(() =>
+          searchAnchorsNeedCheck({
+            area,
+            take:
+              ANCHORS_SEARCH_NUMBER_EACH_TIME +
+              getRandomInt(-2, 8) * ANCHORS_CHECK_NUMBER, // 随机错开
+            org_id: this._context.orgId,
+            org_name: this._context.orgName,
+            anchor_search_policies: this._context.anchorSearchPolicies,
+          }),
+        );
+        if (this._anchorsSearchCache.length) {
+          const anchorsCacheSet = new Set(
+            this._anchorsSearchCache.map(item => item.user_id),
+          );
+          anchors = anchors.filter(item => !anchorsCacheSet.has(item.user_id));
+        }
+        this._anchorsSearchCache.push(...anchors);
+      }
       logger.info(
         `[guild-user] [orgName: ${this._context.orgName}] [orgId: ${this._context.orgId}] [area: ${area}] searchAnchorsTaskQueue add task cost: ${Date.now() - now}ms`,
       );
@@ -332,9 +345,13 @@ export class GuildUserCollection {
       );
       return;
     }
-    if (anchors.length < ANCHORS_CHECK_NUMBER) {
+    if (this._anchorsSearchCache.length < ANCHORS_CHECK_NUMBER) {
       return;
     }
+    const anchorsToCheck = this._anchorsSearchCache.slice(
+      0,
+      ANCHORS_CHECK_NUMBER,
+    );
     let checkSuccess = false;
     const excludeGuildUserIds = new Set<string>();
     while (!checkSuccess) {
@@ -352,17 +369,38 @@ export class GuildUserCollection {
       logger.info(
         `[guild-user] [orgName: ${this._context.orgName}] [orgId: ${this._context.orgId}] [area: ${area}] choose the guild user: [name: ${guildUser.username}] [id: ${guildUser.id}]`,
       );
-      const { success } = await guildUser.checkAnchors(anchors);
+      const { success } = await guildUser.checkAnchors(anchorsToCheck);
       checkSuccess = success;
     }
+    if (checkSuccess) {
+      this._anchorsSearchCache =
+        this._anchorsSearchCache.slice(ANCHORS_CHECK_NUMBER);
+    }
   }
+
+  private _isChecking = false;
 
   private async _batchCheckAnchors() {
     if (!this._context.isValid) {
       return;
     }
-    for (const area of this._context.areas) {
-      await this._checkAnchorsOfArea(area);
+    if (this._isChecking) {
+      return;
+    }
+    this._isChecking = true;
+    try {
+      for (const area of this._context.areas) {
+        await this._checkAnchorsOfArea(area);
+      }
+    } catch (error) {
+      logger.error(
+        `[guild-user] [orgName: ${this._context.orgName}] [orgId: ${this._context.orgId}] batch check anchors error:`,
+        {
+          error,
+        },
+      );
+    } finally {
+      this._isChecking = false;
     }
   }
 

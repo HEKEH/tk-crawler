@@ -1,5 +1,6 @@
 import type {
   Area,
+  BroadcastAnchorMessageData,
   BroadcastGuildUserMessage,
   BroadcastGuildUserMessageData,
   BroadcastGuildUserUpdateMessage,
@@ -13,6 +14,7 @@ import { logger } from '../../infra/logger';
 import { searchAnchorsNeedCheck } from '../../services';
 import { getAvailableGuildUser } from '../../services/guild-user';
 import { GuildUserModel } from './guild-user-model';
+import { searchAnchorsTaskQueue } from './search-anchors-task-queue';
 
 export interface GuildUserCollectionContext {
   readonly areas: Area[];
@@ -306,11 +308,30 @@ export class GuildUserCollection {
 
   private async _checkAnchorsOfArea(area: Area) {
     logger.info(`[guild-user] check anchors of area: ${area}`);
-    const anchors = await searchAnchorsNeedCheck({
-      area,
-      org_id: this._context.orgId,
-      anchor_search_policies: this._context.anchorSearchPolicies,
-    });
+    let anchors: BroadcastAnchorMessageData[] = [];
+    try {
+      const now = Date.now();
+      anchors = await searchAnchorsTaskQueue.addTask(() =>
+        searchAnchorsNeedCheck({
+          area,
+          take: ANCHORS_CHECK_NUMBER,
+          org_id: this._context.orgId,
+          org_name: this._context.orgName,
+          anchor_search_policies: this._context.anchorSearchPolicies,
+        }),
+      );
+      logger.info(
+        `[guild-user] [orgName: ${this._context.orgName}] [orgId: ${this._context.orgId}] [area: ${area}] searchAnchorsTaskQueue add task cost: ${Date.now() - now}ms`,
+      );
+    } catch (error) {
+      logger.error(
+        `[guild-user] [orgName: ${this._context.orgName}] [orgId: ${this._context.orgId}] [area: ${area}] check anchors error:`,
+        {
+          error,
+        },
+      );
+      return;
+    }
     if (anchors.length < ANCHORS_CHECK_NUMBER) {
       return;
     }

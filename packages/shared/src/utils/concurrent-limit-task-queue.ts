@@ -47,4 +47,14 @@ export class ConcurrentLimitTaskQueue {
         this._runNext();
       });
   }
+
+  clear(): void {
+    // 清空队列中的所有任务
+    while (this._queue.length > 0) {
+      const item = this._queue.shift();
+      if (item) {
+        item.reject(new Error('Task cancelled: queue was cleared'));
+      }
+    }
+  }
 }

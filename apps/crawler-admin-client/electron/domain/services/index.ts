@@ -2,6 +2,7 @@ import type { IsCookieValidResult } from '@tk-crawler-admin-client/shared';
 import type { TKGuildUser } from '@tk-crawler/biz-shared';
 import type { CommonResult, MessageCenter } from '@tk-crawler/shared';
 import type { Crawler } from '../crawler';
+import type { ErrorManager } from '../error';
 import type { ViewsManager } from '../views';
 import {
   CRAWL_EVENTS,
@@ -13,7 +14,7 @@ import {
   GUILD_COOKIE_PAGE_HELP_EVENTS,
   TK_GUILD_USER_EVENTS,
 } from '@tk-crawler/biz-shared';
-import { getTrayManager, initProxy } from '@tk-crawler/electron-utils/main';
+import { initProxy } from '@tk-crawler/electron-utils/main';
 import {
   checkTiktokCookieValid,
   getMsTokenFromCookie,
@@ -32,6 +33,7 @@ import { getToken, removeToken, saveToken } from './token';
 export class Services {
   private _crawler: Crawler;
   private _viewManager: ViewsManager;
+  private _errorManager: ErrorManager;
 
   private _messageCenter: MessageCenter;
 
@@ -39,14 +41,17 @@ export class Services {
   constructor({
     crawler,
     viewManager,
+    errorManager,
     messageCenter,
   }: {
     crawler: Crawler;
     viewManager: ViewsManager;
+    errorManager: ErrorManager;
     messageCenter: MessageCenter;
   }) {
     this._crawler = crawler;
     this._viewManager = viewManager;
+    this._errorManager = errorManager;
     this._messageCenter = messageCenter;
   }
 
@@ -188,12 +193,7 @@ export class Services {
     this._addEventHandler(
       TK_GUILD_USER_EVENTS.IS_ANY_GUILD_USER_ERROR,
       (_, hasError: boolean) => {
-        const trayManager = getTrayManager();
-        if (hasError) {
-          trayManager.showShining();
-        } else {
-          trayManager.showNormal();
-        }
+        this._errorManager.setHasGuildUserError(hasError);
       },
     );
   }

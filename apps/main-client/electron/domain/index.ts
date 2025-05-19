@@ -1,4 +1,5 @@
 import { MessageCenter } from '@tk-crawler/shared';
+import { ErrorManager } from './error';
 import { Services } from './services';
 import { ViewsManager } from './views';
 
@@ -8,6 +9,7 @@ export class GlobalManager {
 
   private _messageCenter: MessageCenter;
   private _viewsManager: ViewsManager;
+  private _errorManager: ErrorManager;
 
   private _services: Services;
 
@@ -22,9 +24,11 @@ export class GlobalManager {
         this.destroy();
       },
     });
+    this._errorManager = new ErrorManager();
     this._services = new Services({
       messageCenter: this._messageCenter,
       viewManager: this._viewsManager,
+      errorManager: this._errorManager,
     });
   }
 
@@ -36,6 +40,7 @@ export class GlobalManager {
 
   destroy() {
     // this._mainPageManagement.clear();
+    this._errorManager.destroy();
     this._viewsManager.destroy();
     this._services.destroy();
     this._messageCenter.clear();

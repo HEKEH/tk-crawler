@@ -34,6 +34,7 @@ const errorMessage = computed<{
             <ElLink
               class="mx-1 text-xs"
               type="primary"
+              underline="always"
               onClick={jumpToGuildManagement}
             >
               公会管理

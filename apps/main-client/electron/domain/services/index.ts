@@ -1,11 +1,11 @@
 import type { TKGuildUser } from '@tk-crawler/biz-shared';
+import type { ErrorManager } from '../error';
 import type { ViewsManager } from '../views';
 import {
   GUILD_COOKIE_PAGE_HELP_EVENTS,
   TIKTOK_LIVE_ADMIN_URL,
   TK_GUILD_USER_EVENTS,
 } from '@tk-crawler/biz-shared';
-import { getTrayManager } from '@tk-crawler/electron-utils/main';
 import {
   CheckNetworkResultType,
   CUSTOM_EVENTS,
@@ -18,6 +18,7 @@ import { getToken, removeToken, saveToken } from './token';
 
 export class Services {
   private _viewManager: ViewsManager;
+  private _errorManager: ErrorManager;
 
   private _messageCenter: MessageCenter;
 
@@ -25,12 +26,15 @@ export class Services {
   constructor({
     viewManager,
     messageCenter,
+    errorManager,
   }: {
     viewManager: ViewsManager;
     messageCenter: MessageCenter;
+    errorManager: ErrorManager;
   }) {
     this._viewManager = viewManager;
     this._messageCenter = messageCenter;
+    this._errorManager = errorManager;
   }
 
   // private async _startCrawl(): Promise<CommonResult<void>> {
@@ -90,12 +94,7 @@ export class Services {
     this._addEventHandler(
       TK_GUILD_USER_EVENTS.IS_ANY_GUILD_USER_ERROR,
       (_, hasError: boolean) => {
-        const trayManager = getTrayManager();
-        if (hasError) {
-          trayManager.showShining();
-        } else {
-          trayManager.showNormal();
-        }
+        this._errorManager.setHasGuildUserError(hasError);
       },
     );
   }

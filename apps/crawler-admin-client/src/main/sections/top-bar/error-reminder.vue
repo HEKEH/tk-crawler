@@ -20,6 +20,7 @@ const errorMessage = computed<{
           <ElLink
             class="mx-1 text-xs"
             type="primary"
+            underline="always"
             onClick={() => globalStore.goToPage(Page.GuildManage)}
           >
             公会管理

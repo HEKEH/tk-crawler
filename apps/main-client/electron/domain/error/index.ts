@@ -1,7 +1,10 @@
 import { join } from 'node:path';
-import { getTrayManager } from '@tk-crawler/electron-utils/main';
+import {
+  getExtraResourcesPath,
+  getTrayManager,
+} from '@tk-crawler/electron-utils/main';
 import { SoundPlayer } from '@tk-crawler/node-shared';
-import { app } from 'electron';
+import { isDevelopment } from '../../env';
 import { logger } from '../../infra';
 
 export class ErrorManager {
@@ -23,8 +26,13 @@ export class ErrorManager {
       trayManager.showNormal();
     }
     if (hasError) {
+      const soundPath = join(
+        getExtraResourcesPath(isDevelopment),
+        'sounds',
+        'error.mp3',
+      );
       SoundPlayer.getInstance().play({
-        soundPath: join(app.getAppPath(), 'assets/sounds/error.mp3'),
+        soundPath,
         logger,
       });
     }

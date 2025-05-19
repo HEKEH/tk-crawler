@@ -15,7 +15,7 @@ export class SoundPlayer {
     return SoundPlayer.instance;
   }
 
-  play({
+  async play({
     soundPath,
     logger,
     volume,
@@ -25,7 +25,7 @@ export class SoundPlayer {
     volume?: number;
   }) {
     try {
-      play(soundPath, volume ?? this._volume);
+      await play(soundPath, volume ?? this._volume);
     } catch (error) {
       logger?.error('Error play:', error);
     }

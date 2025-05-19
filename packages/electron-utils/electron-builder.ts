@@ -10,6 +10,7 @@ export function getElectronBuilderConfig(props: {
   protocolName: string;
   publishUrl: string;
   files?: string[];
+  extraResources?: string[];
 }) {
   const {
     appId,
@@ -17,6 +18,7 @@ export function getElectronBuilderConfig(props: {
     protocolName,
     publishUrl,
     files = ['dist', 'dist-electron', 'assets'],
+    extraResources = [],
   } = props;
   const config: Configuration = {
     appId,
@@ -26,6 +28,7 @@ export function getElectronBuilderConfig(props: {
       output: 'release/${version}',
     },
     files,
+    extraResources,
     protocols: {
       name: protocolName,
       schemes: [appId],

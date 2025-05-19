@@ -12,6 +12,7 @@ const config = getElectronBuilderConfig({
   protocolName: APP_PROTOCOL_NAME,
   publishUrl: PUBLISH_URL,
   files: ['dist-electron', 'assets'],
+  extraResources: ['extra-resources'],
 });
 
 export default config;

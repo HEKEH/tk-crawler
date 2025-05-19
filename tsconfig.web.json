@@ -42,6 +42,7 @@
     "packages/electron-biz-shared/src/main/**",
     "packages/tk-requests/**/*",
     "packages/server-shared/**/*",
+    "packages/node-shared/**/*",
     "**/node_modules/**",
     "**/dist/**",
     "**/vite.config.*",

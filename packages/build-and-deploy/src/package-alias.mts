@@ -25,6 +25,7 @@ export function getCommonPackageAlias(isProduction: boolean) {
       __dirname,
       '../../main-client-shared/src',
     ),
+    '@tk-crawler/node-shared': resolve(__dirname, '../../node-shared/src'),
   };
   if (!isProduction) {
     // secure 会劫持 console.log，开发环境要使用源码

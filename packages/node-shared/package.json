@@ -1,0 +1,15 @@
+{
+  "name": "@tk-crawler/node-shared",
+  "version": "0.0.1",
+  "private": true,
+  "files": [],
+  "scripts": {
+    "preinstall": "npx only-allow pnpm"
+  },
+  "peerDependencies": {
+    "sound-play": "^1.1.0"
+  },
+  "devDependencies": {
+    "@types/sound-play": "^1.1.3"
+  }
+}

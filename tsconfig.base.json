@@ -42,6 +42,7 @@
       "@tk-crawler/build-and-deploy": [
         "packages/build-and-deploy/src/index.ts"
       ],
+      "@tk-crawler/node-shared": ["packages/node-shared/src/index.ts"],
       "@tk-crawler/secure": ["packages/secure/src/index.ts"]
     },
     "resolveJsonModule": true,

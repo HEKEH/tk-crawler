@@ -36,6 +36,7 @@
     "packages/script-tools/**/*",
     "packages/database/**/*",
     "packages/plugins/src/**/*",
+    "packages/node-shared/src/**/*",
     "**/vite.config.*",
     "**/tsup.config.*",
     ".husky/**/*"

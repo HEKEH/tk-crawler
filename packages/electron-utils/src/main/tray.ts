@@ -19,12 +19,15 @@ class TrayManager {
   private _tray!: Tray;
   private _iconPath: string;
   private _warningIconPath?: string;
+  private _currentIconPath?: string;
   private _logger: Logger;
   private _projectName: string;
-  private _status: 'normal' | 'warning' = 'normal';
+  private _status: 'normal' | 'warning' | 'shining' = 'normal';
   private _contextMenuOptions?: Array<
     Electron.MenuItemConstructorOptions | Electron.MenuItem
   >;
+
+  private _shiningInterval: NodeJS.Timeout | null = null;
 
   constructor(props: TrayManagerProps) {
     this._logger = props.logger;
@@ -32,6 +35,11 @@ class TrayManager {
     this._warningIconPath = props.warningIconPath;
     this._projectName = props.projectName;
     this._contextMenuOptions = props.contextMenuOptions;
+  }
+
+  private _setCurrentIconPath(iconPath: string) {
+    this._currentIconPath = iconPath;
+    this._tray.setImage(iconPath);
   }
 
   init() {
@@ -80,31 +88,62 @@ class TrayManager {
     });
   }
 
+  private _clearShining() {
+    if (this._shiningInterval) {
+      clearInterval(this._shiningInterval);
+      this._shiningInterval = null;
+    }
+  }
+
+  showShining() {
+    if (this._status === 'shining') {
+      return;
+    }
+    this._status = 'shining';
+    this._logger.info('showShining');
+    if (!this._tray || this._tray.isDestroyed() || !this._iconPath) {
+      return;
+    }
+    if (!this._warningIconPath) {
+      throw new Error('warningIconPath is not set');
+    }
+    this._shiningInterval = setInterval(() => {
+      this._setCurrentIconPath(
+        this._iconPath === this._currentIconPath
+          ? this._warningIconPath!
+          : this._iconPath,
+      );
+    }, 800);
+  }
+
   showWarning() {
     if (this._status === 'warning') {
       return;
     }
+    this._clearShining();
     this._status = 'warning';
     this._logger.info('showWarning');
     if (!this._tray || this._tray.isDestroyed() || !this._warningIconPath) {
       return;
     }
-    this._tray.setImage(this._warningIconPath);
+    this._setCurrentIconPath(this._warningIconPath);
   }
 
   showNormal() {
     if (this._status === 'normal') {
       return;
     }
+    this._clearShining();
     this._status = 'normal';
     this._logger.info('showNormal');
     if (!this._tray || this._tray.isDestroyed() || !this._iconPath) {
       return;
     }
-    this._tray.setImage(this._iconPath);
+    this._setCurrentIconPath(this._iconPath);
   }
 
   destroy() {
+    this._clearShining();
     if (this._tray) {
       this._tray.destroy();
     }

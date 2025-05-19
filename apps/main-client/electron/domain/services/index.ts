@@ -92,7 +92,7 @@ export class Services {
       (_, hasError: boolean) => {
         const trayManager = getTrayManager();
         if (hasError) {
-          trayManager.showWarning();
+          trayManager.showShining();
         } else {
           trayManager.showNormal();
         }

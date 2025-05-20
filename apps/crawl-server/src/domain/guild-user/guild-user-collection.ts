@@ -46,12 +46,8 @@ export class GuildUserCollection {
     const guildUsersCount = this._guildUsers.filter(
       item => item.isValid,
     ).length;
-    // const maxInterval = 1000 * 60 * 1; // 60000ms
-    // const minInterval = (1000 * 60) / 4; // 15000ms
-
-    // TODO: 还原
-    const maxInterval = 1000 * 60 * 2; // 120000ms
-    const minInterval = (1000 * 60) / 2; // 30000ms
+    const maxInterval = 1000 * 60 * 2; // 2min
+    const minInterval = (1000 * 60) / 4; // 15s
 
     if (guildUsersCount === 0) {
       return maxInterval;
@@ -312,8 +308,17 @@ export class GuildUserCollection {
   private async _checkAnchorsOfArea(area: Area) {
     logger.info(`[guild-user] check anchors of area: ${area}`);
     try {
-      const now = Date.now();
+      const rawValidGuildUsers = this._guildUsers.filter(
+        item => item.area === area && item.isValid,
+      );
+      if (!rawValidGuildUsers.length) {
+        logger.info(
+          `[guild-user] [orgName: ${this._context.orgName}] [orgId: ${this._context.orgId}] [area: ${area}] no valid guild user to check anchors`,
+        );
+        return;
+      }
       if (this._anchorsSearchCache.length < ANCHORS_CHECK_NUMBER) {
+        const now = Date.now();
         let anchors = await searchAnchorsTaskQueue.addTask(() =>
           searchAnchorsNeedCheck({
             area,
@@ -325,6 +330,9 @@ export class GuildUserCollection {
             anchor_search_policies: this._context.anchorSearchPolicies,
           }),
         );
+        logger.info(
+          `[guild-user] [orgName: ${this._context.orgName}] [orgId: ${this._context.orgId}] [area: ${area}] searchAnchorsTaskQueue add task cost: ${Date.now() - now}ms`,
+        );
         if (this._anchorsSearchCache.length) {
           const anchorsCacheSet = new Set(
             this._anchorsSearchCache.map(item => item.user_id),
@@ -333,9 +341,6 @@ export class GuildUserCollection {
         }
         this._anchorsSearchCache.push(...anchors);
       }
-      logger.info(
-        `[guild-user] [orgName: ${this._context.orgName}] [orgId: ${this._context.orgId}] [area: ${area}] searchAnchorsTaskQueue add task cost: ${Date.now() - now}ms`,
-      );
     } catch (error) {
       logger.error(
         `[guild-user] [orgName: ${this._context.orgName}] [orgId: ${this._context.orgId}] [area: ${area}] check anchors error:`,

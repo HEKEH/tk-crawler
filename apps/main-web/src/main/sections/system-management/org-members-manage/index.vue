@@ -84,7 +84,7 @@ const queryFilter = computed(() => {
   return transformFilterViewValuesToFilterValues(filters.value);
 });
 
-const { data, isLoading, isError, error, refetch } = useGetOrgMemberList(
+const { data, isLoading, refetch } = useGetOrgMemberList(
   {
     pageNum,
     pageSize,

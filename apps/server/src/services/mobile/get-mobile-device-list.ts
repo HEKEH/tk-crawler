@@ -32,17 +32,18 @@ export async function getMobileDeviceList(
   logger.trace(mobileDeviceList);
   return {
     list: mobileDeviceList.map(item => {
-      const org = item.organization;
       return {
         id: item.id.toString(),
         device_id: item.device_id.toString(),
         device_name: item.device_name,
         created_at: item.created_at,
         updated_at: item.updated_at,
-        organization: {
-          ...org,
-          id: org.id.toString(),
-        },
+        organization: item.organization
+          ? {
+              ...item.organization,
+              id: item.organization.id.toString(),
+            }
+          : undefined,
       };
     }),
     total,

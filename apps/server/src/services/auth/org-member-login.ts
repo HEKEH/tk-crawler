@@ -90,7 +90,7 @@ export async function orgMemberLogin(
     },
     org_info: {
       ...organization,
-      mobile_devices: organization.mobile_devices.map(item => ({
+      mobile_devices: organization.mobile_devices?.map(item => ({
         ...item,
         id: item.device_id.toString(),
         device_id: item.device_id.toString(),

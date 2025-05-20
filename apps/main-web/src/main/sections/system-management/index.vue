@@ -2,6 +2,7 @@
 import { MenuSelect } from '@tk-crawler/view-shared';
 import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import MobileDevicesManage from './mobile-devices-manage/index.vue';
 import OrgMembersManage from './org-members-manage/index.vue';
 
 defineOptions({
@@ -10,6 +11,7 @@ defineOptions({
 
 enum MenuType {
   USER = 'user',
+  MOBILE_DEVICE = 'mobile_device',
 }
 
 const MenuList = [
@@ -17,6 +19,10 @@ const MenuList = [
     value: MenuType.USER,
     label: '用户管理',
   },
+  // {
+  //   value: MenuType.MOBILE_DEVICE,
+  //   label: '移动设备列表',
+  // },
 ];
 const route = useRoute();
 const router = useRouter();
@@ -44,6 +50,7 @@ function handleSelectMenu(key: string) {
       <KeepAlive>
         <OrgMembersManage v-if="currentMenu === MenuType.USER" />
       </KeepAlive>
+      <MobileDevicesManage v-if="currentMenu === MenuType.MOBILE_DEVICE" />
     </div>
   </div>
 </template>

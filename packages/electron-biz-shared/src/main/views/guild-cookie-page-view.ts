@@ -647,7 +647,7 @@ export class GuildCookiePageView implements IView {
       );
       this._helpView?.webContents.send(
         GUILD_COOKIE_PAGE_HELP_EVENTS.REQUEST_ERROR,
-        `保存失败: ${(error as any).message}`,
+        `保存失败，可能需要更换VPN节点: ${(error as any).message}`,
       );
     } finally {
       this._isActivating = false;

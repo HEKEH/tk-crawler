@@ -135,7 +135,7 @@ const { vConsoleOpen, toggleVConsoleOpen } = useVConsole();
             class="info-item"
           >
             <ElIcon><Calendar /></ElIcon>
-            <span>会员到期</span>
+            <span>会员期限</span>
             <ElTag type="success" size="small">
               {{ formatDateTime(userProfile.orgInfo!.membership_expire_at) }}
             </ElTag>

@@ -49,7 +49,7 @@ class Logger {
           pattern: '.yyyy-MM-dd',
           // compress: true,
           keepFileExt: true,
-          daysToKeep: 30,
+          daysToKeep: 7,
         },
         // 错误日志文件配置
         error: {

@@ -48,6 +48,7 @@ const props = defineProps<{
     refresh?: () => void;
     onOrgMembersManage: (org: OrganizationItem) => void;
     onOrgDelete: (org: OrganizationItem) => void;
+    onMobileDevicesManage: (org: OrganizationItem) => void;
   };
 }>();
 
@@ -236,6 +237,9 @@ function onCloseOrgMembershipDialog() {
 
 function onManageOrgMembers(org: OrganizationItem) {
   props.model.onOrgMembersManage(org);
+}
+function onManageMobileDevices(org: OrganizationItem) {
+  props.model.onMobileDevicesManage(org);
 }
 </script>
 
@@ -430,6 +434,16 @@ function onManageOrgMembers(org: OrganizationItem) {
             >
               管理成员
             </ElButton>
+            <ElButton
+              link
+              type="primary"
+              size="small"
+              @click.prevent="onManageMobileDevices(scope.row)"
+            >
+              管理移动设备
+            </ElButton>
+          </div>
+          <div class="action-row">
             <ElButton
               link
               type="primary"

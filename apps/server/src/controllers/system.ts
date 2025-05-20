@@ -163,7 +163,10 @@ export default class SystemController {
     const data = ctx.getRequestData<
       GetMobileDeviceListRequest & { org_id: string }
     >();
-    const resp = await getMobileDeviceList(data, ctx.logger);
+    const resp = await getMobileDeviceList(
+      { ...data, with_org: true },
+      ctx.logger,
+    );
     ctx.body = resp;
     await next();
   }

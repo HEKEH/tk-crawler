@@ -1,3 +1,5 @@
+import type { RESPONSE_CODE } from '@tk-crawler/shared';
+import type { MobileDeviceItem } from '../../mobile';
 import type {
   GetAnchorListFilter,
   GetAnchorListRequest,
@@ -34,3 +36,24 @@ export type MobileAnchorContactedRequest = AnchorContactedRequest & {
 };
 
 export type MobileAnchorContactedResponse = AnchorContactedResponse;
+
+export interface GetMobileDeviceListResponseData {
+  list: MobileDeviceItem[];
+  total: number;
+}
+
+export interface GetMobileDeviceListResponse {
+  status_code: RESPONSE_CODE;
+  data?: GetMobileDeviceListResponseData;
+  message?: string;
+}
+
+export interface DeleteMobileDeviceRequest {
+  id: string;
+  org_id: string;
+}
+
+export interface DeleteMobileDeviceResponse {
+  status_code: RESPONSE_CODE;
+  message?: string;
+}

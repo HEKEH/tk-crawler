@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import type OrgMembersManageTabModel from '../../domain/client-manage/members-manage-tab-model';
+import type MobileDevicesManageTabModel from '../../domain/client-manage/mobile-devices-tab-model';
 import type OrgManageTabModel from '../../domain/client-manage/org-manage-tab-model';
 import { ElTabPane, ElTabs } from 'element-plus';
 import { ClientTabType } from '../../domain/client-manage/types';
 import { useGlobalStore } from '../../utils';
+import MobileDevicesManage from './mobile-devices-manage/index.vue';
 import OrgManage from './org-manage/index.vue';
 import OrgMembersManage from './org-members-manage/index.vue';
 
@@ -35,7 +37,6 @@ function onCloseTab(tabId: string | number) {
         v-for="tab in clientManage.tabs"
         :key="tab.id"
         :label="tab.label"
-        z
         :name="tab.id"
         :closable="tab.closable"
       >
@@ -46,6 +47,10 @@ function onCloseTab(tabId: string | number) {
         <OrgMembersManage
           v-else-if="tab.type === ClientTabType.OrgMembersManage"
           :model="tab as OrgMembersManageTabModel"
+        />
+        <MobileDevicesManage
+          v-else-if="tab.type === ClientTabType.MobileDevicesManage"
+          :model="tab as MobileDevicesManageTabModel"
         />
       </ElTabPane>
     </ElTabs>

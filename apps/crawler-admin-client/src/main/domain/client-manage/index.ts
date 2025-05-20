@@ -1,11 +1,17 @@
 import type { OrganizationItem } from '@tk-crawler/biz-shared';
+import type {
+  OrgManageTabModelContext,
+} from './org-manage-tab-model';
 import type { ClientTabModel } from './types';
 import OrgMembersManageTabModel, {
   generateOrgMembersManageTabId,
 } from './members-manage-tab-model';
+import MobileDevicesManageTabModel, {
+  generateMobileDevicesManageTabId,
+} from './mobile-devices-tab-model';
 import OrgManageTabModel from './org-manage-tab-model';
 
-export default class ClientManage {
+export default class ClientManage implements OrgManageTabModelContext {
   private _tabs: ClientTabModel[];
 
   private _activeTabId: string;
@@ -31,6 +37,14 @@ export default class ClientManage {
     const id = generateOrgMembersManageTabId(org.id);
     if (!this._tabs.find(t => t.id === id)) {
       this._tabs.push(new OrgMembersManageTabModel({ org }));
+    }
+    this._activeTabId = id;
+  }
+
+  onMobileDevicesManage(org: OrganizationItem) {
+    const id = generateMobileDevicesManageTabId(org.id);
+    if (!this._tabs.find(t => t.id === id)) {
+      this._tabs.push(new MobileDevicesManageTabModel({ org }));
     }
     this._activeTabId = id;
   }

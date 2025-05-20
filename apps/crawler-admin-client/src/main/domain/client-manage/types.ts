@@ -1,6 +1,7 @@
 export enum ClientTabType {
   OrgManage = 'OrgManage',
   OrgMembersManage = 'OrgMembersManage',
+  MobileDevicesManage = 'MobileDevicesManage',
 }
 
 export interface ClientTabModel {

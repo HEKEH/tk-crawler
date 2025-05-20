@@ -1,10 +1,12 @@
 import type { OrganizationItem } from '@tk-crawler/biz-shared';
 import type { ClientTabModel } from './types';
 import { generateOrgMembersManageTabId } from './members-manage-tab-model';
+import { generateMobileDevicesManageTabId } from './mobile-devices-tab-model';
 import { ClientTabType } from './types';
 
-interface OrgManageTabModelContext {
+export interface OrgManageTabModelContext {
   onOrgMembersManage: (org: OrganizationItem) => void;
+  onMobileDevicesManage: (org: OrganizationItem) => void;
   closeTab: (tabId: string) => void;
 }
 
@@ -19,8 +21,13 @@ export default class OrgManageTabModel implements ClientTabModel {
     this._context.onOrgMembersManage(org);
   }
 
+  onMobileDevicesManage(org: OrganizationItem) {
+    this._context.onMobileDevicesManage(org);
+  }
+
   onOrgDelete(org: OrganizationItem) {
     this._context.closeTab(generateOrgMembersManageTabId(org.id));
+    this._context.closeTab(generateMobileDevicesManageTabId(org.id));
   }
 
   get id() {

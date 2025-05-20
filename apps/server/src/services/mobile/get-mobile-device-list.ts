@@ -3,7 +3,7 @@ import type {
   GetMobileDeviceListResponseData,
 } from '@tk-crawler/biz-shared';
 import type { Logger } from '@tk-crawler/shared';
-import { mysqlClient } from '@tk-crawler/database/mysql';
+import { mysqlClient } from '@tk-crawler/database';
 
 export async function getMobileDeviceList(
   request: GetMobileDeviceListRequest & { org_id: string; with_org?: boolean },

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { OrgMemberChangePasswordRequest } from '@tk-crawler/biz-shared';
 import {
+  Calendar,
   Message,
   OfficeBuilding,
   Phone,
@@ -9,7 +10,7 @@ import {
 import { useQueryClient } from '@tanstack/vue-query';
 import { KeyIcon } from '@tk-crawler/assets';
 import { OrgMemberRole } from '@tk-crawler/biz-shared';
-import { RESPONSE_CODE } from '@tk-crawler/shared';
+import { formatDateTime, RESPONSE_CODE } from '@tk-crawler/shared';
 import { useIsWebSize, useVConsole } from '@tk-crawler/view-shared';
 import {
   ElDivider,
@@ -125,6 +126,18 @@ const { vConsoleOpen, toggleVConsoleOpen } = useVConsole();
               size="small"
             >
               该机构会员已过期
+            </ElTag>
+          </div>
+          <div
+            v-if="
+              userProfile.membershipStatus === MembershipStatus.has_membership
+            "
+            class="info-item"
+          >
+            <ElIcon><Calendar /></ElIcon>
+            <span>会员到期</span>
+            <ElTag type="success" size="small">
+              {{ formatDateTime(userProfile.orgInfo!.membership_expire_at) }}
             </ElTag>
           </div>
           <div class="info-item">

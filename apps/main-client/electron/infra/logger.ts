@@ -46,14 +46,14 @@ class Logger {
           pattern: '.yyyy-MM-dd',
           // compress: true,
           keepFileExt: true,
-          daysToKeep: 30,
+          daysToKeep: 3,
         },
         // 错误日志文件配置
         error: {
           type: 'file',
           filename: path.join(logDir, 'error/error.log'),
           maxLogSize: '10M',
-          backups: 5,
+          backups: 2,
           keepFileExt: true,
         },
         // 错误日志过滤器

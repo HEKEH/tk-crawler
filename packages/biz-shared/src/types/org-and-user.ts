@@ -1,4 +1,5 @@
 import type { Area } from './area';
+import type { MobileDeviceItem } from './mobile';
 
 export enum OrganizationStatus {
   /** 正常 */
@@ -33,6 +34,8 @@ export interface OrganizationItem {
 
   /** 设备限制 */
   mobile_device_limit: number;
+  /** 设备id列表 */
+  mobile_devices?: MobileDeviceItem[];
 
   /** 是否忽略电商主播，默认为true */
   ignore_commerce_anchor: boolean;

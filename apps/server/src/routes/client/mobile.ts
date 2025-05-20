@@ -2,6 +2,7 @@ import Router from 'koa-router';
 import MobileController from '../../controllers/client/mobile';
 import {
   checkHasMembershipAndValid,
+  checkIsMobileDeviceValid,
   clientTokenAuthMiddleware,
 } from '../../middlewares';
 
@@ -10,22 +11,28 @@ const mobileRouter = new Router({
 });
 
 mobileRouter.post('/login', MobileController.mobileOrgMemberLogin);
+const clientTokenAuthMiddlewareItem = clientTokenAuthMiddleware({
+  fetchMobileDevices: true,
+});
 mobileRouter.post(
   '/login-by-token',
-  clientTokenAuthMiddleware(),
+  clientTokenAuthMiddlewareItem,
   checkHasMembershipAndValid,
+  checkIsMobileDeviceValid,
   MobileController.mobileOrgMemberLoginByToken,
 );
 mobileRouter.post(
   '/get-assigned-anchor-list',
-  clientTokenAuthMiddleware(),
+  clientTokenAuthMiddlewareItem,
   checkHasMembershipAndValid,
+  checkIsMobileDeviceValid,
   MobileController.getAssignedAnchorList,
 );
 mobileRouter.post(
   '/anchor-contacted',
-  clientTokenAuthMiddleware(),
+  clientTokenAuthMiddlewareItem,
   checkHasMembershipAndValid,
+  checkIsMobileDeviceValid,
   MobileController.anchorContacted,
 );
 

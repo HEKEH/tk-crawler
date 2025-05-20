@@ -5,6 +5,7 @@ import { getOrgMemberInfoByToken } from '../services/auth/get-org-member-info-by
 /** Token authentication */
 export function clientTokenAuthMiddleware(options?: {
   fetchPassword?: boolean;
+  fetchMobileDevices?: boolean;
 }) {
   return async (ctx: Context, next: Next) => {
     const token = ctx.request.headers[CLIENT_TOKEN_HEADER_KEY];

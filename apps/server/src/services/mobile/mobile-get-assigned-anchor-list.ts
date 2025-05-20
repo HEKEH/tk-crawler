@@ -48,8 +48,8 @@ export async function mobileGetAssignedAnchorList(
       page_size,
       filter,
       order_by: {
-        // checked_at: 'desc',
-        crawled_at: 'desc',
+        checked_at: 'desc',
+        // crawled_at: 'desc',
       },
       org_id,
     },

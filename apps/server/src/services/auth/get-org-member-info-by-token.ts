@@ -12,6 +12,7 @@ export async function getOrgMemberInfoByToken(
   token: string | any | undefined,
   options?: {
     fetchPassword?: boolean;
+    fetchMobileDevices?: boolean;
   },
 ): Promise<OrgMemberUserInfoWithOrgInfo> {
   if (!token) {
@@ -48,6 +49,7 @@ export async function getOrgMemberInfoByToken(
               area: true,
             },
           },
+          mobile_devices: options?.fetchMobileDevices,
         },
       },
     },
@@ -82,6 +84,13 @@ export async function getOrgMemberInfoByToken(
       if_membership_valid:
         Boolean(org.membership_expire_at) &&
         dayjs(org.membership_expire_at).isAfter(new Date()),
+      mobile_devices: org.mobile_devices?.map(item => ({
+        id: item.id.toString(),
+        device_id: item.device_id.toString(),
+        device_name: item.device_name,
+        created_at: item.created_at,
+        updated_at: item.updated_at,
+      })),
     },
     device_id: deviceId,
   };

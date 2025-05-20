@@ -12,6 +12,12 @@ export async function mobileAnchorContacted(
   },
 ): Promise<void> {
   logger.info('[Mobile Anchor Contacted]', { data });
+  if (!data.token_device_id) {
+    throw new BusinessError('鉴权失败');
+  }
+  if (!data.device_id) {
+    throw new BusinessError('设备ID不能为空');
+  }
   if (data.token_device_id !== data.device_id) {
     throw new BusinessError('设备不匹配');
   }

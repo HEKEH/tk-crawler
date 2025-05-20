@@ -111,7 +111,9 @@ export class AnchorPool {
     if (this._stopped) {
       throw new StopCrawlError();
     }
-    getLogger().info('[SaveAnchor] To save anchor info:', { anchor });
+    getLogger().info('[SaveAnchor] To save anchor info:', {
+      display_id: anchor.display_id,
+    });
     const response = await updateAnchor(anchor);
     if (response.status_code !== 0) {
       throw new Error(

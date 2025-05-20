@@ -93,10 +93,12 @@ function refresh() {
       {{ error?.message }}
     </div> -->
     <div class="header-row">
-      <div class="left-part text-xs text-gray-500 font-medium md:text-sm">
-        {{
-          `设备上限: ${globalStore.userProfile?.orgInfo?.mobile_device_limit}`
-        }}
+      <div class="left-part">
+        <span class="text-xs text-gray-500 font-medium md:text-sm">
+          {{
+            `设备数量上限: ${globalStore.userProfile?.orgInfo?.mobile_device_limit}台`
+          }}
+        </span>
       </div>
       <div class="right-part">
         <ElButton type="default" size="small" @click="resetSort">
@@ -119,7 +121,6 @@ function refresh() {
       @sort-change="handleSortChange"
     >
       <ElTableColumn
-        fixed
         prop="id"
         label="ID"
         sortable="custom"
@@ -132,7 +133,6 @@ function refresh() {
         :min-width="isWeb ? 120 : 90"
       />
       <ElTableColumn
-        fixed
         prop="device_name"
         label="设备名"
         sortable="custom"

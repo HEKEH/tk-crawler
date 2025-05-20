@@ -136,7 +136,11 @@ async function deleteItem(item: MobileDeviceItem) {
       {{ error?.message }}
     </div> -->
     <div class="header-row">
-      <div class="left-part"></div>
+      <div class="left-part">
+        <span class="text-xs text-gray-500 font-medium md:text-sm">
+          {{ `设备数量上限: ${props.model.org.mobile_device_limit}台` }}
+        </span>
+      </div>
       <div class="right-part">
         <ElButton type="default" size="small" @click="resetSort">
           重置排序
@@ -158,7 +162,6 @@ async function deleteItem(item: MobileDeviceItem) {
       @sort-change="handleSortChange"
     >
       <ElTableColumn
-        fixed
         prop="id"
         label="ID"
         sortable="custom"
@@ -171,7 +174,6 @@ async function deleteItem(item: MobileDeviceItem) {
         :min-width="isWeb ? 120 : 90"
       />
       <ElTableColumn
-        fixed
         prop="device_name"
         label="设备名"
         sortable="custom"

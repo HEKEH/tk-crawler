@@ -171,7 +171,7 @@ export default class GlobalStore implements GuildAccountsManageContext {
 
   async logout() {
     await removeToken();
-    this._clear();
+    await this._clear();
     redirectToLogin();
   }
 

@@ -109,4 +109,24 @@ systemRouter.post(
   SystemController.getSystemAdminUserList,
 );
 
+systemRouter.post(
+  '/get-mobile-device-list',
+  isRequestSecureMiddleware(),
+  systemAdminTokenAuthMiddleware(),
+  systemAdminHasPrivilegeMiddleware({
+    privilege: AdminPrivilege.CLIENT_MANAGEMENT,
+  }),
+  SystemController.getMobileDeviceList,
+);
+
+systemRouter.post(
+  '/delete-mobile-device',
+  isRequestSecureMiddleware(),
+  systemAdminTokenAuthMiddleware(),
+  systemAdminHasPrivilegeMiddleware({
+    privilege: AdminPrivilege.CLIENT_MANAGEMENT,
+  }),
+  SystemController.deleteMobileDevice,
+);
+
 export default systemRouter;

@@ -4,7 +4,11 @@ import type { OrganizationItem } from '../../org-and-user';
 
 export type CreateOrgRequest = Omit<
   OrganizationItem,
-  'id' | 'membership_start_at' | 'membership_expire_at' | 'if_membership_valid'
+  | 'id'
+  | 'membership_start_at'
+  | 'membership_expire_at'
+  | 'if_membership_valid'
+  | 'mobile_devices'
 >;
 
 export interface CreateOrgResponse {

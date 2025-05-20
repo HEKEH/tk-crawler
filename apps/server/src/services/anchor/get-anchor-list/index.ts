@@ -14,7 +14,7 @@ import { transformAnchorListFilterValues } from './filter';
 import { transformAnchorListOrderBy } from './order-by';
 
 const PAGE_SIZE_LIMIT = 1000;
-const CACHE_TTL = 60; // 缓存1分钟
+const CACHE_TTL = 120; // 缓存2分钟
 
 // 清除指定机构的缓存
 export async function clearAnchorListCache(org_id: string) {

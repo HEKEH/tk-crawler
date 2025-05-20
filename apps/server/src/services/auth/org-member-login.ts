@@ -90,6 +90,11 @@ export async function orgMemberLogin(
     },
     org_info: {
       ...organization,
+      mobile_devices: organization.mobile_devices.map(item => ({
+        ...item,
+        id: item.device_id.toString(),
+        device_id: item.device_id.toString(),
+      })),
       areas: organization.areas.map(item => item.area as Area),
       id: organization.id.toString(),
       if_membership_valid:

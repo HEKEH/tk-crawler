@@ -4,7 +4,7 @@ export * from './crawl';
 export * from './error';
 export * from './follow-help';
 export * from './messages';
-export * from './mobile-device';
+export * from './mobile';
 export * from './org-and-user';
 export * from './region';
 export * from './request';

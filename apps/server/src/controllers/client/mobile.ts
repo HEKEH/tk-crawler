@@ -1,4 +1,5 @@
 import type {
+  GetMobileDeviceListRequest,
   LoginByTokenRequest,
   MobileAnchorContactedRequest,
   MobileGetAssignedAnchorListRequest,
@@ -7,6 +8,7 @@ import type {
 import type { Context, Next } from 'koa';
 import assert from 'node:assert';
 import {
+  getMobileDeviceList,
   mobileAnchorContacted,
   mobileGetAssignedAnchorList,
   mobileOrgMemberLogin,
@@ -59,6 +61,19 @@ export default class MobileController {
       token_device_id,
     });
     ctx.body = ctx.t('Success');
+    await next();
+  }
+
+  static async getMobileDeviceList(ctx: Context, next: Next) {
+    const { org_info } = ctx.clientInfo!;
+    const data = ctx.getRequestData<GetMobileDeviceListRequest>();
+    ctx.body = await getMobileDeviceList(
+      {
+        ...data,
+        org_id: org_info.id,
+      },
+      ctx.logger,
+    );
     await next();
   }
 }

@@ -8,6 +8,8 @@ export const UpdateOrgMember = '/client/org-and-user/update-org-member';
 export const DeleteOrgMember = '/client/org-and-user/delete-org-member';
 export const UpdateOrgAnchorSearchPolicies =
   '/client/org-and-user/update-org-anchor-search-policies';
+
+export const ClientGetMobileDeviceList = '/client/mobile/get-device-list';
 export const Post = 'post';
 export const OwnServerUrl = 'ownServerUrl';
 
@@ -45,3 +47,6 @@ export const SystemGetAdminUserList = '/system/get-admin-user-list';
 export const SystemUpdateAdminUser = '/system/update-admin-user';
 export const SystemCreateAdminUser = '/system/create-admin-user';
 export const SystemDeleteAdminUser = '/system/delete-admin-user';
+
+export const SystemGetMobileDeviceList = '/system/get-mobile-device-list';
+export const SystemDeleteMobileDevice = '/system/delete-mobile-device';

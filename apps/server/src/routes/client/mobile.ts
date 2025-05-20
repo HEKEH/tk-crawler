@@ -36,4 +36,11 @@ mobileRouter.post(
   MobileController.anchorContacted,
 );
 
+mobileRouter.post(
+  '/get-device-list',
+  clientTokenAuthMiddleware(),
+  checkHasMembershipAndValid,
+  MobileController.getMobileDeviceList,
+);
+
 export default mobileRouter;

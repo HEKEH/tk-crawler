@@ -1,7 +1,9 @@
 import type {
   CreateSystemAdminUserRequest,
+  DeleteMobileDeviceRequest,
   DeleteSystemAdminUserRequest,
   GetAllTKGuildUserListRequest,
+  GetMobileDeviceListRequest,
   GetSystemAdminUserListRequest,
   IsAnyGuildAccountErrorRequest,
   StartTKLiveAdminAccountRequest,
@@ -19,9 +21,11 @@ import { OrganizationStatus } from '@tk-crawler/biz-shared';
 import {
   changeSystemUserPassword,
   createSystemAdminUser,
+  deleteMobileDevice,
   deleteSystemAdminUser,
   getAllTKGuildUserList,
   getCrawlStatistics,
+  getMobileDeviceList,
   getSystemAdminUserList,
   isAnyGuildAccountError,
   startLiveAdminAccount,
@@ -152,6 +156,22 @@ export default class SystemController {
     const data = ctx.getRequestData<GetSystemAdminUserListRequest>();
     const resp = await getSystemAdminUserList(data, ctx.logger);
     ctx.body = resp;
+    await next();
+  }
+
+  static async getMobileDeviceList(ctx: Context, next: Next) {
+    const data = ctx.getRequestData<
+      GetMobileDeviceListRequest & { org_id: string }
+    >();
+    const resp = await getMobileDeviceList(data, ctx.logger);
+    ctx.body = resp;
+    await next();
+  }
+
+  static async deleteMobileDevice(ctx: Context, next: Next) {
+    const data = ctx.getRequestData<DeleteMobileDeviceRequest>();
+    await deleteMobileDevice(data, ctx.logger);
+    ctx.body = ctx.t('Success');
     await next();
   }
 }

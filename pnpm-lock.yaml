@@ -110,9 +110,6 @@ importers:
       '@tk-crawler/database':
         specifier: workspace:*
         version: link:../../packages/database
-      canvas:
-        specifier: ^3.0.1
-        version: 3.1.0
       cross-env:
         specifier: ^7.0.3
         version: 7.0.3
@@ -125,12 +122,12 @@ importers:
       i18next-fs-backend:
         specifier: ^2.3.2
         version: 2.6.0
-      jsdom:
-        specifier: ^26.0.0
-        version: 26.0.0(canvas@3.1.0)
       pm2:
         specifier: ^5.4.3
         version: 5.4.3
+      tk-crack:
+        specifier: workspace:*
+        version: link:../../packages/tk-crack
       uuid:
         specifier: ^11.0.3
         version: 11.1.0

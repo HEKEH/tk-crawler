@@ -30,13 +30,12 @@
   },
   "dependencies": {
     "@tk-crawler/database": "workspace:*",
-    "canvas": "^3.0.1",
     "cross-env": "^7.0.3",
     "dotenv": "^16.4.7",
     "dotenv-cli": "^7.4.2",
     "i18next-fs-backend": "^2.3.2",
-    "jsdom": "^26.0.0",
     "pm2": "^5.4.3",
+    "tk-crack": "workspace:*",
     "uuid": "^11.0.3"
   },
   "devDependencies": {

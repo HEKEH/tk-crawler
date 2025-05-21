@@ -28,7 +28,9 @@ import config from '../../config';
 
 // 评论模板相关请求
 export function getAnchorCommentTemplateList(
-  params: GetAnchorCommentTemplateListRequest,
+  params: GetAnchorCommentTemplateListRequest & {
+    org_id: string;
+  },
 ): Promise<GetAnchorCommentTemplateListResponse> {
   return commonRequest<GetAnchorCommentTemplateListResponse>({
     baseURL: config.ownServerUrl,
@@ -39,7 +41,9 @@ export function getAnchorCommentTemplateList(
 }
 
 export function createAnchorCommentTemplate(
-  params: CreateAnchorCommentTemplateRequest,
+  params: CreateAnchorCommentTemplateRequest & {
+    org_id: string;
+  },
 ): Promise<CreateAnchorCommentTemplateResponse> {
   return commonRequest<CreateAnchorCommentTemplateResponse>({
     baseURL: config.ownServerUrl,
@@ -50,7 +54,9 @@ export function createAnchorCommentTemplate(
 }
 
 export function updateAnchorCommentTemplate(
-  params: UpdateAnchorCommentTemplateRequest,
+  params: UpdateAnchorCommentTemplateRequest & {
+    org_id: string;
+  },
 ): Promise<UpdateAnchorCommentTemplateResponse> {
   return commonRequest<UpdateAnchorCommentTemplateResponse>({
     baseURL: config.ownServerUrl,
@@ -61,7 +67,9 @@ export function updateAnchorCommentTemplate(
 }
 
 export function deleteAnchorCommentTemplate(
-  params: DeleteAnchorCommentTemplateRequest,
+  params: DeleteAnchorCommentTemplateRequest & {
+    org_id: string;
+  },
 ): Promise<DeleteAnchorCommentTemplateResponse> {
   return commonRequest<DeleteAnchorCommentTemplateResponse>({
     baseURL: config.ownServerUrl,
@@ -72,7 +80,9 @@ export function deleteAnchorCommentTemplate(
 }
 
 export function clearAnchorCommentTemplate(
-  params: ClearAnchorCommentTemplateRequest,
+  params: ClearAnchorCommentTemplateRequest & {
+    org_id: string;
+  },
 ): Promise<ClearAnchorCommentTemplateResponse> {
   return commonRequest<ClearAnchorCommentTemplateResponse>({
     baseURL: config.ownServerUrl,
@@ -84,7 +94,9 @@ export function clearAnchorCommentTemplate(
 
 // 评论模板分组相关请求
 export function getAnchorCommentTemplateGroupList(
-  params: GetAnchorCommentTemplateGroupListRequest,
+  params: GetAnchorCommentTemplateGroupListRequest & {
+    org_id: string;
+  },
 ): Promise<GetAnchorCommentTemplateGroupListResponse> {
   return commonRequest<GetAnchorCommentTemplateGroupListResponse>({
     baseURL: config.ownServerUrl,
@@ -95,7 +107,9 @@ export function getAnchorCommentTemplateGroupList(
 }
 
 export function getAnchorCommentTemplateGroupById(
-  params: GetAnchorCommentTemplateGroupByIdRequest,
+  params: GetAnchorCommentTemplateGroupByIdRequest & {
+    org_id: string;
+  },
 ): Promise<GetAnchorCommentTemplateGroupByIdResponse> {
   return commonRequest<GetAnchorCommentTemplateGroupByIdResponse>({
     baseURL: config.ownServerUrl,
@@ -106,7 +120,9 @@ export function getAnchorCommentTemplateGroupById(
 }
 
 export function createAnchorCommentTemplateGroup(
-  params: CreateAnchorCommentTemplateGroupRequest,
+  params: CreateAnchorCommentTemplateGroupRequest & {
+    org_id: string;
+  },
 ): Promise<CreateAnchorCommentTemplateGroupResponse> {
   return commonRequest<CreateAnchorCommentTemplateGroupResponse>({
     baseURL: config.ownServerUrl,
@@ -117,7 +133,9 @@ export function createAnchorCommentTemplateGroup(
 }
 
 export function updateAnchorCommentTemplateGroup(
-  params: UpdateAnchorCommentTemplateGroupRequest,
+  params: UpdateAnchorCommentTemplateGroupRequest & {
+    org_id: string;
+  },
 ): Promise<UpdateAnchorCommentTemplateGroupResponse> {
   return commonRequest<UpdateAnchorCommentTemplateGroupResponse>({
     baseURL: config.ownServerUrl,
@@ -128,7 +146,9 @@ export function updateAnchorCommentTemplateGroup(
 }
 
 export function deleteAnchorCommentTemplateGroup(
-  params: DeleteAnchorCommentTemplateGroupRequest,
+  params: DeleteAnchorCommentTemplateGroupRequest & {
+    org_id: string;
+  },
 ): Promise<DeleteAnchorCommentTemplateGroupResponse> {
   return commonRequest<DeleteAnchorCommentTemplateGroupResponse>({
     baseURL: config.ownServerUrl,
@@ -139,7 +159,9 @@ export function deleteAnchorCommentTemplateGroup(
 }
 
 export function clearAnchorCommentTemplateGroup(
-  params: ClearAnchorCommentTemplateGroupRequest,
+  params: ClearAnchorCommentTemplateGroupRequest & {
+    org_id: string;
+  },
 ): Promise<ClearAnchorCommentTemplateGroupResponse> {
   return commonRequest<ClearAnchorCommentTemplateGroupResponse>({
     baseURL: config.ownServerUrl,

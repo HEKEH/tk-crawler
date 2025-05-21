@@ -135,70 +135,114 @@ export default class FollowHelpController {
 
   // 评论模板相关接口
   static async getAnchorCommentTemplateList(ctx: Context, next: Next) {
-    const data = ctx.getRequestData<GetAnchorCommentTemplateListRequest>();
+    const data = ctx.getRequestData<
+      GetAnchorCommentTemplateListRequest & {
+        org_id: string;
+      }
+    >();
     ctx.body = await getAnchorCommentTemplateList(data);
     await next();
   }
 
   static async createAnchorCommentTemplate(ctx: Context, next: Next) {
-    const data = ctx.getRequestData<CreateAnchorCommentTemplateRequest>();
+    const data = ctx.getRequestData<
+      CreateAnchorCommentTemplateRequest & {
+        org_id: string;
+      }
+    >();
     ctx.body = await createAnchorCommentTemplate(data);
     await next();
   }
 
   static async updateAnchorCommentTemplate(ctx: Context, next: Next) {
-    const data = ctx.getRequestData<UpdateAnchorCommentTemplateRequest>();
+    const data = ctx.getRequestData<
+      UpdateAnchorCommentTemplateRequest & {
+        org_id: string;
+      }
+    >();
     await updateAnchorCommentTemplate(data);
     ctx.body = ctx.t('Success');
     await next();
   }
 
   static async deleteAnchorCommentTemplate(ctx: Context, next: Next) {
-    const data = ctx.getRequestData<DeleteAnchorCommentTemplateRequest>();
+    const data = ctx.getRequestData<
+      DeleteAnchorCommentTemplateRequest & {
+        org_id: string;
+      }
+    >();
     ctx.body = await deleteAnchorCommentTemplate(data);
     await next();
   }
 
   static async clearAnchorCommentTemplate(ctx: Context, next: Next) {
-    const data = ctx.getRequestData<ClearAnchorCommentTemplateRequest>();
+    const data = ctx.getRequestData<
+      ClearAnchorCommentTemplateRequest & {
+        org_id: string;
+      }
+    >();
     ctx.body = await clearAnchorCommentTemplate(data);
     await next();
   }
 
   // 评论模板分组相关接口
   static async getAnchorCommentTemplateGroupList(ctx: Context, next: Next) {
-    const data = ctx.getRequestData<GetAnchorCommentTemplateGroupListRequest>();
+    const data = ctx.getRequestData<
+      GetAnchorCommentTemplateGroupListRequest & {
+        org_id: string;
+      }
+    >();
     ctx.body = await getAnchorCommentTemplateGroupList(data);
     await next();
   }
 
   static async getAnchorCommentTemplateGroupById(ctx: Context, next: Next) {
-    const data = ctx.getRequestData<GetAnchorCommentTemplateGroupByIdRequest>();
+    const data = ctx.getRequestData<
+      GetAnchorCommentTemplateGroupByIdRequest & {
+        org_id: string;
+      }
+    >();
     ctx.body = await getAnchorCommentTemplateGroupById(data);
     await next();
   }
 
   static async createAnchorCommentTemplateGroup(ctx: Context, next: Next) {
-    const data = ctx.getRequestData<CreateAnchorCommentTemplateGroupRequest>();
+    const data = ctx.getRequestData<
+      CreateAnchorCommentTemplateGroupRequest & {
+        org_id: string;
+      }
+    >();
     ctx.body = await createAnchorCommentTemplateGroup(data);
     await next();
   }
 
   static async updateAnchorCommentTemplateGroup(ctx: Context, next: Next) {
-    const data = ctx.getRequestData<UpdateAnchorCommentTemplateGroupRequest>();
+    const data = ctx.getRequestData<
+      UpdateAnchorCommentTemplateGroupRequest & {
+        org_id: string;
+      }
+    >();
     await updateAnchorCommentTemplateGroup(data);
     ctx.body = ctx.t('Success');
     await next();
   }
 
   static async deleteAnchorCommentTemplateGroup(ctx: Context, next: Next) {
-    const data = ctx.getRequestData<DeleteAnchorCommentTemplateGroupRequest>();
+    const data = ctx.getRequestData<
+      DeleteAnchorCommentTemplateGroupRequest & {
+        org_id: string;
+      }
+    >();
     ctx.body = await deleteAnchorCommentTemplateGroup(data);
     await next();
   }
 
   static async clearAnchorCommentTemplateGroup(ctx: Context, next: Next) {
-    const data = ctx.getRequestData<ClearAnchorCommentTemplateGroupRequest>();
+    const data = ctx.getRequestData<
+      ClearAnchorCommentTemplateGroupRequest & {
+        org_id: string;
+      }
+    >();
     ctx.body = await clearAnchorCommentTemplateGroup(data);
     await next();
   }

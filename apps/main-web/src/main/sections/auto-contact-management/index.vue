@@ -2,6 +2,7 @@
 import { MenuSelect } from '@tk-crawler/view-shared';
 import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import AnchorCommentTemplateManage from './anchor-comment-template-manage/index.vue';
 import MobileDevicesManage from './mobile-devices-manage/index.vue';
 
 defineOptions({
@@ -9,10 +10,15 @@ defineOptions({
 });
 
 enum MenuType {
+  ANCHOR_COMMENT_TEMPLATE = 'anchor_comment_template',
   MOBILE_DEVICE = 'mobile_device',
 }
 
 const MenuList = [
+  {
+    value: MenuType.ANCHOR_COMMENT_TEMPLATE,
+    label: '评论模板管理',
+  },
   {
     value: MenuType.MOBILE_DEVICE,
     label: '移动设备列表',
@@ -41,6 +47,11 @@ function handleSelectMenu(key: string) {
       />
     </div>
     <div class="main-part">
+      <KeepAlive>
+        <AnchorCommentTemplateManage
+          v-if="currentMenu === MenuType.ANCHOR_COMMENT_TEMPLATE"
+        />
+      </KeepAlive>
       <MobileDevicesManage v-if="currentMenu === MenuType.MOBILE_DEVICE" />
     </div>
   </div>

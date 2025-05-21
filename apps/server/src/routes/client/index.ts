@@ -1,5 +1,6 @@
 import Router from 'koa-router';
 import anchorRouter from './anchor';
+import autoContactRouter from './auto-contact';
 import mobileRouter from './mobile';
 import orgAndUserRouter from './org-and-user';
 import taskRouter from './task';
@@ -24,5 +25,11 @@ clientRouter.use(taskRouter.routes(), taskRouter.allowedMethods());
 
 // mobile
 clientRouter.use(mobileRouter.routes(), mobileRouter.allowedMethods());
+
+// auto contact
+clientRouter.use(
+  autoContactRouter.routes(),
+  autoContactRouter.allowedMethods(),
+);
 
 export default clientRouter;

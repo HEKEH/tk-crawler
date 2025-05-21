@@ -19,7 +19,9 @@ import { transformTemplateGroupFilterValues } from './filter';
 
 // 获取评论模板分组列表
 export async function getAnchorCommentTemplateGroupList(
-  data: GetAnchorCommentTemplateGroupListRequest,
+  data: GetAnchorCommentTemplateGroupListRequest & {
+    org_id: string;
+  },
 ): Promise<GetAnchorCommentTemplateGroupListResponseData> {
   logger.info('[Get Anchor Comment Template Group List]', { data });
   assert(data.org_id, '机构ID不能为空');
@@ -69,7 +71,9 @@ export async function getAnchorCommentTemplateGroupList(
 
 // 获取单个评论模板分组
 export async function getAnchorCommentTemplateGroupById(
-  data: GetAnchorCommentTemplateGroupByIdRequest,
+  data: GetAnchorCommentTemplateGroupByIdRequest & {
+    org_id: string;
+  },
 ): Promise<GetAnchorCommentTemplateGroupByIdResponseData> {
   logger.info('[Get Anchor Comment Template Group By Id]', { data });
   assert(data.org_id, '机构ID不能为空');
@@ -100,7 +104,9 @@ export async function getAnchorCommentTemplateGroupById(
 
 // 创建评论模板分组
 export async function createAnchorCommentTemplateGroup(
-  data: CreateAnchorCommentTemplateGroupRequest,
+  data: CreateAnchorCommentTemplateGroupRequest & {
+    org_id: string;
+  },
 ): Promise<CreateAnchorCommentTemplateGroupResponse['data']> {
   logger.info('[Create Anchor Comment Template Group]', { data });
 
@@ -134,7 +140,9 @@ export async function createAnchorCommentTemplateGroup(
 
 // 更新评论模板分组
 export async function updateAnchorCommentTemplateGroup(
-  data: UpdateAnchorCommentTemplateGroupRequest,
+  data: UpdateAnchorCommentTemplateGroupRequest & {
+    org_id: string;
+  },
 ): Promise<void> {
   logger.info('[Update Anchor Comment Template Group]', { data });
 
@@ -171,7 +179,9 @@ export async function updateAnchorCommentTemplateGroup(
 
 // 删除评论模板分组
 export async function deleteAnchorCommentTemplateGroup(
-  data: DeleteAnchorCommentTemplateGroupRequest,
+  data: DeleteAnchorCommentTemplateGroupRequest & {
+    org_id: string;
+  },
 ): Promise<DeleteAnchorCommentTemplateGroupResponse['data']> {
   logger.info('[Delete Anchor Comment Template Group]', { data });
   assert(data.org_id, '机构ID不能为空');
@@ -207,7 +217,9 @@ export async function deleteAnchorCommentTemplateGroup(
 
 // 清空评论模板分组
 export async function clearAnchorCommentTemplateGroup(
-  data: ClearAnchorCommentTemplateGroupRequest,
+  data: ClearAnchorCommentTemplateGroupRequest & {
+    org_id: string;
+  },
 ): Promise<ClearAnchorCommentTemplateGroupResponse['data']> {
   logger.info('[Clear Anchor Comment Template Group]', { data });
   assert(data.org_id, '机构ID不能为空');

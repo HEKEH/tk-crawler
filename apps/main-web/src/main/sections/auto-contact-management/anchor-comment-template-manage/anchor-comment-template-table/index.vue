@@ -57,6 +57,7 @@ interface ScopeType {
 }
 
 const globalStore = useGlobalStore();
+const token = computed(() => globalStore.token);
 
 const tableRef = ref<InstanceType<typeof ElTable>>();
 const pageNum = ref(1);
@@ -92,7 +93,7 @@ const { data, isFetching, isError, error, refetch } = useQuery<
 >({
   queryKey: [
     'anchor-comment-templates',
-    globalStore.orgId,
+    token,
     props.templateGroupId,
     pageNum,
     pageSize,
@@ -106,16 +107,18 @@ const { data, isFetching, isError, error, refetch } = useQuery<
     const orderBy = sortField.value
       ? { [sortField.value]: sortOrder.value === 'ascending' ? 'asc' : 'desc' }
       : undefined;
-    const response = await getAnchorCommentTemplateList({
-      org_id: globalStore.orgId,
-      page_num: pageNum.value,
-      page_size: pageSize.value,
-      order_by: orderBy,
-      filter: {
-        ...transformFilterViewValuesToFilterValues(filters.value),
-        group_id: BigInt(props.templateGroupId),
+    const response = await getAnchorCommentTemplateList(
+      {
+        page_num: pageNum.value,
+        page_size: pageSize.value,
+        order_by: orderBy,
+        filter: {
+          ...transformFilterViewValuesToFilterValues(filters.value),
+          group_id: BigInt(props.templateGroupId),
+        },
       },
-    });
+      token.value,
+    );
     if (response.status_code !== RESPONSE_CODE.SUCCESS) {
       throw new Error(response.message);
     }
@@ -163,10 +166,12 @@ async function deleteItem(item: AnchorCommentTemplate) {
   } catch {
     return;
   }
-  await deleteAnchorCommentTemplate({
-    ids: [item.id],
-    org_id: globalStore.orgId,
-  });
+  await deleteAnchorCommentTemplate(
+    {
+      ids: [item.id],
+    },
+    token.value,
+  );
   ElMessage.success({ message: '删除成功', type: 'success', duration: 2000 });
   emits('deleteItems', [item.id]);
   await refetch();
@@ -203,10 +208,12 @@ async function handleBatchDelete() {
   }
 
   const itemsIds = selectedRows.value.map(item => item.id);
-  const { data, status_code } = await deleteAnchorCommentTemplate({
-    org_id: globalStore.orgId,
-    ids: itemsIds,
-  });
+  const { data, status_code } = await deleteAnchorCommentTemplate(
+    {
+      ids: itemsIds,
+    },
+    token.value,
+  );
   if (status_code !== RESPONSE_CODE.SUCCESS) {
     return;
   }
@@ -240,15 +247,17 @@ async function handleClearData() {
       cancelButtonText: '取消',
     });
 
-    const resp = await clearAnchorCommentTemplate({
-      org_id: globalStore.orgId,
-      filter: {
-        ...(state.clearType === 'all'
-          ? undefined
-          : transformFilterViewValuesToFilterValues(filters.value)),
-        group_id: BigInt(props.templateGroupId),
+    const resp = await clearAnchorCommentTemplate(
+      {
+        filter: {
+          ...(state.clearType === 'all'
+            ? undefined
+            : transformFilterViewValuesToFilterValues(filters.value)),
+          group_id: BigInt(props.templateGroupId),
+        },
       },
-    });
+      token.value,
+    );
 
     if (resp.status_code !== RESPONSE_CODE.SUCCESS) {
       return;
@@ -290,25 +299,29 @@ async function handleCreateOrEdit(data: Partial<AnchorCommentTemplate>) {
     | CreateAnchorCommentTemplateResponse
     | UpdateAnchorCommentTemplateResponse;
   if (formMode.value === 'create') {
-    result = await createAnchorCommentTemplate({
-      org_id: globalStore.orgId,
-      group_id: props.templateGroupId,
-      templates: [
-        {
+    result = await createAnchorCommentTemplate(
+      {
+        group_id: props.templateGroupId,
+        templates: [
+          {
+            content: data.content!,
+            label: data.label || null,
+          },
+        ],
+      },
+      token.value,
+    );
+  } else {
+    result = await updateAnchorCommentTemplate(
+      {
+        template: {
+          id: formData.value!.id,
           content: data.content!,
           label: data.label || null,
         },
-      ],
-    });
-  } else {
-    result = await updateAnchorCommentTemplate({
-      org_id: globalStore.orgId,
-      template: {
-        id: formData.value!.id,
-        content: data.content!,
-        label: data.label || null,
       },
-    });
+      token.value,
+    );
   }
   if (result.status_code !== RESPONSE_CODE.SUCCESS) {
     return;

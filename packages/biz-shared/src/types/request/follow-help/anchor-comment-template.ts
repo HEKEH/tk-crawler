@@ -4,7 +4,6 @@ import type { RESPONSE_CODE } from '@tk-crawler/shared';
 import type { AnchorCommentTemplate } from '../../follow-help';
 
 export interface CreateAnchorCommentTemplateRequest {
-  org_id: string;
   group_id: string;
   templates: Omit<
     AnchorCommentTemplate,
@@ -21,7 +20,6 @@ export interface CreateAnchorCommentTemplateResponse {
 }
 
 export interface UpdateAnchorCommentTemplateRequest {
-  org_id: string;
   template: Partial<
     Omit<
       AnchorCommentTemplate,
@@ -48,7 +46,6 @@ export type AnchorCommentTemplateListFilter =
 export interface GetAnchorCommentTemplateListRequest {
   page_num: number;
   page_size: number;
-  org_id: string;
   filter?: AnchorCommentTemplateListFilter;
   order_by?: Prisma.AnchorCommentTemplateOrderByWithRelationInput;
 }
@@ -66,7 +63,6 @@ export interface GetAnchorCommentTemplateListResponse {
 
 export interface DeleteAnchorCommentTemplateRequest {
   ids: string[];
-  org_id: string;
 }
 
 export interface DeleteAnchorCommentTemplateResponse {
@@ -78,7 +74,6 @@ export interface DeleteAnchorCommentTemplateResponse {
 }
 
 export interface ClearAnchorCommentTemplateRequest {
-  org_id: string;
   filter?: AnchorCommentTemplateListFilter;
 }
 

@@ -92,7 +92,7 @@ const { data, isFetching, isError, error, refetch } = useQuery<
     filters,
   ],
   retry: false,
-  refetchOnWindowFocus: false,
+  // refetchOnWindowFocus: false,
   queryFn: async () => {
     const orderBy = sortField.value
       ? { [sortField.value]: sortOrder.value === 'ascending' ? 'asc' : 'desc' }

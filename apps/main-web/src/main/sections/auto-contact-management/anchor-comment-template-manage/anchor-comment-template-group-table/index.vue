@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type {
-  AnchorCommentTemplate,
-  CreateAnchorCommentTemplateResponse,
-  GetAnchorCommentTemplateListResponseData,
-  UpdateAnchorCommentTemplateResponse,
+  AnchorCommentTemplateGroup,
+  CreateAnchorCommentTemplateGroupResponse,
+  GetAnchorCommentTemplateGroupListResponseData,
+  UpdateAnchorCommentTemplateGroupResponse,
 } from '@tk-crawler/biz-shared';
 import type { TableColumnCtx } from 'element-plus';
 import { useQuery } from '@tanstack/vue-query';
@@ -23,45 +23,51 @@ import {
 } from 'element-plus';
 import { computed, h, reactive, ref, watch } from 'vue';
 import {
-  clearAnchorCommentTemplate,
-  createAnchorCommentTemplate,
-  deleteAnchorCommentTemplate,
-  getAnchorCommentTemplateList,
-  updateAnchorCommentTemplate,
+  clearAnchorCommentTemplateGroup,
+  createAnchorCommentTemplateGroup,
+  deleteAnchorCommentTemplateGroup,
+  getAnchorCommentTemplateGroupList,
+  updateAnchorCommentTemplateGroup,
 } from '../../../../requests';
 import { useGlobalStore } from '../../../../utils/vue';
-import AnchorCommentTemplateFilter from './anchor-comment-template-filter.vue';
+import AnchorCommentTemplateGroupFilter from './anchor-comment-template-group-filter.vue';
 import {
   DefaultFilterViewValues,
   type FilterViewValues,
   transformFilterViewValuesToFilterValues,
 } from './filter';
-import TemplateFormDialog from './template-form-dialog.vue';
+import TemplateGroupFormDialog from './template-group-dialog.vue';
 
 defineOptions({
-  name: 'AnchorCommentTemplateTable',
+  name: 'AnchorCommentGroupTable',
 });
 
 const props = defineProps<{
-  templateGroupId: string;
+  selected: boolean;
 }>();
 
 const emits = defineEmits<{
-  (e: 'deleteItems', templateIds: string[]): void;
+  (e: 'deleteItems', templateGroupIds: string[]): void;
+  (e: 'templateGroupManage', templateGroup: AnchorCommentTemplateGroup): void;
 }>();
 
 interface ScopeType {
-  row: AnchorCommentTemplate;
-  column: TableColumnCtx<AnchorCommentTemplate>;
+  row: AnchorCommentTemplateGroup;
+  column: TableColumnCtx<AnchorCommentTemplateGroup>;
   $index: number;
 }
 
+function onTemplateGroupManage(templateGroup: AnchorCommentTemplateGroup) {
+  emits('templateGroupManage', templateGroup);
+}
+
 const globalStore = useGlobalStore();
+const token = computed(() => globalStore.token);
 
 const tableRef = ref<InstanceType<typeof ElTable>>();
 const pageNum = ref(1);
 const pageSize = ref(20);
-const sortField = ref<keyof AnchorCommentTemplate>();
+const sortField = ref<keyof AnchorCommentTemplateGroup>();
 const sortOrder = ref<'ascending' | 'descending'>();
 
 // 过滤条件
@@ -78,22 +84,12 @@ function handleFilterReset() {
   pageNum.value = 1; // 重置页码
 }
 
-// 监听模板分组ID变化，重置页码和过滤条件
-watch(
-  () => props.templateGroupId,
-  () => {
-    pageNum.value = 1;
-    filters.value = DefaultFilterViewValues;
-  },
-);
-
 const { data, isFetching, isError, error, refetch } = useQuery<
-  GetAnchorCommentTemplateListResponseData | undefined
+  GetAnchorCommentTemplateGroupListResponseData | undefined
 >({
   queryKey: [
-    'anchor-comment-templates',
-    globalStore.orgId,
-    props.templateGroupId,
+    'anchor-comment-template-groups',
+    token,
     pageNum,
     pageSize,
     sortField,
@@ -106,23 +102,21 @@ const { data, isFetching, isError, error, refetch } = useQuery<
     const orderBy = sortField.value
       ? { [sortField.value]: sortOrder.value === 'ascending' ? 'asc' : 'desc' }
       : undefined;
-    const response = await getAnchorCommentTemplateList({
-      org_id: globalStore.orgId,
-      page_num: pageNum.value,
-      page_size: pageSize.value,
-      order_by: orderBy,
-      filter: {
-        ...transformFilterViewValuesToFilterValues(filters.value),
-        group_id: BigInt(props.templateGroupId),
+    const response = await getAnchorCommentTemplateGroupList(
+      {
+        page_num: pageNum.value,
+        page_size: pageSize.value,
+        order_by: orderBy,
+        filter: transformFilterViewValuesToFilterValues(filters.value),
       },
-    });
+      token.value,
+    );
     if (response.status_code !== RESPONSE_CODE.SUCCESS) {
       throw new Error(response.message);
     }
     return response.data;
   },
   placeholderData: previousData => previousData,
-  enabled: !!props.templateGroupId,
 });
 
 // 处理排序变化
@@ -130,7 +124,7 @@ function handleSortChange({
   prop,
   order,
 }: {
-  prop: keyof AnchorCommentTemplate;
+  prop: keyof AnchorCommentTemplateGroup;
   order: 'ascending' | 'descending' | null;
 }) {
   sortField.value = order ? prop : undefined;
@@ -152,10 +146,10 @@ async function refresh() {
   });
 }
 
-// 删除模板
-async function deleteItem(item: AnchorCommentTemplate) {
+// 删除模板分组
+async function deleteItem(item: AnchorCommentTemplateGroup) {
   try {
-    await ElMessageBox.confirm(`确定要删除模板吗？`, {
+    await ElMessageBox.confirm(`确定要删除模板分组 ${item.name} 吗？`, {
       type: 'warning',
       confirmButtonText: '确定',
       cancelButtonText: '取消',
@@ -163,10 +157,12 @@ async function deleteItem(item: AnchorCommentTemplate) {
   } catch {
     return;
   }
-  await deleteAnchorCommentTemplate({
-    ids: [item.id],
-    org_id: globalStore.orgId,
-  });
+  await deleteAnchorCommentTemplateGroup(
+    {
+      ids: [item.id],
+    },
+    token.value,
+  );
   ElMessage.success({ message: '删除成功', type: 'success', duration: 2000 });
   emits('deleteItems', [item.id]);
   await refetch();
@@ -180,10 +176,10 @@ function handlePageSizeChange(_pageSize: number) {
   pageSize.value = _pageSize;
 }
 
-const selectedRows = ref<AnchorCommentTemplate[]>([]);
+const selectedRows = ref<AnchorCommentTemplateGroup[]>([]);
 
 // 处理选择变化
-function handleSelectionChange(rows: AnchorCommentTemplate[]) {
+function handleSelectionChange(rows: AnchorCommentTemplateGroup[]) {
   selectedRows.value = rows;
 }
 const hasSelectedRows = computed(() => selectedRows.value.length > 0);
@@ -191,7 +187,7 @@ const hasSelectedRows = computed(() => selectedRows.value.length > 0);
 async function handleBatchDelete() {
   try {
     await ElMessageBox.confirm(
-      `确定要删除 ${selectedRows.value.length} 个模板吗？`,
+      `确定要删除 ${selectedRows.value.length} 个模板分组吗？`,
       {
         type: 'warning',
         confirmButtonText: '确定',
@@ -203,16 +199,18 @@ async function handleBatchDelete() {
   }
 
   const itemsIds = selectedRows.value.map(item => item.id);
-  const { data, status_code } = await deleteAnchorCommentTemplate({
-    org_id: globalStore.orgId,
-    ids: itemsIds,
-  });
+  const { data, status_code } = await deleteAnchorCommentTemplateGroup(
+    {
+      ids: itemsIds,
+    },
+    token.value,
+  );
   if (status_code !== RESPONSE_CODE.SUCCESS) {
     return;
   }
 
   ElMessage.success({
-    message: `共删除 ${data!.deleted_count} 个模板`,
+    message: `共删除 ${data!.deleted_count} 个模板分组`,
     type: 'success',
     duration: 2000,
   });
@@ -240,34 +238,44 @@ async function handleClearData() {
       cancelButtonText: '取消',
     });
 
-    const resp = await clearAnchorCommentTemplate({
-      org_id: globalStore.orgId,
-      filter: {
-        ...(state.clearType === 'all'
-          ? undefined
-          : transformFilterViewValuesToFilterValues(filters.value)),
-        group_id: BigInt(props.templateGroupId),
+    const resp = await clearAnchorCommentTemplateGroup(
+      {
+        filter:
+          state.clearType === 'all'
+            ? undefined
+            : transformFilterViewValuesToFilterValues(filters.value),
       },
-    });
+      token.value,
+    );
 
     if (resp.status_code !== RESPONSE_CODE.SUCCESS) {
       return;
     }
 
     ElMessage.success({
-      message: `共清空 ${resp.data!.deleted_count} 个模板`,
+      message: `共清空 ${resp.data!.deleted_count} 个模板分组`,
       type: 'success',
       duration: 2000,
     });
+
+    emits('deleteItems', resp.data!.deleted_ids);
 
     await refetch();
   } catch {}
 }
 
 onKeepAliveActivated(refetch);
+watch(
+  () => props.selected,
+  () => {
+    if (props.selected) {
+      refetch();
+    }
+  },
+);
 
 const formDialogVisible = ref(false);
-const formData = ref<AnchorCommentTemplate>();
+const formData = ref<AnchorCommentTemplateGroup>();
 const formMode = ref<'create' | 'edit'>('create');
 
 function onAddItem() {
@@ -275,7 +283,7 @@ function onAddItem() {
   formMode.value = 'create';
   formDialogVisible.value = true;
 }
-function onEditItem(item: AnchorCommentTemplate) {
+function onEditItem(item: AnchorCommentTemplateGroup) {
   formData.value = item;
   formMode.value = 'edit';
   formDialogVisible.value = true;
@@ -285,30 +293,25 @@ function onCloseFormDialog() {
   formData.value = undefined;
   formMode.value = 'create';
 }
-async function handleCreateOrEdit(data: Partial<AnchorCommentTemplate>) {
+async function handleCreateOrEdit(data: Partial<AnchorCommentTemplateGroup>) {
   let result:
-    | CreateAnchorCommentTemplateResponse
-    | UpdateAnchorCommentTemplateResponse;
+    | CreateAnchorCommentTemplateGroupResponse
+    | UpdateAnchorCommentTemplateGroupResponse;
   if (formMode.value === 'create') {
-    result = await createAnchorCommentTemplate({
-      org_id: globalStore.orgId,
-      group_id: props.templateGroupId,
-      templates: [
-        {
-          content: data.content!,
-          label: data.label || null,
-        },
-      ],
-    });
-  } else {
-    result = await updateAnchorCommentTemplate({
-      org_id: globalStore.orgId,
-      template: {
-        id: formData.value!.id,
-        content: data.content!,
-        label: data.label || null,
+    result = await createAnchorCommentTemplateGroup(
+      {
+        name: data.name!,
       },
-    });
+      token.value,
+    );
+  } else {
+    result = await updateAnchorCommentTemplateGroup(
+      {
+        id: formData.value!.id,
+        name: data.name!,
+      },
+      token.value,
+    );
   }
   if (result.status_code !== RESPONSE_CODE.SUCCESS) {
     return;
@@ -320,13 +323,13 @@ async function handleCreateOrEdit(data: Partial<AnchorCommentTemplate>) {
 </script>
 
 <template>
-  <div v-loading="isFetching" class="comment-template-table">
-    <div v-if="isError" class="comment-template-table-error">
+  <div v-loading="isFetching" class="comment-template-group-table">
+    <div v-if="isError" class="comment-template-group-table-error">
       {{ error?.message }}
     </div>
     <template v-if="!isError">
       <div class="filter-row">
-        <AnchorCommentTemplateFilter
+        <AnchorCommentTemplateGroupFilter
           :model-value="filters"
           @change="handleFilterChange"
           @reset="handleFilterReset"
@@ -335,7 +338,7 @@ async function handleCreateOrEdit(data: Partial<AnchorCommentTemplate>) {
       <div class="header-row">
         <div class="left-part">
           <ElButton size="small" type="primary" @click="onAddItem">
-            添加模板
+            添加模板组
           </ElButton>
         </div>
         <div class="right-part">
@@ -370,12 +373,13 @@ async function handleCreateOrEdit(data: Partial<AnchorCommentTemplate>) {
         @selection-change="handleSelectionChange"
       >
         <ElTableColumn type="selection" width="55" />
-        <ElTableColumn prop="label" label="标题" min-width="140" />
+        <!-- <ElTableColumn prop="id" label="分组ID" min-width="120" /> -->
+        <ElTableColumn prop="name" label="分组名称" min-width="140" />
         <ElTableColumn
-          prop="content"
-          label="内容"
-          min-width="260"
-          show-overflow-tooltip
+          prop="templates_count"
+          label="模板数量"
+          min-width="140"
+          sortable="custom"
         />
 
         <ElTableColumn
@@ -400,7 +404,7 @@ async function handleCreateOrEdit(data: Partial<AnchorCommentTemplate>) {
           </template>
         </ElTableColumn>
 
-        <ElTableColumn fixed="right" label="操作" min-width="120">
+        <ElTableColumn fixed="right" label="操作" min-width="180">
           <template #default="scope: ScopeType">
             <div>
               <ElButton
@@ -410,6 +414,14 @@ async function handleCreateOrEdit(data: Partial<AnchorCommentTemplate>) {
                 @click.prevent="onEditItem(scope.row)"
               >
                 编辑
+              </ElButton>
+              <ElButton
+                link
+                type="primary"
+                size="small"
+                @click.prevent="onTemplateGroupManage(scope.row)"
+              >
+                模板组管理
               </ElButton>
               <ElButton
                 link
@@ -437,7 +449,7 @@ async function handleCreateOrEdit(data: Partial<AnchorCommentTemplate>) {
       </div>
     </template>
   </div>
-  <TemplateFormDialog
+  <TemplateGroupFormDialog
     :visible="formDialogVisible"
     :mode="formMode"
     :initial-data="formData"
@@ -446,8 +458,8 @@ async function handleCreateOrEdit(data: Partial<AnchorCommentTemplate>) {
   />
 </template>
 
-<style scoped>
-.comment-template-table {
+<style lang="scss" scoped>
+.comment-template-group-table {
   position: relative;
   flex: 1;
   height: fit-content;
@@ -461,7 +473,12 @@ async function handleCreateOrEdit(data: Partial<AnchorCommentTemplate>) {
 .filter-row {
   width: 100%;
   overflow: hidden;
-  margin-bottom: 0.5rem;
+  @include mobile {
+    margin-bottom: 0.5rem;
+  }
+  @include web {
+    margin-bottom: 1rem;
+  }
 }
 
 .header-row {
@@ -492,7 +509,7 @@ async function handleCreateOrEdit(data: Partial<AnchorCommentTemplate>) {
   color: var(--el-color-primary);
 }
 
-.comment-template-table-error {
+.comment-template-group-table-error {
   display: flex;
   align-items: center;
   justify-content: center;

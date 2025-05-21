@@ -18,7 +18,9 @@ import { transformTemplateFilterValues } from './filter';
 
 // 获取评论模板列表
 export async function getAnchorCommentTemplateList(
-  data: GetAnchorCommentTemplateListRequest,
+  data: GetAnchorCommentTemplateListRequest & {
+    org_id: string;
+  },
 ): Promise<GetAnchorCommentTemplateListResponseData> {
   logger.info('[Get Anchor Comment Template List]', { data });
   assert(data.org_id, '机构ID不能为空');
@@ -57,7 +59,9 @@ export async function getAnchorCommentTemplateList(
 
 // 创建评论模板
 export async function createAnchorCommentTemplate(
-  data: CreateAnchorCommentTemplateRequest,
+  data: CreateAnchorCommentTemplateRequest & {
+    org_id: string;
+  },
 ): Promise<CreateAnchorCommentTemplateResponse['data']> {
   logger.info('[Create Anchor Comment Template]', { data });
 
@@ -99,7 +103,9 @@ export async function createAnchorCommentTemplate(
 
 // 更新评论模板
 export async function updateAnchorCommentTemplate(
-  data: UpdateAnchorCommentTemplateRequest,
+  data: UpdateAnchorCommentTemplateRequest & {
+    org_id: string;
+  },
 ): Promise<void> {
   logger.info('[Update Anchor Comment Template]', { data });
 
@@ -143,7 +149,9 @@ export async function updateAnchorCommentTemplate(
 
 // 删除评论模板
 export async function deleteAnchorCommentTemplate(
-  data: DeleteAnchorCommentTemplateRequest,
+  data: DeleteAnchorCommentTemplateRequest & {
+    org_id: string;
+  },
 ): Promise<DeleteAnchorCommentTemplateResponse['data']> {
   logger.info('[Delete Anchor Comment Template]', { data });
   assert(data.org_id, '机构ID不能为空');
@@ -176,7 +184,9 @@ export async function deleteAnchorCommentTemplate(
 
 // 清空评论模板
 export async function clearAnchorCommentTemplate(
-  data: ClearAnchorCommentTemplateRequest,
+  data: ClearAnchorCommentTemplateRequest & {
+    org_id: string;
+  },
 ): Promise<ClearAnchorCommentTemplateResponse['data']> {
   logger.info('[Clear Anchor Comment Template]', { data });
   assert(data.org_id, '机构ID不能为空');

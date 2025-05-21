@@ -7,7 +7,6 @@ import type {
 } from '../../follow-help';
 
 export interface CreateAnchorCommentTemplateGroupRequest {
-  org_id: string;
   name: string;
 }
 
@@ -20,7 +19,6 @@ export interface CreateAnchorCommentTemplateGroupResponse {
 }
 
 export interface UpdateAnchorCommentTemplateGroupRequest {
-  org_id: string;
   id: string;
   name: string;
 }
@@ -46,7 +44,6 @@ export type GetAnchorCommentTemplateGroupListOrderBy =
 export interface GetAnchorCommentTemplateGroupListRequest {
   page_num: number;
   page_size: number;
-  org_id: string;
   filter?: AnchorCommentTemplateGroupListFilter;
   order_by?: GetAnchorCommentTemplateGroupListOrderBy;
 }
@@ -63,7 +60,6 @@ export interface GetAnchorCommentTemplateGroupListResponse {
 }
 
 export interface GetAnchorCommentTemplateGroupByIdRequest {
-  org_id: string;
   id: string;
 }
 
@@ -82,7 +78,6 @@ export interface GetAnchorCommentTemplateGroupByIdResponse {
 
 export interface DeleteAnchorCommentTemplateGroupRequest {
   ids: string[];
-  org_id: string;
 }
 
 export interface DeleteAnchorCommentTemplateGroupResponse {
@@ -95,7 +90,6 @@ export interface DeleteAnchorCommentTemplateGroupResponse {
 }
 
 export interface ClearAnchorCommentTemplateGroupRequest {
-  org_id: string;
   filter?: AnchorCommentTemplateGroupListFilter;
 }
 

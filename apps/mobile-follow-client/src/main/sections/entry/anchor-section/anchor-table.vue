@@ -85,7 +85,7 @@ const { data, isFetching, isError, error, refetch } = useQuery<
     filter,
   ],
   retry: false,
-  refetchOnWindowFocus: false,
+  // refetchOnWindowFocus: false,
   queryFn: async () => {
     const response = await getAnchorFrom87List({
       page_num: pageNum.value,

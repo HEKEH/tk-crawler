@@ -141,7 +141,7 @@ function refresh() {
       <ElTableColumn
         prop="created_at"
         label="创建时间"
-        :min-width="isWeb ? 180 : 120"
+        :min-width="180"
         sortable="custom"
       >
         <template #default="scope: ScopeType">
@@ -151,7 +151,7 @@ function refresh() {
       <ElTableColumn
         prop="updated_at"
         label="更新时间"
-        :min-width="isWeb ? 180 : 120"
+        :min-width="180"
         sortable="custom"
       >
         <template #default="scope: ScopeType">

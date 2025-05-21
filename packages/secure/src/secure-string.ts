@@ -9,6 +9,29 @@ export const DeleteOrgMember = '/client/org-and-user/delete-org-member';
 export const UpdateOrgAnchorSearchPolicies =
   '/client/org-and-user/update-org-anchor-search-policies';
 
+export const GetCommentTemplateList =
+  '/client/auto-contact/get-comment-template-list';
+export const CreateCommentTemplate =
+  '/client/auto-contact/create-comment-template';
+export const UpdateCommentTemplate =
+  '/client/auto-contact/update-comment-template';
+export const DeleteCommentTemplate =
+  '/client/auto-contact/delete-comment-template';
+export const ClearCommentTemplate =
+  '/client/auto-contact/clear-comment-template';
+export const GetCommentTemplateGroupList =
+  '/client/auto-contact/get-comment-template-group-list';
+export const GetCommentTemplateGroup =
+  '/client/auto-contact/get-comment-template-group';
+export const CreateCommentTemplateGroup =
+  '/client/auto-contact/create-comment-template-group';
+export const UpdateCommentTemplateGroup =
+  '/client/auto-contact/update-comment-template-group';
+export const DeleteCommentTemplateGroup =
+  '/client/auto-contact/delete-comment-template-group';
+export const ClearCommentTemplateGroup =
+  '/client/auto-contact/clear-comment-template-group';
+
 export const ClientGetMobileDeviceList = '/client/mobile/get-device-list';
 export const Post = 'post';
 export const OwnServerUrl = 'ownServerUrl';

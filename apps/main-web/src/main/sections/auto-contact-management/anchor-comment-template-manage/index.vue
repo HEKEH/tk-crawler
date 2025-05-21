@@ -12,7 +12,7 @@ import {
 import { TabType } from './tabs-manage-model/types';
 
 defineOptions({
-  name: 'AnchorCommentTemplateSection',
+  name: 'AnchorCommentTemplateManage',
 });
 
 const tabsManageModel = reactive(new TabsManageModel());
@@ -53,6 +53,7 @@ function onTemplateGroupManage(templateGroup: AnchorCommentTemplateGroup) {
       >
         <AnchorCommentTemplateGroupTable
           v-if="tab.type === TabType.TemplateGroupList"
+          :selected="tab.id === tabsManageModel.activeTabId"
           @delete-items="onDeleteTemplateGroupItems"
           @template-group-manage="onTemplateGroupManage"
         />

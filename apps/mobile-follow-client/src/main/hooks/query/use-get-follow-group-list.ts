@@ -32,7 +32,7 @@ export function useGetFollowGroupList({
   return useQuery<GetAnchorFollowGroupListResponseData | undefined>({
     queryKey,
     retry: false,
-    refetchOnWindowFocus: false,
+    // refetchOnWindowFocus: false,
     queryFn: async () => {
       const response = await getAnchorFollowGroupList({
         org_id: toValue(orgId),

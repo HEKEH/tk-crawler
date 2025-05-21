@@ -2,9 +2,11 @@
 export function openScheme(scheme: string, timeout = 5000) {
   return new Promise<void>((resolve, reject) => {
     try {
+      let success = false;
       const handleBlur = () => {
         console.log('blur事件');
         window.removeEventListener('blur', handleBlur);
+        success = true;
         resolve();
       };
 
@@ -28,6 +30,9 @@ export function openScheme(scheme: string, timeout = 5000) {
         console.log('移除link完成');
       }, 1);
       setTimeout(() => {
+        if (success) {
+          return;
+        }
         console.log('超时');
         window.removeEventListener('blur', handleBlur);
         resolve();

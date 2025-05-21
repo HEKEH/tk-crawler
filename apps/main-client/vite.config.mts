@@ -5,6 +5,7 @@ import path from 'node:path';
 import process from 'node:process';
 import {
   CommonTerserOptions,
+  getCommonPostcssConfig,
   getCommonVitePlugins,
 } from '@tk-crawler/build-and-deploy/index.mjs';
 import { getCommonPackageAlias } from '@tk-crawler/build-and-deploy/package-alias.js';
@@ -88,6 +89,7 @@ export default defineConfig(({ mode }) => {
           `,
         },
       },
+      postcss: getCommonPostcssConfig(),
     },
     build: {
       minify: isProduction ? 'terser' : false,

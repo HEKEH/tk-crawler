@@ -76,7 +76,9 @@ onErrorCaptured(e => {
         </ElButton>
       </template>
       <template #icon>
-        <ElIcon class="text-6xl text-red-500 mb-4"><Warning /></ElIcon>
+        <ElIcon class="text-6xl text-[var(--el-color-danger)] mb-4">
+          <Warning />
+        </ElIcon>
       </template>
     </ElResult>
     <Homepage v-else />

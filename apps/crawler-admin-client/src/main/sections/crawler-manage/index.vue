@@ -34,7 +34,7 @@ function handleSelectMenu(key: string) {
 <template>
   <div class="w-full h-full overflow-hidden flex flex-col md:flex-row">
     <div
-      class="overflow-hidden w-full h-fit pt-2 px-4 md:h-full md:w-fit md:border-r md:border-[var(--el-border-color)] md:p-0 menu-container"
+      class="overflow-hidden w-full h-fit pt-2 pl-4 pr-4 md:h-full md:w-fit md:border-r md:border-[var(--el-border-color)] md:p-0 menu-container"
     >
       <MenuSelect
         :menus="MenuList"

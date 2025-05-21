@@ -30,7 +30,7 @@ function handleColumnsVisibleMapUpdate(value: VisibleSettingColumnMap) {
       </ElIcon>
     </template>
     <template #default>
-      <div class="px-2 py-1.5 font-semibold text-sm md:text-base">
+      <div class="pl-2 pr-2 pt-1.5 pb-1.5 font-semibold text-sm md:text-base">
         表格列设置
       </div>
       <ColumnVisibleList

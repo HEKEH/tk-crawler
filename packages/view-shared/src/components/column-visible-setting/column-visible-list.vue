@@ -47,7 +47,7 @@ function handleColumnVisibleChange(key: string, value: boolean) {
     <div
       v-for="column in columns"
       :key="column.key"
-      class="px-2 cursor-pointer transition-colors hover:bg-gray-100 md:py-1"
+      class="pl-2 pr-2 cursor-pointer transition-colors hover:bg-gray-100 md:pt-1 md:pb-1"
     >
       <ElCheckbox
         class="text-xs md:text-sm w-full"

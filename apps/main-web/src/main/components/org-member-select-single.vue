@@ -142,7 +142,7 @@ const isWebSize = useIsWebSize(); // 移动端屏蔽搜索，因为会弹出键�
       :value="option.value"
     >
       <div class="option">
-        {{ option.label }}
+        <span>{{ option.label }}</span>
         <div class="member-tags">
           <ElTag v-if="option.isSelf" size="small" type="success"> 本人 </ElTag>
           <ElTag

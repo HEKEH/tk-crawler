@@ -1,9 +1,11 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import commonjs from '@rollup/plugin-commonjs';
+import json from '@rollup/plugin-json';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import typescript from '@rollup/plugin-typescript';
 import { sync } from 'glob';
+
 // import dts from 'rollup-plugin-dts';
 
 const packageJSON = JSON.parse(
@@ -63,6 +65,7 @@ const sourceConfigs = sourceFiles.map(inputFile => {
     ],
     external: externalFn,
     plugins: [
+      json(),
       commonjs(),
       nodeResolve({
         resolveOnly: moduleId => !externalFn(moduleId),

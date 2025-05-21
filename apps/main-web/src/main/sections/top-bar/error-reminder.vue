@@ -63,7 +63,10 @@ const isWebSize = useIsWebSize();
       </span>
       <component :is="errorMessage.title" v-else :is-functional="true" />
     </template>
-    <ElIcon :size="isWebSize ? 22 : 18" class="text-red-500 cursor-pointer">
+    <ElIcon
+      :size="isWebSize ? 22 : 18"
+      class="text-[var(--el-color-danger)] cursor-pointer"
+    >
       <Bell />
     </ElIcon>
   </ElTooltip>

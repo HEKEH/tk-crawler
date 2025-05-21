@@ -29,7 +29,7 @@ import {
   ElTableColumn,
   ElTooltip,
 } from 'element-plus';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import {
   createTKGuildUser,
   deleteTKGuildUser,
@@ -60,6 +60,7 @@ interface ScopeType {
 }
 
 const globalStore = useGlobalStore();
+const token = computed(() => globalStore.token);
 const isWeb = useIsWebSize();
 
 const tableRef = ref<InstanceType<typeof ElTable>>();
@@ -87,7 +88,7 @@ const { data, isFetching, refetch } = useQuery<
 >({
   queryKey: [
     'tk-guild-users',
-    globalStore.token,
+    token,
     pageNum,
     pageSize,
     sortField,
@@ -107,20 +108,12 @@ const { data, isFetching, refetch } = useQuery<
         order_by: orderBy,
         filter: transformFilterViewValuesToFilterValues(filters.value),
       },
-      globalStore.token,
+      token.value,
     );
     if (response.status_code !== RESPONSE_CODE.SUCCESS) {
       throw new Error(response.message);
     }
     return response.data;
-    // return {
-    //   list: new Array(pageSize.value).fill(0).map((_, index) => ({
-    //     ...response.data?.list![0],
-    //     username: `用户${index}`,
-    //     id: index.toString(),
-    //   })),
-    //   total: 200,
-    // };
   },
   placeholderData: previousData => previousData,
 });
@@ -160,10 +153,7 @@ async function deleteUser(user: TKGuildUserRow) {
     return;
   }
 
-  const response = await deleteTKGuildUser(
-    { ids: [user.id] },
-    globalStore.token,
-  );
+  const response = await deleteTKGuildUser({ ids: [user.id] }, token.value);
 
   if (response.status_code === RESPONSE_CODE.SUCCESS) {
     ElMessage.success({ message: '删除成功', type: 'success', duration: 2000 });
@@ -191,7 +181,6 @@ const selectedRows = ref<TKGuildUser[]>([]);
 function handleSelectionChange(rows: TKGuildUser[]) {
   selectedRows.value = rows;
 }
-// const hasSelectedRows = computed(() => selectedRows.value.length > 0);
 
 // // 批量删除
 // async function handleBatchDelete() {
@@ -258,14 +247,14 @@ async function handleSubmitCreateOrEdit(data: Partial<TKGuildUser>) {
         ...data,
         org_id,
       } as CreateTKGuildUserRequest,
-      globalStore.token,
+      token.value,
     );
   } else {
     result = await updateTKGuildUser(
       {
         data: { id: formData.value!.id!, org_id, ...data },
       },
-      globalStore.token,
+      token.value,
     );
   }
   if (result.status_code !== RESPONSE_CODE.SUCCESS) {

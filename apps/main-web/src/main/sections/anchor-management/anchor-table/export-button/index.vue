@@ -6,8 +6,8 @@ import {
   downloadXLSX,
   useIsWebSize,
 } from '@tk-crawler/view-shared';
-import { ElButton, ElMessage, ElMessageBox, ElDialog } from 'element-plus';
-import { h, ref } from 'vue';
+import { ElButton, ElDialog, ElMessage } from 'element-plus';
+import { ref } from 'vue';
 import { getAnchorListForDownload } from '../../../../requests';
 import { useGlobalStore } from '../../../../utils';
 import ExportDialogContent from './export-dialog-content.vue';
@@ -21,6 +21,8 @@ const isLoading = ref(false);
 const globalStore = useGlobalStore();
 const isDialogVisible = ref(false);
 const isWebSize = useIsWebSize();
+const count = ref<number | undefined>(undefined);
+const format = ref<'xlsx' | 'csv' | 'txt'>('xlsx');
 
 async function handleExport() {
   if (isLoading.value) {
@@ -85,24 +87,21 @@ async function handleExport() {
   }
 }
 
-const count = ref<number | undefined>(undefined);
-const format = ref<'xlsx' | 'csv' | 'txt'>('xlsx');
-
-const handleUpdate = (val: number | undefined) => {
+function handleUpdate(val: number | undefined) {
   count.value = val;
-};
-const handleFormatChange = (val: 'xlsx' | 'csv' | 'txt') => {
+}
+function handleFormatChange(val: 'xlsx' | 'csv' | 'txt') {
   format.value = val;
-};
+}
 
-const openDialog = () => {
+function openDialog() {
   isDialogVisible.value = true;
-};
-const closeDialog = () => {
+}
+function closeDialog() {
   isDialogVisible.value = false;
   count.value = undefined;
   format.value = 'xlsx';
-};
+}
 </script>
 
 <template>
@@ -111,18 +110,18 @@ const closeDialog = () => {
   </ElButton>
   <ElDialog
     :model-value="isDialogVisible"
-    @update:model-value="closeDialog"
     title="导出提示"
     width="400px"
     destroy-on-close
-    @close="closeDialog"
     class="[&_.el-dialog\_\_header]:pb-0 [&_.dialog-container]:!p-0"
+    @update:model-value="closeDialog"
+    @close="closeDialog"
   >
     <ExportDialogContent
       :value="count"
       :format="format"
       @update="handleUpdate"
-      @formatChange="handleFormatChange"
+      @format-change="handleFormatChange"
     />
     <template #footer>
       <div class="flex w-full justify-center">

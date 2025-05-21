@@ -57,7 +57,7 @@ function onCloseTab(tabId: string | number) {
   </div>
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .org-and-user-manage {
   position: relative;
   width: 100%;
@@ -67,16 +67,24 @@ function onCloseTab(tabId: string | number) {
     width: 100%;
     border-top: unset;
   }
-}
-:global(.org-and-user-manage .el-tab-pane) {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  overflow: hidden;
-}
-:global(.org-and-user-manage .el-tabs__content) {
-  @include web {
-    padding: 1.5rem;
+  .el-tabs__item {
+    @include mobile {
+      height: 36px;
+      font-size: 13px;
+      padding-left: 16px !important;
+      padding-right: 16px !important;
+    }
+  }
+  .el-tab-pane {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+  }
+  .el-tabs__content {
+    @include web {
+      padding: 1.5rem;
+    }
   }
 }
 </style>

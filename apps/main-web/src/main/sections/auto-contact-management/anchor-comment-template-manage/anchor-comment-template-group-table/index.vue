@@ -12,6 +12,7 @@ import {
   ClearMessage,
   onKeepAliveActivated,
   RefreshButton,
+  useIsWebSize,
 } from '@tk-crawler/view-shared';
 import {
   ElButton,
@@ -61,6 +62,7 @@ function onTemplateGroupManage(templateGroup: AnchorCommentTemplateGroup) {
   emits('templateGroupManage', templateGroup);
 }
 
+const isWebSize = useIsWebSize();
 const globalStore = useGlobalStore();
 const token = computed(() => globalStore.token);
 
@@ -84,7 +86,7 @@ function handleFilterReset() {
   pageNum.value = 1; // 重置页码
 }
 
-const { data, isFetching, isError, error, refetch } = useQuery<
+const { data, isFetching, isError, refetch } = useQuery<
   GetAnchorCommentTemplateGroupListResponseData | undefined
 >({
   queryKey: [
@@ -324,16 +326,23 @@ async function handleCreateOrEdit(data: Partial<AnchorCommentTemplateGroup>) {
 
 <template>
   <div v-loading="isFetching" class="comment-template-group-table">
-    <div v-if="isError" class="comment-template-group-table-error">
+    <!-- <div v-if="isError" class="comment-template-group-table-error">
       {{ error?.message }}
-    </div>
+    </div> -->
     <template v-if="!isError">
       <div class="filter-row">
         <AnchorCommentTemplateGroupFilter
           :model-value="filters"
           @change="handleFilterChange"
           @reset="handleFilterReset"
-        />
+        >
+          <template v-if="!isWebSize" #extra-buttons>
+            <ElButton type="default" size="small" @click="resetSort">
+              重置排序
+            </ElButton>
+            <RefreshButton @click="refresh" />
+          </template>
+        </AnchorCommentTemplateGroupFilter>
       </div>
       <div class="header-row">
         <div class="left-part">
@@ -353,14 +362,17 @@ async function handleCreateOrEdit(data: Partial<AnchorCommentTemplateGroup>) {
           <ElButton type="danger" size="small" @click="handleClearData">
             清空数据
           </ElButton>
-          <ElButton type="default" size="small" @click="resetSort">
-            重置排序
-          </ElButton>
-          <RefreshButton @click="refresh" />
+          <template v-if="isWebSize">
+            <ElButton type="default" size="small" @click="resetSort">
+              重置排序
+            </ElButton>
+            <RefreshButton @click="refresh" />
+          </template>
         </div>
       </div>
       <ElTable
         ref="tableRef"
+        :size="isWebSize ? 'default' : 'small'"
         :data="data?.list"
         class="main-table"
         :default-sort="
@@ -372,20 +384,24 @@ async function handleCreateOrEdit(data: Partial<AnchorCommentTemplateGroup>) {
         @sort-change="handleSortChange"
         @selection-change="handleSelectionChange"
       >
-        <ElTableColumn type="selection" width="55" />
+        <ElTableColumn type="selection" :width="isWebSize ? 55 : 30" />
         <!-- <ElTableColumn prop="id" label="分组ID" min-width="120" /> -->
-        <ElTableColumn prop="name" label="分组名称" min-width="140" />
+        <ElTableColumn
+          prop="name"
+          label="分组名称"
+          :min-width="isWebSize ? 140 : 100"
+        />
         <ElTableColumn
           prop="templates_count"
           label="模板数量"
-          min-width="140"
+          :min-width="isWebSize ? 140 : 100"
           sortable="custom"
         />
 
         <ElTableColumn
           prop="created_at"
           label="创建时间"
-          min-width="180"
+          :min-width="180"
           sortable="custom"
         >
           <template #default="scope: ScopeType">
@@ -396,7 +412,7 @@ async function handleCreateOrEdit(data: Partial<AnchorCommentTemplateGroup>) {
         <ElTableColumn
           prop="updated_at"
           label="更新时间"
-          min-width="180"
+          :min-width="180"
           sortable="custom"
         >
           <template #default="scope: ScopeType">
@@ -404,7 +420,11 @@ async function handleCreateOrEdit(data: Partial<AnchorCommentTemplateGroup>) {
           </template>
         </ElTableColumn>
 
-        <ElTableColumn fixed="right" label="操作" min-width="180">
+        <ElTableColumn
+          :fixed="isWebSize ? 'right' : undefined"
+          label="操作"
+          :min-width="180"
+        >
           <template #default="scope: ScopeType">
             <div>
               <ElButton
@@ -442,6 +462,7 @@ async function handleCreateOrEdit(data: Partial<AnchorCommentTemplateGroup>) {
           size="small"
           background
           layout="total, sizes, prev, pager, next"
+          :pager-count="isWebSize ? 7 : 3"
           :total="data?.total || 0"
           @size-change="handlePageSizeChange"
           @current-change="handlePageNumChange"
@@ -461,70 +482,67 @@ async function handleCreateOrEdit(data: Partial<AnchorCommentTemplateGroup>) {
 <style lang="scss" scoped>
 .comment-template-group-table {
   position: relative;
-  flex: 1;
   height: fit-content;
   max-height: 100%;
-  width: 100%;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-}
-
-.filter-row {
-  width: 100%;
-  overflow: hidden;
-  @include mobile {
-    margin-bottom: 0.5rem;
-  }
   @include web {
-    margin-bottom: 1rem;
+    padding: 2rem 1rem;
   }
-}
-
-.header-row {
-  margin-bottom: 1rem;
-  display: flex;
-  justify-content: space-between;
-}
-
-.left-part {
-  display: flex;
-  align-items: center;
-  padding-left: 0.5rem;
-}
-
-.right-part {
-  display: flex;
-  align-items: center;
-  padding-right: 0.5rem;
-}
-
-.header-row-icon {
-  cursor: pointer;
-  font-size: 18px;
-  margin-left: 0.5rem;
-}
-
-.header-row-icon:hover {
-  color: var(--el-color-primary);
-}
-
-.comment-template-group-table-error {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--el-color-danger);
-}
-
-.pagination-row {
-  width: 100%;
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 1rem;
-  padding-right: 1rem;
-}
-.main-table {
-  flex: 1;
-  width: 100%;
+  @include mobile {
+    padding: 1rem;
+  }
+  .filter-row {
+    width: 100%;
+    overflow: hidden;
+    @include mobile {
+      margin-bottom: 0.5rem;
+    }
+    @include web {
+      margin-bottom: 1rem;
+    }
+  }
+  .header-row {
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    .left-part {
+      display: flex;
+      align-items: center;
+      @include mobile {
+        padding-left: 0.5rem;
+      }
+    }
+    .right-part {
+      display: flex;
+      align-items: center;
+      padding-right: 0.5rem;
+    }
+  }
+  .header-row-icon {
+    cursor: pointer;
+    font-size: 18px;
+    margin-left: 0.5rem;
+    &:hover {
+      color: var(--el-color-primary);
+    }
+  }
+  .pagination-row {
+    width: 100%;
+    display: flex;
+    margin-top: 1rem;
+    padding-right: 1rem;
+    @include mobile {
+      justify-content: center;
+    }
+    @include web {
+      justify-content: flex-end;
+    }
+  }
+  .main-table {
+    flex: 1;
+    width: 100%;
+  }
 }
 </style>

@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import type { FilterViewValues } from './filter';
-import { Search } from '@element-plus/icons-vue';
+import { Refresh, Search } from '@element-plus/icons-vue';
+import { useIsMobileSize } from '@tk-crawler/view-shared';
 import { ElButton, ElIcon, ElInput } from 'element-plus';
 import { debounce } from 'lodash';
 import { ref, watch } from 'vue';
+import '@tk-crawler/styles/table-header-filter.scss';
 
 const props = defineProps<{
   modelValue: FilterViewValues;
@@ -43,10 +45,11 @@ function handleSearchChange() {
   handleFilterChange();
 }
 const debounceSearchChange = debounce(handleSearchChange, 500);
+const isMobile = useIsMobileSize();
 </script>
 
 <template>
-  <div class="anchor-comment-filter">
+  <div class="table-header-filter">
     <div class="filter-items">
       <!-- <div class="filter-item">
         <label class="filter-label">是否已分组</label>
@@ -75,51 +78,24 @@ const debounceSearchChange = debounce(handleSearchChange, 500);
           </template>
         </ElInput>
       </div>
-    </div>
 
-    <div class="buttons">
-      <ElButton text type="primary" size="small" @click="resetFilters">
+      <div v-if="!isMobile" class="filter-item-buttons">
+        <ElButton type="default" size="small" @click="resetFilters">
+          <ElIcon style="margin-right: 0.25rem">
+            <Refresh />
+          </ElIcon>
+          搜索重置
+        </ElButton>
+      </div>
+    </div>
+    <div v-if="isMobile" class="buttons">
+      <ElButton type="default" size="small" @click="resetFilters">
+        <ElIcon style="margin-right: 0.25rem">
+          <Refresh />
+        </ElIcon>
         搜索重置
       </ElButton>
+      <slot name="extra-buttons" />
     </div>
   </div>
 </template>
-
-<style scoped>
-.anchor-comment-filter {
-  margin-bottom: 1rem;
-  display: flex;
-  align-items: center;
-  padding: 0 0.5rem;
-}
-
-.filter-item {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  width: 200px;
-}
-
-.filter-label {
-  font-size: 13px;
-  color: var(--el-text-color-regular);
-  white-space: nowrap;
-}
-
-.filter-items {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-}
-
-.buttons {
-  margin-left: 1.5rem;
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-
-  :global(.el-button) {
-    font-size: 13px;
-  }
-}
-</style>

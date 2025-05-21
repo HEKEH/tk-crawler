@@ -39,7 +39,6 @@ function onTemplateGroupManage(templateGroup: AnchorCommentTemplateGroup) {
   <div class="anchor-comment-template">
     <ElTabs
       :model-value="tabsManageModel.activeTabId"
-      class="tabs"
       type="border-card"
       @tab-change="handleTabChange"
       @tab-remove="onCloseTab"
@@ -66,28 +65,49 @@ function onTemplateGroupManage(templateGroup: AnchorCommentTemplateGroup) {
   </div>
 </template>
 
-<style scoped>
+<style lang="scss">
 .anchor-comment-template {
   position: relative;
   width: 100%;
   height: 100%;
   display: flex;
-  .tabs {
+  .el-tabs--border-card {
     width: 100%;
-    border-top: unset;
-  }
-  :global(.el-tabs--border-card) {
-    border: unset;
-    :global(.el-tab-pane) {
+    @include mobile {
+      margin-top: 1rem;
+      border-left: unset;
+      border-right: unset;
+      border-bottom: unset;
+    }
+    @include web {
+      border: unset;
+    }
+    .el-tab-pane {
       height: 100%;
       overflow: hidden;
     }
   }
-  :global(.el-tab-pane) {
+  .el-tabs__item {
+    @include mobile {
+      height: 36px;
+      font-size: 13px;
+      padding-left: 16px !important;
+      padding-right: 16px !important;
+    }
+  }
+  .el-tab-pane {
     display: flex;
     flex-direction: column;
     height: 100%;
     overflow: hidden;
+  }
+  .el-tabs__content {
+    @include web {
+      padding: 1.5rem;
+    }
+    @include mobile {
+      padding: 0;
+    }
   }
 }
 </style>

@@ -29,7 +29,7 @@ import {
   ElTableColumn,
   ElTooltip,
 } from 'element-plus';
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 import {
   createTKGuildUser,
   deleteTKGuildUser,
@@ -191,7 +191,7 @@ const selectedRows = ref<TKGuildUser[]>([]);
 function handleSelectionChange(rows: TKGuildUser[]) {
   selectedRows.value = rows;
 }
-const hasSelectedRows = computed(() => selectedRows.value.length > 0);
+// const hasSelectedRows = computed(() => selectedRows.value.length > 0);
 
 // // 批量删除
 // async function handleBatchDelete() {

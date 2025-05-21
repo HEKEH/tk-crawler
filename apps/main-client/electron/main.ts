@@ -65,6 +65,10 @@ async function main() {
     process.platform === 'win32'
       ? join(appPath, 'assets/tray-icon.ico') // Windows 使用 .ico
       : join(appPath, 'assets/tray-icon@2x.png'); // macOS 使用 .png
+  const warningIconPath =
+    process.platform === 'win32'
+      ? join(appPath, 'assets/tray-icon-warning.ico') // Windows 使用 .ico
+      : join(appPath, 'assets/tray-icon-warning@2x.png'); // macOS 使用 .png
   const transparentIconPath =
     process.platform === 'win32'
       ? join(appPath, 'assets/transparent-icon.ico') // Windows 使用 .ico
@@ -72,6 +76,7 @@ async function main() {
   const trayManager = createTrayManager({
     logger,
     iconPath,
+    warningIconPath,
     transparentIconPath,
     projectName: MAIN_APP_PRODUCT_NAME,
   });

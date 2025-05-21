@@ -1,4 +1,5 @@
 import { join } from 'node:path';
+import process from 'node:process';
 import {
   getExtraResourcesPath,
   getTrayManager,
@@ -39,7 +40,11 @@ export class ErrorManager {
     this._hasGuildUserError = hasError;
     const trayManager = getTrayManager();
     if (hasError) {
-      trayManager.showShining();
+      if (process.platform === 'darwin') {
+        trayManager.showWarning();
+      } else {
+        trayManager.showShining();
+      }
     } else {
       trayManager.showNormal();
     }

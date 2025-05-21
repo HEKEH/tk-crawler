@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import { getGlobalStore } from '../utils';
 import {
   AnchorManagementRouteRecord,
+  AutoContactManagementRouteRecord,
   GuildManagementRouteRecord,
   LoginRouteRecord,
   NoPrivilegeRouteRecord,
@@ -13,6 +14,7 @@ const MainRouteRecords = [
   SystemManagementRouteRecord,
   GuildManagementRouteRecord,
   AnchorManagementRouteRecord,
+  AutoContactManagementRouteRecord,
 ];
 
 const routes: RouteRecordRaw[] = [

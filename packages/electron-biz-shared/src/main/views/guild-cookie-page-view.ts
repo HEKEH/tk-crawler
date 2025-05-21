@@ -284,7 +284,7 @@ export class GuildCookiePageView implements IView {
       this._setStatus(GUILD_COOKIE_PAGE_HELP_STATUS.opened);
       this._catchBatchCheckAnchorRequestCookies();
       await this._refreshRunningStatus();
-      let tryRemainCount = 50;
+      let tryRemainCount = 150; // 15s
       while (
         this._runningStatus === GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS.unknown &&
         tryRemainCount > 0

@@ -2,21 +2,20 @@
 import { MenuSelect } from '@tk-crawler/view-shared';
 import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import OrgMembersManage from './org-members-manage/index.vue';
+import MobileDevicesManage from './mobile-devices-manage/index.vue';
 
 defineOptions({
-  name: 'SystemManagement',
+  name: 'AutoContactManagement',
 });
 
 enum MenuType {
-  USER = 'user',
   MOBILE_DEVICE = 'mobile_device',
 }
 
 const MenuList = [
   {
-    value: MenuType.USER,
-    label: '用户管理',
+    value: MenuType.MOBILE_DEVICE,
+    label: '移动设备列表',
   },
 ];
 const route = useRoute();
@@ -27,7 +26,7 @@ const currentMenu = computed(() => {
 
 function handleSelectMenu(key: string) {
   router.push({
-    path: `/system-management/${key as MenuType}`,
+    path: `/auto-contact-management/${key as MenuType}`,
   });
 }
 </script>
@@ -42,9 +41,7 @@ function handleSelectMenu(key: string) {
       />
     </div>
     <div class="main-part">
-      <KeepAlive>
-        <OrgMembersManage v-if="currentMenu === MenuType.USER" />
-      </KeepAlive>
+      <MobileDevicesManage v-if="currentMenu === MenuType.MOBILE_DEVICE" />
     </div>
   </div>
 </template>

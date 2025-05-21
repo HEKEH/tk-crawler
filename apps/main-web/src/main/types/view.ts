@@ -4,4 +4,5 @@ export enum Menu {
   SystemManagement = 'SystemManagement',
   GuildManagement = 'GuildManagement',
   AnchorManagement = 'AnchorManagement',
+  AutoContactManagement = 'AutoContactManagement',
 }

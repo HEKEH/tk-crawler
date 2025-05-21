@@ -51,3 +51,11 @@ export const AnchorManagementRouteRecord: CustomRouteRecord = {
   jumpTo: '/anchor-management',
   component: () => import('../sections/anchor-management/index.vue'),
 };
+
+export const AutoContactManagementRouteRecord: CustomRouteRecord = {
+  path: '/auto-contact-management/:subMenu?',
+  name: '自动建联管理',
+  menu: Menu.AutoContactManagement,
+  jumpTo: '/auto-contact-management',
+  component: () => import('../sections/auto-contact-management/index.vue'),
+};

@@ -129,15 +129,20 @@ const { vConsoleOpen, toggleVConsoleOpen } = useVConsole();
             </ElTag>
           </div>
           <div
-            v-if="
-              userProfile.membershipStatus === MembershipStatus.has_membership
-            "
+            v-if="userProfile.orgInfo?.membership_expire_at"
             class="info-item"
           >
             <ElIcon><Calendar /></ElIcon>
             <span>会员期限</span>
-            <ElTag type="success" size="small">
-              {{ formatDateTime(userProfile.orgInfo!.membership_expire_at) }}
+            <ElTag
+              :type="
+                userProfile.membershipStatus === MembershipStatus.expired
+                  ? 'danger'
+                  : 'success'
+              "
+              size="small"
+            >
+              {{ formatDateTime(userProfile.orgInfo.membership_expire_at) }}
             </ElTag>
           </div>
           <div class="info-item">

@@ -35,12 +35,14 @@
     "preinstall": "npx only-allow pnpm"
   },
   "dependencies": {
+    "@csstools/postcss-oklab-function": "^4.0.9",
     "@tailwindcss/postcss": "^4.1.7",
     "@tailwindcss/vite": "^4.1.5",
     "@tk-crawler/plugins": "workspace:*",
     "@vitejs/plugin-vue": "^5.2.1",
     "@vitejs/plugin-vue-jsx": "^4.1.1",
     "autoprefixer": "^10.4.21",
+    "postcss-nesting": "^13.0.1",
     "vite": "^5.4.11",
     "vite-plugin-css-injected-by-js": "^3.5.2",
     "vite-plugin-lazy-import": "^1.0.7"

@@ -1,6 +1,7 @@
 import type { Logger } from '@tk-crawler/shared';
+import type { NativeImage } from 'electron';
 import process from 'node:process';
-import { app, Menu, Tray } from 'electron';
+import { app, Menu, nativeImage, Tray } from 'electron';
 import { showWindow } from './show-window';
 
 let trayManager: TrayManager | null = null;
@@ -30,6 +31,7 @@ class TrayManager {
   >;
 
   private _shiningInterval: NodeJS.Timeout | null = null;
+  private _nativeImageMap: Record<string, NativeImage> = {};
 
   constructor(props: TrayManagerProps) {
     this._logger = props.logger;
@@ -42,7 +44,17 @@ class TrayManager {
 
   private _setCurrentIconPath(iconPath: string) {
     this._currentIconPath = iconPath;
-    this._tray.setImage(iconPath);
+    let image: string | NativeImage = iconPath;
+    if (process.platform === 'darwin') {
+      if (this._nativeImageMap[iconPath]) {
+        image = this._nativeImageMap[iconPath];
+      } else {
+        image = nativeImage.createFromPath(iconPath);
+        image.setTemplateImage(true);
+        this._nativeImageMap[iconPath] = image;
+      }
+    }
+    this._tray.setImage(image);
   }
 
   init() {

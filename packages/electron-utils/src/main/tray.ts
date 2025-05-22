@@ -83,23 +83,6 @@ class TrayManager {
       if (process.platform === 'win32') {
         showWindow(this._logger);
       }
-      // const windows = BaseWindow.getAllWindows();
-      // if (windows.length > 0) {
-      //   if (process.platform === 'win32') {
-      //     // Windows: 切换窗口显示/隐藏
-      //     if (windows[0].isVisible()) {
-      //       windows[0].hide();
-      //     } else {
-      //       windows[0].show();
-      //     }
-      //   } else {
-      //     // macOS: 显示窗口并聚焦
-      //     windows[0].show();
-      //     windows[0].focus();
-      //   }
-      // } else {
-      //   showWindow(logger);
-      // }
     });
   }
 

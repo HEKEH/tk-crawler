@@ -3,13 +3,13 @@ import { getBodyHeight } from '@tk-crawler/electron-utils/render';
 import TopBar from './top-bar/index.vue';
 
 defineOptions({
-  name: 'Homepage',
+  name: 'Root',
 });
 const bodyHeight = getBodyHeight();
 </script>
 
 <template>
-  <div class="homepage">
+  <div class="root">
     <TopBar />
     <div class="body">
       <router-view v-slot="{ Component }">
@@ -22,16 +22,16 @@ const bodyHeight = getBodyHeight();
 </template>
 
 <style scoped>
-.homepage {
+.root {
   position: relative;
   overflow: hidden;
   margin-top: var(--top-bar-height);
   width: 100%;
   height: 100%;
-}
-.body {
-  height: v-bind(bodyHeight);
-  width: 100%;
-  overflow: hidden;
+  .body {
+    height: v-bind(bodyHeight);
+    width: 100%;
+    overflow: hidden;
+  }
 }
 </style>

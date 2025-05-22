@@ -1,17 +1,15 @@
 <script setup lang="ts">
 defineOptions({
-  name: 'Entry',
+  name: 'Home',
 });
 </script>
 
 <template>
-  <div class="entry">
-    主页
-  </div>
+  <div class="home">主页</div>
 </template>
 
 <style scoped>
-.entry {
+.home {
   position: relative;
   width: 100%;
   height: 100%;

@@ -5,22 +5,19 @@ import { Lock, User } from '@element-plus/icons-vue';
 import { validatePassword } from '@tk-crawler/biz-shared';
 import { RESPONSE_CODE } from '@tk-crawler/shared';
 import { useIsWebSize } from '@tk-crawler/view-shared';
-import {
-  ElButton,
-  ElCard,
-  ElForm,
-  ElFormItem,
-  ElInput,
-  ElMessage,
-} from 'element-plus';
+import { ElButton, ElForm, ElFormItem, ElInput, ElMessage } from 'element-plus';
 import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { useGlobalStore } from '../../utils';
+import { useGlobalStore } from '../../../utils';
 
-const router = useRouter();
+const emit = defineEmits<{
+  (e: 'success'): void;
+  (e: 'error'): void;
+}>();
 const loginFormRef = ref<FormInstance>();
 const loading = ref(false);
 const globalStore = useGlobalStore();
+const router = useRouter();
 // 表单数据
 const loginForm = reactive<OrgMemberLoginRequest>({
   username: '',
@@ -72,8 +69,14 @@ async function handleLogin() {
     const resp = await globalStore.login(loginForm);
     if (resp.status_code === RESPONSE_CODE.SUCCESS) {
       ElMessage.success('登录成功');
-      router.push('/');
+      const primaryMenu = globalStore.primaryMenu;
+      router.push(primaryMenu.jumpTo || primaryMenu.path);
+      emit('success');
+    } else {
+      emit('error');
     }
+  } catch {
+    emit('error');
   } finally {
     loading.value = false;
   }
@@ -83,91 +86,57 @@ const isWeb = useIsWebSize();
 </script>
 
 <template>
-  <div class="login-container">
-    <ElCard class="login-card">
-      <template #header>
-        <h2 class="login-title">系统登录</h2>
-      </template>
+  <ElForm
+    ref="loginFormRef"
+    :model="loginForm"
+    :rules="rules"
+    label-width="0"
+    @keyup.enter="handleLogin"
+  >
+    <!-- 用户名输入框 -->
+    <ElFormItem prop="username">
+      <ElInput
+        v-model="loginForm.username"
+        :size="isWeb ? 'large' : 'default'"
+        placeholder="请输入用户名"
+        :prefix-icon="User"
+      />
+    </ElFormItem>
 
-      <ElForm
-        ref="loginFormRef"
-        :model="loginForm"
-        :rules="rules"
-        label-width="0"
-        @keyup.enter="handleLogin"
-      >
-        <!-- 用户名输入框 -->
-        <ElFormItem prop="username">
-          <ElInput
-            v-model="loginForm.username"
-            :size="isWeb ? 'large' : 'default'"
-            placeholder="请输入用户名"
-            :prefix-icon="User"
-          />
-        </ElFormItem>
+    <!-- 密码输入框 -->
+    <ElFormItem prop="password">
+      <ElInput
+        v-model="loginForm.password"
+        :size="isWeb ? 'large' : 'default'"
+        type="password"
+        placeholder="请输入密码"
+        :prefix-icon="Lock"
+        show-password
+      />
+    </ElFormItem>
 
-        <!-- 密码输入框 -->
-        <ElFormItem prop="password">
-          <ElInput
-            v-model="loginForm.password"
-            :size="isWeb ? 'large' : 'default'"
-            type="password"
-            placeholder="请输入密码"
-            :prefix-icon="Lock"
-            show-password
-          />
-        </ElFormItem>
-
-        <!-- <ElFormItem>
+    <!-- <ElFormItem>
           <div class="login-options">
             <ElLink type="primary" underline="never">忘记密码？</ElLink>
           </div>
         </ElFormItem> -->
 
-        <!-- 登录按钮 -->
-        <ElFormItem>
-          <ElButton
-            type="primary"
-            :size="isWeb ? 'large' : 'default'"
-            :loading="loading"
-            class="login-button"
-            @click="handleLogin"
-          >
-            登录
-          </ElButton>
-        </ElFormItem>
-      </ElForm>
-    </ElCard>
-  </div>
+    <!-- 登录按钮 -->
+    <ElFormItem>
+      <ElButton
+        type="primary"
+        :size="isWeb ? 'large' : 'default'"
+        :loading="loading"
+        class="login-button"
+        @click="handleLogin"
+      >
+        登录
+      </ElButton>
+    </ElFormItem>
+  </ElForm>
 </template>
 
 <style lang="scss" scoped>
-.login-container {
-  display: flex;
-  height: 100%;
-  justify-content: center;
-}
-
-.login-card {
-  width: 100%;
-  height: fit-content;
-  max-width: 400px;
-  margin-top: 100px;
-  border-radius: 10px;
-  @include mobile {
-    width: 300px;
-    max-width: calc(100vw - 20px);
-  }
-}
-
-.login-title {
-  text-align: center;
-  margin: 0;
-  @include mobile {
-    font-size: 18px;
-  }
-}
-
 .login-button {
   margin-top: 10px;
   width: 100%;

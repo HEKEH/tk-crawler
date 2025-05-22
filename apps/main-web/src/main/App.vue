@@ -13,7 +13,7 @@ import zhCn from 'element-plus/es/locale/lang/zh-cn';
 
 import { computed, onBeforeUnmount, onErrorCaptured } from 'vue';
 import { useRouter } from 'vue-router';
-import Homepage from './sections/homepage.vue';
+import Homepage from './sections/root.vue';
 import { provideGlobalStore } from './utils';
 // import { CrawlerViewMessage } from './constants';
 

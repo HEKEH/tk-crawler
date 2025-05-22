@@ -5,12 +5,13 @@ import {
   AnchorManagementRouteRecord,
   AutoContactManagementRouteRecord,
   GuildManagementRouteRecord,
-  LoginRouteRecord,
+  HomeRouteRecord,
   NoPrivilegeRouteRecord,
   SystemManagementRouteRecord,
 } from './route-records';
 
 const MainRouteRecords = [
+  HomeRouteRecord,
   SystemManagementRouteRecord,
   GuildManagementRouteRecord,
   AnchorManagementRouteRecord,
@@ -18,26 +19,26 @@ const MainRouteRecords = [
 ];
 
 const routes: RouteRecordRaw[] = [
-  {
-    path: LoginRouteRecord.path,
-    name: LoginRouteRecord.name,
-    component: LoginRouteRecord.component,
-    beforeEnter: async (to, from, next) => {
-      const globalStore = getGlobalStore();
-      try {
-        await globalStore.init();
-      } catch {
-        next();
-        return;
-      }
-      if (globalStore.userProfile.hasLoggedIn) {
-        next('/');
-        return;
-      }
-      globalStore.currentMenu = LoginRouteRecord.menu ?? null;
-      next();
-    },
-  },
+  // {
+  //   path: LoginRouteRecord.path,
+  //   name: LoginRouteRecord.name,
+  //   component: LoginRouteRecord.component,
+  //   beforeEnter: async (to, from, next) => {
+  //     const globalStore = getGlobalStore();
+  //     try {
+  //       await globalStore.init();
+  //     } catch {
+  //       next();
+  //       return;
+  //     }
+  //     if (globalStore.userProfile.hasLoggedIn) {
+  //       next('/');
+  //       return;
+  //     }
+  //     globalStore.currentMenu = LoginRouteRecord.menu ?? null;
+  //     next();
+  //   },
+  // },
 
   {
     path: NoPrivilegeRouteRecord.path,
@@ -55,8 +56,13 @@ const routes: RouteRecordRaw[] = [
         next();
         return;
       }
-      if (!globalStore.userProfile.hasLoggedIn) {
-        next('/login');
+      if (menu.needLogin && !globalStore.userProfile.hasLoggedIn) {
+        next({
+          path: '/home',
+          query: {
+            login: 'true',
+          },
+        });
         return;
       }
       if (menu.roles && !menu.roles.includes(globalStore.userProfile.role!)) {
@@ -79,10 +85,12 @@ const routes: RouteRecordRaw[] = [
         return;
       }
       if (!globalStore.userProfile.hasLoggedIn) {
-        next('/login');
+        next({
+          path: '/home',
+        });
         return;
       }
-      const firstMenu = globalStore.menus[0];
+      const firstMenu = globalStore.primaryMenu;
       if (
         firstMenu &&
         MainRouteRecords.some(item => item.name === firstMenu.name)
@@ -103,7 +111,12 @@ const router = createRouter({
 
 export async function redirectToLogin() {
   try {
-    await router.push('/login');
+    await router.push({
+      path: '/home',
+      query: {
+        login: 'true',
+      },
+    });
   } catch (err) {
     console.error('Navigation failed:', err);
   }

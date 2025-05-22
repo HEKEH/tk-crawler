@@ -1,5 +1,5 @@
 export enum Menu {
-  // Entry = 'Entry',
+  Home = 'Home',
   Login = 'Login',
   SystemManagement = 'SystemManagement',
   GuildManagement = 'GuildManagement',

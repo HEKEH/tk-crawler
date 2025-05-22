@@ -19,7 +19,7 @@ import {
   AnchorManagementRouteRecord,
   AutoContactManagementRouteRecord,
   GuildManagementRouteRecord,
-  LoginRouteRecord,
+  HomeRouteRecord,
   SystemManagementRouteRecord,
 } from '../router/route-records';
 import { getToken, removeToken, setToken } from '../utils';
@@ -45,12 +45,17 @@ export default class GlobalStore implements GuildAccountsManageContext {
 
   readonly messageCenter = markRaw(new MessageCenter());
 
+  get primaryMenu() {
+    return this.menus.find(item => item.isPrimary) ?? this.menus[0];
+  }
+
   get menus() {
     let records: CustomRouteRecord[] = [];
     if (!this.userProfile.hasLoggedIn) {
-      records = [LoginRouteRecord];
+      records = [HomeRouteRecord];
     } else {
       records = [
+        HomeRouteRecord,
         AnchorManagementRouteRecord,
         AutoContactManagementRouteRecord,
         SystemManagementRouteRecord,
@@ -64,6 +69,7 @@ export default class GlobalStore implements GuildAccountsManageContext {
       name: item.name,
       path: item.path,
       jumpTo: item.jumpTo,
+      isPrimary: item.isPrimary,
     }));
   }
 
@@ -155,9 +161,10 @@ export default class GlobalStore implements GuildAccountsManageContext {
     }
   }
 
-  private _gotoLoginPage() {
+  private async _gotoLoginPage() {
     this._userProfile.clear();
-    redirectToLogin();
+    await this._guildAccountsManage.clear();
+    await redirectToLogin();
   }
 
   async login(params: OrgMemberLoginRequest) {
@@ -174,7 +181,7 @@ export default class GlobalStore implements GuildAccountsManageContext {
   async logout() {
     await removeToken();
     await this._clear();
-    redirectToLogin();
+    await redirectToLogin();
   }
 
   async init() {
@@ -188,8 +195,8 @@ export default class GlobalStore implements GuildAccountsManageContext {
     try {
       this._initializationState.initializeBegin();
       this._tokenInvalidSubscription = markRaw(
-        TokenInvalidSubject.subscribe(() => {
-          this._gotoLoginPage();
+        TokenInvalidSubject.subscribe(async () => {
+          await this._gotoLoginPage();
         }),
       );
       this._addEventListeners();

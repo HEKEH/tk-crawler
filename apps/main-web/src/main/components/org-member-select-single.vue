@@ -40,6 +40,7 @@ const emit = defineEmits<{
 }>();
 
 const globalStore = useGlobalStore();
+const token = computed(() => globalStore.token);
 
 type PropsValue = string | 'all';
 
@@ -73,7 +74,7 @@ const { data: orgMembers, isLoading } = useGetOrgMemberList(
     pageSize: 1000,
     filter,
   },
-  globalStore.token,
+  token,
 );
 
 interface Option {

@@ -51,6 +51,7 @@ const isWeb = useIsWebSize();
 
 const tableRef = ref<InstanceType<typeof ElTable>>();
 const globalStore = useGlobalStore();
+const token = computed(() => globalStore.token);
 
 const pageNum = ref(1);
 const pageSize = ref(10);
@@ -90,7 +91,7 @@ const { data, isLoading, refetch } = useGetAdminUserList(
     orderBy,
     filter: queryFilter,
   },
-  globalStore.token,
+  token,
 );
 // 处理排序变化
 function handleSortChange({
@@ -130,7 +131,7 @@ async function deleteItem(item: Omit<SystemAdminUserInfo, 'password'>) {
     {
       id: item.id,
     },
-    globalStore.token,
+    token.value,
   );
   if (resp.status_code === RESPONSE_CODE.SUCCESS) {
     await refetch();
@@ -162,14 +163,14 @@ async function handleSubmitCreateOrEdit(data: Partial<SystemAdminUserInfo>) {
   if (formMode.value === 'create') {
     result = await createSystemAdminUser(
       data as CreateSystemAdminUserRequest,
-      globalStore.token,
+      token.value,
     );
   } else {
     result = await updateSystemAdminUser(
       {
         data: { id: data.id!, ...data },
       },
-      globalStore.token,
+      token.value,
     );
   }
   if (result.status_code !== RESPONSE_CODE.SUCCESS) {

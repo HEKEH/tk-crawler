@@ -3,6 +3,7 @@ import type {
   GetOrgMemberListResponseData,
 } from '@tk-crawler/biz-shared';
 import type { UseQueryParams } from '@tk-crawler/view-shared';
+import type { ComputedRef } from 'vue';
 import { useQuery } from '@tanstack/vue-query';
 import { toValue } from 'vue';
 import { getOrgMemberList } from '../requests';
@@ -19,7 +20,7 @@ export function useGetOrgMemberList(
     filter?: GetOrgMemberListRequest['filter'];
     orderBy?: GetOrgMemberListRequest['order_by'];
   }>,
-  token: string,
+  token: ComputedRef<string>,
 ) {
   const queryKey = [
     'use-get-org-member-list',
@@ -41,7 +42,7 @@ export function useGetOrgMemberList(
           order_by: toValue(orderBy),
           filter: toValue(filter),
         },
-        token,
+        token.value,
       );
       return response.data;
     },

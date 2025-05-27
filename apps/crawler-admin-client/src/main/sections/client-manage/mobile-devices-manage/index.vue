@@ -16,7 +16,7 @@ import {
   ElTable,
   ElTableColumn,
 } from 'element-plus';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { deleteMobileDevice, getMobileDeviceList } from '../../../requests';
 import { useGlobalStore } from '../../../utils';
 
@@ -42,6 +42,7 @@ const pageSize = ref(10);
 const sortField = ref<keyof MobileDeviceItem>();
 const sortOrder = ref<'ascending' | 'descending'>();
 const globalStore = useGlobalStore();
+const token = computed(() => globalStore.token);
 const isWeb = useIsWebSize();
 
 const { data, isLoading, refetch } = useQuery<
@@ -49,6 +50,7 @@ const { data, isLoading, refetch } = useQuery<
 >({
   queryKey: [
     'mobile-devices',
+    token,
     props.model.org.id,
     pageNum,
     pageSize,
@@ -68,7 +70,7 @@ const { data, isLoading, refetch } = useQuery<
         page_size: pageSize.value,
         order_by: orderBy,
       },
-      globalStore.token,
+      token.value,
     );
     return response.data;
   },
@@ -121,7 +123,7 @@ async function deleteItem(item: MobileDeviceItem) {
       id: item.id,
       org_id: props.model.org.id,
     },
-    globalStore.token,
+    token.value,
   );
   if (resp.status_code === RESPONSE_CODE.SUCCESS) {
     await refetch();

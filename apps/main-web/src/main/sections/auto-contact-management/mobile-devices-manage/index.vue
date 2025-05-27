@@ -8,7 +8,7 @@ import { useQuery } from '@tanstack/vue-query';
 import { formatDateTime } from '@tk-crawler/shared';
 import { RefreshButton, useIsWebSize } from '@tk-crawler/view-shared';
 import { ElButton, ElPagination, ElTable, ElTableColumn } from 'element-plus';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { getMobileDeviceList } from '../../../requests';
 import { useGlobalStore } from '../../../utils';
 
@@ -28,19 +28,13 @@ const pageSize = ref(10);
 const sortField = ref<keyof MobileDeviceItem>();
 const sortOrder = ref<'ascending' | 'descending'>();
 const globalStore = useGlobalStore();
+const token = computed(() => globalStore.token);
 const isWeb = useIsWebSize();
 
 const { data, isLoading, refetch } = useQuery<
   GetMobileDeviceListResponseData | undefined
 >({
-  queryKey: [
-    'mobile-devices',
-    globalStore.token,
-    pageNum,
-    pageSize,
-    sortField,
-    sortOrder,
-  ],
+  queryKey: ['mobile-devices', token, pageNum, pageSize, sortField, sortOrder],
   retry: false,
   // refetchOnWindowFocus: false,
   queryFn: async () => {
@@ -53,7 +47,7 @@ const { data, isLoading, refetch } = useQuery<
         page_size: pageSize.value,
         order_by: orderBy,
       },
-      globalStore.token,
+      token.value,
     );
     return response.data;
   },

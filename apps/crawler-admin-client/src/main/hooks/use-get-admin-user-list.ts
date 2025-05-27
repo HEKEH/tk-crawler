@@ -3,6 +3,7 @@ import type {
   GetSystemAdminUserListResponseData,
 } from '@tk-crawler/biz-shared';
 import type { UseQueryParams } from '@tk-crawler/view-shared';
+import type { ComputedRef } from 'vue';
 import { useQuery } from '@tanstack/vue-query';
 import { toValue } from 'vue';
 import { getSystemAdminUserList } from '../requests';
@@ -19,7 +20,7 @@ export function useGetAdminUserList(
     filter?: GetSystemAdminUserListRequest['filter'];
     orderBy?: GetSystemAdminUserListRequest['order_by'];
   }>,
-  token: string,
+  token: ComputedRef<string>,
 ) {
   const queryKey = [
     'use-get-admin-user-list',
@@ -41,7 +42,7 @@ export function useGetAdminUserList(
           order_by: toValue(orderBy),
           filter: toValue(filter),
         },
-        token,
+        token.value,
       );
       return response.data;
     },

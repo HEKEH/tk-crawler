@@ -25,7 +25,7 @@ import {
   ElTableColumn,
   ElTag,
 } from 'element-plus';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import {
   createOrgMember,
   deleteOrgMember,
@@ -57,6 +57,7 @@ const pageSize = ref(10);
 const sortField = ref<keyof OrgMemberItem>();
 const sortOrder = ref<'ascending' | 'descending'>();
 const globalStore = useGlobalStore();
+const token = computed(() => globalStore.token);
 const isWeb = useIsWebSize();
 
 const { data, isLoading, refetch } = useQuery<
@@ -64,6 +65,7 @@ const { data, isLoading, refetch } = useQuery<
 >({
   queryKey: [
     'org-members',
+    token,
     props.model.org.id,
     pageNum,
     pageSize,
@@ -83,7 +85,7 @@ const { data, isLoading, refetch } = useQuery<
         page_size: pageSize.value,
         order_by: orderBy,
       },
-      globalStore.token,
+      token.value,
     );
     return response.data;
   },
@@ -140,7 +142,7 @@ async function toggleDisableItem(row: Omit<OrgMemberItem, 'password'>) {
           status: OrgMemberStatus.disabled,
         },
       },
-      globalStore.token,
+      token.value,
     );
   } else {
     updateResp = await updateOrgMember(
@@ -151,7 +153,7 @@ async function toggleDisableItem(row: Omit<OrgMemberItem, 'password'>) {
           status: OrgMemberStatus.normal,
         },
       },
-      globalStore.token,
+      token.value,
     );
   }
   if (updateResp.status_code === RESPONSE_CODE.SUCCESS) {
@@ -172,7 +174,7 @@ async function deleteItem(item: Omit<OrgMemberItem, 'password'>) {
       id: item.id,
       org_id: item.org_id,
     },
-    globalStore.token,
+    token.value,
   );
   if (resp.status_code === RESPONSE_CODE.SUCCESS) {
     await refetch();
@@ -204,7 +206,7 @@ async function handleSubmitCreateOrEdit(data: Partial<OrgMemberItem>) {
         ...data,
         org_id: orgId,
       } as CreateOrgMemberRequest,
-      globalStore.token,
+      token.value,
     );
   } else {
     result = await updateOrgMember(
@@ -215,7 +217,7 @@ async function handleSubmitCreateOrEdit(data: Partial<OrgMemberItem>) {
           id: data.id!,
         },
       },
-      globalStore.token,
+      token.value,
     );
   }
   if (result.status_code !== RESPONSE_CODE.SUCCESS) {

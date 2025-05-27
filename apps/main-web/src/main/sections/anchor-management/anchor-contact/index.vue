@@ -25,10 +25,7 @@ import {
   transformFilterViewValuesToFilterValues,
 } from '../anchor-table/filter';
 import TKAnchorFilter from '../anchor-table/filter.vue';
-import {
-  EXPORT_DATA_FUNCTION_IS_OPENED_KEY,
-  useOpenDataExportFunction,
-} from '../anchor-table/hooks';
+import { useOpenDataExportFunction } from '../anchor-table/hooks';
 import { BatchOperationButtons, useOperationColumn } from './operation';
 import '../anchor-table/styles.scss';
 
@@ -39,6 +36,7 @@ defineOptions({
 const isWeb = useIsWebSize();
 
 const globalStore = useGlobalStore();
+const token = computed(() => globalStore.token);
 
 const pageNum = ref(1);
 const pageSize = ref(20);
@@ -113,7 +111,7 @@ const { data, isFetching, refetch } = useGetAnchorList(
     includeTaskAssign: true,
     includeAnchorContact: true,
   },
-  globalStore.token,
+  token,
 );
 
 // 刷新功能

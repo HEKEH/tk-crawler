@@ -3,6 +3,7 @@ import type {
   GetAnchorListResponseData,
 } from '@tk-crawler/biz-shared';
 import type { UseQueryParams } from '@tk-crawler/view-shared';
+import type { ComputedRef } from 'vue';
 import { useQuery } from '@tanstack/vue-query';
 import { UseTkAnchorList } from '@tk-crawler/secure';
 import { RESPONSE_CODE } from '@tk-crawler/shared';
@@ -25,7 +26,7 @@ export function useGetAnchorList(
     includeTaskAssign?: boolean;
     includeAnchorContact?: boolean;
   }>,
-  token: string,
+  token: ComputedRef<string>,
 ) {
   const queryKey = [
     UseTkAnchorList,
@@ -51,7 +52,7 @@ export function useGetAnchorList(
           include_task_assign: toValue(includeTaskAssign),
           include_anchor_contact: toValue(includeAnchorContact),
         },
-        token,
+        token.value,
       );
       if (response.status_code !== RESPONSE_CODE.SUCCESS) {
         throw new Error(response.message);

@@ -52,6 +52,7 @@ const isWeb = useIsWebSize();
 
 const tableRef = ref<InstanceType<typeof ElTable>>();
 const globalStore = useGlobalStore();
+const token = computed(() => globalStore.token);
 
 const pageNum = ref(1);
 const pageSize = ref(10);
@@ -91,7 +92,7 @@ const { data, isLoading, refetch } = useGetOrgMemberList(
     orderBy,
     filter: queryFilter,
   },
-  globalStore.token,
+  token,
 );
 // 处理排序变化
 function handleSortChange({
@@ -136,7 +137,7 @@ async function toggleDisableItem(row: Omit<OrgMemberItem, 'password'>) {
         id: row.id,
         status: OrgMemberStatus.disabled,
       },
-      globalStore.token,
+      token.value,
     );
   } else {
     updateResp = await updateOrgMember(
@@ -144,7 +145,7 @@ async function toggleDisableItem(row: Omit<OrgMemberItem, 'password'>) {
         id: row.id,
         status: OrgMemberStatus.normal,
       },
-      globalStore.token,
+      token.value,
     );
   }
   if (updateResp.status_code === RESPONSE_CODE.SUCCESS) {
@@ -164,7 +165,7 @@ async function deleteItem(item: Omit<OrgMemberItem, 'password'>) {
     {
       id: item.id,
     },
-    globalStore.token,
+    token.value,
   );
   if (resp.status_code === RESPONSE_CODE.SUCCESS) {
     await refetch();
@@ -194,17 +195,14 @@ function onCloseFormDialog() {
 async function handleSubmitCreateOrEdit(data: Partial<OrgMemberItem>) {
   let result: CreateOrgMemberResponse | UpdateOrgMemberResponse;
   if (formMode.value === 'create') {
-    result = await createOrgMember(
-      data as CreateOrgMemberRequest,
-      globalStore.token,
-    );
+    result = await createOrgMember(data as CreateOrgMemberRequest, token.value);
   } else {
     result = await updateOrgMember(
       {
         id: data.id!,
         ...data,
       },
-      globalStore.token,
+      token.value,
     );
   }
   if (result.status_code !== RESPONSE_CODE.SUCCESS) {

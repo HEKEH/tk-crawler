@@ -17,7 +17,7 @@ import {
   VisiblePassword,
 } from '@tk-crawler/view-shared';
 import { ElButton, ElPagination, ElTable, ElTableColumn } from 'element-plus';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { getAllTKGuildUserList } from '../../../requests';
 import { useGlobalStore } from '../../../utils/vue';
 import {
@@ -42,6 +42,7 @@ interface ScopeType {
 }
 
 const globalStore = useGlobalStore();
+const token = computed(() => globalStore.token);
 const isWeb = useIsWebSize();
 
 const tableRef = ref<InstanceType<typeof ElTable>>();
@@ -69,7 +70,7 @@ const { data, isFetching, refetch } = useQuery<
 >({
   queryKey: [
     'tk-guild-users',
-    globalStore.token,
+    token,
     pageNum,
     pageSize,
     sortField,
@@ -89,7 +90,7 @@ const { data, isFetching, refetch } = useQuery<
         order_by: orderBy,
         filter: transformFilterViewValuesToFilterValues(filters.value),
       },
-      globalStore.token,
+      token.value,
     );
     if (response.status_code !== RESPONSE_CODE.SUCCESS) {
       throw new Error(response.message);

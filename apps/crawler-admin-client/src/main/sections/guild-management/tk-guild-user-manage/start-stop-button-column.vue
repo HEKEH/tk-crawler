@@ -20,7 +20,7 @@ import {
   ElMessageBox,
   ElTableColumn,
 } from 'element-plus';
-import { toRaw } from 'vue';
+import { computed, toRaw } from 'vue';
 import { APP_ID, PRODUCT_NAME, PUBLISH_URL } from '../../../constants';
 import { stopTKGuildUserAccount } from '../../../requests';
 import { useGlobalStore } from '../../../utils/vue';
@@ -43,6 +43,7 @@ const emit = defineEmits<{
 }>();
 
 const globalStore = useGlobalStore();
+const token = computed(() => globalStore.token);
 
 function getStartButtonTextAndType(
   status: TKGuildUserStatus,
@@ -163,7 +164,7 @@ async function onStop(item: TKGuildUserRow) {
   }
   const result = await stopTKGuildUserAccount(
     { user_id: item.id },
-    globalStore.token,
+    token.value,
   );
   if (result.status_code !== RESPONSE_CODE.SUCCESS) {
     return;

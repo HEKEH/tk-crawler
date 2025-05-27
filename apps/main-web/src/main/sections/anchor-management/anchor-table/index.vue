@@ -40,6 +40,7 @@ defineOptions({
 const isWeb = useIsWebSize();
 
 const globalStore = useGlobalStore();
+const token = computed(() => globalStore.token);
 
 const pageNum = ref(1);
 const pageSize = ref(20);
@@ -111,7 +112,7 @@ const { data, isFetching, refetch } = useGetAnchorList(
     includeTaskAssign: true,
     includeAnchorContact: true,
   },
-  globalStore.token,
+  token,
 );
 
 // 刷新功能

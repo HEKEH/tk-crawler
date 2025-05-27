@@ -27,7 +27,7 @@ import {
   ElTag,
 } from 'element-plus';
 import { omit } from 'lodash';
-import { markRaw, onBeforeUnmount, ref } from 'vue';
+import { computed, markRaw, onBeforeUnmount, ref } from 'vue';
 import {
   createOrg,
   deleteOrg,
@@ -59,6 +59,7 @@ interface ScopeType {
 }
 
 const globalStore = useGlobalStore();
+const token = computed(() => globalStore.token);
 const isWeb = useIsWebSize();
 
 const tableRef = ref<InstanceType<typeof ElTable>>();
@@ -70,7 +71,7 @@ const sortOrder = ref<'ascending' | 'descending'>();
 const { data, isLoading, refetch } = useQuery<
   GetOrgListResponseData | undefined
 >({
-  queryKey: ['orgs', pageNum, pageSize, sortField, sortOrder],
+  queryKey: ['orgs', token, pageNum, pageSize, sortField, sortOrder],
   retry: false,
   // refetchOnWindowFocus: false,
   queryFn: async () => {
@@ -83,7 +84,7 @@ const { data, isLoading, refetch } = useQuery<
         page_size: pageSize.value,
         order_by: orderBy,
       },
-      globalStore.token,
+      token.value,
     );
     return response.data;
   },
@@ -140,7 +141,7 @@ async function toggleDisableItem(row: OrganizationItem) {
         id: row.id,
         status: OrganizationStatus.disabled,
       },
-      globalStore.token,
+      token.value,
     );
   } else {
     updateResp = await updateOrg(
@@ -148,7 +149,7 @@ async function toggleDisableItem(row: OrganizationItem) {
         id: row.id,
         status: OrganizationStatus.normal,
       },
-      globalStore.token,
+      token.value,
     );
   }
   if (updateResp.status_code === RESPONSE_CODE.SUCCESS) {
@@ -165,7 +166,7 @@ async function deleteOrganization(item: OrganizationItem) {
   } catch {
     return;
   }
-  const resp = await deleteOrg({ id: item.id }, globalStore.token);
+  const resp = await deleteOrg({ id: item.id }, token.value);
   if (resp.status_code === RESPONSE_CODE.SUCCESS) {
     await refetch();
     ElMessage.success('删除成功');
@@ -194,11 +195,11 @@ function onCloseFormDialog() {
 async function handleCreateOrEdit(data: Partial<OrganizationItem>) {
   let result: CreateOrgResponse | UpdateOrgResponse;
   if (formMode.value === 'create') {
-    result = await createOrg(data as CreateOrgRequest, globalStore.token);
+    result = await createOrg(data as CreateOrgRequest, token.value);
   } else {
     result = await updateOrg(
       omit(data, ['created_at', 'updated_at']) as UpdateOrgRequest,
-      globalStore.token,
+      token.value,
     );
   }
   if (result.status_code !== RESPONSE_CODE.SUCCESS) {
@@ -222,7 +223,7 @@ async function handleUpdateOrgMembership(data: { membership_days: number }) {
       id: orgMembershipEditId.value!,
       membership_days: data.membership_days,
     },
-    globalStore.token,
+    token.value,
   );
   if (resp.status_code === RESPONSE_CODE.SUCCESS) {
     await refetch();

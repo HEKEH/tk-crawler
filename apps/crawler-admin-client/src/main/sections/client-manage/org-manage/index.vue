@@ -8,6 +8,7 @@ import type {
   UpdateOrgResponse,
 } from '@tk-crawler/biz-shared';
 import type { TableColumnCtx } from 'element-plus';
+import type { FilterViewValues } from './filter';
 import { useQuery } from '@tanstack/vue-query';
 import { AREA_NAME_MAP, OrganizationStatus } from '@tk-crawler/biz-shared';
 import { formatDateTime, RESPONSE_CODE } from '@tk-crawler/shared';
@@ -36,7 +37,12 @@ import {
   updateOrgMembership,
 } from '../../../requests';
 import { useGlobalStore } from '../../../utils';
+import {
+  DefaultFilterViewValues,
+  transformFilterViewValuesToFilterValues,
+} from './filter';
 import OrgFormDialog from './org-form-dialog.vue';
+import OrgManageFilter from './org-manage-filter.vue';
 import OrgMembershipDialog from './org-membership-dialog.vue';
 
 defineOptions({
@@ -68,10 +74,24 @@ const pageSize = ref(10);
 const sortField = ref<keyof OrganizationItem>();
 const sortOrder = ref<'ascending' | 'descending'>();
 
+// 过滤条件
+const filters = ref<FilterViewValues>(DefaultFilterViewValues);
+
+// 处理过滤器变化
+function handleFilterChange(_filters: FilterViewValues) {
+  filters.value = _filters;
+  pageNum.value = 1; // 重置页码
+}
+
+function handleFilterReset() {
+  filters.value = DefaultFilterViewValues;
+  pageNum.value = 1; // 重置页码
+}
+
 const { data, isLoading, refetch } = useQuery<
   GetOrgListResponseData | undefined
 >({
-  queryKey: ['orgs', token, pageNum, pageSize, sortField, sortOrder],
+  queryKey: ['orgs', token, pageNum, pageSize, sortField, sortOrder, filters],
   retry: false,
   // refetchOnWindowFocus: false,
   queryFn: async () => {
@@ -83,6 +103,7 @@ const { data, isLoading, refetch } = useQuery<
         page_num: pageNum.value,
         page_size: pageSize.value,
         order_by: orderBy,
+        filter: transformFilterViewValuesToFilterValues(filters.value),
       },
       token.value,
     );
@@ -160,7 +181,7 @@ async function toggleDisableItem(row: OrganizationItem) {
 
 async function deleteOrganization(item: OrganizationItem) {
   try {
-    const message = `确定要删除机构 ${item.name} 吗？删除后将无法恢复。一般情况下，更推荐使用禁用`;
+    const message = `确定要删除机构 「${item.name}」 吗？删除后将无法恢复。一般情况下，更推荐使用禁用`;
     await confirmAfterSeconds(message);
     props.model.onOrgDelete(item);
   } catch {
@@ -249,6 +270,13 @@ function onManageMobileDevices(org: OrganizationItem) {
     <!-- <div v-if="isError" class="org-manage-error">
       {{ error?.message }}
     </div> -->
+    <div class="filter-row">
+      <OrgManageFilter
+        :model-value="filters"
+        @change="handleFilterChange"
+        @reset="handleFilterReset"
+      />
+    </div>
     <div class="header-row">
       <div class="left-part">
         <ElButton size="small" type="primary" @click="onAddItem">
@@ -367,7 +395,12 @@ function onManageMobileDevices(org: OrganizationItem) {
         label="移动设备上限"
         :min-width="isWeb ? 140 : 120"
       />
-      <ElTableColumn prop="owner" label="经销商" :min-width="isWeb ? 120 : 100">
+      <ElTableColumn
+        prop="owner_id"
+        sortable="custom"
+        label="经销商"
+        :min-width="isWeb ? 120 : 100"
+      >
         <template #default="scope: ScopeType">
           {{ scope.row.owner?.username || '-' }}
         </template>

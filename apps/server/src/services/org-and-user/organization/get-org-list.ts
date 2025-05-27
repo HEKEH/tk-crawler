@@ -1,15 +1,44 @@
 import type {
   Area,
+  GetOrgListFilter,
   GetOrgListRequest,
   GetOrgListResponseData,
   SystemAdminUserInfo,
   SystemAdminUserRole,
 } from '@tk-crawler/biz-shared';
+import type { Prisma } from '@tk-crawler/database';
 import type { Logger } from '@tk-crawler/shared';
 import { AdminFeature } from '@tk-crawler/biz-shared';
 import { mysqlClient } from '@tk-crawler/database';
 import { isEmpty } from '@tk-crawler/shared';
 import dayjs from 'dayjs';
+
+function transformOrgListFilterValues(
+  filterValues: GetOrgListFilter = {},
+): Prisma.OrganizationWhereInput {
+  const { owner_id, status, if_membership_valid } = filterValues;
+  const where: Prisma.OrganizationWhereInput = {
+    owner_id: owner_id ? BigInt(owner_id) : undefined,
+    status,
+  };
+  if (if_membership_valid !== undefined) {
+    if (if_membership_valid) {
+      where.membership_expire_at = {
+        gt: new Date(),
+      };
+    } else {
+      where.OR = [
+        {
+          membership_expire_at: null,
+        },
+        {
+          membership_expire_at: { lt: new Date() },
+        },
+      ];
+    }
+  }
+  return where;
+}
 
 export async function getOrgList(
   data: GetOrgListRequest,
@@ -31,7 +60,7 @@ export async function getOrgList(
       _count: user_count,
     };
   }
-  let filter = data.filter;
+  let filter = transformOrgListFilterValues(data.filter);
   if (user_info.features.includes(AdminFeature.ONLY_OWN_ORG)) {
     filter = {
       ...filter,

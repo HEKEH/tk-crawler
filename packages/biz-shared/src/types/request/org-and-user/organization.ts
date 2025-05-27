@@ -1,6 +1,6 @@
 import type { Prisma } from '.prisma/client';
 import type { RESPONSE_CODE } from '@tk-crawler/shared';
-import type { OrganizationItem } from '../../org-and-user';
+import type { OrganizationItem, OrganizationStatus } from '../../org-and-user';
 
 export type CreateOrgRequest = Omit<
   OrganizationItem,
@@ -35,10 +35,16 @@ export interface DeleteOrgResponse {
   message?: string;
 }
 
+export interface GetOrgListFilter {
+  owner_id?: string;
+  status?: OrganizationStatus;
+  if_membership_valid?: boolean;
+}
+
 export interface GetOrgListRequest {
   page_num: number;
   page_size: number;
-  filter?: Prisma.OrganizationWhereInput;
+  filter?: GetOrgListFilter;
   order_by?: Prisma.OrganizationOrderByWithRelationInput & {
     user_count?: Prisma.SortOrder;
   };

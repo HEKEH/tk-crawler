@@ -13,6 +13,7 @@ export function getOrgMemberList(
   return commonRequest<GetOrgMemberListResponse>({
     baseURL: config.ownServerUrl,
     method: 'post',
+    secure: true,
     path: '/admin/org-and-user/get-org-member-list',
     params,
     headers: {

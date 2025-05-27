@@ -12,6 +12,7 @@ export function deleteOrgMember(
 ): Promise<DeleteOrgMemberResponse> {
   return commonRequest<DeleteOrgMemberResponse>({
     baseURL: config.ownServerUrl,
+    secure: true,
     method: 'post',
     path: '/admin/org-and-user/delete-org-member',
     params,

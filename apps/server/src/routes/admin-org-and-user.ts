@@ -1,4 +1,5 @@
 import { AdminPrivilege } from '@tk-crawler/biz-shared';
+import { isRequestSecureMiddleware } from '@tk-crawler/server-shared';
 import Router from 'koa-router';
 import SystemAdminOrgAndUserController from '../controllers/system-admin-org-and-user';
 import {
@@ -8,7 +9,10 @@ import {
 
 const adminOrgAndUserRouter = new Router({ prefix: '/admin/org-and-user' });
 
-adminOrgAndUserRouter.use(systemAdminTokenAuthMiddleware());
+adminOrgAndUserRouter.use(
+  isRequestSecureMiddleware(),
+  systemAdminTokenAuthMiddleware(),
+);
 
 adminOrgAndUserRouter.post(
   '/get-org-list',

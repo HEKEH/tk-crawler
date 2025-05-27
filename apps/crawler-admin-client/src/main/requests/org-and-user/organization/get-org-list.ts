@@ -12,6 +12,7 @@ export function getOrgList(
 ): Promise<GetOrgListResponse> {
   return commonRequest<GetOrgListResponse>({
     baseURL: config.ownServerUrl,
+    secure: true,
     method: 'post',
     path: '/admin/org-and-user/get-org-list',
     params,

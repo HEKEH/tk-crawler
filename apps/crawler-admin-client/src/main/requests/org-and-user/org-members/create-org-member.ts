@@ -12,6 +12,7 @@ export function createOrgMember(
 ): Promise<CreateOrgMemberResponse> {
   return commonRequest<CreateOrgMemberResponse>({
     baseURL: config.ownServerUrl,
+    secure: true,
     method: 'post',
     path: '/admin/org-and-user/create-org-member',
     params,

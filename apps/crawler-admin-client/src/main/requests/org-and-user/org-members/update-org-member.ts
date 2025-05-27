@@ -12,6 +12,7 @@ export function updateOrgMember(
 ): Promise<UpdateOrgMemberResponse> {
   return commonRequest<UpdateOrgMemberResponse>({
     baseURL: config.ownServerUrl,
+    secure: true,
     method: 'post',
     path: '/admin/org-and-user/update-org-member',
     params,

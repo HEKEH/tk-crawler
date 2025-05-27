@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {
+  ADMIN_USER_ROLE_OPTIONS,
   type SystemAdminUserInfo,
   SystemAdminUserRole,
   validatePassword,
@@ -35,11 +36,6 @@ const form = reactive({
   ...props.initialData,
   role_id: props.initialData?.role_id ?? SystemAdminUserRole.USER,
 });
-
-const roleOptions = [
-  { label: '管理员', value: SystemAdminUserRole.ADMIN },
-  { label: '普通用户', value: SystemAdminUserRole.USER },
-];
 
 const rules = computed<FormRules>(() => {
   return {
@@ -145,7 +141,7 @@ function handleCancel() {
         :disabled="props.initialData?.id === globalStore.userProfile.userId"
       >
         <ElOption
-          v-for="item in roleOptions"
+          v-for="item in ADMIN_USER_ROLE_OPTIONS"
           :key="item.value"
           :label="item.label"
           :value="item.value"

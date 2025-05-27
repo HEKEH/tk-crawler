@@ -363,9 +363,14 @@ function onManageMobileDevices(org: OrganizationItem) {
       <ElTableColumn
         sortable="custom"
         prop="mobile_device_limit"
-        label="设备数量上限"
+        label="移动设备上限"
         :min-width="isWeb ? 140 : 120"
       />
+      <ElTableColumn prop="owner" label="经销商" :min-width="isWeb ? 120 : 100">
+        <template #default="scope: ScopeType">
+          {{ scope.row.owner?.username || '-' }}
+        </template>
+      </ElTableColumn>
       <ElTableColumn
         prop="created_at"
         label="创建时间"

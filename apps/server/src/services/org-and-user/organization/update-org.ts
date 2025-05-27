@@ -1,14 +1,22 @@
+import type {
+  BroadcastOrganizationUpdateMessage,
+  SystemAdminUserInfo,
+  UpdateOrgRequest,
+} from '@tk-crawler/biz-shared';
+import type { Logger } from '@tk-crawler/shared';
 import {
-  type BroadcastOrganizationUpdateMessage,
+  AdminFeature,
   ServerBroadcastMessageChannel,
-  type UpdateOrgRequest,
 } from '@tk-crawler/biz-shared';
 import { mysqlClient, redisMessageBus } from '@tk-crawler/database';
 import { omit } from 'lodash';
-import { logger } from '../../../infra/logger';
 import { BusinessError } from '../../../utils';
 
-export async function updateOrg(_data: UpdateOrgRequest): Promise<void> {
+export async function updateOrg(
+  _data: UpdateOrgRequest,
+  user_info: SystemAdminUserInfo,
+  logger: Logger,
+): Promise<void> {
   const data = {
     ..._data,
     name: _data.name?.trim(),
@@ -21,6 +29,22 @@ export async function updateOrg(_data: UpdateOrgRequest): Promise<void> {
     });
     if (orgNameFind) {
       throw new BusinessError('组织名称已存在');
+    }
+  }
+  if (user_info.features.includes(AdminFeature.ONLY_OWN_ORG)) {
+    const org = await mysqlClient.prismaClient.organization.findUnique({
+      where: {
+        id: BigInt(data.id),
+      },
+      select: {
+        owner_id: true,
+      },
+    });
+    if (!org) {
+      throw new BusinessError('机构不存在');
+    }
+    if (org.owner_id !== BigInt(user_info.id)) {
+      throw new BusinessError('您没有权限操作该机构');
     }
   }
   const { areas, ...rest } = data;

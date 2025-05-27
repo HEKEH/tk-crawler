@@ -1,15 +1,21 @@
+import type {
+  BroadcastOrganizationUpdateMessage,
+  SystemAdminUserInfo,
+  UpdateOrgMembershipRequest,
+} from '@tk-crawler/biz-shared';
+import type { Logger } from '@tk-crawler/shared';
 import {
-  type BroadcastOrganizationUpdateMessage,
+  AdminFeature,
   ServerBroadcastMessageChannel,
-  type UpdateOrgMembershipRequest,
 } from '@tk-crawler/biz-shared';
 import { mysqlClient, redisMessageBus } from '@tk-crawler/database';
 import dayjs from 'dayjs';
-import { logger } from '../../../infra/logger';
 import { BusinessError } from '../../../utils';
 
 export async function updateOrgMembership(
   data: UpdateOrgMembershipRequest,
+  user_info: SystemAdminUserInfo,
+  logger: Logger,
 ): Promise<void> {
   logger.info('[Update Org Membership]', { data });
   const { id, membership_days: days } = data;
@@ -20,6 +26,11 @@ export async function updateOrgMembership(
   });
   if (!org) {
     throw new BusinessError('未找到该机构');
+  }
+  if (user_info.features.includes(AdminFeature.ONLY_OWN_ORG)) {
+    if (org.owner_id !== BigInt(user_info.id)) {
+      throw new BusinessError('您没有权限操作该机构');
+    }
   }
   const membershipExpireAt = org.membership_expire_at;
   let updateData: {

@@ -49,7 +49,10 @@ export default class ClientOrgAndUserController {
   static async updateOrgAnchorSearchPolicies(ctx: Context, next: Next) {
     const { org_info } = ctx.clientInfo!;
     const data = ctx.getRequestData<UpdateOrgAnchorSearchPoliciesRequest>();
-    await updateOrgAnchorSearchPolicies({ ...data, org_id: org_info.id });
+    await updateOrgAnchorSearchPolicies(
+      { ...data, org_id: org_info.id },
+      ctx.logger,
+    );
     ctx.body = ctx.t('Success');
     await next();
   }

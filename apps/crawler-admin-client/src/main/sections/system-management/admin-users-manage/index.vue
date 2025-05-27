@@ -7,7 +7,7 @@ import type {
 } from '@tk-crawler/biz-shared';
 import type { TableColumnCtx } from 'element-plus';
 import type { FilterViewValues } from './filter';
-import { SystemAdminUserRole } from '@tk-crawler/biz-shared';
+import { AdminUserRoleMap, SystemAdminUserRole } from '@tk-crawler/biz-shared';
 import { formatDateTime, RESPONSE_CODE } from '@tk-crawler/shared';
 import {
   confirmAfterSeconds,
@@ -253,11 +253,7 @@ async function handleSubmitCreateOrEdit(data: Partial<SystemAdminUserInfo>) {
                 : 'info'
             "
           >
-            {{
-              scope.row.role_id === SystemAdminUserRole.ADMIN
-                ? '管理员'
-                : '普通用户'
-            }}
+            {{ AdminUserRoleMap[scope.row.role_id] }}
           </ElTag>
         </template>
       </ElTableColumn>

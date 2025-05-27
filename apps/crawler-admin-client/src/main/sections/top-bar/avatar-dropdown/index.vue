@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import type { OrgMemberChangePasswordRequest } from '@tk-crawler/biz-shared';
-import type { SettingFormValues } from './setting-dialog/setting-form.vue';
+import type { Settings } from '../../../hooks';
 import { Setting, SwitchButton } from '@element-plus/icons-vue';
 import { useQueryClient } from '@tanstack/vue-query';
 // import { useRouter } from 'vue-router';
 import { KeyIcon } from '@tk-crawler/assets';
+import { isInElectronApp } from '@tk-crawler/electron-utils/render';
 import { RESPONSE_CODE } from '@tk-crawler/shared';
 import { useIsWebSize, useVConsole } from '@tk-crawler/view-shared';
 import {
@@ -19,12 +20,11 @@ import {
 } from 'element-plus';
 import { computed, ref } from 'vue';
 import { Avatar } from '../../../components';
+import { useSettings } from '../../../hooks';
 import { changePassword } from '../../../requests';
 import { useGlobalStore } from '../../../utils';
 import PasswordChangeDialog from './password-change-dialog/index.vue';
 import SettingDialog from './setting-dialog/index.vue';
-import { Settings, useSettings } from '../../../hooks';
-import { isInElectronApp } from '@tk-crawler/electron-utils/render';
 
 const globalStore = useGlobalStore();
 const userProfile = computed(() => globalStore.userProfile);
@@ -199,6 +199,7 @@ const inElectronApp = isInElectronApp();
   display: flex;
   gap: 16px;
   padding: 8px;
+  min-width: 180px;
   .user-details {
     flex: 1;
     display: flex;

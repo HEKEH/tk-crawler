@@ -1,5 +1,6 @@
 import type { Area } from './area';
 import type { MobileDeviceItem } from './mobile';
+import type { SystemAdminUserInfo } from './request/system';
 
 export enum OrganizationStatus {
   /** 正常 */
@@ -39,6 +40,8 @@ export interface OrganizationItem {
 
   /** 是否忽略电商主播，默认为true */
   ignore_commerce_anchor: boolean;
+  /** 所有者 */
+  owner?: Omit<SystemAdminUserInfo, 'privileges' | 'features'>;
 }
 
 export enum OrgMemberStatus {

@@ -1,5 +1,6 @@
 import assert from 'node:assert';
 import {
+  getAdminFeaturesByRole,
   getAdminPrivilegesByRole,
   type SystemAdminUserRole,
   type SystemUserLoginRequest,
@@ -43,6 +44,7 @@ export async function systemAdminUserLogin(
       id: rest.id.toString(),
       role_id: role_id as SystemAdminUserRole,
       privileges: getAdminPrivilegesByRole(role_id),
+      features: getAdminFeaturesByRole(role_id),
     },
     token,
   };

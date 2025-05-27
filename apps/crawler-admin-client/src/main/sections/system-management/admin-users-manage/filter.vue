@@ -2,7 +2,7 @@
 import type { FilterViewValues } from './filter';
 import { Refresh, Search } from '@element-plus/icons-vue';
 import { DoubleDownIcon, DoubleUpIcon } from '@tk-crawler/assets';
-import { SystemAdminUserRole } from '@tk-crawler/biz-shared';
+import { ADMIN_USER_ROLE_OPTIONS } from '@tk-crawler/biz-shared';
 import { useIsMobileSize } from '@tk-crawler/view-shared';
 import { ElButton, ElIcon, ElInput, ElOption, ElSelect } from 'element-plus';
 import { debounce } from 'lodash';
@@ -87,8 +87,12 @@ function toggleExpand() {
           @change="handleFilterChange"
         >
           <ElOption value="all" label="全部" />
-          <ElOption :value="SystemAdminUserRole.ADMIN" label="管理员" />
-          <ElOption :value="SystemAdminUserRole.USER" label="普通用户" />
+          <ElOption
+            v-for="role in ADMIN_USER_ROLE_OPTIONS"
+            :key="role.value"
+            :value="role.value"
+            :label="role.label"
+          />
         </ElSelect>
       </div>
       <div v-if="!isMobile" class="filter-item-buttons">

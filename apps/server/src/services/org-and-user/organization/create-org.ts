@@ -1,15 +1,23 @@
 import type {
   BroadcastOrganizationCreateMessage,
   CreateOrgRequest,
+  SystemAdminUserInfo,
 } from '@tk-crawler/biz-shared';
+import type { Logger } from '@tk-crawler/shared';
 import assert from 'node:assert';
-import { ServerBroadcastMessageChannel } from '@tk-crawler/biz-shared';
+import {
+  AdminFeature,
+  ServerBroadcastMessageChannel,
+} from '@tk-crawler/biz-shared';
 import { mysqlClient, redisMessageBus } from '@tk-crawler/database';
-import { logger } from '../../../infra/logger';
 import { BusinessError } from '../../../utils';
 import { checkOrgNameExist } from './check-org-name-exist';
 
-export async function createOrg(_data: CreateOrgRequest): Promise<void> {
+export async function createOrg(
+  _data: CreateOrgRequest,
+  user_info: SystemAdminUserInfo,
+  logger: Logger,
+): Promise<void> {
   const data = {
     ..._data,
     name: _data.name?.trim(),
@@ -24,7 +32,12 @@ export async function createOrg(_data: CreateOrgRequest): Promise<void> {
   assert(areas && areas.length > 0, '地区不能为空');
   await mysqlClient.prismaClient.$transaction(async tx => {
     const org = await tx.organization.create({
-      data: rest,
+      data: {
+        ...rest,
+        owner_id: user_info.features.includes(AdminFeature.ONLY_OWN_ORG)
+          ? BigInt(user_info.id)
+          : undefined,
+      },
     });
     await tx.orgAreaRelation.createMany({
       data: areas.map(area => ({

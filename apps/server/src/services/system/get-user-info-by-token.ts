@@ -1,4 +1,5 @@
 import {
+  getAdminFeaturesByRole,
   getAdminPrivilegesByRole,
   type SystemAdminUser,
 } from '@tk-crawler/biz-shared';
@@ -52,6 +53,7 @@ export async function getSystemAdminUserInfoByToken(
       created_at: user.created_at,
       updated_at: user.updated_at,
       privileges: getAdminPrivilegesByRole(user.role_id),
+      features: getAdminFeaturesByRole(user.role_id),
     },
   };
 }

@@ -1,6 +1,6 @@
 import { AdminPrivilege } from '@tk-crawler/biz-shared';
 import Router from 'koa-router';
-import OrgAndUserController from '../controllers/org-and-user';
+import SystemAdminOrgAndUserController from '../controllers/system-admin-org-and-user';
 import {
   systemAdminHasPrivilegeMiddleware,
   systemAdminTokenAuthMiddleware,
@@ -15,7 +15,7 @@ adminOrgAndUserRouter.post(
   systemAdminHasPrivilegeMiddleware({
     privilege: AdminPrivilege.CLIENT_MANAGEMENT,
   }),
-  OrgAndUserController.getOrgList,
+  SystemAdminOrgAndUserController.getOrgList,
 );
 
 adminOrgAndUserRouter.post(
@@ -23,7 +23,7 @@ adminOrgAndUserRouter.post(
   systemAdminHasPrivilegeMiddleware({
     privilege: AdminPrivilege.CLIENT_MANAGEMENT,
   }),
-  OrgAndUserController.deleteOrg,
+  SystemAdminOrgAndUserController.deleteOrg,
 );
 
 adminOrgAndUserRouter.post(
@@ -31,7 +31,7 @@ adminOrgAndUserRouter.post(
   systemAdminHasPrivilegeMiddleware({
     privilege: AdminPrivilege.CLIENT_MANAGEMENT,
   }),
-  OrgAndUserController.createOrg,
+  SystemAdminOrgAndUserController.createOrg,
 );
 
 adminOrgAndUserRouter.post(
@@ -39,7 +39,7 @@ adminOrgAndUserRouter.post(
   systemAdminHasPrivilegeMiddleware({
     privilege: AdminPrivilege.CLIENT_MANAGEMENT,
   }),
-  OrgAndUserController.updateOrg,
+  SystemAdminOrgAndUserController.updateOrg,
 );
 
 adminOrgAndUserRouter.post(
@@ -47,7 +47,7 @@ adminOrgAndUserRouter.post(
   systemAdminHasPrivilegeMiddleware({
     privilege: AdminPrivilege.CLIENT_MANAGEMENT,
   }),
-  OrgAndUserController.updateOrgMembership,
+  SystemAdminOrgAndUserController.updateOrgMembership,
 );
 
 adminOrgAndUserRouter.post(
@@ -55,14 +55,14 @@ adminOrgAndUserRouter.post(
   systemAdminHasPrivilegeMiddleware({
     privilege: AdminPrivilege.CLIENT_MANAGEMENT,
   }),
-  OrgAndUserController.getOrgMemberList,
+  SystemAdminOrgAndUserController.getOrgMemberList,
 );
 adminOrgAndUserRouter.post(
   '/create-org-member',
   systemAdminHasPrivilegeMiddleware({
     privilege: AdminPrivilege.CLIENT_MANAGEMENT,
   }),
-  OrgAndUserController.createOrgMember,
+  SystemAdminOrgAndUserController.createOrgMember,
 );
 
 adminOrgAndUserRouter.post(
@@ -70,7 +70,7 @@ adminOrgAndUserRouter.post(
   systemAdminHasPrivilegeMiddleware({
     privilege: AdminPrivilege.CLIENT_MANAGEMENT,
   }),
-  OrgAndUserController.updateOrgMember,
+  SystemAdminOrgAndUserController.updateOrgMember,
 );
 
 adminOrgAndUserRouter.post(
@@ -78,7 +78,7 @@ adminOrgAndUserRouter.post(
   systemAdminHasPrivilegeMiddleware({
     privilege: AdminPrivilege.CLIENT_MANAGEMENT,
   }),
-  OrgAndUserController.deleteOrgMember,
+  SystemAdminOrgAndUserController.deleteOrgMember,
 );
 
 export default adminOrgAndUserRouter;

@@ -20,6 +20,7 @@ const ROLE_TO_PRIVILEGE_MAP: Record<
     AdminPrivilege.CRAWLER_MANAGEMENT,
     AdminPrivilege.GUILD_MANAGEMENT,
   ],
+  [SystemAdminUserRole.DEALER]: [AdminPrivilege.CLIENT_MANAGEMENT],
 };
 
 export function getAdminPrivilegesByRole(role: SystemAdminUserRole) {

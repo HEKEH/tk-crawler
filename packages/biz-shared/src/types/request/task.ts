@@ -1,4 +1,4 @@
-import type { Prisma } from '@tk-crawler/database/mysql';
+import type { Prisma } from '@tk-crawler/database';
 import type { RESPONSE_CODE } from '@tk-crawler/shared';
 
 export interface AssignTaskRequest {

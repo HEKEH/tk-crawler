@@ -2,12 +2,13 @@ import type {
   BroadcastOrganizationUpdateMessage,
   UpdateOrgAnchorSearchPoliciesRequest,
 } from '@tk-crawler/biz-shared';
+import type { Logger } from '@tk-crawler/shared';
 import { ServerBroadcastMessageChannel } from '@tk-crawler/biz-shared';
 import { mysqlClient, redisMessageBus } from '@tk-crawler/database';
-import { logger } from '../../../infra/logger';
 
 export async function updateOrgAnchorSearchPolicies(
   data: UpdateOrgAnchorSearchPoliciesRequest & { org_id: string },
+  logger: Logger,
 ): Promise<void> {
   logger.info('[Update Org Anchor Search Policies]', data);
   await mysqlClient.prismaClient.organization.update({

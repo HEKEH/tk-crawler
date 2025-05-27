@@ -9,6 +9,8 @@ export type CreateOrgRequest = Omit<
   | 'membership_expire_at'
   | 'if_membership_valid'
   | 'mobile_devices'
+  | 'owner_id'
+  | 'owner'
 >;
 
 export interface CreateOrgResponse {

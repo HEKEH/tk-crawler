@@ -1,4 +1,5 @@
 import type {
+  AdminFeature,
   AdminPrivilege,
   SystemAdminUserRole,
 } from '@tk-crawler/biz-shared';
@@ -16,6 +17,7 @@ export interface SystemAdminUserInfo {
   password?: string;
   role_id: SystemAdminUserRole;
   privileges: AdminPrivilege[] | 'all';
+  features: AdminFeature[];
   created_at: Date;
   updated_at: Date;
 }
@@ -123,7 +125,7 @@ export interface GetSystemAdminUserListRequest {
 }
 
 export interface GetSystemAdminUserListResponseData {
-  list: Omit<SystemAdminUserInfo, 'password' | 'privileges'>[];
+  list: Omit<SystemAdminUserInfo, 'password' | 'privileges' | 'features'>[];
   total: number;
 }
 

@@ -123,36 +123,36 @@ const computedColumns = computed(() => {
   return [selectionColumn.value, ...props.columns];
 });
 
-const containerWidth = ref(800);
-const containerHeight = ref(600);
-const tableContainer = ref<HTMLElement>();
+// const containerWidth = ref(800);
+// const containerHeight = ref(600);
+// const tableContainer = ref<HTMLElement>();
 
-function updateSize() {
-  if (tableContainer.value) {
-    containerWidth.value = tableContainer.value.offsetWidth;
-    containerHeight.value = Math.max(tableContainer.value.offsetHeight, 100);
-  }
-}
+// function updateSize() {
+//   if (tableContainer.value) {
+//     containerWidth.value = tableContainer.value.offsetWidth;
+//     containerHeight.value = Math.max(tableContainer.value.offsetHeight, 100);
+//   }
+// }
 
-let resizeObserver: ResizeObserver | null = null;
-onMounted(() => {
-  if (tableContainer.value) {
-    resizeObserver = new ResizeObserver(updateSize);
-    resizeObserver.observe(tableContainer.value);
-  }
-  updateSize();
-});
+// let resizeObserver: ResizeObserver | null = null;
+// onMounted(() => {
+//   if (tableContainer.value) {
+//     resizeObserver = new ResizeObserver(updateSize);
+//     resizeObserver.observe(tableContainer.value);
+//   }
+//   updateSize();
+// });
 
-onBeforeUnmount(() => {
-  if (!resizeObserver) {
-    return;
-  }
-  if (tableContainer.value) {
-    resizeObserver.unobserve(tableContainer.value);
-  }
-  resizeObserver.disconnect();
-  resizeObserver = null;
-});
+// onBeforeUnmount(() => {
+//   if (!resizeObserver) {
+//     return;
+//   }
+//   if (tableContainer.value) {
+//     resizeObserver.unobserve(tableContainer.value);
+//   }
+//   resizeObserver.disconnect();
+//   resizeObserver = null;
+// });
 
 function handlePageNumChange(_pageNum: number) {
   emit('update:pageNum', _pageNum);
@@ -188,7 +188,7 @@ onMounted(async () => {
         <VxeTable
           v-bind="$attrs"
           :data="tableData"
-          :height="containerHeight"
+          height="auto"
           :row-config="{ useKey: true, keyField: rowKey }"
           :virtual-x-config="{ enabled: true, gt: 0 }"
           :virtual-y-config="{ enabled: true, gt: 0, oSize: 50, preSize: 20 }"

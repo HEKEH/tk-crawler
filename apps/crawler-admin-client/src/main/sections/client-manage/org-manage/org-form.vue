@@ -3,12 +3,10 @@ import {
   type OrganizationItem,
   OrganizationStatus,
 } from '@tk-crawler/biz-shared';
-import { CommonDatePickerShortcuts, isArrayEqual } from '@tk-crawler/shared';
+import { isArrayEqual } from '@tk-crawler/shared';
 import { AreaSelectMultiple, useIsWebSize } from '@tk-crawler/view-shared';
-import dayjs from 'dayjs';
 import {
   ElButton,
-  ElDatePicker,
   ElForm,
   ElFormItem,
   ElInput,
@@ -30,9 +28,7 @@ const props = defineProps<{
   submit: (data: FormValues) => void;
 }>();
 
-const emit = defineEmits<{
-  cancel: [];
-}>();
+const emit = defineEmits(['cancel']);
 
 const mode = computed(() => {
   return props.initialData ? 'edit' : 'create';

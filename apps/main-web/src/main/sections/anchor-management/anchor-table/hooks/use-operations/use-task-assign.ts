@@ -38,9 +38,9 @@ export function useTaskAssign(params: UseTaskAssignParams) {
     if (result.status_code !== RESPONSE_CODE.SUCCESS) {
       return;
     }
-    await params.refetch();
     onCloseAssignTaskDialog();
     ElMessage.success('主播分配成功');
+    await params.refetch();
   }
   async function handleCancelAssignTask(data: DisplayedAnchorItem) {
     try {

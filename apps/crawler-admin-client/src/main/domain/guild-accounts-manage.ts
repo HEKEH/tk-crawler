@@ -1,5 +1,5 @@
 import type { UserProfile } from './user-profile';
-import { TK_GUILD_USER_EVENTS } from '@tk-crawler/biz-shared';
+import { AdminPrivilege, TK_GUILD_USER_EVENTS } from '@tk-crawler/biz-shared';
 import { RESPONSE_CODE } from '@tk-crawler/shared';
 import { ElMessageBox } from 'element-plus';
 import { getSettings } from '../hooks';
@@ -94,6 +94,11 @@ export class GuildAccountsManage {
   }
 
   async start() {
+    if (
+      !this._context.userProfile.hasPrivilege(AdminPrivilege.GUILD_MANAGEMENT)
+    ) {
+      return;
+    }
     this._clearCheckInterval();
     this._checkInterval = setInterval(
       () => {

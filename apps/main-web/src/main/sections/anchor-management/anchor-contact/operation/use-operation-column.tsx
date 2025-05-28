@@ -133,13 +133,10 @@ export function useOperationColumn(props: {
             size="small"
             type="primary"
             onClick={() => onContactAnchor(toRaw(rowData))}
-            loading={anchorTryToContact.value === rowData.id}
           >
-            {anchorTryToContact.value !== rowData.id && (
-              <ElIcon>
-                <StarFilled />
-              </ElIcon>
-            )}
+            <ElIcon>
+              <StarFilled />
+            </ElIcon>
             建联
           </ElButton>
         ) : rowData.contacted_user ? (

@@ -213,7 +213,9 @@ function onCloseFormDialog() {
   formData.value = undefined;
   formMode.value = 'create';
 }
-async function handleCreateOrEdit(data: Partial<OrganizationItem>) {
+async function handleCreateOrEdit(
+  data: Partial<OrganizationItem> & { membership_days?: number },
+) {
   let result: CreateOrgResponse | UpdateOrgResponse;
   if (formMode.value === 'create') {
     result = await createOrg(data as CreateOrgRequest, token.value);
@@ -489,7 +491,7 @@ function onManageMobileDevices(org: OrganizationItem) {
               size="small"
               @click.prevent="openUpdateOrgMembershipDialog(scope.row)"
             >
-              新增或延长会员
+              会员时长调整
             </ElButton>
           </div>
         </template>

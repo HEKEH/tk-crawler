@@ -6,7 +6,9 @@ import OrgForm from './org-form.vue';
 const props = defineProps<{
   mode: 'create' | 'edit';
   visible: boolean;
-  submit: (data: Partial<OrganizationItem>) => Promise<void>;
+  submit: (
+    data: Partial<OrganizationItem> & { membership_days?: number },
+  ) => Promise<void>;
   initialData?: Partial<OrganizationItem>;
 }>();
 

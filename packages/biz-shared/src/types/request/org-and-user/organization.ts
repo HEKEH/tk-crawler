@@ -11,14 +11,18 @@ export type CreateOrgRequest = Omit<
   | 'mobile_devices'
   | 'owner_id'
   | 'owner'
->;
+> & {
+  membership_days?: number;
+};
 
 export interface CreateOrgResponse {
   status_code: RESPONSE_CODE;
   message?: string;
 }
 
-export type UpdateOrgRequest = Partial<CreateOrgRequest> &
+export type UpdateOrgRequest = Partial<
+  Omit<CreateOrgRequest, 'membership_days'>
+> &
   Pick<OrganizationItem, 'id'>;
 
 export interface UpdateOrgResponse {

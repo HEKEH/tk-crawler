@@ -10,6 +10,7 @@ import {
   ServerBroadcastMessageChannel,
 } from '@tk-crawler/biz-shared';
 import { mysqlClient, redisMessageBus } from '@tk-crawler/database';
+import dayjs from 'dayjs';
 import { BusinessError } from '../../../utils';
 import { checkOrgNameExist } from './check-org-name-exist';
 
@@ -28,12 +29,21 @@ export async function createOrg(
   if (await checkOrgNameExist(data.name)) {
     throw new BusinessError('组织名称已存在');
   }
-  const { areas, ...rest } = data;
+  const { areas, membership_days, ...rest } = data;
   assert(areas && areas.length > 0, '地区不能为空');
   await mysqlClient.prismaClient.$transaction(async tx => {
+    let membership_start_at: Date | undefined;
+    let membership_expire_at: Date | undefined;
+    if (membership_days) {
+      const now = dayjs();
+      membership_start_at = now.toDate();
+      membership_expire_at = now.add(membership_days, 'day').toDate();
+    }
     const org = await tx.organization.create({
       data: {
         ...rest,
+        membership_start_at,
+        membership_expire_at,
         owner_id: user_info.features.includes(AdminFeature.ONLY_OWN_ORG)
           ? BigInt(user_info.id)
           : undefined,

@@ -20,7 +20,11 @@
     "apps/**/*.ts",
     "apps/**/*.d.ts",
     "apps/**/*.vue",
-    "apps/**/*.tsx"
+    "apps/**/*.tsx",
+    "designs/**/*.ts",
+    "designs/**/*.d.ts",
+    "designs/**/*.vue",
+    "designs/**/*.tsx"
   ],
   "exclude": [
     "scripts/**",

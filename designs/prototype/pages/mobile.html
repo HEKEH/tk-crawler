@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Mobile App Design</title>
+    <style>
+      #loading-mask {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #f3f4f6;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+      }
+      #loading-mask.hidden {
+        display: none;
+      }
+    </style>
+    <script
+      type="module"
+      src="/src/styles/index.ts"
+      onload="document.getElementById('loading-mask').classList.add('hidden')"
+    ></script>
+  </head>
+  <body>
+    <div id="loading-mask">
+      <div class="text-gray-500">Loading...</div>
+    </div>
+    <div class="min-h-screen bg-gray-100">
+      <div class="max-w-7xl mx-auto px-6 py-8">
+        <!-- 返回按钮 -->
+        <a
+          href="/"
+          class="flex items-center text-gray-600 hover:text-blue-500 transition-colors mb-4"
+        >
+          <i class="el-icon-arrow-left mr-2"></i>
+          Back to Design List
+        </a>
+
+        <!-- 移动端预览 -->
+        <div
+          class="w-[375px] h-[812px] mx-auto overflow-hidden relative bg-white shadow-lg rounded-[40px] border border-gray-200"
+        >
+          <!-- Status Bar -->
+          <div
+            class="h-[44px] w-full bg-white flex items-center justify-between px-4"
+          >
+            <span class="text-gray-900">9:41</span>
+            <div class="flex items-center space-x-2">
+              <i class="el-icon-mobile"></i>
+              <i class="el-icon-wifi"></i>
+              <i class="el-icon-battery"></i>
+            </div>
+          </div>
+
+          <!-- Main Content -->
+          <div class="flex-1 p-4">
+            <h1 class="text-2xl font-bold text-blue-500">Mobile App</h1>
+            <p class="mt-2 text-gray-600">
+              Design prototype for mobile interface
+            </p>
+
+            <!-- 示例内容 -->
+            <div class="mt-6 space-y-4">
+              <!-- 列表示例 -->
+              <div class="bg-white rounded-lg border border-gray-200">
+                <div
+                  class="px-4 py-3 border-b border-gray-200 last:border-b-0 hover:bg-gray-50 transition-colors"
+                >
+                  <div class="flex items-center">
+                    <i class="el-icon-user mr-3 text-blue-500"></i>
+                    <span>User Profile</span>
+                  </div>
+                </div>
+                <div
+                  class="px-4 py-3 border-b border-gray-200 last:border-b-0 hover:bg-gray-50 transition-colors"
+                >
+                  <div class="flex items-center">
+                    <i class="el-icon-setting mr-3 text-blue-500"></i>
+                    <span>Settings</span>
+                  </div>
+                </div>
+                <div
+                  class="px-4 py-3 border-b border-gray-200 last:border-b-0 hover:bg-gray-50 transition-colors"
+                >
+                  <div class="flex items-center">
+                    <i class="el-icon-message mr-3 text-blue-500"></i>
+                    <span>Messages</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 按钮示例 -->
+              <div class="space-y-2">
+                <button
+                  class="w-full px-4 py-2 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-colors text-sm"
+                >
+                  <i class="el-icon-plus mr-1"></i>
+                  Get Started
+                </button>
+                <button
+                  class="w-full px-4 py-2 bg-white text-gray-600 border border-gray-300 rounded-lg font-medium hover:text-blue-500 hover:border-blue-500 transition-colors text-sm"
+                >
+                  <i class="el-icon-info mr-1"></i>
+                  Learn More
+                </button>
+              </div>
+
+              <!-- 表单示例 -->
+              <div
+                class="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow p-6 border border-gray-200"
+              >
+                <div class="text-lg font-medium text-gray-900 mb-2">
+                  Quick Search
+                </div>
+                <div class="space-y-4">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-600 mb-1"
+                      >Search</label
+                    >
+                    <div class="relative">
+                      <input
+                        type="text"
+                        class="w-full px-4 py-2 rounded-lg border border-gray-300 bg-white text-gray-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors pl-10"
+                        placeholder="Type to search..."
+                      />
+                      <i
+                        class="el-icon-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                      ></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom Navigation -->
+          <div
+            class="h-[83px] w-full bg-white flex items-center justify-around border-t border-gray-200"
+          >
+            <button class="p-2 text-blue-500">
+              <i class="el-icon-house"></i>
+            </button>
+            <button class="p-2 text-gray-500">
+              <i class="el-icon-search"></i>
+            </button>
+            <button class="p-2 text-gray-500">
+              <i class="el-icon-plus"></i>
+            </button>
+            <button class="p-2 text-gray-500">
+              <i class="el-icon-chat-dot-round"></i>
+            </button>
+            <button class="p-2 text-gray-500">
+              <i class="el-icon-user"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // 主题切换
+      const html = document.documentElement;
+
+      // 检查本地存储中的主题设置
+      if (
+        localStorage.theme === 'dark' ||
+        (!('theme' in localStorage) &&
+          window.matchMedia('(prefers-color-scheme: dark)').matches)
+      ) {
+        html.classList.add('dark');
+      } else {
+        html.classList.remove('dark');
+      }
+    </script>
+  </body>
+</html>

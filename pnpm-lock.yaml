@@ -611,6 +611,22 @@ importers:
         specifier: ^3.1.9
         version: 3.1.9
 
+  designs/prototype:
+    dependencies:
+      element-plus:
+        specifier: ^2.9.9
+        version: 2.9.9(vue@3.5.13)
+    devDependencies:
+      '@tk-crawler/build-and-deploy':
+        specifier: workspace:*
+        version: link:../../packages/build-and-deploy
+      tailwindcss:
+        specifier: ^4.1.5
+        version: 4.1.7
+      vite:
+        specifier: ^5.4.11
+        version: 5.4.14(@types/node@22.13.10)(sass@1.85.1)
+
   packages/assets: {}
 
   packages/biz-shared: {}
@@ -11381,7 +11397,6 @@ packages:
 
   /tailwindcss@4.1.7:
     resolution: {integrity: sha512-kr1o/ErIdNhTz8uzAYL7TpaUuzKIE6QPQ4qmSdxnoX/lo+5wmUHQA6h3L5yIqEImSRnAAURDirLu/BgiXGPAhg==}
-    dev: false
 
   /tapable@2.2.1:
     resolution: {integrity: sha512-GNzQvQTOIP6RyTfE2Qxb8ZVlNmw0n88vp1szwWRimP02mnTsx3Wtn5qRdqY9w2XduFNUgvOwhNnQsjwCp+kqaQ==}

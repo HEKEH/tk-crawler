@@ -24,7 +24,7 @@ export function getCommonPostcssConfig(): {
           'not ie 11', // 明确不支持 IE11
         ],
         flexbox: 'no-2009',
-        grid: 'autoplace',
+        // grid: 'autoplace',
         // 添加更多 autoprefixer 选项
         cascade: true, // 保持 CSS 属性的顺序
         add: true, // 添加前缀

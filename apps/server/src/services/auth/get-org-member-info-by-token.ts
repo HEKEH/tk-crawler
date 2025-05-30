@@ -86,7 +86,7 @@ export async function getOrgMemberInfoByToken(
         dayjs(org.membership_expire_at).isAfter(new Date()),
       mobile_devices: org.mobile_devices?.map(item => ({
         id: item.id.toString(),
-        device_id: item.device_id.toString(),
+        device_id: item.device_id,
         device_name: item.device_name,
         created_at: item.created_at,
         updated_at: item.updated_at,

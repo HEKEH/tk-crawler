@@ -37,15 +37,13 @@ export async function mobileOrgMemberLogin(
   }
 
   const mobileDevices = organization.mobile_devices;
-  if (
-    mobileDevices.every(item => item.device_id.toString() !== request.device_id)
-  ) {
+  if (mobileDevices.every(item => item.device_id !== request.device_id)) {
     if (mobileDevices.length >= organization.mobile_device_limit) {
       throw new BusinessError('设备数量已达上限');
     }
     await mysqlClient.prismaClient.mobileDevice.create({
       data: {
-        device_id: BigInt(request.device_id),
+        device_id: request.device_id,
         device_name: request.device_name,
         org_id: organization.id,
       },

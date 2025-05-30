@@ -33,17 +33,15 @@
       }
 
       .hero-section {
-        max-width: 1392px;
         margin: 0 auto;
-        padding: 198px 24px;
         display: flex;
-        gap: 19px;
-        min-height: 441px;
+        flex-direction: column;
       }
 
       .hero-content {
-        flex: 1;
-        max-width: 807px;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
       }
 
       .hero-heading {
@@ -170,26 +168,142 @@
     <div class="w-full h-full overflow-y-auto">
       <section class="hero-section">
         <div class="hero-content">
-          <h1 class="hero-heading">
-            Hey there, I'm Omar. A UX Researcher & Product Designer
-          </h1>
-          <p class="hero-description">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Amet amet
-            tristique ipsum aliquam. Vulputate dolor, nunc phasellus vestibulum
-            turpis posuere turpis eget vel.
-          </p>
-          <a href="#" class="cta-button">Discover My Work</a>
+          <div class="hero-content-left">
+            <div style="font-size: 20px; color: #222; margin-bottom: 32px">
+              限时零交易手续费，尽享投资乐趣
+            </div>
+            <h1
+              class="hero-heading"
+              style="
+                font-size: 80px;
+                line-height: 1.1;
+                font-weight: 500;
+                margin-bottom: 0;
+                letter-spacing: 1px;
+              "
+            >
+              限时 <span style="color: #a3d100">0交易</span><br />
+              <span style="color: #a3d100">手续费</span>
+            </h1>
+          </div>
+          <div class="hero-content-right">
+            <p
+              class="hero-description"
+              style="
+                font-size: 18px;
+                color: #222;
+                margin-bottom: 24px;
+                line-height: 1.7;
+              "
+            >
+              在限时优惠期间，我们的平台为您提供零交易手续费的超值体验。每一笔交易都不收取任何费用，让您可以充分利用每一个交易机会，无需担心额外的成本。立即行动，享受免费交易的优势，最大化您的投资收益。
+            </p>
+            <a
+              href="#"
+              class="cta-button"
+              style="
+                background: #c6f200;
+                color: #222;
+                font-weight: 600;
+                font-size: 20px;
+                padding: 16px 44px;
+                border: none;
+                border-radius: 18px;
+                box-shadow: 0 2px 8px #e6f7b0;
+              "
+              >现在开始</a
+            >
+          </div>
         </div>
-        <div class="hero-image">
-          <svg
-            width="120"
-            height="90"
-            viewBox="0 0 120 90"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
+        <div
+          style="
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+          "
+        >
+          <div
+            style="
+              width: 820px;
+              height: 540px;
+              position: relative;
+              margin: 0 auto;
+              z-index: 1;
+            "
           >
-            <rect width="120" height="90" fill="#6200FF" />
-          </svg>
+            <svg
+              width="820"
+              height="540"
+              viewBox="0 0 820 540"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              style="display: block"
+            >
+              <ellipse
+                cx="410"
+                cy="270"
+                rx="380"
+                ry="160"
+                fill="#D6FF6B"
+                fill-opacity="0.7"
+              />
+              <ellipse
+                cx="410"
+                cy="270"
+                rx="300"
+                ry="120"
+                fill="#C6F200"
+                fill-opacity="0.8"
+              />
+              <ellipse
+                cx="410"
+                cy="270"
+                rx="220"
+                ry="90"
+                fill="#A3D100"
+                fill-opacity="0.9"
+              />
+              <ellipse
+                cx="410"
+                cy="270"
+                rx="140"
+                ry="60"
+                fill="#7EB900"
+                fill-opacity="1"
+              />
+              <ellipse
+                cx="410"
+                cy="270"
+                rx="80"
+                ry="32"
+                fill="#4A7A00"
+                fill-opacity="1"
+              />
+              <ellipse
+                cx="410"
+                cy="270"
+                rx="40"
+                ry="16"
+                fill="#2C4A00"
+                fill-opacity="0.8"
+              />
+              <ellipse
+                cx="410"
+                cy="270"
+                rx="380"
+                ry="160"
+                fill="#000"
+                fill-opacity="0.08"
+                filter="url(#shadow)"
+              />
+              <defs>
+                <filter id="shadow" x="0" y="0" width="820" height="540">
+                  <feGaussianBlur stdDeviation="20" />
+                </filter>
+              </defs>
+            </svg>
+          </div>
         </div>
       </section>
 

@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Home Page Design</title>
+    <style>
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
+          Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        line-height: 1.5;
+        color: #000;
+      }
+
+      #loading-mask {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #f3f4f6;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+      }
+      #loading-mask.hidden {
+        display: none;
+      }
+
+      .hero-section {
+        max-width: 1392px;
+        margin: 0 auto;
+        padding: 198px 24px;
+        display: flex;
+        gap: 19px;
+        min-height: 441px;
+      }
+
+      .hero-content {
+        flex: 1;
+        max-width: 807px;
+      }
+
+      .hero-heading {
+        font-size: 48px;
+        line-height: 1.2;
+        margin-bottom: 0;
+      }
+
+      .hero-description {
+        margin-top: 0;
+        max-width: 525px;
+        font-size: 18px;
+        line-height: 1.5;
+      }
+
+      .hero-image {
+        flex: 1;
+        max-width: 566px;
+        height: 441px;
+        background: #fafbfc;
+        border: 1px solid #000;
+        border-radius: 5px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .cta-button {
+        display: inline-block;
+        background: #696969;
+        color: white;
+        padding: 31.5px 51px;
+        border-radius: 50px;
+        text-decoration: none;
+        font-size: 18px;
+        margin-top: 20px;
+      }
+
+      .services-section {
+        max-width: 1392px;
+        margin: 0 auto;
+        padding: 100px 24px;
+      }
+
+      .services-heading {
+        text-align: center;
+        font-size: 36px;
+        margin-bottom: 67px;
+      }
+
+      .services-grid {
+        display: flex;
+        gap: 24px;
+        justify-content: space-between;
+        flex-wrap: nowrap;
+      }
+
+      .service-card {
+        width: 330px;
+        height: 408px;
+        background: #c4c4c4;
+        border-radius: 20px;
+        padding: 33px;
+        box-sizing: border-box;
+        flex-shrink: 0;
+      }
+
+      .service-title {
+        font-size: 24px;
+        line-height: 1.4;
+        margin: 0;
+      }
+
+      @media (max-width: 1024px) {
+        .hero-section {
+          flex-direction: column;
+          padding: 100px 24px;
+        }
+
+        .hero-content {
+          max-width: 100%;
+        }
+
+        .hero-image {
+          max-width: 100%;
+        }
+
+        .services-grid {
+          overflow-x: auto;
+          padding-bottom: 20px;
+        }
+
+        .service-card {
+          margin: 0;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .hero-heading {
+          font-size: 36px;
+        }
+
+        .hero-description {
+          font-size: 16px;
+        }
+
+        .service-card {
+          width: 100%;
+          max-width: 330px;
+        }
+      }
+    </style>
+    <script
+      type="module"
+      src="/src/styles/index.ts"
+      onload="document.getElementById('loading-mask').classList.add('hidden')"
+    ></script>
+  </head>
+  <body>
+    <div id="loading-mask">
+      <div class="text-gray-500">Loading...</div>
+    </div>
+
+    <div class="w-full h-full overflow-y-auto">
+      <section class="hero-section">
+        <div class="hero-content">
+          <h1 class="hero-heading">
+            Hey there, I'm Omar. A UX Researcher & Product Designer
+          </h1>
+          <p class="hero-description">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Amet amet
+            tristique ipsum aliquam. Vulputate dolor, nunc phasellus vestibulum
+            turpis posuere turpis eget vel.
+          </p>
+          <a href="#" class="cta-button">Discover My Work</a>
+        </div>
+        <div class="hero-image">
+          <svg
+            width="120"
+            height="90"
+            viewBox="0 0 120 90"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <rect width="120" height="90" fill="#6200FF" />
+          </svg>
+        </div>
+      </section>
+
+      <section class="services-section">
+        <h2 class="services-heading">Services</h2>
+        <div class="services-grid">
+          <div class="service-card">
+            <h3 class="service-title">Product Design & UI/UX</h3>
+          </div>
+          <div class="service-card">
+            <h3 class="service-title">Strategy & Direction</h3>
+          </div>
+          <div class="service-card">
+            <h3 class="service-title">Motion Graphics & Animation</h3>
+          </div>
+          <div class="service-card">
+            <h3 class="service-title">Wireframes & Prototypes</h3>
+          </div>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>

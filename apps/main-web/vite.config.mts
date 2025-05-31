@@ -45,7 +45,7 @@ export default defineConfig(({ mode }) => {
             template: 'index.html',
             injectOptions: {
               data: {
-                title: packageJSON.description,
+                title: '小橙助手',
               },
             },
           },

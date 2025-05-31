@@ -38,6 +38,7 @@ export async function mobileGetAssignedAnchorList(
 
   const filter: GetAnchorListFilter = {
     ..._filter,
+    checked_result: true,
     assign_to: org_member_id,
     contacted_by: 'not_contacted',
   };

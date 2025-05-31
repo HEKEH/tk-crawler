@@ -17,6 +17,7 @@ import { login, loginByToken } from '../requests';
 import { redirectToLogin } from '../router';
 import {
   AnchorManagementRouteRecord,
+  AutoContactManagementRouteRecord,
   GuildManagementRouteRecord,
   LoginRouteRecord,
   SystemManagementRouteRecord,
@@ -51,7 +52,7 @@ export default class GlobalStore implements GuildAccountsManageContext {
     } else {
       records = [
         AnchorManagementRouteRecord,
-        // AutoContactManagementRouteRecord,
+        AutoContactManagementRouteRecord,
         SystemManagementRouteRecord,
         GuildManagementRouteRecord,
       ].filter(item => {

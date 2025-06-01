@@ -1,7 +1,6 @@
 # 排除所有apps目录，除了server
 apps/*
 !apps/server
-!apps/crawl-server
 
 # 排除不需要的packages
 packages/core
@@ -10,8 +9,8 @@ packages/electron-biz-shared
 packages/electron-utils
 packages/play
 packages/styles
-# packages/tk-crack
-# packages/tk-requests
+packages/tk-crack
+packages/tk-requests
 packages/view-shared
 
 # 排除所有node_modules

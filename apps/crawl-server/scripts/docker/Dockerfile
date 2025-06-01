@@ -29,7 +29,6 @@ RUN npm install -g pnpm@8.15.9 --force
 WORKDIR /app
 
 COPY . .
-RUN rm -rf apps/server
 ENV NODE_ENV=development
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --ignore-scripts
 RUN pnpm prisma:generate

@@ -2,8 +2,8 @@
 import { MenuSelect } from '@tk-crawler/view-shared';
 import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import AnchorCommentTemplateManage from './anchor-comment-template-manage/index.vue';
-import MobileDevicesManage from './mobile-devices-manage/index.vue';
+import AnchorCommentTemplateManage from './anchor-comment-template-manage';
+import MobileDevicesManage from './mobile-devices-manage';
 
 defineOptions({
   name: 'AutoContactManagement',

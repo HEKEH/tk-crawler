@@ -2,7 +2,7 @@
 import { MenuSelect } from '@tk-crawler/view-shared';
 import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import OrgMembersManage from './org-members-manage/index.vue';
+import OrgMembersManage from './org-members-manage';
 
 defineOptions({
   name: 'SystemManagement',

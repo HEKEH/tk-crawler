@@ -29,7 +29,7 @@ RUN npm install -g pnpm@8.15.9 --force
 WORKDIR /app
 
 COPY . .
-RUN rm -rf node_modules apps/*/node_modules packages/*/node_modules
+RUN rm -rf apps/crawl-server packages/tk-crack packages/tk-requests
 ENV NODE_ENV=development
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --ignore-scripts
 RUN pnpm prisma:generate

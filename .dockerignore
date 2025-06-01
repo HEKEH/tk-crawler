@@ -1,0 +1,36 @@
+# 排除所有apps目录，除了server
+apps/*
+!apps/server
+!apps/crawl-server
+
+# 排除不需要的packages
+packages/core
+packages/main-client-shared
+packages/electron-biz-shared
+packages/electron-utils
+packages/play
+packages/styles
+# packages/tk-crack
+# packages/tk-requests
+packages/view-shared
+
+# 排除所有node_modules
+**/node_modules
+
+# 排除其他不需要的文件
+.git
+.gitignore
+.DS_Store
+**/*.log
+
+**/dist
+**/dist-ssr
+
+**/*.bak
+**/backup
+
+**/docker-images
+
+**/.rollup.cache
+
+**/*.tsbuildinfo

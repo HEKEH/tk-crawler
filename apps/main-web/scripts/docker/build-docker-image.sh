@@ -108,6 +108,7 @@ function remove_image() {
 
 function build_image() {
   log "Building docker image ${IMAGE_TAG}"
+  export DOCKER_BUILDKIT=1
   local build_cmd="docker build . -f "${SCRIPT_DIR}/Dockerfile" --platform linux/amd64 -t "${IMAGE_TAG}""
 
   if [ "$NO_CACHE" = true ]; then

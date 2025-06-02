@@ -90,6 +90,26 @@ systemRouter.post(
 );
 
 systemRouter.post(
+  '/update-admin-user-discount',
+  isRequestSecureMiddleware(),
+  systemAdminTokenAuthMiddleware(),
+  systemAdminHasPrivilegeMiddleware({
+    privilege: AdminPrivilege.SYSTEM_MANAGEMENT,
+  }),
+  SystemController.updateSystemAdminUserDiscount,
+);
+
+systemRouter.post(
+  '/add-admin-user-balance',
+  isRequestSecureMiddleware(),
+  systemAdminTokenAuthMiddleware(),
+  systemAdminHasPrivilegeMiddleware({
+    privilege: AdminPrivilege.SYSTEM_MANAGEMENT,
+  }),
+  SystemController.addSystemAdminUserBalance,
+);
+
+systemRouter.post(
   '/delete-admin-user',
   isRequestSecureMiddleware(),
   systemAdminTokenAuthMiddleware(),

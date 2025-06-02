@@ -1,4 +1,5 @@
 import type {
+  AddSystemAdminUserBalanceRequest,
   CreateSystemAdminUserRequest,
   DeleteMobileDeviceRequest,
   DeleteSystemAdminUserRequest,
@@ -12,6 +13,7 @@ import type {
   SystemCrawlStatisticsRequest,
   SystemUserChangePasswordRequest,
   SystemUserLoginRequest,
+  UpdateSystemAdminUserDiscountRequest,
   UpdateSystemAdminUserRequest,
 } from '@tk-crawler/biz-shared';
 import type { Prisma } from '@tk-crawler/database';
@@ -19,6 +21,7 @@ import type { Context, Next } from 'koa';
 import { OrganizationStatus } from '@tk-crawler/biz-shared';
 
 import {
+  addSystemAdminUserBalance,
   changeSystemUserPassword,
   createSystemAdminUser,
   deleteMobileDevice,
@@ -32,6 +35,7 @@ import {
   stopLiveAdminAccount,
   systemAdminUserLogin,
   updateSystemAdminUser,
+  updateSystemAdminUserDiscount,
 } from '../services';
 
 export default class SystemController {
@@ -140,6 +144,22 @@ export default class SystemController {
     const data = ctx.getRequestData<UpdateSystemAdminUserRequest>();
     await updateSystemAdminUser(data, ctx.logger);
     ctx.logger.info('[Update System Admin User success]');
+    ctx.body = ctx.t('Success');
+    await next();
+  }
+
+  static async updateSystemAdminUserDiscount(ctx: Context, next: Next) {
+    const data = ctx.getRequestData<UpdateSystemAdminUserDiscountRequest>();
+    await updateSystemAdminUserDiscount(data, ctx.logger);
+    ctx.logger.info('[Update System Admin User Discount success]');
+    ctx.body = ctx.t('Success');
+    await next();
+  }
+
+  static async addSystemAdminUserBalance(ctx: Context, next: Next) {
+    const data = ctx.getRequestData<AddSystemAdminUserBalanceRequest>();
+    await addSystemAdminUserBalance(data, ctx.logger);
+    ctx.logger.info('[Add System Admin User Balance success]');
     ctx.body = ctx.t('Success');
     await next();
   }

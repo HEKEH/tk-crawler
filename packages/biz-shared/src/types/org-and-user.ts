@@ -41,7 +41,10 @@ export interface OrganizationItem {
   /** 是否忽略电商主播，默认为true */
   ignore_commerce_anchor: boolean;
   /** 所有者 */
-  owner?: Omit<SystemAdminUserInfo, 'privileges' | 'features'>;
+  owner?: Omit<
+    SystemAdminUserInfo,
+    'privileges' | 'features' | 'password' | 'balance' | 'discount'
+  >;
 }
 
 export enum OrgMemberStatus {

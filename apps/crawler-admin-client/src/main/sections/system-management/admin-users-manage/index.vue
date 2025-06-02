@@ -8,6 +8,7 @@ import type {
 import type { TableColumnCtx } from 'element-plus';
 import type { FilterViewValues } from './filter';
 import {
+  AdminFeature,
   AdminUserRoleMap,
   SystemAdminUserRole,
   SystemAdminUserStatus,
@@ -30,11 +31,15 @@ import {
 import { computed, ref } from 'vue';
 import { useGetAdminUserList } from '../../../hooks';
 import {
+  addSystemAdminUserBalance,
   createSystemAdminUser,
   deleteSystemAdminUser,
   updateSystemAdminUser,
+  updateSystemAdminUserDiscount,
 } from '../../../requests';
 import { useGlobalStore } from '../../../utils';
+import BalanceDialog from './balance-dialog.vue';
+import DiscountDialog from './discount-dialog.vue';
 import {
   getDefaultFilterViewValues,
   transformFilterViewValuesToFilterValues,
@@ -185,6 +190,62 @@ async function handleSubmitCreateOrEdit(data: Partial<SystemAdminUserInfo>) {
   onCloseFormDialog();
   ElMessage.success('保存成功');
 }
+
+const discountDialogVisible = ref(false);
+const discountFormData = ref<{ discount: number }>();
+const discountFormUser = ref<Omit<SystemAdminUserInfo, 'password'>>();
+
+function onEditDiscount(item: Omit<SystemAdminUserInfo, 'password'>) {
+  discountFormData.value = { discount: item.discount };
+  discountDialogVisible.value = true;
+  discountFormUser.value = item;
+}
+function onCloseDiscountDialog() {
+  discountDialogVisible.value = false;
+  discountFormData.value = undefined;
+  discountFormUser.value = undefined;
+}
+async function handleSubmitDiscount(data: { discount: number }) {
+  const result = await updateSystemAdminUserDiscount(
+    {
+      data: { id: discountFormUser.value!.id, ...data },
+    },
+    token.value,
+  );
+  if (result.status_code !== RESPONSE_CODE.SUCCESS) {
+    return;
+  }
+  await refetch();
+  onCloseDiscountDialog();
+  ElMessage.success('保存成功');
+}
+
+const balanceDialogVisible = ref(false);
+const balanceFormUser = ref<Omit<SystemAdminUserInfo, 'password'>>();
+
+function onEditBalance(item: Omit<SystemAdminUserInfo, 'password'>) {
+  balanceDialogVisible.value = true;
+  balanceFormUser.value = item;
+}
+function onCloseBalanceDialog() {
+  balanceDialogVisible.value = false;
+  balanceFormUser.value = undefined;
+}
+async function handleSubmitBalance(data: { amount: number }) {
+  const result = await addSystemAdminUserBalance(
+    {
+      data: { id: balanceFormUser.value!.id, ...data },
+    },
+    token.value,
+  );
+  if (result.status_code !== RESPONSE_CODE.SUCCESS) {
+    return;
+  }
+  await refetch();
+  onCloseBalanceDialog();
+  ElMessage.success('保存成功');
+}
+
 async function toggleDisableItem(row: SystemAdminUserInfo) {
   let updateResp: UpdateSystemAdminUserResponse;
   if (row.status === SystemAdminUserStatus.normal) {
@@ -321,6 +382,34 @@ async function toggleDisableItem(row: SystemAdminUserInfo) {
         </template>
       </ElTableColumn>
       <ElTableColumn
+        prop="balance"
+        label="余额"
+        min-width="100"
+        sortable="custom"
+      >
+        <template #default="scope: ScopeType">
+          {{
+            scope.row.features.includes(AdminFeature.NEED_TO_CHARGE)
+              ? `${scope.row.balance.toFixed(2)}元`
+              : '-'
+          }}
+        </template>
+      </ElTableColumn>
+      <ElTableColumn
+        prop="discount"
+        label="折扣"
+        min-width="100"
+        sortable="custom"
+      >
+        <template #default="scope: ScopeType">
+          {{
+            scope.row.features.includes(AdminFeature.NEED_TO_CHARGE)
+              ? `${scope.row.discount * 100}%`
+              : '-'
+          }}
+        </template>
+      </ElTableColumn>
+      <ElTableColumn
         prop="created_at"
         label="创建时间"
         min-width="180"
@@ -383,6 +472,26 @@ async function toggleDisableItem(row: SystemAdminUserInfo) {
               删除
             </ElButton>
           </div>
+          <div>
+            <ElButton
+              v-if="scope.row.features.includes(AdminFeature.NEED_TO_CHARGE)"
+              link
+              type="primary"
+              size="small"
+              @click.prevent="onEditBalance(scope.row)"
+            >
+              充值
+            </ElButton>
+            <ElButton
+              v-if="scope.row.features.includes(AdminFeature.NEED_TO_CHARGE)"
+              link
+              type="primary"
+              size="small"
+              @click.prevent="onEditDiscount(scope.row)"
+            >
+              调整折扣
+            </ElButton>
+          </div>
         </template>
       </ElTableColumn>
     </ElTable>
@@ -406,6 +515,18 @@ async function toggleDisableItem(row: SystemAdminUserInfo) {
     :initial-data="formData"
     :submit="handleSubmitCreateOrEdit"
     @close="onCloseFormDialog"
+  />
+  <DiscountDialog
+    :visible="discountDialogVisible"
+    :initial-data="discountFormData"
+    :submit="handleSubmitDiscount"
+    @close="onCloseDiscountDialog"
+  />
+  <BalanceDialog
+    :visible="balanceDialogVisible"
+    :current-balance="balanceFormUser?.balance"
+    :submit="handleSubmitBalance"
+    @close="onCloseBalanceDialog"
   />
 </template>
 

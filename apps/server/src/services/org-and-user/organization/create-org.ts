@@ -16,7 +16,7 @@ import { checkOrgNameExist } from './check-org-name-exist';
 
 export async function createOrg(
   _data: CreateOrgRequest,
-  user_info: SystemAdminUserInfo,
+  user_info: Pick<SystemAdminUserInfo, 'id' | 'features'>,
   logger: Logger,
 ): Promise<void> {
   const data = {

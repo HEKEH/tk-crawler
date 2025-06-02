@@ -13,7 +13,7 @@ import { BusinessError } from '../../../utils';
 
 export async function deleteOrg(
   data: DeleteOrgRequest,
-  user_info: SystemAdminUserInfo,
+  user_info: Pick<SystemAdminUserInfo, 'id' | 'features'>,
   logger: Logger,
 ): Promise<void> {
   logger.info('[Delete Org]', { data });

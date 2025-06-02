@@ -20,7 +20,7 @@ interface OrganizationRow {
 
 export async function updateOrgMembership(
   data: UpdateOrgMembershipRequest,
-  user_info: SystemAdminUserInfo,
+  user_info: Pick<SystemAdminUserInfo, 'id' | 'features'>,
   logger: Logger,
 ): Promise<void> {
   logger.info('[Update Org Membership]', { data });

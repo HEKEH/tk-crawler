@@ -1,11 +1,12 @@
-import type {
-  GetSystemAdminUserListFilter,
-  GetSystemAdminUserListRequest,
-  GetSystemAdminUserListResponseData,
-  SystemAdminUserWhereInput,
-} from '@tk-crawler/biz-shared';
 import type { Prisma } from '@tk-crawler/database';
 import type { Logger } from '@tk-crawler/shared';
+import {
+  getAdminFeaturesByRole,
+  type GetSystemAdminUserListFilter,
+  type GetSystemAdminUserListRequest,
+  type GetSystemAdminUserListResponseData,
+  type SystemAdminUserWhereInput,
+} from '@tk-crawler/biz-shared';
 import { mysqlClient } from '@tk-crawler/database';
 import { isEmpty } from '@tk-crawler/shared';
 
@@ -60,6 +61,9 @@ export async function getSystemAdminUserList(
     list: systemAdminUsers.map(systemAdminUser => ({
       ...systemAdminUser,
       id: systemAdminUser.id.toString(),
+      features: getAdminFeaturesByRole(systemAdminUser.role_id),
+      balance: systemAdminUser.balance.toNumber(),
+      discount: systemAdminUser.discount.toNumber(),
     })),
     total,
   };

@@ -42,7 +42,7 @@ function transformOrgListFilterValues(
 
 export async function getOrgList(
   data: GetOrgListRequest,
-  user_info: SystemAdminUserInfo,
+  user_info: Pick<SystemAdminUserInfo, 'id' | 'features'>,
   options: {
     include_owner_info?: boolean;
   },

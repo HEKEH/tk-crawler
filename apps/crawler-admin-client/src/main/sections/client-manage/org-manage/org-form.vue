@@ -210,7 +210,6 @@ function handleCancel() {
           <ElInputNumber
             v-model="form.membership_days"
             style="width: 100%"
-            type="number"
             :precision="0"
             :controls="false"
             :min="1"
@@ -257,7 +256,6 @@ function handleCancel() {
       <ElInputNumber
         v-model="form.mobile_device_limit"
         style="width: 100%"
-        type="number"
         :precision="0"
         placeholder="请输入"
         :min="1"

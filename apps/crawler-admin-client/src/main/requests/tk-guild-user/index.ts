@@ -1,4 +1,6 @@
 import type {
+  AddSystemAdminUserBalanceRequest,
+  AddSystemAdminUserBalanceResponse,
   CreateSystemAdminUserRequest,
   CreateSystemAdminUserResponse,
   DeleteSystemAdminUserRequest,
@@ -12,6 +14,8 @@ import type {
   StartTKLiveAdminAccountRequest,
   StartTKLiveAdminAccountResponse,
   StopTKLiveAdminAccountRequest,
+  UpdateSystemAdminUserDiscountRequest,
+  UpdateSystemAdminUserDiscountResponse,
   UpdateSystemAdminUserRequest,
   UpdateSystemAdminUserResponse,
 } from '@tk-crawler/biz-shared';
@@ -19,6 +23,7 @@ import { SYSTEM_TOKEN_HEADER_KEY } from '@tk-crawler/biz-shared';
 import {
   OwnServerUrl,
   Post,
+  SystemAddAdminUserBalance,
   SystemCreateAdminUser,
   SystemDeleteAdminUser,
   SystemGetAdminUserList,
@@ -27,6 +32,7 @@ import {
   SystemStartTKGuildUserAccount,
   SystemStopTKGuildUserAccount,
   SystemUpdateAdminUser,
+  SystemUpdateAdminUserDiscount,
 } from '@tk-crawler/secure';
 import { RESPONSE_CODE, simpleDecrypt } from '@tk-crawler/shared';
 import { commonRequest } from '@tk-crawler/view-shared';
@@ -93,12 +99,14 @@ export function stopTKGuildUserAccount(
 export function isAnyGuildAccountError(
   params: IsAnyGuildAccountErrorRequest,
   token: string,
+  hideErrorNotify?: boolean,
 ) {
   return commonRequest<IsAnyGuildAccountErrorResponse>({
     baseURL: config[OwnServerUrl],
     method: Post,
     path: SystemIsAnyGuildAccountError,
     params,
+    hideErrorNotify,
     headers: {
       [SYSTEM_TOKEN_HEADER_KEY]: token,
     },
@@ -145,6 +153,38 @@ export function updateSystemAdminUser(
     baseURL: config[OwnServerUrl],
     method: Post,
     path: SystemUpdateAdminUser,
+    params,
+    secure: true,
+    headers: {
+      [SYSTEM_TOKEN_HEADER_KEY]: token,
+    },
+  });
+}
+
+export function updateSystemAdminUserDiscount(
+  params: UpdateSystemAdminUserDiscountRequest,
+  token: string,
+) {
+  return commonRequest<UpdateSystemAdminUserDiscountResponse>({
+    baseURL: config[OwnServerUrl],
+    method: Post,
+    path: SystemUpdateAdminUserDiscount,
+    params,
+    secure: true,
+    headers: {
+      [SYSTEM_TOKEN_HEADER_KEY]: token,
+    },
+  });
+}
+
+export function addSystemAdminUserBalance(
+  params: AddSystemAdminUserBalanceRequest,
+  token: string,
+) {
+  return commonRequest<AddSystemAdminUserBalanceResponse>({
+    baseURL: config[OwnServerUrl],
+    method: Post,
+    path: SystemAddAdminUserBalance,
     params,
     secure: true,
     headers: {

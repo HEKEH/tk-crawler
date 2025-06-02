@@ -28,7 +28,7 @@ import { BusinessError } from '../utils';
 
 async function checkOrgOwner(
   orgId: string,
-  userInfo: SystemAdminUserInfo,
+  userInfo: Pick<SystemAdminUserInfo, 'id' | 'features'>,
 ): Promise<void> {
   if (userInfo.features.includes(AdminFeature.ONLY_OWN_ORG)) {
     const org = await mysqlClient.prismaClient.organization.findUnique({

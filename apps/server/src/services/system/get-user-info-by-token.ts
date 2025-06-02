@@ -60,6 +60,8 @@ export async function getSystemAdminUserInfoByToken(
       updated_at: user.updated_at,
       privileges: getAdminPrivilegesByRole(user.role_id),
       features: getAdminFeaturesByRole(user.role_id),
+      balance: user.balance.toNumber(),
+      discount: user.discount.toNumber(),
     },
   };
 }

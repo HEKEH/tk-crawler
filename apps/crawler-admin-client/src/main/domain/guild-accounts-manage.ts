@@ -57,7 +57,11 @@ export class GuildAccountsManage {
       return;
     }
 
-    const response = await isAnyGuildAccountError({}, this._context.token);
+    const response = await isAnyGuildAccountError(
+      {},
+      this._context.token,
+      true,
+    );
     if (response.status_code === RESPONSE_CODE.SUCCESS) {
       await this._setIsAnyAccountError(response.data!.has_error);
       if (!this._isAnyAccountError) {

@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE `SystemAdminUser` ADD COLUMN `balance` DECIMAL(10, 2) NOT NULL DEFAULT 0,
+    ADD COLUMN `discount` DECIMAL(4, 3) NOT NULL DEFAULT 1;

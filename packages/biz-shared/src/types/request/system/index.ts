@@ -22,6 +22,8 @@ export interface SystemAdminUserInfo {
   id: string;
   username: string;
   password?: string;
+  balance: number;
+  discount: number;
   role_id: SystemAdminUserRole;
   status: SystemAdminUserStatus;
   privileges: AdminPrivilege[] | 'all';
@@ -92,7 +94,8 @@ export interface SystemCrawlStatisticsResponse {
 export type CreateSystemAdminUserRequest = Omit<
   SystemAdminUserInfo,
   'id' | 'privileges'
->;
+> &
+  Partial<Pick<SystemAdminUserInfo, 'balance' | 'discount'>>;
 
 export interface CreateSystemAdminUserResponse {
   status_code: RESPONSE_CODE;
@@ -105,6 +108,26 @@ export interface UpdateSystemAdminUserRequest {
 }
 
 export interface UpdateSystemAdminUserResponse {
+  status_code: RESPONSE_CODE;
+  message?: string;
+}
+
+export interface UpdateSystemAdminUserDiscountRequest {
+  data: Pick<SystemAdminUserInfo, 'id' | 'discount'>;
+}
+export interface UpdateSystemAdminUserDiscountResponse {
+  status_code: RESPONSE_CODE;
+  message?: string;
+}
+
+export interface AddSystemAdminUserBalanceRequest {
+  data: {
+    id: string;
+    amount: number;
+  };
+}
+
+export interface AddSystemAdminUserBalanceResponse {
   status_code: RESPONSE_CODE;
   message?: string;
 }
@@ -134,7 +157,7 @@ export interface GetSystemAdminUserListRequest {
 }
 
 export interface GetSystemAdminUserListResponseData {
-  list: Omit<SystemAdminUserInfo, 'password' | 'privileges' | 'features'>[];
+  list: Omit<SystemAdminUserInfo, 'password' | 'privileges'>[];
   total: number;
 }
 

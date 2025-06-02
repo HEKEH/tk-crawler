@@ -14,7 +14,7 @@ import { BusinessError } from '../../../utils';
 
 export async function updateOrg(
   _data: UpdateOrgRequest,
-  user_info: SystemAdminUserInfo,
+  user_info: Pick<SystemAdminUserInfo, 'id' | 'features'>,
   logger: Logger,
 ): Promise<void> {
   const data = {

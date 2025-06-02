@@ -68,6 +68,10 @@ export const SystemIsAnyGuildAccountError =
 
 export const SystemGetAdminUserList = '/system/get-admin-user-list';
 export const SystemUpdateAdminUser = '/system/update-admin-user';
+export const SystemUpdateAdminUserDiscount =
+  '/system/update-admin-user-discount';
+export const SystemAddAdminUserBalance = '/system/add-admin-user-balance';
+
 export const SystemCreateAdminUser = '/system/create-admin-user';
 export const SystemDeleteAdminUser = '/system/delete-admin-user';
 

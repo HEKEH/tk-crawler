@@ -36,6 +36,7 @@ const rules: Record<string, FormItemRule[]> = {
       validator: (rule, value, callback) => {
         if (value && value.includes(' ')) {
           callback(new Error('名字不要有空格'));
+          return;
         }
         callback();
       },

@@ -9,6 +9,7 @@ const props = defineProps<{
   submit: (
     data: Partial<OrganizationItem> & { membership_days?: number },
   ) => Promise<void>;
+  areasLimit?: number;
   initialData?: Partial<OrganizationItem>;
 }>();
 
@@ -33,6 +34,7 @@ function handleClose() {
       <OrgForm
         :initial-data="initialData"
         :submit="props.submit"
+        :areas-limit="areasLimit"
         @cancel="handleClose"
       />
     </ElScrollbar>

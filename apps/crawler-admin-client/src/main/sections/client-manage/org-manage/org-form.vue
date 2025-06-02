@@ -25,6 +25,7 @@ type FormValues = Partial<OrganizationItem> & {
 
 const props = defineProps<{
   initialData?: FormValues;
+  areasLimit?: number;
   submit: (data: FormValues) => void;
 }>();
 
@@ -57,6 +58,7 @@ const rules: FormRules = {
       validator: (rule, value, callback) => {
         if (value && value.includes(' ')) {
           callback(new Error('名字不要有空格'));
+          return;
         }
         callback();
       },
@@ -64,7 +66,20 @@ const rules: FormRules = {
   ],
   status: [{ required: true, message: '请选择状态' }],
   mobile_device_limit: [{ required: true, message: '请输入设备数量上限' }],
-  areas: [{ required: true, message: '请选择地区' }],
+  areas: [
+    { required: true, message: '请选择分区' },
+    {
+      validator: (rule, value, callback) => {
+        if (props.areasLimit && value && value.length > props.areasLimit) {
+          callback(
+            new Error(`您权限不足，最多只能选择${props.areasLimit}个分区`),
+          );
+          return;
+        }
+        callback();
+      },
+    },
+  ],
   // membershipDates: [
   //   {
   //     validator: (rule, value, callback) => {
@@ -223,7 +238,7 @@ function handleCancel() {
       </div>
     </ElFormItem>
 
-    <ElFormItem label="区域" prop="areas">
+    <ElFormItem label="分区" prop="areas">
       <AreaSelectMultiple v-model="form.areas" :show-all="false" />
     </ElFormItem>
 

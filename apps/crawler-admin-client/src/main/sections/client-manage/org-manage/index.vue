@@ -67,6 +67,9 @@ interface ScopeType {
 const globalStore = useGlobalStore();
 const token = computed(() => globalStore.token);
 const isWeb = useIsWebSize();
+const areasLimit = computed(() =>
+  globalStore.userProfile?.isAdmin ? undefined : 2,
+);
 
 const tableRef = ref<InstanceType<typeof ElTable>>();
 const pageNum = ref(1);
@@ -515,6 +518,7 @@ function onManageMobileDevices(org: OrganizationItem) {
     :visible="formDialogVisible"
     :mode="formMode"
     :initial-data="formData"
+    :areas-limit="areasLimit"
     :submit="handleCreateOrEdit"
     @close="onCloseFormDialog"
   />

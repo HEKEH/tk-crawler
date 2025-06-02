@@ -12,11 +12,11 @@ import {
 } from 'element-plus';
 import { reactive, ref } from 'vue';
 
-type FormValues = {
+interface FormValues {
   type: 'add' | 'minus';
   unit: 'day' | 'week' | 'month' | 'year';
   membership_value: number;
-};
+}
 
 const props = defineProps<{
   submit: (data: { membership_days: number }) => void;

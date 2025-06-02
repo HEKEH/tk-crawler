@@ -27,6 +27,7 @@ export interface GuildUserCollectionContext {
 // 每次的主播搜索数量
 const ANCHORS_SEARCH_NUMBER_EACH_TIME = 300;
 
+// TODO 拆分地区
 export class GuildUserCollection {
   private _guildUsers: GuildUserModel[] = [];
 

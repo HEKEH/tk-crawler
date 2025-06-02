@@ -7,7 +7,11 @@ import type {
 } from '@tk-crawler/biz-shared';
 import type { TableColumnCtx } from 'element-plus';
 import type { FilterViewValues } from './filter';
-import { AdminUserRoleMap, SystemAdminUserRole } from '@tk-crawler/biz-shared';
+import {
+  AdminUserRoleMap,
+  SystemAdminUserRole,
+  SystemAdminUserStatus,
+} from '@tk-crawler/biz-shared';
 import { formatDateTime, RESPONSE_CODE } from '@tk-crawler/shared';
 import {
   confirmAfterSeconds,
@@ -17,6 +21,7 @@ import {
 import {
   ElButton,
   ElMessage,
+  ElMessageBox,
   ElPagination,
   ElTable,
   ElTableColumn,
@@ -180,6 +185,40 @@ async function handleSubmitCreateOrEdit(data: Partial<SystemAdminUserInfo>) {
   onCloseFormDialog();
   ElMessage.success('保存成功');
 }
+async function toggleDisableItem(row: SystemAdminUserInfo) {
+  let updateResp: UpdateSystemAdminUserResponse;
+  if (row.status === SystemAdminUserStatus.normal) {
+    try {
+      await ElMessageBox.confirm('确定要禁用该用户吗？', {
+        type: 'warning',
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+      });
+    } catch {
+      return;
+    }
+    updateResp = await updateSystemAdminUser(
+      {
+        data: {
+          id: row.id,
+          status: SystemAdminUserStatus.disabled,
+        },
+      },
+      token.value,
+    );
+  } else {
+    updateResp = await updateSystemAdminUser(
+      {
+        data: { id: row.id, status: SystemAdminUserStatus.normal },
+      },
+      token.value,
+    );
+  }
+  if (updateResp.status_code === RESPONSE_CODE.SUCCESS) {
+    await refetch();
+    ElMessage.success('操作成功');
+  }
+}
 </script>
 
 <template>
@@ -240,6 +279,29 @@ async function handleSubmitCreateOrEdit(data: Partial<SystemAdminUserInfo>) {
         sortable="custom"
       />
       <ElTableColumn
+        prop="status"
+        label="状态"
+        :min-width="isWeb ? 100 : 70"
+        sortable="custom"
+      >
+        <template #default="scope: ScopeType">
+          <ElTag
+            size="small"
+            :type="
+              scope.row.status === SystemAdminUserStatus.normal
+                ? 'success'
+                : 'danger'
+            "
+          >
+            {{
+              scope.row.status === SystemAdminUserStatus.normal
+                ? '正常'
+                : '禁用'
+            }}
+          </ElTag>
+        </template>
+      </ElTableColumn>
+      <ElTableColumn
         prop="role_id"
         label="角色"
         min-width="100"
@@ -293,6 +355,23 @@ async function handleSubmitCreateOrEdit(data: Partial<SystemAdminUserInfo>) {
               @click.prevent="onEditItem(scope.row)"
             >
               编辑
+            </ElButton>
+            <ElButton
+              :disabled="scope.row.id === globalStore.userProfile.userId"
+              link
+              :type="
+                scope.row.status === SystemAdminUserStatus.normal
+                  ? 'danger'
+                  : 'primary'
+              "
+              size="small"
+              @click.prevent="toggleDisableItem(scope.row)"
+            >
+              {{
+                scope.row.status === SystemAdminUserStatus.normal
+                  ? '禁用'
+                  : '启用'
+              }}
             </ElButton>
             <ElButton
               link

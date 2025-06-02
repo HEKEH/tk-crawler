@@ -3,6 +3,7 @@ import {
   getAdminFeaturesByRole,
   getAdminPrivilegesByRole,
   type SystemAdminUserRole,
+  SystemAdminUserStatus,
   type SystemUserLoginRequest,
   type SystemUserLoginResponseData,
 } from '@tk-crawler/biz-shared';
@@ -33,6 +34,10 @@ export async function systemAdminUserLogin(
   );
   if (!(await verifyPassword(passwordDecrypted, password))) {
     throw new BusinessError('密码错误, 请重新登录');
+  }
+
+  if (user.status !== SystemAdminUserStatus.normal) {
+    throw new BusinessError('用户已禁用, 请重新登录');
   }
 
   const token = await generateToken({

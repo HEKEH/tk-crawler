@@ -11,11 +11,19 @@ export interface SystemUserLoginRequest {
   password: string;
 }
 
+export enum SystemAdminUserStatus {
+  /** 正常 */
+  normal = 1,
+  /** 禁用 */
+  disabled = 0,
+}
+
 export interface SystemAdminUserInfo {
   id: string;
   username: string;
   password?: string;
   role_id: SystemAdminUserRole;
+  status: SystemAdminUserStatus;
   privileges: AdminPrivilege[] | 'all';
   features: AdminFeature[];
   created_at: Date;
@@ -113,6 +121,7 @@ export interface DeleteSystemAdminUserResponse {
 export interface GetSystemAdminUserListFilter {
   username?: string;
   role_id?: SystemAdminUserRole;
+  status?: SystemAdminUserStatus;
 }
 
 export type SystemAdminUserWhereInput = Prisma.SystemAdminUserWhereInput;

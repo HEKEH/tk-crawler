@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `SystemAdminUser` ADD COLUMN `status` TINYINT UNSIGNED NOT NULL DEFAULT 1;

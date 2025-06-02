@@ -16,7 +16,7 @@ const tip = computed(() => getStatusTip(props.status));
 </script>
 
 <template>
-  <ElTag class="status-tag" :type="type">
+  <ElTag size="small" class="status-tag" :type="type">
     {{ text }}
     <ElTooltip v-if="tip" :content="tip" placement="top">
       <ElIcon class="status-tag-icon" :size="12">

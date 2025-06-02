@@ -2,7 +2,10 @@
 import type { FilterViewValues } from './filter';
 import { Refresh, Search } from '@element-plus/icons-vue';
 import { DoubleDownIcon, DoubleUpIcon } from '@tk-crawler/assets';
-import { ADMIN_USER_ROLE_OPTIONS } from '@tk-crawler/biz-shared';
+import {
+  ADMIN_USER_ROLE_OPTIONS,
+  SystemAdminUserStatus,
+} from '@tk-crawler/biz-shared';
 import { useIsMobileSize } from '@tk-crawler/view-shared';
 import { ElButton, ElIcon, ElInput, ElOption, ElSelect } from 'element-plus';
 import { debounce } from 'lodash';
@@ -78,6 +81,18 @@ function toggleExpand() {
             <ElIcon><Search /></ElIcon>
           </template>
         </ElInput>
+      </div>
+      <div class="filter-item">
+        <label class="filter-label">状态</label>
+        <ElSelect
+          v-model="filters.status"
+          size="small"
+          @change="handleFilterChange"
+        >
+          <ElOption value="all" label="全部" />
+          <ElOption :value="SystemAdminUserStatus.normal" label="正常" />
+          <ElOption :value="SystemAdminUserStatus.disabled" label="禁用" />
+        </ElSelect>
       </div>
       <div class="filter-item">
         <label class="filter-label">角色</label>

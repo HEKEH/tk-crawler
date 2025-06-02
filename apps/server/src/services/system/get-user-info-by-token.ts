@@ -2,6 +2,7 @@ import {
   getAdminFeaturesByRole,
   getAdminPrivilegesByRole,
   type SystemAdminUser,
+  SystemAdminUserStatus,
 } from '@tk-crawler/biz-shared';
 import { mysqlClient } from '@tk-crawler/database';
 import { BusinessError, parseToken, TokenInvalidError } from '../../utils';
@@ -44,11 +45,16 @@ export async function getSystemAdminUserInfoByToken(
     throw new TokenInvalidError('用户不存在, 请重新登录');
   }
 
+  if (user.status !== SystemAdminUserStatus.normal) {
+    throw new TokenInvalidError('用户已禁用, 请重新登录');
+  }
+
   return {
     user_info: {
       id: user.id.toString(),
       username: user.username,
       password: user.password,
+      status: user.status,
       role_id: user.role_id,
       created_at: user.created_at,
       updated_at: user.updated_at,

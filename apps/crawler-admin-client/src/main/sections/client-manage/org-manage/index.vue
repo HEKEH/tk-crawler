@@ -330,6 +330,7 @@ function onManageMobileDevices(org: OrganizationItem) {
       >
         <template #default="scope: ScopeType">
           <ElTag
+            size="small"
             :type="
               scope.row.status === OrganizationStatus.normal
                 ? 'success'

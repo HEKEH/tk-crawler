@@ -23,6 +23,7 @@ model SystemAdminUser {
   username     String         @unique @db.VarChar(50)
   password     String         @db.VarChar(128)
   role_id      Int            @default(5) @db.UnsignedInt
+  status       Int            @default(1) @db.UnsignedTinyInt
   created_at   DateTime       @default(now()) @db.DateTime(3)
   updated_at   DateTime       @updatedAt @db.DateTime(3)
   Organization Organization[]

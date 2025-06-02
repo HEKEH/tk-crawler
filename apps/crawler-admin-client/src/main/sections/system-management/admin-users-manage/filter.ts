@@ -1,10 +1,12 @@
 import type {
   GetSystemAdminUserListFilter,
   SystemAdminUserRole,
+  SystemAdminUserStatus,
 } from '@tk-crawler/biz-shared';
 
 export interface FilterViewValues {
   username?: string;
+  status: SystemAdminUserStatus | 'all';
   role_id: SystemAdminUserRole | 'all';
 }
 
@@ -20,11 +22,13 @@ export function transformFilterViewValuesToFilterValues(
   return {
     username: filterViewValues.username || undefined,
     role_id: transValue(filterViewValues.role_id),
+    status: transValue(filterViewValues.status),
   };
 }
 
 export function getDefaultFilterViewValues(): FilterViewValues {
   return {
+    status: 'all',
     role_id: 'all',
   };
 }

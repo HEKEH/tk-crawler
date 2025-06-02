@@ -324,6 +324,7 @@ async function handleSubmitCreateOrEdit(data: Partial<OrgMemberItem>) {
       >
         <template #default="scope: ScopeType">
           <ElTag
+            size="small"
             :type="
               scope.row.status === OrgMemberStatus.normal ? 'success' : 'danger'
             "

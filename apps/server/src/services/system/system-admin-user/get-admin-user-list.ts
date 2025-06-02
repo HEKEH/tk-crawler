@@ -12,10 +12,11 @@ import { isEmpty } from '@tk-crawler/shared';
 export function transformSystemAdminUserListValues(
   filterValues: GetSystemAdminUserListFilter = {},
 ): SystemAdminUserWhereInput {
-  const { username, role_id } = filterValues;
+  const { username, role_id, status } = filterValues;
   const where: SystemAdminUserWhereInput = {
-    role_id: role_id !== undefined ? role_id : undefined,
+    role_id,
     username: username ? { contains: username } : undefined,
+    status,
   };
   return where;
 }

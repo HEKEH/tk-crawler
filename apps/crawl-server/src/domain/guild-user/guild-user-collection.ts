@@ -30,7 +30,9 @@ const ANCHORS_SEARCH_NUMBER_EACH_TIME = 300;
 export class GuildUserCollection {
   private _guildUsers: GuildUserModel[] = [];
 
-  private _anchorsSearchCache: BroadcastAnchorMessageData[] = [];
+  private _anchorsSearchCache: {
+    [key in Area]?: BroadcastAnchorMessageData[];
+  } = {};
 
   private _context: GuildUserCollectionContext;
 
@@ -306,7 +308,9 @@ export class GuildUserCollection {
   }
 
   private async _checkAnchorsOfArea(area: Area) {
-    logger.info(`[guild-user] check anchors of area: ${area}`);
+    logger.info(
+      `[guild-user] [orgName: ${this._context.orgName}] [orgId: ${this._context.orgId}] check anchors of area: ${area}`,
+    );
     try {
       const rawValidGuildUsers = this._guildUsers.filter(
         item => item.area === area && item.isValid,
@@ -317,7 +321,10 @@ export class GuildUserCollection {
         );
         return;
       }
-      if (this._anchorsSearchCache.length < ANCHORS_CHECK_NUMBER) {
+      if (!this._anchorsSearchCache[area]) {
+        this._anchorsSearchCache[area] = [];
+      }
+      if (this._anchorsSearchCache[area].length < ANCHORS_CHECK_NUMBER) {
         const now = Date.now();
         let anchors = await searchAnchorsTaskQueue.addTask(() =>
           searchAnchorsNeedCheck({
@@ -333,13 +340,13 @@ export class GuildUserCollection {
         logger.info(
           `[guild-user] [orgName: ${this._context.orgName}] [orgId: ${this._context.orgId}] [area: ${area}] searchAnchorsTaskQueue add task cost: ${Date.now() - now}ms`,
         );
-        if (this._anchorsSearchCache.length) {
+        if (this._anchorsSearchCache[area]?.length) {
           const anchorsCacheSet = new Set(
-            this._anchorsSearchCache.map(item => item.user_id),
+            this._anchorsSearchCache[area].map(item => item.user_id),
           );
           anchors = anchors.filter(item => !anchorsCacheSet.has(item.user_id));
         }
-        this._anchorsSearchCache.push(...anchors);
+        this._anchorsSearchCache[area].push(...anchors);
       }
     } catch (error) {
       logger.error(
@@ -350,10 +357,10 @@ export class GuildUserCollection {
       );
       return;
     }
-    if (this._anchorsSearchCache.length < ANCHORS_CHECK_NUMBER) {
+    if (this._anchorsSearchCache[area].length < ANCHORS_CHECK_NUMBER) {
       return;
     }
-    const anchorsToCheck = this._anchorsSearchCache.slice(
+    const anchorsToCheck = this._anchorsSearchCache[area].slice(
       0,
       ANCHORS_CHECK_NUMBER,
     );
@@ -378,8 +385,8 @@ export class GuildUserCollection {
       checkSuccess = success;
     }
     if (checkSuccess) {
-      this._anchorsSearchCache =
-        this._anchorsSearchCache.slice(ANCHORS_CHECK_NUMBER);
+      this._anchorsSearchCache[area] =
+        this._anchorsSearchCache[area].slice(ANCHORS_CHECK_NUMBER);
     }
   }
 

@@ -60,6 +60,7 @@ interface ScopeType {
 }
 
 const globalStore = useGlobalStore();
+const orgAreas = computed(() => globalStore.userProfile.orgInfo?.areas ?? []);
 const token = computed(() => globalStore.token);
 const isWeb = useIsWebSize();
 
@@ -378,7 +379,16 @@ onKeepAliveActivated(refresh);
       >
         <template #default="scope: ScopeType">
           <div class="area-with-tooltip">
-            {{ AREA_NAME_MAP[scope.row.area as Area] || '-' }}
+            {{ (() => {
+              const area = scope.row.area as Area;
+              if (area && AREA_NAME_MAP[area]) {
+                if (orgAreas.includes(area)) {
+                  return AREA_NAME_MAP[area];
+                }
+                return `${AREA_NAME_MAP[area]} (机构不支持该分区)`;
+              }
+              return '-';
+            })() }}
             <AreaTooltipIcon :area="scope.row.area as Area" />
           </div>
         </template>

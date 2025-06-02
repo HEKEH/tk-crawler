@@ -72,7 +72,7 @@
         align-items: center;
       }
 
-      .cta-button {
+      .start-button {
         display: inline-block;
         background: #696969;
         color: white;
@@ -83,39 +83,61 @@
         margin-top: 20px;
       }
 
-      .services-section {
-        max-width: 1392px;
+      .features-section {
+        max-width: 1280px;
         margin: 0 auto;
-        padding: 100px 24px;
+        padding: 100px 0;
       }
 
-      .services-heading {
+      .features-heading {
         text-align: center;
         font-size: 36px;
         margin-bottom: 67px;
       }
 
-      .services-grid {
+      .features-grid {
+        width: 100%;
         display: flex;
-        gap: 24px;
+        column-gap: 40px;
         justify-content: space-between;
         flex-wrap: nowrap;
       }
 
-      .service-card {
-        width: 330px;
-        height: 408px;
-        background: #c4c4c4;
-        border-radius: 20px;
-        padding: 33px;
+      .feature-card {
+        flex: 1;
+        height: 331px;
+        border-radius: 12px;
+        padding: 40px;
         box-sizing: border-box;
         flex-shrink: 0;
+        border: 1px solid #cccccc;
+        box-shadow: 0 4px 24px 0 rgba(0, 0, 0, 0.06);
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
       }
 
-      .service-title {
-        font-size: 24px;
+      .feature-icon {
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .feature-title {
+        font-size: 28px;
+        font-weight: 600;
         line-height: 1.4;
-        margin: 0;
+        margin: 0 0 18px 0;
+        color: #222;
+      }
+
+      .feature-description {
+        font-size: 18px;
+        color: #999;
+        line-height: 1.7;
+        margin-top: 0;
       }
 
       @media (max-width: 1024px) {
@@ -127,12 +149,12 @@
           max-width: 100%;
         }
 
-        .services-grid {
+        .features-grid {
           overflow-x: auto;
           padding-bottom: 20px;
         }
 
-        .service-card {
+        .feature-card {
           margin: 0;
         }
       }
@@ -146,7 +168,7 @@
           font-size: 16px;
         }
 
-        .service-card {
+        .feature-card {
           width: 100%;
           max-width: 330px;
         }
@@ -197,7 +219,7 @@
             </p>
             <a
               href="#"
-              class="cta-button"
+              class="start-button"
               style="
                 background: #c6f200;
                 color: #222;
@@ -228,20 +250,81 @@
         </div>
       </section>
 
-      <section class="services-section">
-        <h2 class="services-heading">Services</h2>
-        <div class="services-grid">
-          <div class="service-card">
-            <h3 class="service-title">Product Design & UI/UX</h3>
+      <section class="features-section">
+        <h2 class="features-heading">Services</h2>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon" style="margin-bottom: 32px">
+              <!-- Plant/leaf icon -->
+              <svg
+                width="48"
+                height="48"
+                viewBox="0 0 48 48"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle cx="24" cy="16" r="8" fill="#222" />
+                <path
+                  d="M24 44C18 44 12 38 12 32C18 32 24 38 24 44Z"
+                  fill="#A3D100"
+                />
+                <path
+                  d="M24 44C30 44 36 38 36 32C30 32 24 38 24 44Z"
+                  fill="#A3D100"
+                />
+              </svg>
+            </div>
+            <h3 class="feature-title">持牌运营</h3>
+            <div class="feature-description">
+              Dcex目前已荣获澳大利DCE，美国MSB牌照。
+            </div>
           </div>
-          <div class="service-card">
-            <h3 class="service-title">Strategy & Direction</h3>
+          <div class="feature-card">
+            <div class="feature-icon" style="margin-bottom: 32px">
+              <!-- Stylized L1 icon -->
+              <svg
+                width="48"
+                height="48"
+                viewBox="0 0 48 48"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect x="10" y="14" width="8" height="20" rx="4" fill="#222" />
+                <rect
+                  x="26"
+                  y="14"
+                  width="8"
+                  height="12"
+                  rx="4"
+                  fill="#A3D100"
+                />
+              </svg>
+            </div>
+            <h3 class="feature-title">极致体验</h3>
+            <div class="feature-description">
+              专业合约、订单深度、流动性行业领先，用户无门槛轻松交易。
+            </div>
           </div>
-          <div class="service-card">
-            <h3 class="service-title">Motion Graphics & Animation</h3>
-          </div>
-          <div class="service-card">
-            <h3 class="service-title">Wireframes & Prototypes</h3>
+          <div class="feature-card">
+            <div class="feature-icon" style="margin-bottom: 32px">
+              <!-- Four-leaf/abstract flower icon -->
+              <svg
+                width="48"
+                height="48"
+                viewBox="0 0 48 48"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <ellipse cx="16" cy="16" rx="8" ry="4" fill="#A3D100" />
+                <ellipse cx="32" cy="16" rx="8" ry="4" fill="#222" />
+                <ellipse cx="16" cy="32" rx="8" ry="4" fill="#222" />
+                <ellipse cx="32" cy="32" rx="8" ry="4" fill="#A3D100" />
+              </svg>
+            </div>
+            <h3 class="feature-title">安全可靠</h3>
+            <div class="feature-description">
+              领先安全团队，金融级多重钱包管理验证，智能风控+内部风控双重风控制机制，保证资产安全。
+            </div>
           </div>
         </div>
       </section>

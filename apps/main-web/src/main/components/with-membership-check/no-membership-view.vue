@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ElLink, ElIcon } from 'element-plus';
 import { Lock } from '@element-plus/icons-vue';
+import { ElIcon } from 'element-plus';
 
 defineOptions({
   name: 'NoMembershipView',

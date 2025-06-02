@@ -1,5 +1,5 @@
 import type { Component } from 'vue';
-import { defineComponent, h } from 'vue';
+import { computed, defineComponent, h } from 'vue';
 import { useGlobalStore } from '../../utils';
 import NoMembershipView from './no-membership-view.vue';
 
@@ -19,15 +19,16 @@ export function WithMembershipCheck<T extends Component>(WrappedComponent: T) {
 
     setup(props, { slots, attrs }) {
       const globalStore = useGlobalStore();
-
-      // 检查会员权限
-      if (!globalStore.userProfile.hasMembership) {
-        return () => h(NoMembershipView);
-      }
+      const hasMembership = computed(
+        () => globalStore.userProfile.hasMembership,
+      );
 
       // 渲染原始组件
-      return () =>
-        h(
+      return () => {
+        if (!hasMembership.value) {
+          return h(NoMembershipView);
+        }
+        return h(
           WrappedComponent,
           {
             ...props,
@@ -35,6 +36,7 @@ export function WithMembershipCheck<T extends Component>(WrappedComponent: T) {
           },
           slots,
         );
+      };
     },
   }) as T;
 }

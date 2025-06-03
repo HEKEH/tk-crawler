@@ -87,7 +87,6 @@ const rules: FormRules = {
   ],
   membership_days: [
     {
-      trigger: ['change', 'blur'],
       validator: (rule, value, callback) => {
         if (mode.value === 'edit') {
           callback();
@@ -260,13 +259,12 @@ async function validateMembershipDays() {
             :precision="0"
             :controls="false"
             :min="1"
-            @change="validateMembershipDays"
           />
           <!-- <span class="unit">天</span> -->
         </div>
         <div class="quick-options">
           <ElButton
-            v-for="days in isWeb ? [1, 3, 7, 15, 30] : [3, 7, 30]"
+            v-for="days in isWeb ? [3, 7, 30, 90, 180] : [3, 7, 30]"
             :key="days"
             size="small"
             :type="form.membership_days === days ? 'primary' : 'default'"

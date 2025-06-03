@@ -37,23 +37,23 @@ export type MobileAnchorContactedRequest = AnchorContactedRequest & {
 
 export type MobileAnchorContactedResponse = AnchorContactedResponse;
 
-export interface GetMobileDeviceListResponseData {
+export interface GetAutoFollowMobileDeviceListResponseData {
   list: AutoFollowMobileDeviceItem[];
   total: number;
 }
 
-export interface GetMobileDeviceListResponse {
+export interface GetAutoFollowMobileDeviceListResponse {
   status_code: RESPONSE_CODE;
-  data?: GetMobileDeviceListResponseData;
+  data?: GetAutoFollowMobileDeviceListResponseData;
   message?: string;
 }
 
-export interface DeleteMobileDeviceRequest {
+export interface DeleteAutoFollowMobileDeviceRequest {
   id: string;
   org_id: string;
 }
 
-export interface DeleteMobileDeviceResponse {
+export interface DeleteAutoFollowMobileDeviceResponse {
   status_code: RESPONSE_CODE;
   message?: string;
 }

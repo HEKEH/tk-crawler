@@ -8,7 +8,7 @@ import type {
 import type { Context, Next } from 'koa';
 import assert from 'node:assert';
 import {
-  getMobileDeviceList,
+  getAutoFollowMobileDeviceList,
   mobileAnchorContacted,
   mobileGetAssignedAnchorList,
   mobileOrgMemberLogin,
@@ -67,7 +67,7 @@ export default class MobileController {
   static async getMobileDeviceList(ctx: Context, next: Next) {
     const { org_info } = ctx.clientInfo!;
     const data = ctx.getRequestData<GetMobileDeviceListRequest>();
-    ctx.body = await getMobileDeviceList(
+    ctx.body = await getAutoFollowMobileDeviceList(
       {
         ...data,
         org_id: org_info.id,

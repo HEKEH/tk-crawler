@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type {
   AutoFollowMobileDeviceItem,
-  GetMobileDeviceListResponseData,
+  GetAutoFollowMobileDeviceListResponseData,
   OrganizationItem,
 } from '@tk-crawler/biz-shared';
 import type { TableColumnCtx } from 'element-plus';
@@ -17,7 +17,10 @@ import {
   ElTableColumn,
 } from 'element-plus';
 import { computed, ref } from 'vue';
-import { deleteMobileDevice, getMobileDeviceList } from '../../../requests';
+import {
+  deleteAutoFollowMobileDevice,
+  getAutoFollowMobileDeviceList,
+} from '../../../requests';
 import { useGlobalStore } from '../../../utils';
 
 defineOptions({
@@ -46,7 +49,7 @@ const token = computed(() => globalStore.token);
 const isWeb = useIsWebSize();
 
 const { data, isLoading, refetch } = useQuery<
-  GetMobileDeviceListResponseData | undefined
+  GetAutoFollowMobileDeviceListResponseData | undefined
 >({
   queryKey: [
     'mobile-devices',
@@ -63,7 +66,7 @@ const { data, isLoading, refetch } = useQuery<
     const orderBy = sortField.value
       ? { [sortField.value]: sortOrder.value === 'ascending' ? 'asc' : 'desc' }
       : undefined;
-    const response = await getMobileDeviceList(
+    const response = await getAutoFollowMobileDeviceList(
       {
         org_id: props.model.org.id,
         page_num: pageNum.value,
@@ -122,7 +125,7 @@ async function deleteItem(item: AutoFollowMobileDeviceItem) {
   } catch {
     return;
   }
-  const resp = await deleteMobileDevice(
+  const resp = await deleteAutoFollowMobileDevice(
     {
       id: item.id,
       org_id: props.model.org.id,

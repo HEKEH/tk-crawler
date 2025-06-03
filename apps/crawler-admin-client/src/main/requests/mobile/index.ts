@@ -1,27 +1,27 @@
 import type {
-  DeleteMobileDeviceRequest,
-  DeleteMobileDeviceResponse,
+  DeleteAutoFollowMobileDeviceRequest,
+  DeleteAutoFollowMobileDeviceResponse,
+  GetAutoFollowMobileDeviceListResponse,
   GetMobileDeviceListRequest,
-  GetMobileDeviceListResponse,
 } from '@tk-crawler/biz-shared';
 import { SYSTEM_TOKEN_HEADER_KEY } from '@tk-crawler/biz-shared';
 import {
   OwnServerUrl,
   Post,
-  SystemDeleteMobileDevice,
-  SystemGetMobileDeviceList,
+  SystemDeleteAutoFollowMobileDevice,
+  SystemGetAutoFollowMobileDeviceList,
 } from '@tk-crawler/secure';
 import { commonRequest } from '@tk-crawler/view-shared';
 import config from '../../config';
 
-export function getMobileDeviceList(
+export function getAutoFollowMobileDeviceList(
   params: GetMobileDeviceListRequest & { org_id: string },
   token: string,
 ) {
-  return commonRequest<GetMobileDeviceListResponse>({
+  return commonRequest<GetAutoFollowMobileDeviceListResponse>({
     baseURL: config[OwnServerUrl],
     method: Post,
-    path: SystemGetMobileDeviceList,
+    path: SystemGetAutoFollowMobileDeviceList,
     params,
     secure: true,
     headers: {
@@ -30,14 +30,14 @@ export function getMobileDeviceList(
   });
 }
 
-export function deleteMobileDevice(
-  params: DeleteMobileDeviceRequest,
+export function deleteAutoFollowMobileDevice(
+  params: DeleteAutoFollowMobileDeviceRequest,
   token: string,
 ) {
-  return commonRequest<DeleteMobileDeviceResponse>({
+  return commonRequest<DeleteAutoFollowMobileDeviceResponse>({
     baseURL: config[OwnServerUrl],
     method: Post,
-    path: SystemDeleteMobileDevice,
+    path: SystemDeleteAutoFollowMobileDevice,
     params,
     secure: true,
     headers: {

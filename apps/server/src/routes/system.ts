@@ -130,17 +130,17 @@ systemRouter.post(
 );
 
 systemRouter.post(
-  '/get-mobile-device-list',
+  '/get-auto-follow-mobile-device-list',
   isRequestSecureMiddleware(),
   systemAdminTokenAuthMiddleware(),
   systemAdminHasPrivilegeMiddleware({
     privilege: AdminPrivilege.CLIENT_MANAGEMENT,
   }),
-  SystemController.getMobileDeviceList,
+  SystemController.getAutoFollowMobileDeviceList,
 );
 
 systemRouter.post(
-  '/delete-mobile-device',
+  '/delete-auto-follow-mobile-device',
   isRequestSecureMiddleware(),
   systemAdminTokenAuthMiddleware(),
   systemAdminHasPrivilegeMiddleware({
@@ -149,7 +149,7 @@ systemRouter.post(
   systemAdminHasPrivilegeMiddleware({
     privilege: AdminPrivilege.AUTO_FOLLOW_DEVICE_DELETE,
   }),
-  SystemController.deleteMobileDevice,
+  SystemController.deleteAutoFollowMobileDevice,
 );
 
 export default systemRouter;

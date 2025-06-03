@@ -74,5 +74,9 @@ export const SystemAddAdminUserBalance = '/system/add-admin-user-balance';
 export const SystemCreateAdminUser = '/system/create-admin-user';
 export const SystemDeleteAdminUser = '/system/delete-admin-user';
 
-export const SystemGetMobileDeviceList = '/system/get-mobile-device-list';
-export const SystemDeleteMobileDevice = '/system/delete-mobile-device';
+/** 自动建联设备列表 */
+export const SystemGetAutoFollowMobileDeviceList =
+  '/system/get-auto-follow-mobile-device-list';
+/** 自动建联设备列表 */
+export const SystemDeleteAutoFollowMobileDevice =
+  '/system/delete-auto-follow-mobile-device'; // 自动建联设备列表

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type {
-  GetMobileDeviceListResponseData,
   AutoFollowMobileDeviceItem,
+  GetAutoFollowMobileDeviceListResponseData,
 } from '@tk-crawler/biz-shared';
 import type { TableColumnCtx } from 'element-plus';
 import { useQuery } from '@tanstack/vue-query';
@@ -32,7 +32,7 @@ const token = computed(() => globalStore.token);
 const isWeb = useIsWebSize();
 
 const { data, isLoading, refetch } = useQuery<
-  GetMobileDeviceListResponseData | undefined
+  GetAutoFollowMobileDeviceListResponseData | undefined
 >({
   queryKey: ['mobile-devices', token, pageNum, pageSize, sortField, sortOrder],
   retry: false,

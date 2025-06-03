@@ -1,7 +1,7 @@
 import type {
   AddSystemAdminUserBalanceRequest,
   CreateSystemAdminUserRequest,
-  DeleteMobileDeviceRequest,
+  DeleteAutoFollowMobileDeviceRequest,
   DeleteSystemAdminUserRequest,
   GetAllTKGuildUserListRequest,
   GetMobileDeviceListRequest,
@@ -24,11 +24,11 @@ import {
   addSystemAdminUserBalance,
   changeSystemUserPassword,
   createSystemAdminUser,
-  deleteMobileDevice,
+  deleteAutoFollowMobileDevice,
   deleteSystemAdminUser,
   getAllTKGuildUserList,
+  getAutoFollowMobileDeviceList,
   getCrawlStatistics,
-  getMobileDeviceList,
   getSystemAdminUserList,
   isAnyGuildAccountError,
   startLiveAdminAccount,
@@ -179,11 +179,11 @@ export default class SystemController {
     await next();
   }
 
-  static async getMobileDeviceList(ctx: Context, next: Next) {
+  static async getAutoFollowMobileDeviceList(ctx: Context, next: Next) {
     const data = ctx.getRequestData<
       GetMobileDeviceListRequest & { org_id: string }
     >();
-    const resp = await getMobileDeviceList(
+    const resp = await getAutoFollowMobileDeviceList(
       { ...data, with_org: true },
       ctx.logger,
     );
@@ -191,9 +191,9 @@ export default class SystemController {
     await next();
   }
 
-  static async deleteMobileDevice(ctx: Context, next: Next) {
-    const data = ctx.getRequestData<DeleteMobileDeviceRequest>();
-    await deleteMobileDevice(data, ctx.logger);
+  static async deleteAutoFollowMobileDevice(ctx: Context, next: Next) {
+    const data = ctx.getRequestData<DeleteAutoFollowMobileDeviceRequest>();
+    await deleteAutoFollowMobileDevice(data, ctx.logger);
     ctx.body = ctx.t('Success');
     await next();
   }

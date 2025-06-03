@@ -1,6 +1,6 @@
 import type {
+  GetAutoFollowMobileDeviceListResponse,
   GetMobileDeviceListRequest,
-  GetMobileDeviceListResponse,
 } from '@tk-crawler/biz-shared';
 
 import { CLIENT_TOKEN_HEADER_KEY } from '@tk-crawler/biz-shared';
@@ -17,7 +17,7 @@ export function getMobileDeviceList(
   params: GetMobileDeviceListRequest,
   token: string,
 ) {
-  return commonRequest<GetMobileDeviceListResponse>({
+  return commonRequest<GetAutoFollowMobileDeviceListResponse>({
     baseURL: config[OwnServerUrl],
     method: Post,
     path: ClientGetMobileDeviceList,

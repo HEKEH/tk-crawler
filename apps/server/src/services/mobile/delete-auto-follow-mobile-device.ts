@@ -1,11 +1,11 @@
-import type { DeleteMobileDeviceRequest } from '@tk-crawler/biz-shared';
+import type { DeleteAutoFollowMobileDeviceRequest } from '@tk-crawler/biz-shared';
 import type { Logger } from '@tk-crawler/shared';
 import assert from 'node:assert';
 import { mysqlClient } from '@tk-crawler/database';
 import { BusinessError } from '../../utils';
 
-export async function deleteMobileDevice(
-  request: DeleteMobileDeviceRequest,
+export async function deleteAutoFollowMobileDevice(
+  request: DeleteAutoFollowMobileDeviceRequest,
   logger: Logger,
 ): Promise<void> {
   const { org_id, id } = request;

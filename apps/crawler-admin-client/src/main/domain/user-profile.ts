@@ -1,5 +1,5 @@
 import {
-  type AdminPrivilege,
+  AdminPrivilege,
   hasAdminPrivilege,
   shouldCharge,
   type SystemAdminUserInfo,
@@ -20,6 +20,10 @@ export class UserProfile {
 
   get isAdmin() {
     return this._userInfo?.role_id === SystemAdminUserRole.ADMIN;
+  }
+
+  get hasAutoFollowDeviceDeletePrivilege() {
+    return this.hasPrivilege(AdminPrivilege.AUTO_FOLLOW_DEVICE_DELETE);
   }
 
   get needToCharge() {

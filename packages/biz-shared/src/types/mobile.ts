@@ -1,6 +1,6 @@
 import type { OrganizationItem } from './org-and-user';
 
-export interface MobileDeviceItem {
+export interface AutoFollowMobileDeviceItem {
   id: string;
   device_id: string;
   device_name: string;

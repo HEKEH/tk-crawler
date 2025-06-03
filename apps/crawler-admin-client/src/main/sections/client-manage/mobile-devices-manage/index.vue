@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type {
+  AutoFollowMobileDeviceItem,
   GetMobileDeviceListResponseData,
-  MobileDeviceItem,
   OrganizationItem,
 } from '@tk-crawler/biz-shared';
 import type { TableColumnCtx } from 'element-plus';
@@ -31,15 +31,15 @@ const props = defineProps<{
 }>();
 
 interface ScopeType {
-  row: Required<MobileDeviceItem>;
-  column: TableColumnCtx<MobileDeviceItem>;
+  row: Required<AutoFollowMobileDeviceItem>;
+  column: TableColumnCtx<AutoFollowMobileDeviceItem>;
   $index: number;
 }
 
 const tableRef = ref<InstanceType<typeof ElTable>>();
 const pageNum = ref(1);
 const pageSize = ref(10);
-const sortField = ref<keyof MobileDeviceItem>();
+const sortField = ref<keyof AutoFollowMobileDeviceItem>();
 const sortOrder = ref<'ascending' | 'descending'>();
 const globalStore = useGlobalStore();
 const token = computed(() => globalStore.token);
@@ -82,7 +82,7 @@ function handleSortChange({
   prop,
   order,
 }: {
-  prop: keyof MobileDeviceItem;
+  prop: keyof AutoFollowMobileDeviceItem;
   order: 'ascending' | 'descending' | null;
 }) {
   sortField.value = order ? prop : undefined;
@@ -103,12 +103,16 @@ function refresh() {
   });
 }
 
-async function deleteItem(item: MobileDeviceItem) {
+async function deleteItem(item: AutoFollowMobileDeviceItem) {
+  if (!globalStore.userProfile.hasAutoFollowDeviceDeletePrivilege) {
+    ElMessage.error('您没有权限，只有后台管理员才能解绑设备');
+    return;
+  }
   try {
     await ElMessageBox.confirm(
       item.device_name
-        ? `确定要删除设备 「${item.device_name}」 吗？`
-        : '确定要删除设备吗？',
+        ? `确定要解绑设备 「${item.device_name}」 吗？`
+        : '确定要解绑设备吗？',
       {
         type: 'warning',
         confirmButtonText: '确定',
@@ -210,11 +214,14 @@ async function deleteItem(item: MobileDeviceItem) {
           <div>
             <ElButton
               link
+              :disabled="
+                !globalStore.userProfile.hasAutoFollowDeviceDeletePrivilege
+              "
               type="danger"
               size="small"
               @click.prevent="deleteItem(scope.row)"
             >
-              删除
+              解绑设备
             </ElButton>
           </div>
         </template>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type {
   GetMobileDeviceListResponseData,
-  MobileDeviceItem,
+  AutoFollowMobileDeviceItem,
 } from '@tk-crawler/biz-shared';
 import type { TableColumnCtx } from 'element-plus';
 import { useQuery } from '@tanstack/vue-query';
@@ -17,15 +17,15 @@ defineOptions({
 });
 
 interface ScopeType {
-  row: Required<MobileDeviceItem>;
-  column: TableColumnCtx<MobileDeviceItem>;
+  row: Required<AutoFollowMobileDeviceItem>;
+  column: TableColumnCtx<AutoFollowMobileDeviceItem>;
   $index: number;
 }
 
 const tableRef = ref<InstanceType<typeof ElTable>>();
 const pageNum = ref(1);
 const pageSize = ref(10);
-const sortField = ref<keyof MobileDeviceItem>();
+const sortField = ref<keyof AutoFollowMobileDeviceItem>();
 const sortOrder = ref<'ascending' | 'descending'>();
 const globalStore = useGlobalStore();
 const token = computed(() => globalStore.token);
@@ -59,7 +59,7 @@ function handleSortChange({
   prop,
   order,
 }: {
-  prop: keyof MobileDeviceItem;
+  prop: keyof AutoFollowMobileDeviceItem;
   order: 'ascending' | 'descending' | null;
 }) {
   sortField.value = order ? prop : undefined;

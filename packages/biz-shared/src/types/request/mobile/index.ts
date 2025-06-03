@@ -1,5 +1,5 @@
 import type { RESPONSE_CODE } from '@tk-crawler/shared';
-import type { MobileDeviceItem } from '../../mobile';
+import type { AutoFollowMobileDeviceItem } from '../../mobile';
 import type {
   GetAnchorListFilter,
   GetAnchorListRequest,
@@ -38,7 +38,7 @@ export type MobileAnchorContactedRequest = AnchorContactedRequest & {
 export type MobileAnchorContactedResponse = AnchorContactedResponse;
 
 export interface GetMobileDeviceListResponseData {
-  list: MobileDeviceItem[];
+  list: AutoFollowMobileDeviceItem[];
   total: number;
 }
 

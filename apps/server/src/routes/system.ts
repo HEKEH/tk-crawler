@@ -146,6 +146,9 @@ systemRouter.post(
   systemAdminHasPrivilegeMiddleware({
     privilege: AdminPrivilege.CLIENT_MANAGEMENT,
   }),
+  systemAdminHasPrivilegeMiddleware({
+    privilege: AdminPrivilege.AUTO_FOLLOW_DEVICE_DELETE,
+  }),
   SystemController.deleteMobileDevice,
 );
 

@@ -9,6 +9,8 @@ export enum AdminPrivilege {
   CLIENT_MANAGEMENT = 'client_management',
   // 公会管理
   GUILD_MANAGEMENT = 'guild_management',
+  // 自动关注设备管理
+  AUTO_FOLLOW_DEVICE_DELETE = 'auto_follow_device_delete',
 }
 
 const ROLE_TO_PRIVILEGE_MAP: Record<

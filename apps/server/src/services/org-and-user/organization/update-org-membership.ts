@@ -8,6 +8,7 @@ import {
   AdminFeature,
   computeCharge,
   ServerBroadcastMessageChannel,
+  shouldCharge,
 } from '@tk-crawler/biz-shared';
 import { mysqlClient, redisMessageBus } from '@tk-crawler/database';
 import dayjs from 'dayjs';
@@ -30,7 +31,7 @@ export async function updateOrgMembership(
   logger.info('[Update Org Membership]', { data });
   const { id, membership_days: days } = data;
   let membership_charge: number | undefined;
-  if (user_info.features.includes(AdminFeature.NEED_TO_CHARGE) && days) {
+  if (shouldCharge(user_info) && days) {
     membership_charge = computeCharge({
       membershipDays: days,
       discount: user_info.discount,

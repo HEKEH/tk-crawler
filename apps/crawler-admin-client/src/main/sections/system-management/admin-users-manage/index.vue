@@ -8,8 +8,8 @@ import type {
 import type { TableColumnCtx } from 'element-plus';
 import type { FilterViewValues } from './filter';
 import {
-  AdminFeature,
   AdminUserRoleMap,
+  shouldCharge,
   SystemAdminUserRole,
   SystemAdminUserStatus,
 } from '@tk-crawler/biz-shared';
@@ -389,9 +389,7 @@ async function toggleDisableItem(row: SystemAdminUserInfo) {
       >
         <template #default="scope: ScopeType">
           {{
-            scope.row.features.includes(AdminFeature.NEED_TO_CHARGE)
-              ? `${scope.row.balance.toFixed(2)}元`
-              : '-'
+            shouldCharge(scope.row) ? `${scope.row.balance.toFixed(2)}元` : '-'
           }}
         </template>
       </ElTableColumn>
@@ -402,11 +400,7 @@ async function toggleDisableItem(row: SystemAdminUserInfo) {
         sortable="custom"
       >
         <template #default="scope: ScopeType">
-          {{
-            scope.row.features.includes(AdminFeature.NEED_TO_CHARGE)
-              ? `${scope.row.discount * 100}%`
-              : '-'
-          }}
+          {{ shouldCharge(scope.row) ? `${scope.row.discount * 100}%` : '-' }}
         </template>
       </ElTableColumn>
       <ElTableColumn
@@ -474,7 +468,7 @@ async function toggleDisableItem(row: SystemAdminUserInfo) {
           </div>
           <div>
             <ElButton
-              v-if="scope.row.features.includes(AdminFeature.NEED_TO_CHARGE)"
+              v-if="shouldCharge(scope.row)"
               link
               type="primary"
               size="small"
@@ -483,7 +477,7 @@ async function toggleDisableItem(row: SystemAdminUserInfo) {
               充值
             </ElButton>
             <ElButton
-              v-if="scope.row.features.includes(AdminFeature.NEED_TO_CHARGE)"
+              v-if="shouldCharge(scope.row)"
               link
               type="primary"
               size="small"

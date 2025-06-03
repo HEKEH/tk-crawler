@@ -1,7 +1,7 @@
 import {
-  AdminFeature,
   type AdminPrivilege,
   hasAdminPrivilege,
+  shouldCharge,
   type SystemAdminUserInfo,
   SystemAdminUserRole,
   type SystemUserLoginSuccessData,
@@ -23,7 +23,7 @@ export class UserProfile {
   }
 
   get needToCharge() {
-    return this._userInfo?.features.includes(AdminFeature.NEED_TO_CHARGE);
+    return this._userInfo ? shouldCharge(this._userInfo) : false;
   }
 
   get chargeDiscount() {

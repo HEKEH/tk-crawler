@@ -1,5 +1,6 @@
 import type { AdminPrivilege } from '../constants/system-admin/privileges';
 import {
+  AdminFeature,
   MEMBERSHIP_CHARGE_PER_MONTH,
   type SystemAdminUserRole,
 } from '../constants';
@@ -27,4 +28,9 @@ export function computeCharge({
   discount,
 }: ComputeChargeParams) {
   return ((MEMBERSHIP_CHARGE_PER_MONTH * membershipDays) / 30) * discount;
+}
+
+/** 是否应该收费，目前只需要收取经销商的费用 */
+export function shouldCharge(user: { features: AdminFeature[] }) {
+  return user.features.includes(AdminFeature.NEED_TO_CHARGE);
 }

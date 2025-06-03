@@ -9,6 +9,7 @@ import {
   AdminFeature,
   computeCharge,
   ServerBroadcastMessageChannel,
+  shouldCharge,
 } from '@tk-crawler/biz-shared';
 import { mysqlClient, redisMessageBus } from '@tk-crawler/database';
 import dayjs from 'dayjs';
@@ -39,10 +40,7 @@ export async function createOrg(
     let membership_start_at: Date | undefined;
     let membership_expire_at: Date | undefined;
     let membership_charge: number | undefined;
-    if (
-      user_info.features.includes(AdminFeature.NEED_TO_CHARGE) &&
-      membership_days
-    ) {
+    if (shouldCharge(user_info) && membership_days) {
       const now = dayjs();
       membership_start_at = now.toDate();
       membership_expire_at = now.add(membership_days, 'day').toDate();

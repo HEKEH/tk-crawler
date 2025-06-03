@@ -1,4 +1,5 @@
 import {
+  AdminFeature,
   type AdminPrivilege,
   hasAdminPrivilege,
   type SystemAdminUserInfo,
@@ -21,6 +22,19 @@ export class UserProfile {
     return this._userInfo?.role_id === SystemAdminUserRole.ADMIN;
   }
 
+  get needToCharge() {
+    return this._userInfo?.features.includes(AdminFeature.NEED_TO_CHARGE);
+  }
+
+  get chargeDiscount() {
+    return this._userInfo?.discount ?? 1;
+  }
+
+  get balance() {
+    const balance = this._userInfo?.balance;
+    return balance;
+  }
+
   hasPrivilege(privilege: AdminPrivilege) {
     if (!this._userInfo) {
       return false;
@@ -32,7 +46,7 @@ export class UserProfile {
     return Boolean(this._userInfo);
   }
 
-  initAfterLoginSuccess(data: SystemUserLoginSuccessData) {
+  init(data: SystemUserLoginSuccessData) {
     this._userInfo = data.user_info;
   }
 

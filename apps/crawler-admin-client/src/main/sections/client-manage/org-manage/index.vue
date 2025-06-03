@@ -231,7 +231,10 @@ async function handleCreateOrEdit(
   if (result.status_code !== RESPONSE_CODE.SUCCESS) {
     return;
   }
-  await refetch();
+  await Promise.all([
+    refetch(),
+    formMode.value === 'create' && globalStore.refreshUserProfile(),
+  ]);
   onCloseFormDialog();
   ElMessage.success('保存成功');
 }
@@ -252,7 +255,7 @@ async function handleUpdateOrgMembership(data: { membership_days: number }) {
     token.value,
   );
   if (resp.status_code === RESPONSE_CODE.SUCCESS) {
-    await refetch();
+    await Promise.all([refetch(), globalStore.refreshUserProfile()]);
     onCloseOrgMembershipDialog();
     ElMessage.success('保存成功');
   }
@@ -275,6 +278,14 @@ function onManageMobileDevices(org: OrganizationItem) {
     <!-- <div v-if="isError" class="org-manage-error">
       {{ error?.message }}
     </div> -->
+    <div v-if="globalStore.userProfile.needToCharge" class="balance-row">
+      <div class="balance-row-text">
+        <span>账户余额: </span>
+        <span class="font-bold"
+          >{{ globalStore.userProfile.balance?.toFixed(2) }} 元</span
+        >
+      </div>
+    </div>
     <div class="filter-row">
       <OrgManageFilter
         :model-value="filters"
@@ -547,6 +558,25 @@ function onManageMobileDevices(org: OrganizationItem) {
     }
     @include web {
       margin-bottom: 1rem;
+    }
+  }
+  .balance-row {
+    width: 100%;
+    overflow: hidden;
+    margin-bottom: 1rem;
+    @include mobile {
+      margin-bottom: 0.5rem;
+    }
+    .balance-row-text {
+      display: flex;
+      align-items: center;
+      column-gap: 0.5rem;
+      font-size: 0.875rem;
+      color: var(--el-text-color-regular);
+      @include mobile {
+        padding-left: 0.5rem;
+        font-size: 0.75rem;
+      }
     }
   }
   .header-row {

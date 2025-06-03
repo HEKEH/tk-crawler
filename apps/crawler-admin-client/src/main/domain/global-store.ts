@@ -79,8 +79,15 @@ export default class GlobalStore implements GuildAccountsManageContext {
     this._guildAccountsManage = new GuildAccountsManage(this);
   }
 
+  async refreshUserProfile() {
+    const resp = await loginByToken(this._token);
+    if (resp.status_code === RESPONSE_CODE.SUCCESS) {
+      this._userProfile.init(resp.data!);
+    }
+  }
+
   private _handleLoginSuccess(data: SystemUserLoginSuccessData) {
-    this._userProfile.initAfterLoginSuccess(data);
+    this._userProfile.init(data);
     this._currentPage = this.allPages[0].key;
     this._guildAccountsManage.start();
   }

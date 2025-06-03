@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {
+  computeCharge,
   type OrganizationItem,
   OrganizationStatus,
 } from '@tk-crawler/biz-shared';
@@ -18,6 +19,7 @@ import {
   type FormRules,
 } from 'element-plus';
 import { computed, reactive, ref } from 'vue';
+import { useGlobalStore } from '../../../utils';
 
 type FormValues = Partial<OrganizationItem> & {
   membership_days?: number;
@@ -30,6 +32,12 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits(['cancel']);
+
+const globalStore = useGlobalStore();
+
+const needToCharge = computed(() => {
+  return globalStore.userProfile.needToCharge;
+});
 
 const mode = computed(() => {
   return props.initialData ? 'edit' : 'create';
@@ -45,6 +53,19 @@ const form = reactive<FormValues>({
   status: props.initialData?.status ?? OrganizationStatus.normal,
 });
 
+function getMembershipCharge(membershipDays: number) {
+  return needToCharge.value
+    ? computeCharge({
+        membershipDays,
+        discount: globalStore.userProfile.chargeDiscount,
+      })
+    : 0;
+}
+
+const membershipCharge = computed(() => {
+  return getMembershipCharge(form.membership_days ?? 0);
+});
+
 const statusOptions = [
   { label: '正常', value: OrganizationStatus.normal },
   { label: '禁用', value: OrganizationStatus.disabled },
@@ -58,6 +79,25 @@ const rules: FormRules = {
       validator: (rule, value, callback) => {
         if (value && value.includes(' ')) {
           callback(new Error('名字不要有空格'));
+          return;
+        }
+        callback();
+      },
+    },
+  ],
+  membership_days: [
+    {
+      trigger: ['change', 'blur'],
+      validator: (rule, value, callback) => {
+        if (mode.value === 'edit') {
+          callback();
+          return;
+        }
+        if (
+          needToCharge.value &&
+          getMembershipCharge(value) > globalStore.userProfile.balance!
+        ) {
+          callback(new Error('当前余额不足'));
           return;
         }
         callback();
@@ -160,6 +200,13 @@ async function handleSubmit() {
 function handleCancel() {
   emit('cancel');
 }
+async function validateMembershipDays() {
+  try {
+    await formRef.value?.validateField('membership_days');
+  } catch (error) {
+    console.error('validateMembershipDays', error);
+  }
+}
 </script>
 
 <template>
@@ -213,6 +260,7 @@ function handleCancel() {
             :precision="0"
             :controls="false"
             :min="1"
+            @change="validateMembershipDays"
           />
           <!-- <span class="unit">天</span> -->
         </div>
@@ -222,17 +270,29 @@ function handleCancel() {
             :key="days"
             size="small"
             :type="form.membership_days === days ? 'primary' : 'default'"
-            @click="form.membership_days = days"
+            @click="
+              form.membership_days = days;
+              validateMembershipDays();
+            "
           >
             {{ days }}天
           </ElButton>
           <ElButton
             size="small"
             type="text"
-            @click="form.membership_days = undefined"
+            @click="
+              form.membership_days = undefined;
+              validateMembershipDays();
+            "
           >
             清空
           </ElButton>
+        </div>
+        <div v-if="needToCharge" class="membership-charge">
+          <span
+            >当前余额: {{ globalStore.userProfile.balance?.toFixed(2) }}元</span
+          >
+          <span>会员费用: {{ membershipCharge.toFixed(2) }}元</span>
         </div>
       </div>
     </ElFormItem>
@@ -308,6 +368,22 @@ function handleCancel() {
 .quick-options {
   display: flex;
   flex-wrap: wrap;
+  @include mobile {
+    .el-button + .el-button {
+      margin-left: 6px;
+    }
+  }
+}
+
+.membership-charge {
+  display: flex;
+  column-gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--el-text-color-regular);
+  @include mobile {
+    column-gap: 6px;
+    font-size: 0.75rem;
+  }
 }
 </style>
 

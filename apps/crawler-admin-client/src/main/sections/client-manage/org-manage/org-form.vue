@@ -49,7 +49,7 @@ const formRef = ref<FormInstance>();
 
 const form = reactive<FormValues>({
   ...props.initialData,
-  mobile_device_limit: props.initialData?.mobile_device_limit ?? 10,
+  mobile_device_limit: props.initialData?.mobile_device_limit ?? 0,
   status: props.initialData?.status ?? OrganizationStatus.normal,
 });
 
@@ -58,6 +58,8 @@ function getMembershipCharge(membershipDays: number) {
     ? computeCharge({
         membershipDays,
         basePrice: globalStore.userProfile.chargeBasePrice,
+        followPrice: globalStore.userProfile.chargeFollowPrice,
+        followDevices: form.mobile_device_limit ?? 0,
       })
     : 0;
 }
@@ -85,7 +87,7 @@ const rules: FormRules = {
       },
     },
   ],
-  membership_days: [
+  fee: [
     {
       validator: (rule, value, callback) => {
         if (mode.value === 'edit') {
@@ -94,7 +96,7 @@ const rules: FormRules = {
         }
         if (
           needToCharge.value &&
-          getMembershipCharge(value) > globalStore.userProfile.balance!
+          membershipCharge.value > globalStore.userProfile.balance!
         ) {
           callback(new Error('当前余额不足'));
           return;
@@ -199,11 +201,11 @@ async function handleSubmit() {
 function handleCancel() {
   emit('cancel');
 }
-async function validateMembershipDays() {
+async function validateFee() {
   try {
-    await formRef.value?.validateField('membership_days');
+    await formRef.value?.validateField('fee');
   } catch (error) {
-    console.error('validateMembershipDays', error);
+    console.error('fee', error);
   }
 }
 </script>
@@ -214,7 +216,7 @@ async function validateMembershipDays() {
     :model="form"
     :rules="rules"
     :size="isWeb ? 'default' : 'small'"
-    :label-width="isWeb ? '120px' : '100px'"
+    :label-width="isWeb ? '140px' : '120px'"
     label-position="right"
   >
     <ElFormItem label="机构名称" prop="name">
@@ -246,6 +248,21 @@ async function validateMembershipDays() {
       />
     </ElFormItem> -->
 
+    <ElFormItem label="分区" prop="areas">
+      <AreaSelectMultiple v-model="form.areas" :show-all="false" />
+    </ElFormItem>
+
+    <ElFormItem label="状态" prop="status">
+      <ElSelect v-model="form.status" placeholder="请选择状态">
+        <ElOption
+          v-for="item in statusOptions"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+        />
+      </ElSelect>
+    </ElFormItem>
+
     <ElFormItem
       v-if="mode === 'create'"
       label="会员天数"
@@ -270,7 +287,7 @@ async function validateMembershipDays() {
             :type="form.membership_days === days ? 'primary' : 'default'"
             @click="
               form.membership_days = days;
-              validateMembershipDays();
+              validateFee();
             "
           >
             {{ days }}天
@@ -280,44 +297,37 @@ async function validateMembershipDays() {
             type="text"
             @click="
               form.membership_days = undefined;
-              validateMembershipDays();
+              validateFee();
             "
           >
             清空
           </ElButton>
         </div>
-        <div v-if="needToCharge" class="membership-charge">
-          <span
-            >当前余额: {{ globalStore.userProfile.balance?.toFixed(2) }}元</span
-          >
-          <span>会员费用: {{ membershipCharge.toFixed(2) }}元</span>
-        </div>
       </div>
     </ElFormItem>
 
-    <ElFormItem label="分区" prop="areas">
-      <AreaSelectMultiple v-model="form.areas" :show-all="false" />
-    </ElFormItem>
-
-    <ElFormItem label="状态" prop="status">
-      <ElSelect v-model="form.status" placeholder="请选择状态">
-        <ElOption
-          v-for="item in statusOptions"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        />
-      </ElSelect>
-    </ElFormItem>
-
-    <ElFormItem label="移动设备上限" prop="mobile_device_limit">
+    <ElFormItem
+      v-if="mode === 'create'"
+      label="自动建联设备数量"
+      prop="mobile_device_limit"
+    >
       <ElInputNumber
         v-model="form.mobile_device_limit"
         style="width: 100%"
         :precision="0"
         placeholder="请输入"
-        :min="1"
+        :min="0"
+        @change="validateFee"
       />
+    </ElFormItem>
+
+    <ElFormItem v-if="needToCharge" prop="fee">
+      <div class="membership-charge">
+        <span
+          >当前余额: {{ globalStore.userProfile.balance?.toFixed(2) }}元</span
+        >
+        <span>会员费用: {{ membershipCharge.toFixed(2) }}元</span>
+      </div>
     </ElFormItem>
 
     <ElFormItem label="备注" prop="remark">

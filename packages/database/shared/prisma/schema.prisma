@@ -121,7 +121,7 @@ model Organization {
   remark                 String?   @db.VarChar(200)
   created_at             DateTime  @default(now()) @db.DateTime(3)
   updated_at             DateTime  @updatedAt @db.DateTime(3)
-  mobile_device_limit    Int       @default(10) @db.UnsignedInt
+  mobile_device_limit    Int       @default(0) @db.UnsignedInt // 自动建联的设备数量限制
   ignore_commerce_anchor Boolean   @default(true)
   owner_id               BigInt?   @db.UnsignedBigInt
 

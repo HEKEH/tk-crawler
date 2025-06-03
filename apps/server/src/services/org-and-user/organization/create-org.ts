@@ -47,6 +47,8 @@ export async function createOrg(
       membership_charge = computeCharge({
         membershipDays: membership_days,
         basePrice: user_info.base_price,
+        followPrice: user_info.follow_price,
+        followDevices: data.mobile_device_limit,
       });
       if (membership_charge > user_info.balance) {
         throw new BusinessError('余额不足');

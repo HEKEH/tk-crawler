@@ -240,16 +240,16 @@ async function handleCreateOrEdit(
 }
 
 const orgMembershipDialogVisible = ref(false);
-const orgMembershipEditId = ref<string>();
+const orgMembershipEditItem = ref<OrganizationItem>();
 
 function openUpdateOrgMembershipDialog(item: OrganizationItem) {
-  orgMembershipEditId.value = item.id;
+  orgMembershipEditItem.value = item;
   orgMembershipDialogVisible.value = true;
 }
 async function handleUpdateOrgMembership(data: { membership_days: number }) {
   const resp = await updateOrgMembership(
     {
-      id: orgMembershipEditId.value!,
+      id: orgMembershipEditItem.value!.id,
       membership_days: data.membership_days,
     },
     token.value,
@@ -262,7 +262,7 @@ async function handleUpdateOrgMembership(data: { membership_days: number }) {
 }
 function onCloseOrgMembershipDialog() {
   orgMembershipDialogVisible.value = false;
-  orgMembershipEditId.value = undefined;
+  orgMembershipEditItem.value = undefined;
 }
 
 function onManageOrgMembers(org: OrganizationItem) {
@@ -409,8 +409,8 @@ function onManageMobileDevices(org: OrganizationItem) {
       <ElTableColumn
         sortable="custom"
         prop="mobile_device_limit"
-        label="移动设备上限"
-        :min-width="isWeb ? 140 : 120"
+        label="自动建联设备数量"
+        :min-width="isWeb ? 160 : 140"
       />
       <ElTableColumn
         prop="owner_id"
@@ -496,7 +496,7 @@ function onManageMobileDevices(org: OrganizationItem) {
               size="small"
               @click.prevent="onManageMobileDevices(scope.row)"
             >
-              管理移动设备
+              自动建联设备管理
             </ElButton>
           </div>
           <div class="action-row">
@@ -537,6 +537,7 @@ function onManageMobileDevices(org: OrganizationItem) {
 
   <OrgMembershipDialog
     :visible="orgMembershipDialogVisible"
+    :follow-devices="orgMembershipEditItem?.mobile_device_limit ?? 0"
     :submit="handleUpdateOrgMembership"
     @close="onCloseOrgMembershipDialog"
   />

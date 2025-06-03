@@ -30,6 +30,10 @@ export class UserProfile {
     return this._userInfo?.base_price ?? 0;
   }
 
+  get chargeFollowPrice() {
+    return this._userInfo?.follow_price ?? 0;
+  }
+
   get balance() {
     const balance = this._userInfo?.balance;
     return balance;

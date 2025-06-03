@@ -21,6 +21,7 @@ interface FormValues {
 }
 
 const props = defineProps<{
+  followDevices: number;
   submit: (data: { membership_days: number }) => void;
 }>();
 
@@ -64,6 +65,8 @@ function getMembershipCharge(days: number) {
     ? computeCharge({
         membershipDays: days,
         basePrice: globalStore.userProfile.chargeBasePrice,
+        followPrice: globalStore.userProfile.chargeFollowPrice,
+        followDevices: props.followDevices,
       })
     : 0;
 }
@@ -156,6 +159,9 @@ function validateMembershipValue() {
           >会员费用: {{ membershipCharge.toFixed(2) }}元</span
         >
         <span v-else>退费: {{ (-membershipCharge).toFixed(2) }}元</span>
+        <span v-if="Boolean(props.followDevices)"
+          >(包含{{ props.followDevices }}台自动建联设备费用)</span
+        >
       </div>
     </ElFormItem>
 
@@ -175,6 +181,7 @@ function validateMembershipValue() {
 }
 .membership-charge {
   display: flex;
+  flex-wrap: wrap;
   column-gap: 0.5rem;
   font-size: 0.875rem;
   color: var(--el-text-color-regular);

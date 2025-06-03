@@ -4,6 +4,7 @@ import OrgMembershipForm from './org-membership-form.vue';
 
 const props = defineProps<{
   visible: boolean;
+  followDevices: number;
   submit: (data: { membership_days: number }) => Promise<void>;
 }>();
 
@@ -25,7 +26,11 @@ function handleClose() {
     @close="handleClose"
   >
     <ElScrollbar>
-      <OrgMembershipForm :submit="props.submit" @cancel="handleClose" />
+      <OrgMembershipForm
+        :follow-devices="followDevices"
+        :submit="props.submit"
+        @cancel="handleClose"
+      />
     </ElScrollbar>
   </ElDialog>
 </template>

@@ -21,7 +21,7 @@ const MenuList = [
   },
   {
     value: MenuType.MOBILE_DEVICE,
-    label: '移动设备列表',
+    label: '自动建联设备',
   },
 ];
 const route = useRoute();

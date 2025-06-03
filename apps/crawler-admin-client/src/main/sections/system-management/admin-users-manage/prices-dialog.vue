@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { ElDialog, ElScrollbar } from 'element-plus';
-import DiscountForm from './discount-form.vue';
+import PricesForm from './prices-form.vue';
 
 const props = defineProps<{
   visible: boolean;
-  submit: (data: { discount: number }) => Promise<void>;
-  initialData?: { discount: number };
+  submit: (data: { base_price: number; follow_price: number }) => Promise<void>;
+  initialData?: { base_price: number; follow_price: number };
 }>();
 
 const emit = defineEmits<{
@@ -20,13 +20,13 @@ function handleClose() {
 <template>
   <ElDialog
     :model-value="visible"
-    title="调整折扣"
+    title="调整单价"
     width="350px"
     destroy-on-close
     @close="handleClose"
   >
     <ElScrollbar>
-      <DiscountForm
+      <PricesForm
         :initial-data="initialData"
         :submit="props.submit"
         @cancel="handleClose"

@@ -20,7 +20,7 @@ export async function createOrg(
   _data: CreateOrgRequest,
   user_info: Pick<
     SystemAdminUserInfo,
-    'id' | 'features' | 'discount' | 'balance'
+    'id' | 'features' | 'base_price' | 'follow_price' | 'balance'
   >,
   logger: Logger,
 ): Promise<void> {
@@ -46,7 +46,7 @@ export async function createOrg(
       membership_expire_at = now.add(membership_days, 'day').toDate();
       membership_charge = computeCharge({
         membershipDays: membership_days,
-        discount: user_info.discount,
+        basePrice: user_info.base_price,
       });
       if (membership_charge > user_info.balance) {
         throw new BusinessError('余额不足');

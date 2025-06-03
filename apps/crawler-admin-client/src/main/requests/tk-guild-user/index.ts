@@ -14,8 +14,8 @@ import type {
   StartTKLiveAdminAccountRequest,
   StartTKLiveAdminAccountResponse,
   StopTKLiveAdminAccountRequest,
-  UpdateSystemAdminUserDiscountRequest,
-  UpdateSystemAdminUserDiscountResponse,
+  UpdateSystemAdminUserPricesRequest,
+  UpdateSystemAdminUserPricesResponse,
   UpdateSystemAdminUserRequest,
   UpdateSystemAdminUserResponse,
 } from '@tk-crawler/biz-shared';
@@ -32,7 +32,7 @@ import {
   SystemStartTKGuildUserAccount,
   SystemStopTKGuildUserAccount,
   SystemUpdateAdminUser,
-  SystemUpdateAdminUserDiscount,
+  SystemUpdateAdminUserPrices,
 } from '@tk-crawler/secure';
 import { RESPONSE_CODE, simpleDecrypt } from '@tk-crawler/shared';
 import { commonRequest } from '@tk-crawler/view-shared';
@@ -161,14 +161,14 @@ export function updateSystemAdminUser(
   });
 }
 
-export function updateSystemAdminUserDiscount(
-  params: UpdateSystemAdminUserDiscountRequest,
+export function updateSystemAdminUserPrices(
+  params: UpdateSystemAdminUserPricesRequest,
   token: string,
 ) {
-  return commonRequest<UpdateSystemAdminUserDiscountResponse>({
+  return commonRequest<UpdateSystemAdminUserPricesResponse>({
     baseURL: config[OwnServerUrl],
     method: Post,
-    path: SystemUpdateAdminUserDiscount,
+    path: SystemUpdateAdminUserPrices,
     params,
     secure: true,
     headers: {

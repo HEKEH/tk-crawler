@@ -63,7 +63,8 @@ export async function getSystemAdminUserList(
       id: systemAdminUser.id.toString(),
       features: getAdminFeaturesByRole(systemAdminUser.role_id),
       balance: systemAdminUser.balance.toNumber(),
-      discount: systemAdminUser.discount.toNumber(),
+      base_price: systemAdminUser.base_price,
+      follow_price: systemAdminUser.follow_price,
     })),
     total,
   };

@@ -35,16 +35,16 @@ import {
   createSystemAdminUser,
   deleteSystemAdminUser,
   updateSystemAdminUser,
-  updateSystemAdminUserDiscount,
+  updateSystemAdminUserPrices,
 } from '../../../requests';
 import { useGlobalStore } from '../../../utils';
 import BalanceDialog from './balance-dialog.vue';
-import DiscountDialog from './discount-dialog.vue';
 import {
   getDefaultFilterViewValues,
   transformFilterViewValuesToFilterValues,
 } from './filter';
 import SystemAdminUserFilter from './filter.vue';
+import PricesDialog from './prices-dialog.vue';
 import FormDialog from './user-form-dialog.vue';
 
 defineOptions({
@@ -191,24 +191,33 @@ async function handleSubmitCreateOrEdit(data: Partial<SystemAdminUserInfo>) {
   ElMessage.success('保存成功');
 }
 
-const discountDialogVisible = ref(false);
-const discountFormData = ref<{ discount: number }>();
-const discountFormUser = ref<Omit<SystemAdminUserInfo, 'password'>>();
+const pricesDialogVisible = ref(false);
+const pricesFormData = ref<{
+  base_price: number;
+  follow_price: number;
+}>();
+const pricesFormUser = ref<Omit<SystemAdminUserInfo, 'password'>>();
 
-function onEditDiscount(item: Omit<SystemAdminUserInfo, 'password'>) {
-  discountFormData.value = { discount: item.discount };
-  discountDialogVisible.value = true;
-  discountFormUser.value = item;
+function onEditPrices(item: Omit<SystemAdminUserInfo, 'password'>) {
+  pricesFormData.value = {
+    base_price: item.base_price,
+    follow_price: item.follow_price,
+  };
+  pricesDialogVisible.value = true;
+  pricesFormUser.value = item;
 }
-function onCloseDiscountDialog() {
-  discountDialogVisible.value = false;
-  discountFormData.value = undefined;
-  discountFormUser.value = undefined;
+function onClosePricesDialog() {
+  pricesDialogVisible.value = false;
+  pricesFormData.value = undefined;
+  pricesFormUser.value = undefined;
 }
-async function handleSubmitDiscount(data: { discount: number }) {
-  const result = await updateSystemAdminUserDiscount(
+async function handleSubmitPrices(data: {
+  base_price: number;
+  follow_price: number;
+}) {
+  const result = await updateSystemAdminUserPrices(
     {
-      data: { id: discountFormUser.value!.id, ...data },
+      data: { id: pricesFormUser.value!.id, ...data },
     },
     token.value,
   );
@@ -216,7 +225,7 @@ async function handleSubmitDiscount(data: { discount: number }) {
     return;
   }
   await refetch();
-  onCloseDiscountDialog();
+  onClosePricesDialog();
   ElMessage.success('保存成功');
 }
 
@@ -394,13 +403,23 @@ async function toggleDisableItem(row: SystemAdminUserInfo) {
         </template>
       </ElTableColumn>
       <ElTableColumn
-        prop="discount"
-        label="折扣"
-        min-width="100"
+        prop="base_price"
+        label="基准单价"
+        min-width="120"
         sortable="custom"
       >
         <template #default="scope: ScopeType">
-          {{ shouldCharge(scope.row) ? `${scope.row.discount * 100}%` : '-' }}
+          {{ shouldCharge(scope.row) ? `${scope.row.base_price}元` : '-' }}
+        </template>
+      </ElTableColumn>
+      <ElTableColumn
+        prop="follow_price"
+        label="自动关注功能单价"
+        :min-width="isWeb ? 160 : 140"
+        sortable="custom"
+      >
+        <template #default="scope: ScopeType">
+          {{ shouldCharge(scope.row) ? `${scope.row.follow_price}元` : '-' }}
         </template>
       </ElTableColumn>
       <ElTableColumn
@@ -481,9 +500,9 @@ async function toggleDisableItem(row: SystemAdminUserInfo) {
               link
               type="primary"
               size="small"
-              @click.prevent="onEditDiscount(scope.row)"
+              @click.prevent="onEditPrices(scope.row)"
             >
-              调整折扣
+              调整单价
             </ElButton>
           </div>
         </template>
@@ -510,11 +529,11 @@ async function toggleDisableItem(row: SystemAdminUserInfo) {
     :submit="handleSubmitCreateOrEdit"
     @close="onCloseFormDialog"
   />
-  <DiscountDialog
-    :visible="discountDialogVisible"
-    :initial-data="discountFormData"
-    :submit="handleSubmitDiscount"
-    @close="onCloseDiscountDialog"
+  <PricesDialog
+    :visible="pricesDialogVisible"
+    :initial-data="pricesFormData"
+    :submit="handleSubmitPrices"
+    @close="onClosePricesDialog"
   />
   <BalanceDialog
     :visible="balanceDialogVisible"

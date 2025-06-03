@@ -13,7 +13,7 @@ import type {
   SystemCrawlStatisticsRequest,
   SystemUserChangePasswordRequest,
   SystemUserLoginRequest,
-  UpdateSystemAdminUserDiscountRequest,
+  UpdateSystemAdminUserPricesRequest,
   UpdateSystemAdminUserRequest,
 } from '@tk-crawler/biz-shared';
 import type { Prisma } from '@tk-crawler/database';
@@ -35,7 +35,7 @@ import {
   stopLiveAdminAccount,
   systemAdminUserLogin,
   updateSystemAdminUser,
-  updateSystemAdminUserDiscount,
+  updateSystemAdminUserPrices,
 } from '../services';
 
 export default class SystemController {
@@ -148,10 +148,10 @@ export default class SystemController {
     await next();
   }
 
-  static async updateSystemAdminUserDiscount(ctx: Context, next: Next) {
-    const data = ctx.getRequestData<UpdateSystemAdminUserDiscountRequest>();
-    await updateSystemAdminUserDiscount(data, ctx.logger);
-    ctx.logger.info('[Update System Admin User Discount success]');
+  static async updateSystemAdminUserPrices(ctx: Context, next: Next) {
+    const data = ctx.getRequestData<UpdateSystemAdminUserPricesRequest>();
+    await updateSystemAdminUserPrices(data, ctx.logger);
+    ctx.logger.info('[Update System Admin User Prices success]');
     ctx.body = ctx.t('Success');
     await next();
   }

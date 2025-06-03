@@ -51,7 +51,8 @@ export async function systemAdminUserLogin(
       privileges: getAdminPrivilegesByRole(role_id),
       features: getAdminFeaturesByRole(role_id),
       balance: rest.balance.toNumber(),
-      discount: rest.discount.toNumber(),
+      base_price: rest.base_price,
+      follow_price: rest.follow_price,
     },
     token,
   };

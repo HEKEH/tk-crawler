@@ -63,7 +63,7 @@ function getMembershipCharge(days: number) {
   return needToCharge.value
     ? computeCharge({
         membershipDays: days,
-        discount: globalStore.userProfile.chargeDiscount,
+        basePrice: globalStore.userProfile.chargeBasePrice,
       })
     : 0;
 }

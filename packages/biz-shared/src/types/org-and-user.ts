@@ -43,7 +43,12 @@ export interface OrganizationItem {
   /** 所有者 */
   owner?: Omit<
     SystemAdminUserInfo,
-    'privileges' | 'features' | 'password' | 'balance' | 'discount'
+    | 'privileges'
+    | 'features'
+    | 'password'
+    | 'balance'
+    | 'base_price'
+    | 'follow_price'
   >;
 }
 

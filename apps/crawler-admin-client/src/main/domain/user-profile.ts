@@ -26,8 +26,8 @@ export class UserProfile {
     return this._userInfo ? shouldCharge(this._userInfo) : false;
   }
 
-  get chargeDiscount() {
-    return this._userInfo?.discount ?? 1;
+  get chargeBasePrice() {
+    return this._userInfo?.base_price ?? 0;
   }
 
   get balance() {

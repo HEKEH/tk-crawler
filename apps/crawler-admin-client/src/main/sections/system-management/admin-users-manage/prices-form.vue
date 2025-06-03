@@ -10,8 +10,8 @@ import {
 import { computed, reactive, ref } from 'vue';
 
 const props = defineProps<{
-  initialData?: { discount: number };
-  submit: (data: { discount: number }) => void;
+  initialData?: { base_price: number; follow_price: number };
+  submit: (data: { base_price: number; follow_price: number }) => void;
 }>();
 
 const emit = defineEmits<{
@@ -21,12 +21,14 @@ const emit = defineEmits<{
 const formRef = ref<FormInstance>();
 
 const form = reactive({
-  discount: props.initialData?.discount ?? 1,
+  base_price: props.initialData?.base_price ?? 1000,
+  follow_price: props.initialData?.follow_price ?? 200,
 });
 
 const rules = computed<FormRules>(() => {
   return {
-    discount: [{ required: true, message: '请输入折扣' }],
+    base_price: [{ required: true, message: '请输入基础套餐价格' }],
+    follow_price: [{ required: true, message: '请输入自动关注功能的价格' }],
   };
 });
 
@@ -42,7 +44,8 @@ async function handleSubmit() {
       isLoading.value = true;
       try {
         await props.submit({
-          discount: form.discount,
+          base_price: form.base_price!,
+          follow_price: form.follow_price!,
         });
       } finally {
         isLoading.value = false;
@@ -63,17 +66,25 @@ function handleCancel() {
     ref="formRef"
     :model="form"
     :rules="rules"
-    label-width="80px"
+    label-width="120px"
     label-position="right"
   >
-    <ElFormItem label="折扣" prop="discount">
+    <ElFormItem label="基础套餐价格" prop="base_price">
       <ElInputNumber
-        v-model="form.discount"
+        v-model="form.base_price"
         style="width: 100%"
-        :precision="2"
-        :step="0.05"
-        :min="0.1"
-        :max="1"
+        :precision="0"
+        :step="50"
+        :min="0"
+      />
+    </ElFormItem>
+    <ElFormItem label="自动关注功能价格" prop="follow_price">
+      <ElInputNumber
+        v-model="form.follow_price"
+        style="width: 100%"
+        :precision="0"
+        :step="50"
+        :min="0"
       />
     </ElFormItem>
     <ElFormItem>

@@ -61,7 +61,8 @@ export async function getSystemAdminUserInfoByToken(
       privileges: getAdminPrivilegesByRole(user.role_id),
       features: getAdminFeaturesByRole(user.role_id),
       balance: user.balance.toNumber(),
-      discount: user.discount.toNumber(),
+      base_price: user.base_price,
+      follow_price: user.follow_price,
     },
   };
 }

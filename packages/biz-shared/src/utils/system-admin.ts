@@ -1,9 +1,5 @@
 import type { AdminPrivilege } from '../constants/system-admin/privileges';
-import {
-  AdminFeature,
-  MEMBERSHIP_CHARGE_PER_MONTH,
-  type SystemAdminUserRole,
-} from '../constants';
+import { AdminFeature, type SystemAdminUserRole } from '../constants';
 import { getAdminPrivilegesByRole } from '../constants/system-admin/privileges';
 
 export function hasAdminPrivilege(
@@ -19,15 +15,15 @@ export function hasAdminPrivilege(
 
 export interface ComputeChargeParams {
   membershipDays: number;
-  discount: number;
+  basePrice: number;
 }
 
 /** 计算收费金额 */
 export function computeCharge({
   membershipDays,
-  discount,
+  basePrice,
 }: ComputeChargeParams) {
-  return ((MEMBERSHIP_CHARGE_PER_MONTH * membershipDays) / 30) * discount;
+  return (basePrice * membershipDays) / 30;
 }
 
 /** 是否应该收费，目前只需要收取经销商的费用 */

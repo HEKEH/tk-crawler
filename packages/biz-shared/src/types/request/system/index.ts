@@ -23,7 +23,8 @@ export interface SystemAdminUserInfo {
   username: string;
   password?: string;
   balance: number;
-  discount: number;
+  base_price: number;
+  follow_price: number;
   role_id: SystemAdminUserRole;
   status: SystemAdminUserStatus;
   privileges: AdminPrivilege[] | 'all';
@@ -95,7 +96,7 @@ export type CreateSystemAdminUserRequest = Omit<
   SystemAdminUserInfo,
   'id' | 'privileges'
 > &
-  Partial<Pick<SystemAdminUserInfo, 'balance' | 'discount'>>;
+  Partial<Pick<SystemAdminUserInfo, 'balance' | 'base_price' | 'follow_price'>>;
 
 export interface CreateSystemAdminUserResponse {
   status_code: RESPONSE_CODE;
@@ -112,10 +113,10 @@ export interface UpdateSystemAdminUserResponse {
   message?: string;
 }
 
-export interface UpdateSystemAdminUserDiscountRequest {
-  data: Pick<SystemAdminUserInfo, 'id' | 'discount'>;
+export interface UpdateSystemAdminUserPricesRequest {
+  data: Pick<SystemAdminUserInfo, 'id' | 'base_price' | 'follow_price'>;
 }
-export interface UpdateSystemAdminUserDiscountResponse {
+export interface UpdateSystemAdminUserPricesResponse {
   status_code: RESPONSE_CODE;
   message?: string;
 }

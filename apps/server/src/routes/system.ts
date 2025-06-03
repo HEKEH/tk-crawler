@@ -90,13 +90,13 @@ systemRouter.post(
 );
 
 systemRouter.post(
-  '/update-admin-user-discount',
+  '/update-admin-user-prices',
   isRequestSecureMiddleware(),
   systemAdminTokenAuthMiddleware(),
   systemAdminHasPrivilegeMiddleware({
     privilege: AdminPrivilege.SYSTEM_MANAGEMENT,
   }),
-  SystemController.updateSystemAdminUserDiscount,
+  SystemController.updateSystemAdminUserPrices,
 );
 
 systemRouter.post(

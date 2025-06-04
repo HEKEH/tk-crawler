@@ -2,6 +2,27 @@ import type {
   AnchorListWhereInput,
   GetAnchorListFilter,
 } from '@tk-crawler/biz-shared';
+import type { RangeFilter } from '@tk-crawler/shared';
+import { AnchorInviteCheckTableAlias, AnchorTableAlias } from './constants';
+
+function addRangeFilterConditions<T>(
+  conditions: string[],
+  params: any[],
+  field: RangeFilter<T> | undefined,
+  tableAlias: string,
+  fieldName: string,
+) {
+  if (field !== undefined) {
+    if ('gte' in field && field.gte !== undefined) {
+      conditions.push(`${tableAlias}.${fieldName} >= ?`);
+      params.push(field.gte);
+    }
+    if ('lte' in field && field.lte !== undefined) {
+      conditions.push(`${tableAlias}.${fieldName} <= ?`);
+      params.push(field.lte);
+    }
+  }
+}
 
 export function transformAnchorListFilterValues(
   filterValues: GetAnchorListFilter = {},
@@ -140,8 +161,8 @@ export function transformAnchorListFilterValuesToRawSql(
   const conditions: string[] = [];
   const params: any[] = [];
 
-  // 基础条件
-  conditions.push('aic.org_id = ?');
+  // 1. Join conditions and indexed columns first
+  conditions.push(`${AnchorInviteCheckTableAlias}.org_id = ?`);
   params.push(BigInt(orgId));
 
   const {
@@ -167,167 +188,141 @@ export function transformAnchorListFilterValuesToRawSql(
     contacted_by,
   } = filterValues;
 
-  // anchor表条件
+  if (id?.trim()) {
+    conditions.push(`${AnchorInviteCheckTableAlias}.id = ?`);
+    params.push(BigInt(id.trim()));
+  }
+
   if (user_id?.trim()) {
-    conditions.push('a.user_id = ?');
+    conditions.push(`${AnchorTableAlias}.user_id = ?`);
     params.push(BigInt(user_id.trim()));
   }
 
+  if (room_id?.trim()) {
+    conditions.push(`${AnchorTableAlias}.room_id = ?`);
+    params.push(BigInt(room_id.trim()));
+  }
+
+  // 2. Equality conditions (highly selective)
   if (display_id?.trim()) {
-    conditions.push('a.display_id = ?');
+    conditions.push(`${AnchorTableAlias}.display_id = ?`);
     params.push(display_id.trim());
   }
 
   if (region !== undefined) {
-    conditions.push('a.region = ?');
+    conditions.push(`${AnchorTableAlias}.region = ?`);
     params.push(region);
   }
 
   if (has_commerce_goods !== undefined) {
-    conditions.push('a.has_commerce_goods = ?');
+    conditions.push(`${AnchorTableAlias}.has_commerce_goods = ?`);
     params.push(has_commerce_goods);
   }
 
   if (tag) {
-    conditions.push('a.tag = ?');
+    conditions.push(`${AnchorTableAlias}.tag = ?`);
     params.push(tag);
   }
 
-  if (rank_league !== undefined) {
-    if ('gte' in rank_league && rank_league.gte !== undefined) {
-      conditions.push('a.rank_league >= ?');
-      params.push(rank_league.gte);
-    }
-    if ('lte' in rank_league && rank_league.lte !== undefined) {
-      conditions.push('a.rank_league <= ?');
-      params.push(rank_league.lte);
-    }
-  }
-
-  if (follower_count !== undefined) {
-    if ('gte' in follower_count && follower_count.gte !== undefined) {
-      conditions.push('a.follower_count >= ?');
-      params.push(follower_count.gte);
-    }
-    if ('lte' in follower_count && follower_count.lte !== undefined) {
-      conditions.push('a.follower_count <= ?');
-      params.push(follower_count.lte);
-    }
-  }
-
-  if (audience_count !== undefined) {
-    if ('gte' in audience_count && audience_count.gte !== undefined) {
-      conditions.push('a.audience_count >= ?');
-      params.push(audience_count.gte);
-    }
-    if ('lte' in audience_count && audience_count.lte !== undefined) {
-      conditions.push('a.audience_count <= ?');
-      params.push(audience_count.lte);
-    }
-  }
-
-  if (current_diamonds !== undefined) {
-    if ('gte' in current_diamonds && current_diamonds.gte !== undefined) {
-      conditions.push('a.current_diamonds >= ?');
-      params.push(current_diamonds.gte);
-    }
-    if ('lte' in current_diamonds && current_diamonds.lte !== undefined) {
-      conditions.push('a.current_diamonds <= ?');
-      params.push(current_diamonds.lte);
-    }
-  }
-
-  if (last_diamonds !== undefined) {
-    if ('gte' in last_diamonds && last_diamonds.gte !== undefined) {
-      conditions.push('a.last_diamonds >= ?');
-      params.push(last_diamonds.gte);
-    }
-    if ('lte' in last_diamonds && last_diamonds.lte !== undefined) {
-      conditions.push('a.last_diamonds <= ?');
-      params.push(last_diamonds.lte);
-    }
-  }
-
-  if (highest_diamonds !== undefined) {
-    if ('gte' in highest_diamonds && highest_diamonds.gte !== undefined) {
-      conditions.push('a.highest_diamonds >= ?');
-      params.push(highest_diamonds.gte);
-    }
-    if ('lte' in highest_diamonds && highest_diamonds.lte !== undefined) {
-      conditions.push('a.highest_diamonds <= ?');
-      params.push(highest_diamonds.lte);
-    }
-  }
-
-  if (crawled_at !== undefined && crawled_at !== null) {
-    if ('gte' in crawled_at && crawled_at.gte) {
-      conditions.push('a.updated_at >= ?');
-      params.push(crawled_at.gte);
-    }
-    if ('lte' in crawled_at && crawled_at.lte) {
-      conditions.push('a.updated_at <= ?');
-      params.push(crawled_at.lte);
-    }
-  }
-
-  if (room_id?.trim()) {
-    conditions.push('a.room_id = ?');
-    params.push(BigInt(room_id.trim()));
-  }
-
-  // anchor_invite_check表条件
-  if (id?.trim()) {
-    conditions.push('aic.id = ?');
-    params.push(BigInt(id.trim()));
-  }
-
   if (checked_result !== undefined) {
-    conditions.push('aic.checked_result = ?');
+    conditions.push(`${AnchorInviteCheckTableAlias}.checked_result = ?`);
     params.push(checked_result === true ? 1 : 0);
   }
 
-  if (checked_at !== undefined && checked_at !== null) {
-    if ('gte' in checked_at && checked_at.gte) {
-      conditions.push('aic.checked_at >= ?');
-      params.push(checked_at.gte);
-    }
-    if ('lte' in checked_at && checked_at.lte) {
-      conditions.push('aic.checked_at <= ?');
-      params.push(checked_at.lte);
-    }
-  }
-
-  if (area) {
-    conditions.push('aic.area = ?');
-    params.push(area);
-    conditions.push('a.area = ?');
-    params.push(area);
-  }
-
   if (invite_type !== undefined) {
-    conditions.push('aic.invite_type = ?');
+    conditions.push(`${AnchorInviteCheckTableAlias}.invite_type = ?`);
     params.push(invite_type);
   }
 
-  // 特殊条件处理
+  if (area) {
+    conditions.push(`${AnchorInviteCheckTableAlias}.area = ?`);
+    params.push(area);
+    conditions.push(`${AnchorTableAlias}.area = ?`);
+    params.push(area);
+  }
+
+  // 3. Range filters (less selective)
+  // Range filters for anchor table
+  addRangeFilterConditions(
+    conditions,
+    params,
+    rank_league,
+    AnchorTableAlias,
+    'rank_league',
+  );
+  addRangeFilterConditions(
+    conditions,
+    params,
+    follower_count,
+    AnchorTableAlias,
+    'follower_count',
+  );
+  addRangeFilterConditions(
+    conditions,
+    params,
+    audience_count,
+    AnchorTableAlias,
+    'audience_count',
+  );
+  addRangeFilterConditions(
+    conditions,
+    params,
+    current_diamonds,
+    AnchorTableAlias,
+    'current_diamonds',
+  );
+  addRangeFilterConditions(
+    conditions,
+    params,
+    last_diamonds,
+    AnchorTableAlias,
+    'last_diamonds',
+  );
+  addRangeFilterConditions(
+    conditions,
+    params,
+    highest_diamonds,
+    AnchorTableAlias,
+    'highest_diamonds',
+  );
+  addRangeFilterConditions(
+    conditions,
+    params,
+    crawled_at,
+    AnchorTableAlias,
+    'updated_at',
+  );
+
+  // Range filters for anchor_invite_check table
+  addRangeFilterConditions(
+    conditions,
+    params,
+    checked_at,
+    AnchorInviteCheckTableAlias,
+    'checked_at',
+  );
+
+  // 4. Special conditions (NULL checks and complex conditions)
   if (assign_to !== undefined && assign_to !== '') {
     if (assign_to === 'not_assigned') {
-      conditions.push('aic.assign_to IS NULL');
+      conditions.push(`${AnchorInviteCheckTableAlias}.assign_to IS NULL`);
     } else if (assign_to === 'assigned') {
-      conditions.push('aic.assign_to IS NOT NULL');
+      conditions.push(`${AnchorInviteCheckTableAlias}.assign_to IS NOT NULL`);
     } else {
-      conditions.push('aic.assign_to = ?');
+      conditions.push(`${AnchorInviteCheckTableAlias}.assign_to = ?`);
       params.push(BigInt(assign_to));
     }
   }
 
   if (contacted_by !== undefined && contacted_by !== '') {
     if (contacted_by === 'not_contacted') {
-      conditions.push('aic.contacted_by IS NULL');
+      conditions.push(`${AnchorInviteCheckTableAlias}.contacted_by IS NULL`);
     } else if (contacted_by === 'contacted') {
-      conditions.push('aic.contacted_by IS NOT NULL');
+      conditions.push(
+        `${AnchorInviteCheckTableAlias}.contacted_by IS NOT NULL`,
+      );
     } else {
-      conditions.push('aic.contacted_by = ?');
+      conditions.push(`${AnchorInviteCheckTableAlias}.contacted_by = ?`);
       params.push(BigInt(contacted_by));
     }
   }

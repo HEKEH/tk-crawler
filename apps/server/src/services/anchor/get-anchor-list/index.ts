@@ -10,12 +10,9 @@ import type {
 import type { Logger } from '@tk-crawler/shared';
 import assert from 'node:assert';
 import { mysqlClient } from '@tk-crawler/database';
-import {
-  transformAnchorListFilterValuesToRawSql,
-} from './filter';
-import {
-  transformAnchorListOrderByToRawSql,
-} from './order-by';
+import { AnchorInviteCheckTableAlias, AnchorTableAlias } from './constants';
+import { transformAnchorListFilterValuesToRawSql } from './filter';
+import { transformAnchorListOrderByToRawSql } from './order-by';
 
 const PAGE_SIZE_LIMIT = 1000;
 // const CACHE_TTL = 120; // 缓存2分钟
@@ -104,30 +101,30 @@ export async function getAnchorList(
   // 构建完整的 SQL 查询
   const sql = `
     SELECT
-      aic.id,
-      aic.org_id,
-      aic.anchor_id,
-      aic.checked_at,
-      aic.checked_by,
-      aic.checked_result,
-      aic.area,
-      aic.created_at,
-      aic.updated_at,
-      aic.invite_type,
-      a.user_id,
-      a.display_id,
-      a.rank_league,
-      a.region,
-      a.has_commerce_goods,
-      a.follower_count,
-      a.audience_count,
-      a.current_diamonds,
-      a.last_diamonds,
-      a.highest_diamonds,
-      a.room_id,
-      a.level,
-      a.tag,
-      a.updated_at as anchor_updated_at,
+      ${AnchorInviteCheckTableAlias}.id,
+      ${AnchorInviteCheckTableAlias}.org_id,
+      ${AnchorInviteCheckTableAlias}.anchor_id,
+      ${AnchorInviteCheckTableAlias}.checked_at,
+      ${AnchorInviteCheckTableAlias}.checked_by,
+      ${AnchorInviteCheckTableAlias}.checked_result,
+      ${AnchorInviteCheckTableAlias}.area,
+      ${AnchorInviteCheckTableAlias}.created_at,
+      ${AnchorInviteCheckTableAlias}.updated_at,
+      ${AnchorInviteCheckTableAlias}.invite_type,
+      ${AnchorTableAlias}.user_id,
+      ${AnchorTableAlias}.display_id,
+      ${AnchorTableAlias}.rank_league,
+      ${AnchorTableAlias}.region,
+      ${AnchorTableAlias}.has_commerce_goods,
+      ${AnchorTableAlias}.follower_count,
+      ${AnchorTableAlias}.audience_count,
+      ${AnchorTableAlias}.current_diamonds,
+      ${AnchorTableAlias}.last_diamonds,
+      ${AnchorTableAlias}.highest_diamonds,
+      ${AnchorTableAlias}.room_id,
+      ${AnchorTableAlias}.level,
+      ${AnchorTableAlias}.tag,
+      ${AnchorTableAlias}.updated_at as anchor_updated_at,
       ${
         include_task_assign
           ? `
@@ -145,19 +142,19 @@ export async function getAnchorList(
           : ''
       }
       COUNT(*) OVER() as total_count
-    FROM AnchorInviteCheck aic
-    INNER JOIN Anchor a ON a.user_id = aic.anchor_id
+    FROM AnchorInviteCheck ${AnchorInviteCheckTableAlias}
+    INNER JOIN Anchor ${AnchorTableAlias} ON ${AnchorTableAlias}.user_id = ${AnchorInviteCheckTableAlias}.anchor_id
     ${
       include_task_assign
         ? `
-      LEFT JOIN OrgUser au ON au.id = aic.assign_to
+      LEFT JOIN OrgUser au ON au.id = ${AnchorInviteCheckTableAlias}.assign_to
     `
         : ''
     }
     ${
       include_anchor_contact
         ? `
-      LEFT JOIN OrgUser cu ON cu.id = aic.contacted_by
+      LEFT JOIN OrgUser cu ON cu.id = ${AnchorInviteCheckTableAlias}.contacted_by
     `
         : ''
     }

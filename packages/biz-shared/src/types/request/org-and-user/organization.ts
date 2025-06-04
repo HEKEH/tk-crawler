@@ -21,7 +21,7 @@ export interface CreateOrgResponse {
 }
 
 export type UpdateOrgRequest = Partial<
-  Omit<CreateOrgRequest, 'membership_days'>
+  Omit<CreateOrgRequest, 'membership_days' | 'mobile_device_limit'>
 > &
   Pick<OrganizationItem, 'id'>;
 
@@ -71,6 +71,16 @@ export interface UpdateOrgMembershipRequest {
 }
 
 export interface UpdateOrgMembershipResponse {
+  status_code: RESPONSE_CODE;
+  message?: string;
+}
+
+export interface UpdateOrgAutoFollowDeviceLimitRequest {
+  id: string;
+  auto_follow_device_limit: number;
+}
+
+export interface UpdateOrgAutoFollowDeviceLimitResponse {
   status_code: RESPONSE_CODE;
   message?: string;
 }

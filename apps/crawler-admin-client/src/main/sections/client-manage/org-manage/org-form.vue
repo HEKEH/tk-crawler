@@ -321,7 +321,11 @@ async function validateFee() {
       />
     </ElFormItem>
 
-    <ElFormItem v-if="needToCharge" prop="fee">
+    <ElFormItem
+      v-if="needToCharge && mode === 'create'"
+      prop="fee"
+      class="membership-charge-item"
+    >
       <div class="membership-charge">
         <span
           >当前余额: {{ globalStore.userProfile.balance?.toFixed(2) }}元</span

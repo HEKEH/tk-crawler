@@ -21,6 +21,8 @@ export async function updateOrg(
     ..._data,
     name: _data.name?.trim(),
   };
+  delete (data as any).mobile_device_limit; // 即使存在，也不允许修改
+  delete (data as any).membership_days; // 即使存在，也不允许修改
   logger.info('[Update Org]', { data });
   if (data.name) {
     const orgNameFind = await mysqlClient.prismaClient.organization.findFirst({

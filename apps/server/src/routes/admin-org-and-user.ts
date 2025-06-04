@@ -55,6 +55,14 @@ adminOrgAndUserRouter.post(
 );
 
 adminOrgAndUserRouter.post(
+  '/update-org-auto-follow-device-limit',
+  systemAdminHasPrivilegeMiddleware({
+    privilege: AdminPrivilege.CLIENT_MANAGEMENT,
+  }),
+  SystemAdminOrgAndUserController.updateOrgAutoFollowDeviceLimit,
+);
+
+adminOrgAndUserRouter.post(
   '/get-org-member-list',
   systemAdminHasPrivilegeMiddleware({
     privilege: AdminPrivilege.CLIENT_MANAGEMENT,

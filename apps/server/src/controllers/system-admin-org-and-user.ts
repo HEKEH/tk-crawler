@@ -1,17 +1,18 @@
-import type { Context, Next } from 'koa';
-import {
-  AdminFeature,
-  type CreateOrgMemberRequest,
-  type CreateOrgRequest,
-  type DeleteOrgMemberRequest,
-  type DeleteOrgRequest,
-  type GetOrgListRequest,
-  type GetOrgMemberListRequest,
-  type SystemAdminUserInfo,
-  type UpdateOrgMemberRequest,
-  type UpdateOrgMembershipRequest,
-  type UpdateOrgRequest,
+import type {
+  CreateOrgMemberRequest,
+  CreateOrgRequest,
+  DeleteOrgMemberRequest,
+  DeleteOrgRequest,
+  GetOrgListRequest,
+  GetOrgMemberListRequest,
+  SystemAdminUserInfo,
+  UpdateOrgAutoFollowDeviceLimitRequest,
+  UpdateOrgMemberRequest,
+  UpdateOrgMembershipRequest,
+  UpdateOrgRequest,
 } from '@tk-crawler/biz-shared';
+import type { Context, Next } from 'koa';
+import { AdminFeature } from '@tk-crawler/biz-shared';
 import { mysqlClient } from '@tk-crawler/database';
 import {
   createOrg,
@@ -20,6 +21,7 @@ import {
   deleteOrgMember,
   getOrgList,
   getOrgMemberList,
+  updateAutoFollowDeviceLimit,
   updateOrg,
   updateOrgMember,
   updateOrgMembership,
@@ -88,6 +90,14 @@ export default class SystemAdminOrgAndUserController {
     const data = ctx.getRequestData<UpdateOrgMembershipRequest>();
     const adminUserInfo = ctx.systemUserInfo!.user_info;
     await updateOrgMembership(data, adminUserInfo, ctx.logger);
+    ctx.body = ctx.t('Success');
+    await next();
+  }
+
+  static async updateOrgAutoFollowDeviceLimit(ctx: Context, next: Next) {
+    const data = ctx.getRequestData<UpdateOrgAutoFollowDeviceLimitRequest>();
+    const adminUserInfo = ctx.systemUserInfo!.user_info;
+    await updateAutoFollowDeviceLimit(data, adminUserInfo, ctx.logger);
     ctx.body = ctx.t('Success');
     await next();
   }

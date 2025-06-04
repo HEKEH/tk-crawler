@@ -15,9 +15,9 @@ export interface OrganizationItem {
   /** 机构名称 */
   name: string;
   /** 会员开始时间 */
-  membership_start_at: Date | null;
+  membership_start_at: Date | string | null;
   /** 会员到期时间 */
-  membership_expire_at: Date | null;
+  membership_expire_at: Date | string | null;
   /** 会员是否有效 */
   if_membership_valid: boolean;
   /** 状态 */

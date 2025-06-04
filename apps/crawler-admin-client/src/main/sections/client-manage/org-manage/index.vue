@@ -34,9 +34,11 @@ import {
   deleteOrg,
   getOrgList,
   updateOrg,
+  updateOrgAutoFollowDeviceLimit,
   updateOrgMembership,
 } from '../../../requests';
 import { useGlobalStore } from '../../../utils';
+import AutoFollowDeviceLimitDialog from './auto-follow-device-limit-dialog.vue';
 import {
   DefaultFilterViewValues,
   transformFilterViewValuesToFilterValues,
@@ -271,6 +273,42 @@ function onCloseOrgMembershipDialog() {
   orgMembershipEditItem.value = undefined;
 }
 
+const autoFollowDeviceLimitDialogVisible = ref(false);
+const autoFollowDeviceLimitEditItem = ref<{
+  id: string;
+  membership_expire_at: Date | string | null;
+  auto_follow_device_limit: number;
+}>();
+
+function openUpdateAutoFollowDeviceLimitDialog(item: OrganizationItem) {
+  autoFollowDeviceLimitEditItem.value = {
+    id: item.id,
+    membership_expire_at: item.membership_expire_at,
+    auto_follow_device_limit: item.mobile_device_limit,
+  };
+  autoFollowDeviceLimitDialogVisible.value = true;
+}
+async function handleUpdateAutoFollowDeviceLimit(data: {
+  auto_follow_device_limit: number;
+}) {
+  const resp = await updateOrgAutoFollowDeviceLimit(
+    {
+      id: autoFollowDeviceLimitEditItem.value!.id,
+      auto_follow_device_limit: data.auto_follow_device_limit,
+    },
+    token.value,
+  );
+  if (resp.status_code === RESPONSE_CODE.SUCCESS) {
+    await Promise.all([refetch(), globalStore.refreshUserProfile()]);
+    onCloseAutoFollowDeviceLimitDialog();
+    ElMessage.success('保存成功');
+  }
+}
+function onCloseAutoFollowDeviceLimitDialog() {
+  autoFollowDeviceLimitDialogVisible.value = false;
+  autoFollowDeviceLimitEditItem.value = undefined;
+}
+
 function onManageOrgMembers(org: OrganizationItem) {
   props.model.onOrgMembersManage(org);
 }
@@ -502,7 +540,7 @@ function onManageMobileDevices(org: OrganizationItem) {
               size="small"
               @click.prevent="onManageMobileDevices(scope.row)"
             >
-              自动建联设备管理
+              自动建联设备列表
             </ElButton>
           </div>
           <div class="action-row">
@@ -513,6 +551,16 @@ function onManageMobileDevices(org: OrganizationItem) {
               @click.prevent="openUpdateOrgMembershipDialog(scope.row)"
             >
               会员时长调整
+            </ElButton>
+          </div>
+          <div class="action-row">
+            <ElButton
+              link
+              type="primary"
+              size="small"
+              @click.prevent="openUpdateAutoFollowDeviceLimitDialog(scope.row)"
+            >
+              自动建联设备数调整
             </ElButton>
           </div>
         </template>
@@ -546,6 +594,15 @@ function onManageMobileDevices(org: OrganizationItem) {
     :follow-devices="orgMembershipEditItem?.mobile_device_limit ?? 0"
     :submit="handleUpdateOrgMembership"
     @close="onCloseOrgMembershipDialog"
+  />
+
+  <AutoFollowDeviceLimitDialog
+    v-if="autoFollowDeviceLimitDialogVisible"
+    :visible="true"
+    :membership-expire-at="autoFollowDeviceLimitEditItem!.membership_expire_at"
+    :initial-values="autoFollowDeviceLimitEditItem!"
+    :submit="handleUpdateAutoFollowDeviceLimit"
+    @close="onCloseAutoFollowDeviceLimitDialog"
   />
 </template>
 

@@ -30,6 +30,11 @@ export function formatDateTime(
     );
 }
 
+export function transformStringToDate(value: string) {
+  const result = dayjs(value).toDate();
+  return result;
+}
+
 export function formatTime(
   value: string | number | Date | null | undefined,
   config: {

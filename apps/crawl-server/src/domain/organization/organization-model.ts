@@ -13,8 +13,8 @@ import { GuildUserCollection } from '../guild-user/guild-user-collection';
 export class OrganizationModel implements GuildUserCollectionContext {
   readonly id: string;
   private _name: string;
-  private _membership_start_at: Date | null;
-  private _membership_expire_at: Date | null;
+  private _membership_start_at: Date | string | null;
+  private _membership_expire_at: Date | string | null;
   private _status: OrganizationStatus;
   private _areas: Area[];
   private _guildUserCollection: GuildUserCollection;

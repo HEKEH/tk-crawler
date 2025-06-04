@@ -31,6 +31,16 @@ export function computeCharge({
   return ((basePrice + followPrice * followDevices) * membershipDays) / 30;
 }
 
+export function computeRemainingMembershipDays(membershipExpireAt: Date) {
+  const days = Math.ceil(
+    dayjs(membershipExpireAt).diff(dayjs(), 'seconds') / (24 * 60 * 60),
+  );
+  if (days <= 0) {
+    return 0;
+  }
+  return days;
+}
+
 export function computeChargeByDevicesChange({
   oldDevices,
   newDevices,
@@ -45,12 +55,7 @@ export function computeChargeByDevicesChange({
   if (oldDevices === newDevices) {
     return 0;
   }
-  const days = Math.ceil(
-    dayjs(membershipExpireAt).diff(dayjs(), 'seconds') / (24 * 60 * 60),
-  );
-  if (days <= 0) {
-    return 0;
-  }
+  const days = computeRemainingMembershipDays(membershipExpireAt);
   const charge = ((newDevices - oldDevices) * followPrice * days) / 30;
   return charge;
 }

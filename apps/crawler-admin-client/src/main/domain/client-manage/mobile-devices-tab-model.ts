@@ -20,7 +20,7 @@ export default class MobileDevicesManageTabModel implements ClientTabModel {
   }
 
   get label() {
-    return `${this._org.name}-自动建联设备管理`;
+    return `${this._org.name}-自动建联设备列表`;
   }
 
   constructor(props: { org: OrganizationItem }) {

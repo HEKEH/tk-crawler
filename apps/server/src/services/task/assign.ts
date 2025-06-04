@@ -3,7 +3,7 @@ import assert from 'node:assert';
 import { mysqlClient } from '@tk-crawler/database';
 import { logger } from '../../infra/logger';
 import { BusinessError } from '../../utils';
-import { clearAnchorListCache } from '../anchor/get-anchor-list';
+// import { clearAnchorListCache } from '../anchor/get-anchor-list';
 
 export async function assignTask(
   data: AssignTaskRequest & {
@@ -57,5 +57,5 @@ export async function assignTask(
   });
 
   // 清除缓存
-  await clearAnchorListCache(org_id);
+  // await clearAnchorListCache(org_id);
 }

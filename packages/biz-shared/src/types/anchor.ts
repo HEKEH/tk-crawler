@@ -58,8 +58,8 @@ export interface DisplayedAnchorItem
   created_at: Date | string;
   updated_at: Date | string;
   crawled_at: Date | string;
-  assigned_user?: Omit<OrgMemberItem, 'password'> | null;
-  contacted_user?: Omit<OrgMemberItem, 'password'> | null;
+  assigned_user?: Pick<OrgMemberItem, 'id' | 'display_name'> | null;
+  contacted_user?: Pick<OrgMemberItem, 'id' | 'display_name'> | null;
 }
 
 export enum AnchorRankLeague {

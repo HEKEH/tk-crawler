@@ -102,7 +102,10 @@ export async function getAnchorList(
   const a = AnchorTableAlias;
   const aic = AnchorInviteCheckTableAlias;
 
-  // 构建完整的 SQL 查询
+  // 构建总数查询
+  const countSql = `SELECT COUNT(*) as total_count FROM AnchorInviteCheck ${aic} INNER JOIN Anchor ${a} ON ${a}.user_id = ${aic}.anchor_id ${whereClause}`;
+
+  // 构建主查询
   const sql = `
     SELECT
       ${aic}.id,
@@ -128,50 +131,34 @@ export async function getAnchorList(
       ${a}.room_id,
       ${a}.level,
       ${a}.tag,
-      ${a}.updated_at as anchor_updated_at,
-      ${
-        include_task_assign
-          ? `
-        au.id as assign_to,
-        au.display_name as assigned_user_display_name,
-      `
-          : ''
-      }
-      ${
-        include_anchor_contact
-          ? `
-        cu.id as contacted_by,
-        cu.display_name as contacted_user_display_name,
-      `
-          : ''
-      }
-      COUNT(*) OVER() as total_count
-    FROM AnchorInviteCheck ${aic}
-    INNER JOIN Anchor ${a} ON ${a}.user_id = ${aic}.anchor_id
-    ${
-      include_task_assign
-        ? `
-      LEFT JOIN OrgUser au ON au.id = ${aic}.assign_to
-    `
-        : ''
-    }
-    ${
-      include_anchor_contact
-        ? `
-      LEFT JOIN OrgUser cu ON cu.id = ${aic}.contacted_by
-    `
-        : ''
-    }
+      ${a}.updated_at as anchor_updated_at
+      ${include_task_assign ? `,au.id as assign_to, au.display_name as assigned_user_display_name` : ''}
+      ${include_anchor_contact ? `,cu.id as contacted_by, cu.display_name as contacted_user_display_name` : ''}
+    FROM AnchorInviteCheck ${aic} INNER JOIN Anchor ${a}
+    ON ${a}.user_id = ${aic}.anchor_id
+    ${include_task_assign ? `LEFT JOIN OrgUser au ON au.id = ${aic}.assign_to` : ''}
+    ${include_anchor_contact ? `LEFT JOIN OrgUser cu ON cu.id = ${aic}.contacted_by` : ''}
     ${whereClause}
     ${orderByClause}
     LIMIT ?
     OFFSET ?
   `;
 
-  // 使用 $queryRawUnsafe 执行带参数的查询
-  const queryResult = await mysqlClient.prismaClient.$queryRawUnsafe<
-    QueryResult[]
-  >(sql, ...params, page_size, (page_num - 1) * page_size);
+  // 并行执行两个查询
+  const [countResult, queryResult] = await Promise.all([
+    mysqlClient.prismaClient.$queryRawUnsafe<{ total_count: bigint }[]>(
+      countSql,
+      ...params,
+    ),
+    mysqlClient.prismaClient.$queryRawUnsafe<QueryResult[]>(
+      sql,
+      ...params,
+      page_size,
+      (page_num - 1) * page_size,
+    ),
+  ]);
+
+  const total = Number(countResult[0]?.total_count || 0);
 
   const endTime = Date.now();
   logger.info(`[Get Anchor List] sql time cost: ${endTime - startTime}ms`);
@@ -188,7 +175,6 @@ export async function getAnchorList(
     };
   }
 
-  const total = Number(queryResult[0]?.total_count || 0);
   const list: DisplayedAnchorItem[] = queryResult.map((item: QueryResult) => {
     const data: DisplayedAnchorItem = {
       id: item.id.toString(),

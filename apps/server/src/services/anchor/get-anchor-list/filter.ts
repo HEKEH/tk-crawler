@@ -161,10 +161,6 @@ export function transformAnchorListFilterValuesToRawSql(
   const conditions: string[] = [];
   const params: any[] = [];
 
-  // 1. Join conditions and indexed columns first
-  conditions.push(`${AnchorInviteCheckTableAlias}.org_id = ?`);
-  params.push(BigInt(orgId));
-
   const {
     id,
     user_id,
@@ -188,35 +184,30 @@ export function transformAnchorListFilterValuesToRawSql(
     contacted_by,
   } = filterValues;
 
+  // 1. Primary and unique indexes first
+  conditions.push(`${AnchorInviteCheckTableAlias}.org_id = ?`);
+  params.push(BigInt(orgId));
+
   if (id?.trim()) {
     conditions.push(`${AnchorInviteCheckTableAlias}.id = ?`);
     params.push(BigInt(id.trim()));
   }
 
-  if (user_id?.trim()) {
-    conditions.push(`${AnchorTableAlias}.user_id = ?`);
-    params.push(BigInt(user_id.trim()));
-  }
-
-  if (room_id?.trim()) {
-    conditions.push(`${AnchorTableAlias}.room_id = ?`);
-    params.push(BigInt(room_id.trim()));
-  }
-
-  // 2. Equality conditions (highly selective)
-  if (display_id?.trim()) {
-    conditions.push(`${AnchorTableAlias}.display_id = ?`);
-    params.push(display_id.trim());
+  // 2. Indexed equality conditions
+  if (checked_result !== undefined) {
+    conditions.push(`${AnchorInviteCheckTableAlias}.checked_result = ?`);
+    params.push(checked_result === true ? 1 : 0);
   }
 
   if (area) {
     conditions.push(`${AnchorInviteCheckTableAlias}.area = ?`);
     params.push(area);
+    // 两个表都有area索引，使用两个条件确保数据一致性
     conditions.push(`${AnchorTableAlias}.area = ?`);
     params.push(area);
   }
 
-  if (region !== undefined) {
+  if (region) {
     conditions.push(`${AnchorTableAlias}.region = ?`);
     params.push(region);
   }
@@ -226,14 +217,66 @@ export function transformAnchorListFilterValuesToRawSql(
     params.push(has_commerce_goods);
   }
 
+  if (rank_league !== undefined) {
+    conditions.push(`${AnchorTableAlias}.rank_league = ?`);
+    params.push(rank_league);
+  }
+
+  // 3. Indexed range conditions
+  addRangeFilterConditions(
+    conditions,
+    params,
+    checked_at,
+    AnchorInviteCheckTableAlias,
+    'checked_at',
+  );
+
+  // 使用复合索引 [area, updated_at]
+  addRangeFilterConditions(
+    conditions,
+    params,
+    crawled_at,
+    AnchorTableAlias,
+    'updated_at',
+  );
+
+  addRangeFilterConditions(
+    conditions,
+    params,
+    follower_count,
+    AnchorTableAlias,
+    'follower_count',
+  );
+
+  addRangeFilterConditions(
+    conditions,
+    params,
+    highest_diamonds,
+    AnchorTableAlias,
+    'highest_diamonds',
+  );
+
+  // 4. Non-indexed equality conditions
+  if (user_id?.trim()) {
+    conditions.push(`${AnchorInviteCheckTableAlias}.anchor_id = ?`);
+    params.push(BigInt(user_id.trim()));
+    conditions.push(`${AnchorTableAlias}.user_id = ?`);
+    params.push(BigInt(user_id.trim()));
+  }
+
+  if (room_id?.trim()) {
+    conditions.push(`${AnchorTableAlias}.room_id = ?`);
+    params.push(BigInt(room_id.trim()));
+  }
+
+  if (display_id?.trim()) {
+    conditions.push(`${AnchorTableAlias}.display_id = ?`);
+    params.push(display_id.trim());
+  }
+
   if (tag) {
     conditions.push(`${AnchorTableAlias}.tag = ?`);
     params.push(tag);
-  }
-
-  if (checked_result !== undefined) {
-    conditions.push(`${AnchorInviteCheckTableAlias}.checked_result = ?`);
-    params.push(checked_result === true ? 1 : 0);
   }
 
   if (invite_type !== undefined) {
@@ -241,21 +284,13 @@ export function transformAnchorListFilterValuesToRawSql(
     params.push(invite_type);
   }
 
-  // 3. Range filters (less selective)
-  // Range filters for anchor table
+  // 5. Non-indexed range conditions
   addRangeFilterConditions(
     conditions,
     params,
     rank_league,
     AnchorTableAlias,
     'rank_league',
-  );
-  addRangeFilterConditions(
-    conditions,
-    params,
-    follower_count,
-    AnchorTableAlias,
-    'follower_count',
   );
   addRangeFilterConditions(
     conditions,
@@ -278,31 +313,8 @@ export function transformAnchorListFilterValuesToRawSql(
     AnchorTableAlias,
     'last_diamonds',
   );
-  addRangeFilterConditions(
-    conditions,
-    params,
-    highest_diamonds,
-    AnchorTableAlias,
-    'highest_diamonds',
-  );
-  addRangeFilterConditions(
-    conditions,
-    params,
-    crawled_at,
-    AnchorTableAlias,
-    'updated_at',
-  );
 
-  // Range filters for anchor_invite_check table
-  addRangeFilterConditions(
-    conditions,
-    params,
-    checked_at,
-    AnchorInviteCheckTableAlias,
-    'checked_at',
-  );
-
-  // 4. Special conditions (NULL checks and complex conditions)
+  // 6. Special conditions (NULL checks)
   if (assign_to !== undefined && assign_to !== '') {
     if (assign_to === 'not_assigned') {
       conditions.push(`${AnchorInviteCheckTableAlias}.assign_to IS NULL`);

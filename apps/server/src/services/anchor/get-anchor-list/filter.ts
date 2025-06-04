@@ -101,6 +101,9 @@ export function transformAnchorListFilterValues(
   if (display_id?.trim()) {
     anchorFilter.display_id = display_id.trim();
   }
+  if (area) {
+    anchorFilter.area = area; // 加强索引
+  }
   if (rank_league !== undefined) {
     anchorFilter.rank_league = rank_league;
   }
@@ -108,9 +111,6 @@ export function transformAnchorListFilterValues(
     anchorFilter.region = region;
   }
   if (crawled_at !== undefined) {
-    if (area) {
-      anchorFilter.area = area; // 使用复合索引 [area, updated_at]
-    }
     anchorFilter.updated_at = crawled_at;
   }
   if (has_commerce_goods !== undefined) {
@@ -142,7 +142,6 @@ export function transformAnchorListFilterValues(
   if (room_id?.trim()) {
     anchorFilter.room_id = BigInt(room_id.trim());
   }
-
   if (Object.keys(anchorFilter).length > 0) {
     filter.anchor = anchorFilter;
   }

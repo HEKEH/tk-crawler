@@ -58,8 +58,8 @@ export async function getAnchorList(
   // }
 
   const startTime = Date.now();
-  const where = transformAnchorListFilterValues(filter, org_id);
   const orderBy = transformAnchorListOrderBy(order_by);
+  const where = transformAnchorListFilterValues(filter, org_id);
 
   const [anchorInviteChecks, total] = await Promise.all([
     mysqlClient.prismaClient.anchorInviteCheck.findMany({

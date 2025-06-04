@@ -331,7 +331,7 @@ const columns = computed<VirtualizedTableColumn<AnchorFrom87>[]>(() => [
   {
     key: 'pieces',
     dataKey: 'pieces',
-    title: '主播段位',
+    title: '直播段位',
     width: 120,
     sortable: true,
   },

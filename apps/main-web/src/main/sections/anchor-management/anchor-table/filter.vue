@@ -222,7 +222,7 @@ function toggleExpand() {
         v-if="!hiddenFilters?.includes('rank_league')"
         class="filter-range-item"
       >
-        <label class="filter-label">主播段位</label>
+        <label class="filter-label">直播段位</label>
         <RangeSelect
           v-model="filters.rank_league"
           :options="rankLeagueOptions"

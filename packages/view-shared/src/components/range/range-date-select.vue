@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ElDatePicker, ElDivider } from 'element-plus';
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 
 interface Props {
   modelValue?: [Date | undefined, Date | undefined];
@@ -101,6 +101,17 @@ function disabledStartDate(date: Date) {
   return false;
 }
 
+const startValueDate = computed(() => {
+  if (!startValue.value) {
+    return null;
+  }
+  return new Date(
+    startValue.value.getFullYear(),
+    startValue.value.getMonth(),
+    startValue.value.getDate(),
+  );
+});
+
 function disabledEndDate(date: Date) {
   if (props.disabledDate?.(date)) {
     return true;
@@ -111,8 +122,13 @@ function disabledEndDate(date: Date) {
   if (props.maxDate && date > props.maxDate) {
     return true;
   }
-  if (startValue.value) {
-    return date < startValue.value;
+  if (startValueDate.value) {
+    const compareDate = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate(),
+    );
+    return compareDate < startValueDate.value;
   }
   return false;
 }

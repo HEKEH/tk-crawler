@@ -490,7 +490,7 @@ function onManageMobileDevices(org: OrganizationItem) {
       <ElTableColumn
         :fixed="isWeb ? 'right' : undefined"
         label="操作"
-        :min-width="isWeb ? 220 : 180"
+        :min-width="isWeb ? 220 : 200"
       >
         <template #default="scope: ScopeType">
           <div class="action-row">

@@ -66,10 +66,10 @@ function handleCancel() {
     ref="formRef"
     :model="form"
     :rules="rules"
-    label-width="120px"
+    label-width="140px"
     label-position="right"
   >
-    <ElFormItem label="基础套餐价格" prop="base_price">
+    <ElFormItem label="基础套餐单价" prop="base_price">
       <ElInputNumber
         v-model="form.base_price"
         style="width: 100%"
@@ -78,7 +78,7 @@ function handleCancel() {
         :min="0"
       />
     </ElFormItem>
-    <ElFormItem label="自动关注功能价格" prop="follow_price">
+    <ElFormItem label="自动关注功能单价" prop="follow_price">
       <ElInputNumber
         v-model="form.follow_price"
         style="width: 100%"
@@ -98,7 +98,7 @@ function handleCancel() {
 
 <style scoped>
 .el-form {
-  max-width: 300px;
+  max-width: 350px;
   margin: 0 auto;
 }
 </style>

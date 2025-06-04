@@ -21,7 +21,7 @@ function handleClose() {
   <ElDialog
     :model-value="visible"
     title="调整单价"
-    width="350px"
+    width="400px"
     destroy-on-close
     @close="handleClose"
   >

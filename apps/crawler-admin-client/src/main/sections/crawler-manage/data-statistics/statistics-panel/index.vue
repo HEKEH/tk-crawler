@@ -36,6 +36,18 @@ const { data, isFetching, isError, error, refetch } = useQuery<
   retry: false,
   refetchOnWindowFocus: false,
   queryFn: async () => {
+    if (!token.value) {
+      return {
+        statistics: {
+          total_anchor_count: 0,
+          total_anchors_added_24h: 0,
+          total_anchors_crawled_24h: 0,
+          total_anchors_added_1h: 0,
+          total_anchors_crawled_1h: 0,
+        },
+        query_at: new Date(),
+      };
+    }
     const response = await getCrawlStatistics(
       { force_refresh: forceRefresh.value },
       token.value,

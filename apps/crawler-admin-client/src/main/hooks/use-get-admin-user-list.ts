@@ -35,6 +35,12 @@ export function useGetAdminUserList(
     retry: false,
     // refetchOnWindowFocus: false,
     queryFn: async () => {
+      if (!token.value) {
+        return {
+          list: [],
+          total: 0,
+        };
+      }
       const response = await getSystemAdminUserList(
         {
           page_num: toValue(pageNum),

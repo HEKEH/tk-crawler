@@ -43,6 +43,12 @@ export function useGetAnchorList(
     retry: false,
     refetchOnWindowFocus: false,
     queryFn: async () => {
+      if (!token.value) {
+        return {
+          list: [],
+          total: 0,
+        };
+      }
       const response = await getAnchorList(
         {
           page_num: toValue(pageNum),

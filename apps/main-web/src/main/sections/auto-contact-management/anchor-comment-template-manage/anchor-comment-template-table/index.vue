@@ -106,6 +106,12 @@ const { data, isFetching, isError, refetch } = useQuery<
   retry: false,
   // refetchOnWindowFocus: false,
   queryFn: async () => {
+    if (!token.value) {
+      return {
+        list: [],
+        total: 0,
+      };
+    }
     const orderBy = sortField.value
       ? { [sortField.value]: sortOrder.value === 'ascending' ? 'asc' : 'desc' }
       : undefined;

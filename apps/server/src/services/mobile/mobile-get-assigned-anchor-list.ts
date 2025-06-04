@@ -5,7 +5,7 @@ import type {
 } from '@tk-crawler/biz-shared';
 import type { Logger } from '@tk-crawler/shared';
 import { BusinessError } from '../../utils';
-import { getAnchorList } from '../anchor/get-anchor-list/index-old';
+import { getAnchorList } from '../anchor/get-anchor-list';
 
 export async function mobileGetAssignedAnchorList(
   request: MobileGetAssignedAnchorListRequest & {

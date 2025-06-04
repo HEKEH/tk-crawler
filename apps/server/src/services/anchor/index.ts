@@ -1,2 +1,2 @@
 export * from './clear-anchor-check';
-export * from './get-anchor-list';
+export * from './get-anchor-list/index';

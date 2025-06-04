@@ -66,55 +66,55 @@ export function transformAnchorListOrderBy(
   return result;
 }
 
-// // 字段映射表
-// const fieldMap: Record<string, { field: string; table: string }> = {
-//   crawled_at: { field: 'updated_at', table: 'a' },
-//   checked_at: { field: 'checked_at', table: 'aic' },
-//   checked_result: { field: 'checked_result', table: 'aic' },
-//   invite_type: { field: 'invite_type', table: 'aic' },
-//   area: { field: 'area', table: 'aic' },
-//   display_id: { field: 'display_id', table: 'a' },
-//   user_id: { field: 'user_id', table: 'a' },
-//   follower_count: { field: 'follower_count', table: 'a' },
-//   audience_count: { field: 'audience_count', table: 'a' },
-//   current_diamonds: { field: 'current_diamonds', table: 'a' },
-//   last_diamonds: { field: 'last_diamonds', table: 'a' },
-//   highest_diamonds: { field: 'highest_diamonds', table: 'a' },
-//   rank_league: { field: 'rank_league', table: 'a' },
-//   region: { field: 'region', table: 'a' },
-//   has_commerce_goods: { field: 'has_commerce_goods', table: 'a' },
-//   tag: { field: 'tag', table: 'a' },
-//   room_id: { field: 'room_id', table: 'a' },
-//   assign_to: { field: 'assign_to', table: 'aic' },
-//   contacted_by: { field: 'contacted_by', table: 'aic' },
-// };
+// 字段映射表
+const fieldMap: Record<string, { field: string; table: string }> = {
+  crawled_at: { field: 'updated_at', table: 'a' },
+  checked_at: { field: 'checked_at', table: 'aic' },
+  checked_result: { field: 'checked_result', table: 'aic' },
+  invite_type: { field: 'invite_type', table: 'aic' },
+  area: { field: 'area', table: 'aic' },
+  display_id: { field: 'display_id', table: 'a' },
+  user_id: { field: 'user_id', table: 'a' },
+  follower_count: { field: 'follower_count', table: 'a' },
+  audience_count: { field: 'audience_count', table: 'a' },
+  current_diamonds: { field: 'current_diamonds', table: 'a' },
+  last_diamonds: { field: 'last_diamonds', table: 'a' },
+  highest_diamonds: { field: 'highest_diamonds', table: 'a' },
+  rank_league: { field: 'rank_league', table: 'a' },
+  region: { field: 'region', table: 'a' },
+  has_commerce_goods: { field: 'has_commerce_goods', table: 'a' },
+  tag: { field: 'tag', table: 'a' },
+  room_id: { field: 'room_id', table: 'a' },
+  assign_to: { field: 'assign_to', table: 'aic' },
+  contacted_by: { field: 'contacted_by', table: 'aic' },
+};
 
-// export function transformAnchorListOrderByToRawSql(
-//   orderBy: GetAnchorListOrderBy | undefined,
-// ): string {
-//   if (!orderBy || Object.keys(orderBy).length === 0) {
-//     // 默认时间倒序
-//     return 'ORDER BY aic.checked_at DESC';
-//   }
+export function transformAnchorListOrderByToRawSql(
+  orderBy: GetAnchorListOrderBy | undefined,
+): string {
+  if (!orderBy || Object.keys(orderBy).length === 0) {
+    // 默认时间倒序
+    return 'ORDER BY aic.checked_at DESC';
+  }
 
-//   // 获取排序字段和方向
-//   const validOrderBy = Object.entries(orderBy).find(
-//     ([_, value]) => value !== undefined,
-//   );
+  // 获取排序字段和方向
+  const validOrderBy = Object.entries(orderBy).find(
+    ([_, value]) => value !== undefined,
+  );
 
-//   if (!validOrderBy) {
-//     // 如果没有有效的排序字段，使用默认排序
-//     return 'ORDER BY aic.checked_at DESC';
-//   }
+  if (!validOrderBy) {
+    // 如果没有有效的排序字段，使用默认排序
+    return 'ORDER BY aic.checked_at DESC';
+  }
 
-//   const [orderField, orderDirection] = validOrderBy;
+  const [orderField, orderDirection] = validOrderBy;
 
-//   // 检查字段是否有效
-//   if (!fieldMap[orderField]) {
-//     throw new BusinessError(`Invalid orderBy field: ${orderField}`);
-//   }
+  // 检查字段是否有效
+  if (!fieldMap[orderField]) {
+    throw new BusinessError(`Invalid orderBy field: ${orderField}`);
+  }
 
-//   // 构建排序子句
-//   const { field, table } = fieldMap[orderField];
-//   return `ORDER BY ${table}.${field} ${orderDirection.toUpperCase()}`;
-// }
+  // 构建排序子句
+  const { field, table } = fieldMap[orderField];
+  return `ORDER BY ${table}.${field} ${orderDirection.toUpperCase()}`;
+}

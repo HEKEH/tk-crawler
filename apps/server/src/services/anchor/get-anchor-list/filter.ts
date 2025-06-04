@@ -209,6 +209,13 @@ export function transformAnchorListFilterValuesToRawSql(
     params.push(display_id.trim());
   }
 
+  if (area) {
+    conditions.push(`${AnchorInviteCheckTableAlias}.area = ?`);
+    params.push(area);
+    conditions.push(`${AnchorTableAlias}.area = ?`);
+    params.push(area);
+  }
+
   if (region !== undefined) {
     conditions.push(`${AnchorTableAlias}.region = ?`);
     params.push(region);
@@ -232,13 +239,6 @@ export function transformAnchorListFilterValuesToRawSql(
   if (invite_type !== undefined) {
     conditions.push(`${AnchorInviteCheckTableAlias}.invite_type = ?`);
     params.push(invite_type);
-  }
-
-  if (area) {
-    conditions.push(`${AnchorInviteCheckTableAlias}.area = ?`);
-    params.push(area);
-    conditions.push(`${AnchorTableAlias}.area = ?`);
-    params.push(area);
   }
 
   // 3. Range filters (less selective)

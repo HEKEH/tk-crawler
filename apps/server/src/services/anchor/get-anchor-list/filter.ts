@@ -215,11 +215,6 @@ export function transformAnchorListFilterValuesToRawSql(
     params.push(has_commerce_goods);
   }
 
-  if (rank_league !== undefined) {
-    conditions.push(`${AnchorTableAlias}.rank_league = ?`);
-    params.push(rank_league);
-  }
-
   // 3. Indexed range conditions
   addRangeFilterConditions(
     conditions,
@@ -227,6 +222,14 @@ export function transformAnchorListFilterValuesToRawSql(
     checked_at,
     AnchorInviteCheckTableAlias,
     'checked_at',
+  );
+
+  addRangeFilterConditions(
+    conditions,
+    params,
+    rank_league,
+    AnchorTableAlias,
+    'rank_league',
   );
 
   // 使用复合索引 [area, updated_at]
@@ -283,13 +286,6 @@ export function transformAnchorListFilterValuesToRawSql(
   }
 
   // 5. Non-indexed range conditions
-  addRangeFilterConditions(
-    conditions,
-    params,
-    rank_league,
-    AnchorTableAlias,
-    'rank_league',
-  );
   addRangeFilterConditions(
     conditions,
     params,

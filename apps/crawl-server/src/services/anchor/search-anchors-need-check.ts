@@ -66,7 +66,7 @@ export async function searchAnchorsNeedCheck(data: {
     a.display_id,
     a.region,
     a.has_commerce_goods
-  FROM Anchor a FORCE INDEX (area_updated_at_desc)
+  FROM Anchor a
   WHERE a.area = ${data.area}
     ${data.anchor_search_policies.ignore_commerce_anchor ? Prisma.sql`AND a.has_commerce_goods = false` : Prisma.empty}
     AND NOT EXISTS (
@@ -77,7 +77,7 @@ export async function searchAnchorsNeedCheck(data: {
         AND ic.area = ${data.area}
         AND (
           ic.contacted_by IS NOT NULL
-          OR DATE(ic.checked_at) > DATE_SUB(CURRENT_DATE, INTERVAL ${ANCHOR_CHECK_OUTDATE_DAYS} DAY)
+          OR ic.checked_at > DATE_SUB(CURRENT_DATE, INTERVAL ${ANCHOR_CHECK_OUTDATE_DAYS} DAY)
         )
     )
   ORDER BY a.updated_at DESC

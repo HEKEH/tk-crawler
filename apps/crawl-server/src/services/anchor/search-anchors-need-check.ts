@@ -22,42 +22,11 @@ export async function searchAnchorsNeedCheck(data: {
     area: data.area,
   });
   const dbStart = Date.now();
-  // const result = await mysqlClient.prismaClient.anchor.findMany({
-  //   orderBy: {
-  //     updated_at: 'desc',
-  //   },
-  //   select: {
-  //     user_id: true,
-  //     display_id: true,
-  //     region: true,
-  //     has_commerce_goods: true,
-  //   },
-  //   take: data.take ?? ANCHORS_CHECK_NUMBER,
-  //   where: {
-  //     area: data.area,
-  //     has_commerce_goods: data.anchor_search_policies.ignore_commerce_anchor
-  //       ? false
-  //       : undefined,
-  //     invite_checks: {
-  //       none: {
-  //         org_id: BigInt(data.org_id),
-  //         OR: [
-  //           {
-  //             contacted_by: {
-  //               // 已建联的不用再检查
-  //               not: null,
-  //             },
-  //           },
-  //           {
-  //             checked_at: {
-  //               gt: new Date(Date.now() - ANCHOR_CHECK_OUTDATE_TIME),
-  //             },
-  //           },
-  //         ],
-  //       },
-  //     },
-  //   },
-  // });
+
+  const checkDate = new Date();
+  checkDate.setDate(checkDate.getDate() - ANCHOR_CHECK_OUTDATE_DAYS);
+  checkDate.setHours(0, 0, 0, 0); // Set to start of day
+
   const result: (Omit<BroadcastAnchorMessageData, 'has_commerce_goods'> & {
     has_commerce_goods: 1 | 0;
   })[] = await mysqlClient.prismaClient.$queryRaw`
@@ -77,7 +46,7 @@ export async function searchAnchorsNeedCheck(data: {
         AND ic.area = ${data.area}
         AND (
           ic.contacted_by IS NOT NULL
-          OR ic.checked_at > DATE_SUB(CURRENT_DATE, INTERVAL ${ANCHOR_CHECK_OUTDATE_DAYS} DAY)
+          OR ic.checked_at > ${checkDate}
         )
     )
   ORDER BY a.updated_at DESC

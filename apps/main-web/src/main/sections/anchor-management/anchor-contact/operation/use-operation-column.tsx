@@ -37,7 +37,7 @@ export function useOperationColumn(props: {
     async (anchor: DisplayedAnchorItem): Promise<boolean> => {
       log('尝试打开TK页面');
       try {
-        console.log('判断是否是手机端');
+        log('判断是否是手机端');
         if (!isMobilePlatform()) {
           log('不是移动端');
           try {
@@ -49,17 +49,23 @@ export function useOperationColumn(props: {
         }
         log('判断是否已通知安装TK');
         if (!hasNotifiedTKInstall.value) {
+          log('通知确保手机已安装TK');
           try {
             await ElMessageBox.confirm('请确保手机已安装TK，再进行下一步操作', {
               confirmButtonText: '继续',
               cancelButtonText: '取消',
               type: 'warning',
             });
-          } catch {
-            return false;
+            hasNotifiedTKInstall.value = true;
+            localStorageStore.setItem('has_notified_TK_install', '1');
+          } catch (e) {
+            if (e instanceof Error) {
+              // 这个是系统错误，而不是拒绝。可能是ElMessageBox.confirm不支持低版本浏览器导致的，此时继续运行
+              console.error('通知弹窗失败', e);
+            } else {
+              return false;
+            }
           }
-          hasNotifiedTKInstall.value = true;
-          localStorageStore.setItem('has_notified_TK_install', '1');
         }
         log('开始获取跳转链接');
         const scheme = getTiktokAnchorLink(anchor, true, true);

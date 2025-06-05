@@ -1,16 +1,9 @@
 <script setup lang="tsx" generic="T extends Record<string, any>">
-import type { VirtualizedTableColumn } from './types';
 import { ElCheckbox, ElPagination } from 'element-plus';
-import {
-  computed,
-  onBeforeUnmount,
-  onMounted,
-  ref,
-  shallowRef,
-  watch,
-} from 'vue';
+import { computed, onMounted, shallowRef, watch } from 'vue';
 import { VxeColumn, VxeTable } from 'vxe-table';
 import { useIsWebSize, useTableMultiSelect } from '../../hooks';
+import type { VirtualizedTableColumn } from './types';
 
 const props = withDefaults(
   defineProps<{

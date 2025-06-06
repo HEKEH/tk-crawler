@@ -1,4 +1,5 @@
 import type { RouteRecordRaw } from 'vue-router';
+import { hasClientPrivilege } from '@tk-crawler/biz-shared';
 import { createRouter, createWebHistory } from 'vue-router';
 import { getGlobalStore } from '../utils';
 import {
@@ -65,7 +66,10 @@ const routes: RouteRecordRaw[] = [
         });
         return;
       }
-      if (menu.roles && !menu.roles.includes(globalStore.userProfile.role!)) {
+      if (
+        menu.privilege &&
+        !hasClientPrivilege(globalStore.userProfile.role!, menu.privilege)
+      ) {
         next(NoPrivilegeRouteRecord.path);
         return;
       }

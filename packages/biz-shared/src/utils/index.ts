@@ -1,3 +1,4 @@
+export * from './client-privilege';
 export * from './error';
 export * from './guild-user';
 export * from './password';

@@ -1,8 +1,9 @@
+import { ClientPrivilege } from '@tk-crawler/biz-shared';
 import Router from 'koa-router';
 import TaskController from '../../controllers/client/task';
 import {
   checkHasMembershipAndValid,
-  checkIsAdminClientMiddleware,
+  clientHasPrivilegeMiddleware,
   clientTokenAuthMiddleware,
 } from '../../middlewares';
 
@@ -12,14 +13,34 @@ const taskRouter = new Router({
 
 taskRouter.use(clientTokenAuthMiddleware(), checkHasMembershipAndValid);
 
+const hasAnchorManagementPrivilegeMiddleWare = clientHasPrivilegeMiddleware({
+  privilege: ClientPrivilege.ANCHOR_MANAGEMENT,
+});
+
 taskRouter.post(
   '/assign',
-  checkIsAdminClientMiddleware,
+  hasAnchorManagementPrivilegeMiddleWare,
   TaskController.assignTask,
 );
-taskRouter.post('/claim', TaskController.claimTask);
-taskRouter.post('/cancel-claim', TaskController.cancelClaimTask);
-taskRouter.post('/anchor-contacted', TaskController.anchorContacted);
-taskRouter.post('/cancel-anchor-contact', TaskController.cancelAnchorContact);
+taskRouter.post(
+  '/claim',
+  hasAnchorManagementPrivilegeMiddleWare,
+  TaskController.claimTask,
+);
+taskRouter.post(
+  '/cancel-claim',
+  hasAnchorManagementPrivilegeMiddleWare,
+  TaskController.cancelClaimTask,
+);
+taskRouter.post(
+  '/anchor-contacted',
+  hasAnchorManagementPrivilegeMiddleWare,
+  TaskController.anchorContacted,
+);
+taskRouter.post(
+  '/cancel-anchor-contact',
+  hasAnchorManagementPrivilegeMiddleWare,
+  TaskController.cancelAnchorContact,
+);
 
 export default taskRouter;

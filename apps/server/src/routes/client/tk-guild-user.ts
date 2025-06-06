@@ -1,7 +1,8 @@
+import { ClientPrivilege } from '@tk-crawler/biz-shared';
 import Router from 'koa-router';
 import TKGuildUserController from '../../controllers/client/tk-guild-user';
 import {
-  checkIsAdminClientMiddleware,
+  clientHasPrivilegeMiddleware,
   clientTokenAuthMiddleware,
 } from '../../middlewares';
 
@@ -9,35 +10,39 @@ const tkGuildUserRouter = new Router({ prefix: '/tk-guild-user' });
 
 tkGuildUserRouter.use(clientTokenAuthMiddleware());
 
+const hasGuildManagementPrivilegeMiddleWare = clientHasPrivilegeMiddleware({
+  privilege: ClientPrivilege.GUILD_MANAGEMENT,
+});
+
 // 主播相关路由
 tkGuildUserRouter.post(
   '/get-user-list',
-  checkIsAdminClientMiddleware,
+  hasGuildManagementPrivilegeMiddleWare,
   TKGuildUserController.getTKGuildUserList,
 );
 
 tkGuildUserRouter.post(
   '/get-user-detail',
-  checkIsAdminClientMiddleware,
+  hasGuildManagementPrivilegeMiddleWare,
   TKGuildUserController.getTKGuildUserDetail,
 );
 
 tkGuildUserRouter.post(
   '/delete-user',
-  checkIsAdminClientMiddleware,
+  hasGuildManagementPrivilegeMiddleWare,
   TKGuildUserController.deleteTKGuildUser,
 );
 
 // 分组相关路由
 tkGuildUserRouter.post(
   '/create-user',
-  checkIsAdminClientMiddleware,
+  hasGuildManagementPrivilegeMiddleWare,
   TKGuildUserController.createTKGuildUser,
 );
 
 tkGuildUserRouter.post(
   '/update-user',
-  checkIsAdminClientMiddleware,
+  hasGuildManagementPrivilegeMiddleWare,
   TKGuildUserController.updateTKGuildUser,
 );
 
@@ -48,13 +53,13 @@ tkGuildUserRouter.post(
 
 tkGuildUserRouter.post(
   '/start-live-admin-account',
-  checkIsAdminClientMiddleware,
+  hasGuildManagementPrivilegeMiddleWare,
   TKGuildUserController.startLiveAdminAccount,
 );
 
 tkGuildUserRouter.post(
   '/stop-live-admin-account',
-  checkIsAdminClientMiddleware,
+  hasGuildManagementPrivilegeMiddleWare,
   TKGuildUserController.stopLiveAdminAccount,
 );
 

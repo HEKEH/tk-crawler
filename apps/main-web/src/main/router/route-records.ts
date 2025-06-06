@@ -1,5 +1,5 @@
 import type { RouteComponent } from 'vue-router';
-import { OrgMemberRole } from '@tk-crawler/biz-shared';
+import { ClientPrivilege } from '@tk-crawler/biz-shared';
 import { Menu } from '../types';
 
 export interface CustomRouteRecord {
@@ -11,8 +11,7 @@ export interface CustomRouteRecord {
   // 点击时的跳转路径
   jumpTo?: string;
   component: RouteComponent;
-  // 如果设定了roles，则只有当用户角色在roles中时，才能访问该路由
-  roles?: OrgMemberRole[];
+  privilege?: ClientPrivilege;
 }
 
 // export const LoginRouteRecord: CustomRouteRecord = {
@@ -40,7 +39,7 @@ export const SystemManagementRouteRecord: CustomRouteRecord = {
   name: '系统管理',
   needLogin: true,
   menu: Menu.SystemManagement,
-  roles: [OrgMemberRole.admin],
+  privilege: ClientPrivilege.SYSTEM_MANAGEMENT,
   jumpTo: '/system-management',
   component: () => import('../sections/system-management/index.vue'),
 };
@@ -50,7 +49,7 @@ export const GuildManagementRouteRecord: CustomRouteRecord = {
   name: '公会管理',
   needLogin: true,
   menu: Menu.GuildManagement,
-  roles: [OrgMemberRole.admin],
+  privilege: ClientPrivilege.GUILD_MANAGEMENT,
   jumpTo: '/guild-management',
   component: () => import('../sections/guild-management/index.vue'),
 };
@@ -61,6 +60,7 @@ export const AnchorManagementRouteRecord: CustomRouteRecord = {
   needLogin: true,
   isPrimary: true,
   menu: Menu.AnchorManagement,
+  privilege: ClientPrivilege.ANCHOR_MANAGEMENT,
   jumpTo: '/anchor-management',
   component: () => import('../sections/anchor-management/index.vue'),
 };
@@ -69,6 +69,7 @@ export const AutoContactManagementRouteRecord: CustomRouteRecord = {
   path: '/auto-contact-management/:subMenu?',
   name: '自动建联管理',
   needLogin: true,
+  privilege: ClientPrivilege.AUTO_CONTACT_MANAGEMENT,
   menu: Menu.AutoContactManagement,
   jumpTo: '/auto-contact-management',
   component: () => import('../sections/auto-contact-management/index.vue'),

@@ -1,11 +1,12 @@
-import type {
-  OrgMemberLoginRequest,
-  OrgMemberLoginSuccessData,
-} from '@tk-crawler/biz-shared';
 import type { Subscription } from 'rxjs';
 import type { CustomRouteRecord } from '../router/route-records';
 import type { Menu } from '../types';
 import type { GuildAccountsManageContext } from './guild-accounts-manage';
+import {
+  hasClientPrivilege,
+  type OrgMemberLoginRequest,
+  type OrgMemberLoginSuccessData,
+} from '@tk-crawler/biz-shared';
 import {
   InitializationState,
   MessageCenter,
@@ -61,7 +62,10 @@ export default class GlobalStore implements GuildAccountsManageContext {
         SystemManagementRouteRecord,
         GuildManagementRouteRecord,
       ].filter(item => {
-        return !item.roles || item.roles.includes(this.userProfile.role!);
+        return (
+          !item.privilege ||
+          hasClientPrivilege(this.userProfile.role!, item.privilege)
+        );
       });
     }
     return records.map(item => ({

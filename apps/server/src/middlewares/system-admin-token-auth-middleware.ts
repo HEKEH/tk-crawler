@@ -39,7 +39,7 @@ export function systemAdminHasPrivilegeMiddleware(options: {
     if (
       !hasAdminPrivilege(systemUserInfo.user_info.role_id, options.privilege)
     ) {
-      throw new BusinessError('没有权限');
+      throw new BusinessError('您没有权限');
     }
     await next();
   };

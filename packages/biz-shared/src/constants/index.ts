@@ -1,4 +1,5 @@
 export * from './area';
+export * from './client-privileges';
 export * from './guild-cookie-page-help';
 export * from './guild-user';
 // export * from './crawl';

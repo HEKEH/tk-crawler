@@ -1,9 +1,10 @@
+import { ClientPrivilege } from '@tk-crawler/biz-shared';
 import { isRequestSecureMiddleware } from '@tk-crawler/server-shared';
 import Router from 'koa-router';
 import AnchorController from '../../controllers/client/anchor';
 import {
   checkHasMembershipAndValid,
-  checkIsAdminClientMiddleware,
+  clientHasPrivilegeMiddleware,
   clientTokenAuthMiddleware,
 } from '../../middlewares';
 
@@ -25,7 +26,9 @@ anchorRouter.post(
 );
 anchorRouter.post(
   '/clear-check',
-  checkIsAdminClientMiddleware,
+  clientHasPrivilegeMiddleware({
+    privilege: ClientPrivilege.ANCHOR_MANAGEMENT,
+  }),
   AnchorController.clearAnchorCheck,
 );
 export default anchorRouter;

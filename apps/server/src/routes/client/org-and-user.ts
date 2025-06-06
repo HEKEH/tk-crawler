@@ -1,7 +1,8 @@
+import { ClientPrivilege } from '@tk-crawler/biz-shared';
 import Router from 'koa-router';
 import ClientOrgAndUserController from '../../controllers/client/org-and-user';
 import {
-  checkIsAdminClientMiddleware,
+  clientHasPrivilegeMiddleware,
   clientTokenAuthMiddleware,
 } from '../../middlewares';
 
@@ -11,6 +12,10 @@ const orgAndUserRouter = new Router({
 
 orgAndUserRouter.use(clientTokenAuthMiddleware());
 
+const hasSystemManagementPrivilegeMiddleWare = clientHasPrivilegeMiddleware({
+  privilege: ClientPrivilege.SYSTEM_MANAGEMENT,
+});
+
 // org and user
 orgAndUserRouter.post(
   '/get-org-member-list',
@@ -18,23 +23,23 @@ orgAndUserRouter.post(
 );
 orgAndUserRouter.post(
   '/create-org-member',
-  checkIsAdminClientMiddleware,
+  hasSystemManagementPrivilegeMiddleWare,
   ClientOrgAndUserController.createOrgMember,
 );
 orgAndUserRouter.post(
   '/update-org-member',
-  checkIsAdminClientMiddleware,
+  hasSystemManagementPrivilegeMiddleWare,
   ClientOrgAndUserController.updateOrgMember,
 );
 orgAndUserRouter.post(
   '/delete-org-member',
-  checkIsAdminClientMiddleware,
+  hasSystemManagementPrivilegeMiddleWare,
   ClientOrgAndUserController.deleteOrgMember,
 );
 
 orgAndUserRouter.post(
   '/update-org-anchor-search-policies',
-  checkIsAdminClientMiddleware,
+  hasSystemManagementPrivilegeMiddleWare,
   ClientOrgAndUserController.updateOrgAnchorSearchPolicies,
 );
 

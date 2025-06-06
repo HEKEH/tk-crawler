@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ElButton, ElDialog } from 'element-plus';
+import { ElButton } from 'element-plus';
 import { computed, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
-import LoginForm from './login-form.vue';
+import LoginDialog from './login-dialog.vue';
 
 const route = useRoute();
 const dialogVisible = ref(false);
@@ -41,38 +41,10 @@ function handleLoginError() {
 <template>
   <ElButton type="text" @click="handleClick"> 登录 </ElButton>
 
-  <ElDialog
-    v-model="dialogVisible"
-    title="系统登录"
-    width="400px"
-    :append-to-body="true"
-    :close-on-click-modal="false"
-    :close-on-press-escape="true"
-    :show-close="true"
+  <LoginDialog
+    :visible="dialogVisible"
     @close="handleClose"
-  >
-    <LoginForm @success="handleLoginSuccess" @error="handleLoginError" />
-  </ElDialog>
+    @success="handleLoginSuccess"
+    @error="handleLoginError"
+  />
 </template>
-
-<style lang="scss" scoped>
-:deep(.el-dialog__body) {
-  padding: 20px;
-}
-
-:deep(.el-dialog__header) {
-  margin-right: 0;
-  padding: 20px;
-  border-bottom: 1px solid var(--el-border-color-lighter);
-}
-
-:deep(.el-dialog__title) {
-  font-size: 18px;
-  font-weight: 500;
-}
-
-:deep(.el-dialog__headerbtn) {
-  top: 20px;
-  right: 20px;
-}
-</style>

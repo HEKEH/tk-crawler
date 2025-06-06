@@ -1,11 +1,15 @@
 <script setup lang="ts">
+import HeroSection from './hero-section.vue';
+
 defineOptions({
   name: 'Home',
 });
 </script>
 
 <template>
-  <div class="home">主页</div>
+  <div class="w-full h-full overflow-y-auto pb-8">
+    <HeroSection />
+  </div>
 </template>
 
 <style scoped>

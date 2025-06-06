@@ -68,7 +68,7 @@ const downloadButtons = [
   align-items: center;
   border-radius: 16px;
 
-  @include mobile {
+  @include tablet-and-mobile {
     flex-direction: column;
     padding: 40px 20px;
     gap: 40px;
@@ -79,7 +79,7 @@ const downloadButtons = [
   .download-content {
     padding-left: 60px;
 
-    @include mobile {
+    @include tablet-and-mobile {
       padding-left: 0;
       width: 100%;
     }
@@ -90,7 +90,7 @@ const downloadButtons = [
       row-gap: 16px;
       margin-bottom: 40px;
 
-      @include mobile {
+      @include tablet-and-mobile {
         text-align: center;
         margin-bottom: 32px;
       }
@@ -99,8 +99,9 @@ const downloadButtons = [
         color: #a8cc00;
         font-size: 36px;
         font-weight: 600;
+        line-height: 1.2;
 
-        @include mobile {
+        @include tablet-and-mobile {
           font-size: 28px;
         }
       }
@@ -110,7 +111,7 @@ const downloadButtons = [
         color: var(--el-text-color-secondary);
         margin-top: 16px;
 
-        @include mobile {
+        @include tablet-and-mobile {
           font-size: 14px;
           margin-top: 12px;
         }
@@ -122,7 +123,7 @@ const downloadButtons = [
       flex-direction: row;
       gap: 20px;
 
-      @include mobile {
+      @include tablet-and-mobile {
         justify-content: center;
         gap: 16px;
       }
@@ -142,7 +143,7 @@ const downloadButtons = [
         text-decoration: none;
         transition: all 0.3s ease;
 
-        @include mobile {
+        @include tablet-and-mobile {
           height: 100px;
           width: 100px;
           font-size: 12px;
@@ -158,7 +159,7 @@ const downloadButtons = [
           height: 40px;
           margin-bottom: 8px;
 
-          @include mobile {
+          @include tablet-and-mobile {
             width: 32px;
             height: 32px;
             margin-bottom: 6px;
@@ -173,7 +174,7 @@ const downloadButtons = [
       height: 500px;
       object-fit: contain;
 
-      @include mobile {
+      @include tablet-and-mobile {
         height: 300px;
       }
     }

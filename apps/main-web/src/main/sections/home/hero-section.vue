@@ -83,7 +83,7 @@ function handleButtonClick() {
   position: relative;
   min-height: 800px;
 
-  @include mobile {
+  @include tablet-and-mobile {
     padding: 40px 20px 0 20px;
     min-height: auto;
   }
@@ -93,13 +93,14 @@ function handleButtonClick() {
     flex-direction: row;
     justify-content: space-between;
     z-index: 1;
-    @include mobile {
+    column-gap: 32px;
+    @include tablet-and-mobile {
       flex-direction: column;
-      gap: 32px;
+      row-gap: 32px;
     }
 
     .hero-content-left {
-      @include mobile {
+      @include tablet-and-mobile {
         text-align: center;
       }
 
@@ -108,7 +109,7 @@ function handleButtonClick() {
         color: var(--el-text-color-primary);
         margin-bottom: 32px;
 
-        @include mobile {
+        @include tablet-and-mobile {
           font-size: 16px;
           margin-bottom: 20px;
         }
@@ -121,7 +122,7 @@ function handleButtonClick() {
         margin-bottom: 0;
         letter-spacing: 1px;
 
-        @include mobile {
+        @include tablet-and-mobile {
           font-size: 40px;
           line-height: 1.2;
         }
@@ -136,7 +137,7 @@ function handleButtonClick() {
       flex: 1;
       max-width: 525px;
 
-      @include mobile {
+      @include tablet-and-mobile {
         max-width: 100%;
         text-align: center;
       }
@@ -147,7 +148,7 @@ function handleButtonClick() {
         margin-bottom: 24px;
         line-height: 1.7;
 
-        @include mobile {
+        @include tablet-and-mobile {
           font-size: 14px;
           line-height: 1.6;
           margin-bottom: 24px;
@@ -166,8 +167,9 @@ function handleButtonClick() {
         border-radius: 12px;
         box-shadow: 0 2px 8px #e6f7b0;
 
-        @include mobile {
+        @include tablet-and-mobile {
           width: 100%;
+          max-width: 400px;
           font-size: 18px;
           height: 48px;
         }
@@ -185,7 +187,7 @@ function handleButtonClick() {
     width: 100%;
     height: 100%;
 
-    @include mobile {
+    @include tablet-and-mobile {
       position: relative;
       top: 0;
       margin-top: 40px;
@@ -195,7 +197,7 @@ function handleButtonClick() {
       height: 600px;
       width: auto;
       object-fit: contain;
-      @include mobile {
+      @include tablet-and-mobile {
         height: 360px;
       }
     }

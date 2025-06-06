@@ -63,7 +63,7 @@ const isMobile = useIsMobileSize();
   margin: 0 auto;
   padding: 100px 0;
 
-  @include mobile {
+  @include tablet-and-mobile {
     padding: 60px 0;
   }
 
@@ -73,7 +73,7 @@ const isMobile = useIsMobileSize();
     margin-bottom: 67px;
     color: var(--el-text-color-primary);
 
-    @include mobile {
+    @include tablet-and-mobile {
       font-size: 24px;
       margin-bottom: 40px;
     }
@@ -88,7 +88,7 @@ const isMobile = useIsMobileSize();
     padding-left: 20px;
     padding-right: 20px;
 
-    @include mobile {
+    @include tablet-and-mobile {
       flex-direction: column;
       gap: 24px;
       padding-bottom: 0;
@@ -107,7 +107,7 @@ const isMobile = useIsMobileSize();
       flex-direction: column;
       align-items: flex-start;
 
-      @include mobile {
+      @include tablet-and-mobile {
         width: 100%;
         height: auto;
         min-height: auto;
@@ -122,7 +122,7 @@ const isMobile = useIsMobileSize();
         align-items: center;
         justify-content: center;
 
-        @include mobile {
+        @include tablet-and-mobile {
           width: 48px;
           height: 48px;
           margin-bottom: 16px;
@@ -136,7 +136,7 @@ const isMobile = useIsMobileSize();
         margin: 0 0 18px 0;
         color: var(--el-text-color-primary);
 
-        @include mobile {
+        @include tablet-and-mobile {
           font-size: 24px;
           margin-bottom: 16px;
         }
@@ -148,7 +148,7 @@ const isMobile = useIsMobileSize();
         line-height: 1.7;
         margin-top: 0;
 
-        @include mobile {
+        @include tablet-and-mobile {
           font-size: 14px;
           line-height: 1.6;
         }

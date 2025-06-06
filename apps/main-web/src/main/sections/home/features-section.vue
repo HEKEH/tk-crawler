@@ -33,9 +33,14 @@ const isMobile = useIsMobileSize();
     <h2 class="features-heading">小橙助手，您的智能工作伙伴</h2>
     <div class="features-grid">
       <div
-        v-for="feature in features"
+        v-for="(feature, index) in features"
         :key="feature.title"
+        v-motion
         class="feature-card"
+        :initial="{ opacity: 0, y: 20 }"
+        :visible-once="{ opacity: 1, y: 0 }"
+        :duration="1000"
+        :delay="index * 200"
       >
         <div class="feature-icon">
           <component

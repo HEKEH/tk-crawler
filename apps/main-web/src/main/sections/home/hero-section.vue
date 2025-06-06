@@ -34,7 +34,13 @@ function handleButtonClick() {
 
 <template>
   <section class="hero-section">
-    <div class="hero-content">
+    <div
+      v-motion
+      class="hero-content"
+      :initial="{ opacity: 0, y: 20 }"
+      :visible-once="{ opacity: 1, y: 0 }"
+      :duration="1000"
+    >
       <div class="hero-content-left">
         <div class="hero-subtitle">高效精准联动主播，助力公会成长</div>
         <div class="hero-heading">
@@ -56,7 +62,13 @@ function handleButtonClick() {
         </ElButton>
       </div>
     </div>
-    <div class="hero-image-container">
+    <div
+      v-motion
+      class="hero-image-container"
+      :initial="{ opacity: 0, y: 30 }"
+      :visible-once="{ opacity: 1, y: 0 }"
+      :duration="1000"
+    >
       <img src="/images/iphone.png" alt="Iphone" />
     </div>
   </section>

@@ -1,4 +1,5 @@
 import { VueQueryPlugin } from '@tanstack/vue-query';
+import { MotionPlugin } from '@vueuse/motion';
 import { vLoading } from 'element-plus';
 
 import { createApp } from 'vue';
@@ -12,6 +13,7 @@ function init() {
   app.use(router);
   app.directive('loading', vLoading);
   app.use(VueQueryPlugin);
+  app.use(MotionPlugin);
   app.mount('#app');
 }
 

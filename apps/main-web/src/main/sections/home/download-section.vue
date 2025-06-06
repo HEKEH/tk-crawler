@@ -20,13 +20,25 @@ const downloadButtons = [
 <template>
   <section class="download-section">
     <div class="download-content">
-      <div class="download-info">
+      <div
+        v-motion
+        class="download-info"
+        :initial="{ opacity: 0, y: 20 }"
+        :visible-once="{ opacity: 1, y: 0 }"
+        :duration="1000"
+      >
         <div class="download-title">小橙助手桌面客户端</div>
         <div class="download-description">
           下载桌面客户端，体验更强大的功能，让工作更高效
         </div>
       </div>
-      <div class="download-buttons">
+      <div
+        v-motion
+        class="download-buttons"
+        :initial="{ opacity: 0, y: 30 }"
+        :visible-once="{ opacity: 1, y: 0 }"
+        :duration="1000"
+      >
         <a
           v-for="button in downloadButtons"
           :key="button.platform"
@@ -39,7 +51,14 @@ const downloadButtons = [
         </a>
       </div>
     </div>
-    <div class="download-image">
+    <div
+      v-motion
+      :initial="{ opacity: 0, y: 30 }"
+      :visible-once="{ opacity: 1, y: 0 }"
+      :duration="1000"
+      :delay="100"
+      class="download-image"
+    >
       <img src="/images/computer.png" height="500" alt="computer" />
     </div>
   </section>

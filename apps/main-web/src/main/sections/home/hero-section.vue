@@ -62,13 +62,7 @@ function handleButtonClick() {
         </ElButton>
       </div>
     </div>
-    <div
-      v-motion
-      class="hero-image-container"
-      :initial="{ opacity: 0, y: 30 }"
-      :visible-once="{ opacity: 1, y: 0 }"
-      :duration="1000"
-    >
+    <div class="hero-image-container">
       <img src="/images/iphone.png" alt="Iphone" />
     </div>
   </section>

@@ -20,6 +20,7 @@
     "@tk-crawler/secure": "workspace:*",
     "@types/lodash": "^4.17.13",
     "@vueuse/core": "^13.1.0",
+    "@vueuse/motion": "^3.0.3",
     "axios": "^1.7.9",
     "core-js": "^3.42.0",
     "crypto-js": "^4.2.0",
@@ -32,8 +33,5 @@
     "vue-router": "^4.5.1",
     "vue-tsc": "^2.0.26",
     "xlsx": "^0.18.5"
-  },
-  "dependencies": {
-    "@vueuse/motion": "^3.0.3"
   }
 }

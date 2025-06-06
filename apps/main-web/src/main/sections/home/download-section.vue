@@ -51,14 +51,7 @@ const downloadButtons = [
         </a>
       </div>
     </div>
-    <div
-      v-motion
-      :initial="{ opacity: 0, y: 30 }"
-      :visible-once="{ opacity: 1, y: 0 }"
-      :duration="1000"
-      :delay="100"
-      class="download-image"
-    >
+    <div class="download-image">
       <img src="/images/computer.png" height="500" alt="computer" />
     </div>
   </section>

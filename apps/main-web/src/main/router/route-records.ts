@@ -30,7 +30,7 @@ export const NoPrivilegeRouteRecord: CustomRouteRecord = {
 
 export const HomeRouteRecord: CustomRouteRecord = {
   path: '/home',
-  name: '主页',
+  name: '首页',
   menu: Menu.Home,
   component: () => import('../sections/home/index.vue'),
 };

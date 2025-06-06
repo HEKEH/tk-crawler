@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import DownloadSection from './download-section.vue';
+import FeaturesSection from './features-section.vue';
 import HeroSection from './hero-section.vue';
 
 defineOptions({
@@ -9,6 +11,8 @@ defineOptions({
 <template>
   <div class="w-full h-full overflow-y-auto pb-8">
     <HeroSection />
+    <FeaturesSection />
+    <DownloadSection />
   </div>
 </template>
 

@@ -68,7 +68,7 @@ function handleButtonClick() {
   />
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .hero-section {
   display: flex;
   padding: 60px 80px 0 80px;
@@ -126,19 +126,6 @@ function handleButtonClick() {
         box-shadow: 0 2px 8px #e6f7b0;
       }
     }
-
-    @media (max-width: 1024px) {
-      flex-direction: column;
-      gap: 40px;
-
-      .hero-content-right {
-        max-width: 100%;
-      }
-
-      .hero-heading {
-        font-size: 60px;
-      }
-    }
   }
 
   .hero-image-container {
@@ -150,27 +137,6 @@ function handleButtonClick() {
     left: 0;
     width: 100%;
     height: 100%;
-  }
-
-  @media (max-width: 768px) {
-    padding: 40px 20px 0 20px;
-
-    .hero-heading {
-      font-size: 40px;
-    }
-
-    .hero-subtitle {
-      font-size: 18px;
-    }
-
-    .hero-description {
-      font-size: 16px;
-    }
-
-    .start-button {
-      width: 100%;
-      text-align: center;
-    }
   }
 }
 </style>

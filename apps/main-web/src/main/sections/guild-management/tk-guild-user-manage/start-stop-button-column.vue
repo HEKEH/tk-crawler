@@ -10,7 +10,6 @@ import { isInElectronApp } from '@tk-crawler/electron-utils/render';
 import {
   MAIN_APP_ID,
   MAIN_APP_PRODUCT_NAME,
-  MAIN_APP_PUBLISH_URL,
 } from '@tk-crawler/main-client-shared';
 import { RESPONSE_CODE } from '@tk-crawler/shared';
 import {
@@ -27,6 +26,7 @@ import {
 } from 'element-plus';
 import { toRaw } from 'vue';
 import { stopTKGuildUserAccount } from '../../../requests';
+import { getAppDownloadUrl } from '../../../utils';
 import { useGlobalStore } from '../../../utils/vue';
 
 type TKGuildUserRow = GetTKGuildUserListResponseData['list'][number];
@@ -120,8 +120,8 @@ async function onStart(item: TKGuildUserRow) {
                 }}
                 href={
                   platform === 'Mac'
-                    ? `${MAIN_APP_PUBLISH_URL}/${MAIN_APP_PRODUCT_NAME}-Mac-Installer.dmg`
-                    : `${MAIN_APP_PUBLISH_URL}/${MAIN_APP_PRODUCT_NAME}-Windows-Installer.exe`
+                    ? getAppDownloadUrl('Mac')
+                    : getAppDownloadUrl('Windows')
                 }
                 target="_blank"
                 type="primary"

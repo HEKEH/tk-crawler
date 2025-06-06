@@ -42,8 +42,7 @@ class TrayManager {
     this._contextMenuOptions = props.contextMenuOptions;
   }
 
-  private _setCurrentIconPath(iconPath: string) {
-    this._currentIconPath = iconPath;
+  private _getTrayImage(iconPath: string) {
     let image: string | NativeImage = iconPath;
     if (process.platform === 'darwin') {
       if (this._nativeImageMap[iconPath]) {
@@ -54,11 +53,17 @@ class TrayManager {
         this._nativeImageMap[iconPath] = image;
       }
     }
-    this._tray.setImage(image);
+    return image;
+  }
+
+  private _setCurrentIconPath(iconPath: string) {
+    this._currentIconPath = iconPath;
+    this._tray.setImage(this._getTrayImage(iconPath));
   }
 
   init() {
-    this._tray = new Tray(this._iconPath);
+    this._currentIconPath = this._iconPath;
+    this._tray = new Tray(this._getTrayImage(this._currentIconPath));
     this._tray.setToolTip(this._projectName);
     const contextMenu = Menu.buildFromTemplate(
       this._contextMenuOptions || [

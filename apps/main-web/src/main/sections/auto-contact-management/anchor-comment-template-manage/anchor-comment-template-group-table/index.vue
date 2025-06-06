@@ -493,9 +493,6 @@ async function handleCreateOrEdit(data: Partial<AnchorCommentTemplateGroup>) {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  @include web {
-    padding: 2rem 1rem;
-  }
   @include mobile {
     padding: 1rem;
   }

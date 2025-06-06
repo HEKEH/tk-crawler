@@ -9,7 +9,7 @@ defineOptions({
 </script>
 
 <template>
-  <div class="w-full h-full overflow-y-auto pb-8">
+  <div class="w-full h-full overflow-y-auto md:pb-8">
     <HeroSection />
     <FeaturesSection />
     <DownloadSection />

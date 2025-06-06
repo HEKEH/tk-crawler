@@ -56,8 +56,21 @@ const downloadButtons = [
   align-items: center;
   border-radius: 16px;
 
+  @include mobile {
+    flex-direction: column;
+    padding: 40px 20px;
+    gap: 40px;
+    border-radius: 8px;
+    margin: 0 20px 20px 20px;
+  }
+
   .download-content {
     padding-left: 60px;
+
+    @include mobile {
+      padding-left: 0;
+      width: 100%;
+    }
 
     .download-info {
       display: flex;
@@ -65,16 +78,30 @@ const downloadButtons = [
       row-gap: 16px;
       margin-bottom: 40px;
 
+      @include mobile {
+        text-align: center;
+        margin-bottom: 32px;
+      }
+
       .download-title {
         color: #a8cc00;
         font-size: 36px;
         font-weight: 600;
+
+        @include mobile {
+          font-size: 28px;
+        }
       }
 
       .download-description {
         font-size: 18px;
         color: var(--el-text-color-secondary);
         margin-top: 16px;
+
+        @include mobile {
+          font-size: 14px;
+          margin-top: 12px;
+        }
       }
     }
 
@@ -82,6 +109,11 @@ const downloadButtons = [
       display: flex;
       flex-direction: row;
       gap: 20px;
+
+      @include mobile {
+        justify-content: center;
+        gap: 16px;
+      }
 
       .download-button {
         align-items: center;
@@ -98,6 +130,12 @@ const downloadButtons = [
         text-decoration: none;
         transition: all 0.3s ease;
 
+        @include mobile {
+          height: 100px;
+          width: 100px;
+          font-size: 12px;
+        }
+
         &:hover {
           background-color: var(--el-bg-color-overlay);
           transform: translateY(-2px);
@@ -107,6 +145,12 @@ const downloadButtons = [
           width: 40px;
           height: 40px;
           margin-bottom: 8px;
+
+          @include mobile {
+            width: 32px;
+            height: 32px;
+            margin-bottom: 6px;
+          }
         }
       }
     }
@@ -116,6 +160,10 @@ const downloadButtons = [
     img {
       height: 500px;
       object-fit: contain;
+
+      @include mobile {
+        height: 300px;
+      }
     }
   }
 }

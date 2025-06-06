@@ -37,13 +37,14 @@ function handleButtonClick() {
     <div class="hero-content">
       <div class="hero-content-left">
         <div class="hero-subtitle">高效精准联动主播，助力公会成长</div>
-        <h1 class="hero-heading">
-          限时 <span class="highlight">免费体验</span>
-        </h1>
+        <div class="hero-heading">
+          限时<span class="highlight">免费体验</span>
+        </div>
       </div>
       <div class="hero-content-right">
         <div class="hero-description">
-          打造专业的主播联动平台，每日更新海量最新主播数据，提供自动建联工具，助您实现高效精准对接。限时免费体验，加速业务增长，让每一次建联都创造最大价值。
+          「<span class="font-bold">小橙助手</span
+          >」是专业的公会管理平台，每日更新海量最新主播数据，提供自动建联工具，助您实现高效精准对接。限时免费体验，加速业务增长，让每一次建联都创造最大价值
         </div>
         <ElButton
           class="start-button"
@@ -56,7 +57,7 @@ function handleButtonClick() {
       </div>
     </div>
     <div class="hero-image-container">
-      <img src="/images/iphone.png" height="600" alt="Iphone" />
+      <img src="/images/iphone.png" alt="Iphone" />
     </div>
   </section>
   <LoginDialog
@@ -76,17 +77,35 @@ function handleButtonClick() {
   position: relative;
   min-height: 800px;
 
+  @include mobile {
+    padding: 40px 20px 0 20px;
+    min-height: auto;
+  }
+
   .hero-content {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     z-index: 1;
+    @include mobile {
+      flex-direction: column;
+      gap: 32px;
+    }
 
     .hero-content-left {
+      @include mobile {
+        text-align: center;
+      }
+
       .hero-subtitle {
         font-size: 20px;
         color: var(--el-text-color-primary);
         margin-bottom: 32px;
+
+        @include mobile {
+          font-size: 16px;
+          margin-bottom: 20px;
+        }
       }
 
       .hero-heading {
@@ -95,6 +114,11 @@ function handleButtonClick() {
         font-weight: 500;
         margin-bottom: 0;
         letter-spacing: 1px;
+
+        @include mobile {
+          font-size: 40px;
+          line-height: 1.2;
+        }
 
         .highlight {
           color: #a3d100;
@@ -106,11 +130,22 @@ function handleButtonClick() {
       flex: 1;
       max-width: 525px;
 
+      @include mobile {
+        max-width: 100%;
+        text-align: center;
+      }
+
       .hero-description {
         font-size: 18px;
         color: var(--el-text-color-primary);
         margin-bottom: 24px;
         line-height: 1.7;
+
+        @include mobile {
+          font-size: 14px;
+          line-height: 1.6;
+          margin-bottom: 24px;
+        }
       }
 
       .start-button {
@@ -124,6 +159,12 @@ function handleButtonClick() {
         padding-right: 20px;
         border-radius: 12px;
         box-shadow: 0 2px 8px #e6f7b0;
+
+        @include mobile {
+          width: 100%;
+          font-size: 18px;
+          height: 48px;
+        }
       }
     }
   }
@@ -137,6 +178,21 @@ function handleButtonClick() {
     left: 0;
     width: 100%;
     height: 100%;
+
+    @include mobile {
+      position: relative;
+      top: 0;
+      margin-top: 40px;
+    }
+
+    img {
+      height: 600px;
+      width: auto;
+      object-fit: contain;
+      @include mobile {
+        height: 360px;
+      }
+    }
   }
 }
 </style>

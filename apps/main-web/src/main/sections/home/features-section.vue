@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useIsMobileSize } from '@tk-crawler/view-shared';
 import FeatureIcon1 from '../../assets/icons/feature-icon1.svg';
 import FeatureIcon2 from '../../assets/icons/feature-icon2.svg';
 import FeatureIcon3 from '../../assets/icons/feature-icon3.svg';
@@ -23,6 +24,8 @@ const features = [
       '智能建联工具，一键批量操作，让您快速建立主播联系，效率提升翻倍',
   },
 ];
+
+const isMobile = useIsMobileSize();
 </script>
 
 <template>
@@ -35,7 +38,12 @@ const features = [
         class="feature-card"
       >
         <div class="feature-icon">
-          <component :is="feature.icon" />
+          <component
+            :is="feature.icon"
+            :width="isMobile ? 40 : 56"
+            :height="isMobile ? 40 : 56"
+            :size="isMobile ? 40 : 56"
+          />
         </div>
         <h3 class="feature-title">{{ feature.title }}</h3>
         <div class="feature-description" v-html="feature.description"></div>
@@ -50,11 +58,20 @@ const features = [
   margin: 0 auto;
   padding: 100px 0;
 
+  @include mobile {
+    padding: 60px 0;
+  }
+
   .features-heading {
     text-align: center;
     font-size: 36px;
     margin-bottom: 67px;
     color: var(--el-text-color-primary);
+
+    @include mobile {
+      font-size: 24px;
+      margin-bottom: 40px;
+    }
   }
 
   .features-grid {
@@ -63,6 +80,14 @@ const features = [
     column-gap: 40px;
     justify-content: space-between;
     flex-wrap: nowrap;
+    padding-left: 20px;
+    padding-right: 20px;
+
+    @include mobile {
+      flex-direction: column;
+      gap: 24px;
+      padding-bottom: 0;
+    }
 
     .feature-card {
       flex: 1;
@@ -77,6 +102,13 @@ const features = [
       flex-direction: column;
       align-items: flex-start;
 
+      @include mobile {
+        width: 100%;
+        height: auto;
+        min-height: auto;
+        padding: 24px;
+      }
+
       .feature-icon {
         width: 56px;
         height: 56px;
@@ -84,6 +116,12 @@ const features = [
         display: flex;
         align-items: center;
         justify-content: center;
+
+        @include mobile {
+          width: 48px;
+          height: 48px;
+          margin-bottom: 16px;
+        }
       }
 
       .feature-title {
@@ -92,6 +130,11 @@ const features = [
         line-height: 1.4;
         margin: 0 0 18px 0;
         color: var(--el-text-color-primary);
+
+        @include mobile {
+          font-size: 24px;
+          margin-bottom: 16px;
+        }
       }
 
       .feature-description {
@@ -99,6 +142,11 @@ const features = [
         color: var(--el-text-color-secondary);
         line-height: 1.7;
         margin-top: 0;
+
+        @include mobile {
+          font-size: 14px;
+          line-height: 1.6;
+        }
 
         :deep(.font-bold) {
           font-weight: 600;

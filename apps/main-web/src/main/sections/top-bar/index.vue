@@ -21,7 +21,7 @@ function handleImgClick() {
     <div class="flex-1 flex items-center gap-x-10">
       <img
         class="h-8 w-auto cursor-pointer md:h-10"
-        src="/appicon.svg?url"
+        src="/appicon.svg?v=1.0.0&url"
         alt="appicon"
         @click="handleImgClick"
       />

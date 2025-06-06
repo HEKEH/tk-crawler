@@ -67,7 +67,7 @@ async function main() {
       : join(appPath, 'assets/tray-icon@2x.png'); // macOS 使用 .png
   const warningIconPath =
     process.platform === 'win32'
-      ? join(appPath, 'assets/tray-icon-warning.ico') // Windows 使用 .ico
+      ? undefined
       : join(appPath, 'assets/tray-icon-warning@2x.png'); // macOS 使用 .png
   const transparentIconPath =
     process.platform === 'win32'

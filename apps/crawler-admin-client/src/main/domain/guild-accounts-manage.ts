@@ -1,10 +1,12 @@
+import type { Page } from '../types';
 import type { UserProfile } from './user-profile';
 import { AdminPrivilege, TK_GUILD_USER_EVENTS } from '@tk-crawler/biz-shared';
 import { RESPONSE_CODE } from '@tk-crawler/shared';
 import { ElMessageBox } from 'element-plus';
 import { getSettings } from '../hooks';
 import { isAnyGuildAccountError } from '../requests';
-import { Page } from '../types';
+import router from '../router';
+import { GuildManagementRouteRecord } from '../router/route-records';
 import { localStorageStore } from '../utils';
 
 export interface GuildAccountsManageContext {
@@ -90,7 +92,9 @@ export class GuildAccountsManage {
             closeOnPressEscape: false,
           },
         );
-        this._context.goToPage(Page.GuildManage);
+        router.push(
+          GuildManagementRouteRecord.jumpTo ?? GuildManagementRouteRecord.path,
+        );
       } catch {
         localStorageStore.setItem(IGNORE_ERROR_KEY, 1);
       }

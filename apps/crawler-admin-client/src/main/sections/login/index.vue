@@ -14,13 +14,14 @@ import {
   ElMessage,
 } from 'element-plus';
 import { reactive, ref } from 'vue';
-// import { useRouter } from 'vue-router';
+import { useRouter } from 'vue-router';
 import { useGlobalStore } from '../../utils';
 
 // const router = useRouter();
 const loginFormRef = ref<FormInstance>();
 const loading = ref(false);
 const globalStore = useGlobalStore();
+const router = useRouter();
 // 表单数据
 const loginForm = reactive<OrgMemberLoginRequest>({
   username: '',
@@ -72,7 +73,8 @@ async function handleLogin() {
     const resp = await globalStore.login(loginForm);
     if (resp.status_code === RESPONSE_CODE.SUCCESS) {
       ElMessage.success('登录成功');
-      // router.push('/');
+      const primaryMenu = globalStore.primaryMenu;
+      router.push(primaryMenu.jumpTo || primaryMenu.path);
     }
   } finally {
     loading.value = false;

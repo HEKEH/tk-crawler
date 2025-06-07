@@ -1,8 +1,9 @@
 import type { Subscription } from 'rxjs';
+import type { CustomRouteRecord } from '../router/route-records';
 import type { GuildAccountsManageContext } from './guild-accounts-manage';
 import { CRAWL_EVENTS } from '@tk-crawler-admin-client/shared';
 import {
-  AdminPrivilege,
+  hasAdminPrivilege,
   type SystemUserLoginRequest,
   type SystemUserLoginSuccessData,
 } from '@tk-crawler/biz-shared';
@@ -15,6 +16,8 @@ import {
 import { TokenInvalidSubject } from '@tk-crawler/view-shared';
 import { markRaw } from 'vue';
 import { login, loginByToken } from '../requests';
+import { MainRouteRecords, redirectToLogin } from '../router';
+import { LoginRouteRecord } from '../router/route-records';
 import { Page } from '../types';
 import { getToken, removeToken, setToken } from '../utils';
 import ClientManage from './client-manage';
@@ -88,7 +91,6 @@ export default class GlobalStore implements GuildAccountsManageContext {
 
   private _handleLoginSuccess(data: SystemUserLoginSuccessData) {
     this._userProfile.init(data);
-    this._currentPage = this.allPages[0].key;
     this._guildAccountsManage.start();
   }
 
@@ -103,14 +105,15 @@ export default class GlobalStore implements GuildAccountsManageContext {
     );
   }
 
-  private _gotoLoginPage() {
+  private async _gotoLoginPage() {
     this._userProfile.clear();
     this._currentPage = Page.Login;
+    await redirectToLogin();
   }
 
-  goToPage(page: Page) {
+  async goToPage(page: Page) {
     if (page === Page.Login) {
-      this._gotoLoginPage();
+      await this._gotoLoginPage();
       return;
     }
     this._currentPage = page;
@@ -128,57 +131,40 @@ export default class GlobalStore implements GuildAccountsManageContext {
         }
       }
       this._userProfile.clear();
-      this._gotoLoginPage();
     } catch (error) {
       this._userProfile.clear();
-      this._gotoLoginPage();
       throw error;
     }
   }
 
+  get primaryMenu() {
+    return this.allPages.find(item => item.isPrimary) ?? this.allPages[0];
+  }
+
   get allPages() {
+    let records: CustomRouteRecord[] = [];
     if (!this.userProfile.hasLoggedIn) {
-      return [
-        {
-          key: Page.Login,
-          name: '登录',
-        },
-      ];
+      records = [LoginRouteRecord];
+    } else {
+      records = MainRouteRecords.filter(item => {
+        return (
+          !item.privilege ||
+          hasAdminPrivilege(this.userProfile.role!, item.privilege)
+        );
+      });
     }
-    let pageList: {
-      key: Page;
-      name: string;
-      privilege: AdminPrivilege;
-      onlyApp?: boolean;
-    }[] = [
-      {
-        key: Page.Crawler,
-        name: '爬虫管理',
-        privilege: AdminPrivilege.CRAWLER_MANAGEMENT,
-        onlyApp: true,
-      },
-      {
-        key: Page.System,
-        name: '系统管理',
-        privilege: AdminPrivilege.SYSTEM_MANAGEMENT,
-      },
-      {
-        key: Page.Client,
-        name: '客户管理',
-        privilege: AdminPrivilege.CLIENT_MANAGEMENT,
-      },
-      {
-        key: Page.GuildManage,
-        name: '公会管理',
-        privilege: AdminPrivilege.GUILD_MANAGEMENT,
-      },
-    ];
-    if (!isInElectronApp()) {
-      pageList = pageList.filter(page => !page.onlyApp);
+    if (isInElectronApp()) {
+      records = records.filter(item => !item.only || item.only === 'electron');
+    } else {
+      records = records.filter(item => !item.only || item.only === 'web');
     }
-    return pageList.filter(page =>
-      this.userProfile.hasPrivilege(page.privilege),
-    );
+    return records.map(item => ({
+      menu: item.menu,
+      name: item.name,
+      path: item.path,
+      jumpTo: item.jumpTo,
+      isPrimary: item.isPrimary,
+    }));
   }
 
   async login(params: SystemUserLoginRequest) {
@@ -188,7 +174,6 @@ export default class GlobalStore implements GuildAccountsManageContext {
       this._token = data.token;
       await setToken(data.token);
       this._handleLoginSuccess(data);
-      this._currentPage = this.allPages[0].key;
     }
     return resp;
   }
@@ -199,7 +184,7 @@ export default class GlobalStore implements GuildAccountsManageContext {
     if (isInElectronApp()) {
       await window.ipcRenderer.invoke(CRAWL_EVENTS.CLEAR_TIKTOK_COOKIE);
     }
-    this._gotoLoginPage();
+    await redirectToLogin();
   }
 
   async init() {
@@ -216,12 +201,13 @@ export default class GlobalStore implements GuildAccountsManageContext {
       await this._loginByToken();
       this._initializationState.initializeComplete();
     } catch (error) {
+      console.error(error);
       this._initializationState.initializeError(error as Error);
       throw error;
     }
   }
 
-  setCurrentMenu(menu: Page) {
+  setCurrentMenu(menu: Page | null) {
     this._currentPage = menu;
   }
 

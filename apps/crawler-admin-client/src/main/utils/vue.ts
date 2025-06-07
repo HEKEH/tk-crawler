@@ -5,9 +5,21 @@ import GlobalStore from '../domain/global-store';
 const GlobalStoreKey: InjectionKey<GlobalStore> =
   (window as any).__TK_GLOBAL_STORE_KEY__ ||
   ((window as any).__TK_GLOBAL_STORE_KEY__ = Symbol('GlobalStore'));
+
+let globalStore: GlobalStore;
+
+export function getGlobalStore() {
+  if (!globalStore) {
+    globalStore = reactive(new GlobalStore()) as GlobalStore;
+  }
+  return globalStore;
+}
+
 /** register global store when init */
 export function provideGlobalStore() {
-  const globalStore: GlobalStore = reactive(new GlobalStore()) as GlobalStore;
+  if (!globalStore) {
+    globalStore = reactive(new GlobalStore()) as GlobalStore;
+  }
   provide(GlobalStoreKey, globalStore);
   return globalStore;
 }

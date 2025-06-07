@@ -4,10 +4,19 @@ import { Bell } from '@element-plus/icons-vue';
 import { useIsWebSize } from '@tk-crawler/view-shared';
 import { ElIcon, ElLink, ElTooltip } from 'element-plus';
 import { computed } from 'vue';
-import { Page } from '../../types';
+import { useRouter } from 'vue-router';
+import { GuildManagementRouteRecord } from '../../router/route-records';
 import { useGlobalStore } from '../../utils';
 
 const globalStore = useGlobalStore();
+
+const router = useRouter();
+
+function jumpToGuildManagement() {
+  router.push(
+    GuildManagementRouteRecord.jumpTo ?? GuildManagementRouteRecord.path,
+  );
+}
 
 const errorMessage = computed<{
   title: string | VNode;
@@ -21,7 +30,7 @@ const errorMessage = computed<{
             class="mx-1 text-xs"
             type="primary"
             underline="always"
-            onClick={() => globalStore.goToPage(Page.GuildManage)}
+            onClick={jumpToGuildManagement}
           >
             公会管理
           </ElLink>

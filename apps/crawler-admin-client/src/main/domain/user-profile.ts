@@ -22,6 +22,10 @@ export class UserProfile {
     return this._userInfo?.role_id === SystemAdminUserRole.ADMIN;
   }
 
+  get role() {
+    return this._userInfo?.role_id;
+  }
+
   get hasAutoFollowDeviceDeletePrivilege() {
     return this.hasPrivilege(AdminPrivilege.AUTO_FOLLOW_DEVICE_DELETE);
   }

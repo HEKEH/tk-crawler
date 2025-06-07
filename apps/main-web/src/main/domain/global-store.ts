@@ -165,6 +165,17 @@ export default class GlobalStore implements GuildAccountsManageContext {
     }
   }
 
+  private _subscribeTokenInvalid() {
+    if (this._tokenInvalidSubscription) {
+      this._tokenInvalidSubscription.unsubscribe();
+    }
+    this._tokenInvalidSubscription = markRaw(
+      TokenInvalidSubject.subscribe(() => {
+        this._gotoLoginPage();
+      }),
+    );
+  }
+
   private async _gotoLoginPage() {
     this._userProfile.clear();
     await this._guildAccountsManage.clear();
@@ -198,15 +209,12 @@ export default class GlobalStore implements GuildAccountsManageContext {
     }
     try {
       this._initializationState.initializeBegin();
-      this._tokenInvalidSubscription = markRaw(
-        TokenInvalidSubject.subscribe(async () => {
-          await this._gotoLoginPage();
-        }),
-      );
+      this._subscribeTokenInvalid();
       this._addEventListeners();
       await this._loginByToken();
       this._initializationState.initializeComplete();
     } catch (error) {
+      console.error(error);
       this._initializationState.initializeError(error as Error);
       throw error;
     }

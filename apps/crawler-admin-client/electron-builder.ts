@@ -4,7 +4,7 @@ import {
   APP_PROTOCOL_NAME,
   PRODUCT_NAME,
   PUBLISH_URL,
-} from './shared/constants';
+} from './shared/constants/build';
 
 const config = getElectronBuilderConfig({
   appId: APP_ID,

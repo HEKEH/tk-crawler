@@ -3,6 +3,7 @@ import path from 'node:path';
 import process from 'node:process';
 import { app } from 'electron';
 import log4js from 'log4js';
+import { getSettings } from '../domain/services/settings';
 import { isDevelopment, isProduction } from '../env';
 
 class Logger {
@@ -108,23 +109,41 @@ class Logger {
     return Logger._instance;
   }
 
+  private _shouldWriteLog(): boolean {
+    const settings = getSettings(true);
+    return settings.write_log;
+  }
+
   public info(message: any, ...args: any[]): void {
+    if (!this._shouldWriteLog()) {
+      return;
+    }
     this.logger.info(message, ...args);
   }
 
   public error(message: any, ...args: any[]): void {
+    // 错误日志总是记录
     this.logger.error(message, ...args);
   }
 
   public debug(message: any, ...args: any[]): void {
+    if (!this._shouldWriteLog()) {
+      return;
+    }
     this.logger.debug(message, ...args);
   }
 
   public warn(message: any, ...args: any[]): void {
+    if (!this._shouldWriteLog()) {
+      return;
+    }
     this.logger.warn(message, ...args);
   }
 
   public trace(message: any, ...args: any[]): void {
+    if (!this._shouldWriteLog()) {
+      return;
+    }
     this.logger.trace(message, ...args);
   }
 }

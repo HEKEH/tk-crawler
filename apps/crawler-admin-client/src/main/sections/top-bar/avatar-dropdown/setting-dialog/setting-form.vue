@@ -4,13 +4,16 @@ import {
   ElButton,
   ElForm,
   ElFormItem,
+  ElSwitch,
   type FormInstance,
   type FormRules,
 } from 'element-plus';
+import { cloneDeep } from 'lodash';
 import { reactive, ref } from 'vue';
 
 export interface SettingFormValues {
   error_sound_time: [number, number] | undefined;
+  write_log: boolean;
 }
 
 const props = defineProps<{
@@ -24,7 +27,7 @@ const emit = defineEmits<{
 
 const formRef = ref<FormInstance>();
 
-const form = reactive<SettingFormValues>(props.initialValues);
+const form = reactive<SettingFormValues>(cloneDeep(props.initialValues));
 
 const rules: FormRules = {
   error_sound_time: [
@@ -62,18 +65,19 @@ async function handleSubmit() {
     if (valid) {
       isLoading.value = true;
       try {
-        const errorSoundTime = form.error_sound_time;
-        const isStartTimeNumber = typeof errorSoundTime?.[0] === 'number';
-        const isEndTimeNumber = typeof errorSoundTime?.[1] === 'number';
+        let errorSoundTime: [number, number] | undefined;
+        const isStartTimeNumber =
+          typeof form.error_sound_time?.[0] === 'number';
+        const isEndTimeNumber = typeof form.error_sound_time?.[1] === 'number';
         if (isStartTimeNumber && isEndTimeNumber) {
-          await props.submit({
-            error_sound_time: form.error_sound_time,
-          });
+          errorSoundTime = form.error_sound_time;
         } else {
-          await props.submit({
-            error_sound_time: undefined,
-          });
+          errorSoundTime = undefined;
         }
+        await props.submit({
+          error_sound_time: errorSoundTime,
+          write_log: form.write_log,
+        });
       } finally {
         isLoading.value = false;
       }
@@ -97,6 +101,9 @@ const isWebSize = useIsWebSize();
     :size="isWebSize ? 'default' : 'small'"
     label-position="right"
   >
+    <ElFormItem label="开启日志" prop="write_log">
+      <ElSwitch v-model="form.write_log" />
+    </ElFormItem>
     <ElFormItem
       label="错误声音播放时间"
       prop="error_sound_time"
@@ -115,7 +122,6 @@ const isWebSize = useIsWebSize();
         :precision="0"
       />
     </ElFormItem>
-
     <ElFormItem class="flex justify-center">
       <ElButton type="primary" :loading="isLoading" @click="handleSubmit">
         保存

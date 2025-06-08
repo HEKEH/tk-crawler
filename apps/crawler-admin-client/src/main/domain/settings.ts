@@ -1,14 +1,20 @@
 import type { Settings } from '@tk-crawler-admin-client/shared';
 import {
-  DefaultSettings,
+  getDefaultSettings,
   SETTINGS_EVENTS,
 } from '@tk-crawler-admin-client/shared';
 import { isInElectronApp } from '@tk-crawler/electron-utils/render';
 import { deepToRaw } from '@tk-crawler/view-shared';
+import { ElMessage } from 'element-plus';
+import config from '../config';
 import { localStorageStore } from '../utils';
 
+const defaultSettings = getDefaultSettings({
+  defaultWriteLog: config.defaultWriteLog,
+});
+
 export class SettingsManage {
-  private _settings: Settings = DefaultSettings;
+  private _settings: Settings = defaultSettings;
 
   async init() {
     let settings: Settings | undefined;
@@ -25,7 +31,7 @@ export class SettingsManage {
         'local-settings',
       );
     }
-    this._settings = settings ?? DefaultSettings;
+    this._settings = settings ?? defaultSettings;
   }
 
   get settings() {
@@ -35,10 +41,15 @@ export class SettingsManage {
   async setSettings(value: Settings) {
     this._settings = value;
     if (isInElectronApp()) {
-      await window.ipcRenderer.invoke(
-        SETTINGS_EVENTS.SET_SETTINGS,
-        deepToRaw(value),
-      );
+      try {
+        await window.ipcRenderer.invoke(
+          SETTINGS_EVENTS.SET_SETTINGS,
+          deepToRaw(value),
+        );
+      } catch (error) {
+        console.error('Failed to set settings:', error);
+        ElMessage.error('保存失败，请将软件更新到最新版本后重试');
+      }
     } else {
       localStorageStore.setItem('local-settings', deepToRaw(value));
     }

@@ -192,7 +192,7 @@ export class Services {
       saveToken(token),
     );
     this._addEventHandler(TOKEN_EVENTS.REMOVE_TOKEN, removeToken);
-    this._addEventHandler(SETTINGS_EVENTS.GET_SETTINGS, getSettings);
+    this._addEventHandler(SETTINGS_EVENTS.GET_SETTINGS, () => getSettings());
     this._addEventHandler(
       SETTINGS_EVENTS.SET_SETTINGS,
       (_, settings: Settings) => saveSettings(settings),

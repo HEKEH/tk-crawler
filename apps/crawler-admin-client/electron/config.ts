@@ -16,14 +16,14 @@ if (!CLIENT_OWN_SERVER_URL) {
 }
 
 // @ts-expect-error vite使用
-export const CLIENT_ADMIN_WEB_URL = import.meta.env.CLIENT_ADMIN_WEB_URL;
+const CLIENT_ADMIN_WEB_URL = import.meta.env.CLIENT_ADMIN_WEB_URL;
 if (!CLIENT_ADMIN_WEB_URL) {
   logger.error('CLIENT_ADMIN_WEB_URL is required');
   process.exit(1);
 }
 
 // @ts-expect-error vite使用
-export const CLIENT_MAIN_WEB_URL = import.meta.env.CLIENT_MAIN_WEB_URL;
+const CLIENT_MAIN_WEB_URL = import.meta.env.CLIENT_MAIN_WEB_URL;
 if (!CLIENT_MAIN_WEB_URL) {
   logger.error('CLIENT_MAIN_WEB_URL is required');
   process.exit(1);

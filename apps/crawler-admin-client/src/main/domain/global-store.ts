@@ -23,6 +23,7 @@ import { getToken, removeToken, setToken } from '../utils';
 import ClientManage from './client-manage';
 import CrawlerManage from './crawler-manage';
 import { GuildAccountsManage } from './guild-accounts-manage';
+import { SettingsManage } from './settings';
 import { UserProfile } from './user-profile';
 
 export default class GlobalStore implements GuildAccountsManageContext {
@@ -35,6 +36,8 @@ export default class GlobalStore implements GuildAccountsManageContext {
   private _currentPage: Page | null = null;
 
   private _userProfile = new UserProfile();
+
+  private _settingsManage = new SettingsManage();
 
   private _initializationState = new InitializationState();
 
@@ -74,6 +77,10 @@ export default class GlobalStore implements GuildAccountsManageContext {
 
   get token() {
     return this._token;
+  }
+
+  get settingsManage() {
+    return this._settingsManage;
   }
 
   constructor() {
@@ -198,7 +205,7 @@ export default class GlobalStore implements GuildAccountsManageContext {
     try {
       this._initializationState.initializeBegin();
       this._subscribeTokenInvalid();
-      await this._loginByToken();
+      await Promise.all([this._loginByToken(), this._settingsManage.init()]);
       this._initializationState.initializeComplete();
     } catch (error) {
       console.error(error);

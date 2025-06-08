@@ -1,4 +1,7 @@
-import type { IsCookieValidResult } from '@tk-crawler-admin-client/shared';
+import type {
+  IsCookieValidResult,
+  Settings,
+} from '@tk-crawler-admin-client/shared';
 import type { TKGuildUser } from '@tk-crawler/biz-shared';
 import type { CommonResult, MessageCenter } from '@tk-crawler/shared';
 import type { Crawler } from '../crawler';
@@ -7,6 +10,7 @@ import type { ViewsManager } from '../views';
 import {
   CRAWL_EVENTS,
   IsCookieValidResultStatus,
+  SETTINGS_EVENTS,
   TOKEN_EVENTS,
 } from '@tk-crawler-admin-client/shared';
 import {
@@ -28,6 +32,7 @@ import {
   saveTiktokCookie,
   syncTiktokCookie,
 } from './cookie';
+import { getSettings, saveSettings } from './settings';
 import { getToken, removeToken, saveToken } from './token';
 
 export class Services {
@@ -187,13 +192,18 @@ export class Services {
       saveToken(token),
     );
     this._addEventHandler(TOKEN_EVENTS.REMOVE_TOKEN, removeToken);
+    this._addEventHandler(SETTINGS_EVENTS.GET_SETTINGS, getSettings);
+    this._addEventHandler(
+      SETTINGS_EVENTS.SET_SETTINGS,
+      (_, settings: Settings) => saveSettings(settings),
+    );
     this._addEventHandler(CRAWL_EVENTS.GET_SIMPLE_CRAWL_STATISTICS, () => {
       return this._crawler.simpleCrawlStatistics;
     });
     this._addEventHandler(
       TK_GUILD_USER_EVENTS.IS_ANY_GUILD_USER_ERROR,
-      (_, hasError: boolean, errorSoundTime: [number, number] | undefined) => {
-        this._errorManager.setHasGuildUserError(hasError, errorSoundTime);
+      (_, hasError: boolean) => {
+        this._errorManager.setHasGuildUserError(hasError);
       },
     );
   }

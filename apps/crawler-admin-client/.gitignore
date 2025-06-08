@@ -2,3 +2,4 @@ dist-electron
 release
 .tiktok-cookies
 .system-admin-token
+.admin-settings

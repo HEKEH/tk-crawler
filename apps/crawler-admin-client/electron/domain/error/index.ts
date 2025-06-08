@@ -7,6 +7,7 @@ import {
 import { SoundPlayer } from '@tk-crawler/node-shared';
 import { isDevelopment } from '../../env';
 import { logger } from '../../infra';
+import { getSettings } from '../services/settings';
 
 export class ErrorManager {
   private _hasGuildUserError = false;
@@ -30,10 +31,7 @@ export class ErrorManager {
 
   init() {}
 
-  setHasGuildUserError(
-    hasError: boolean,
-    errorSoundTime: [number, number] | undefined,
-  ) {
+  setHasGuildUserError(hasError: boolean) {
     if (this._hasGuildUserError === hasError) {
       return;
     }
@@ -48,6 +46,7 @@ export class ErrorManager {
     } else {
       trayManager.showNormal();
     }
+    const errorSoundTime = getSettings().error_sound_time;
     if (hasError && this._shouldErrorSoundPlay(errorSoundTime)) {
       const soundPath = join(
         getExtraResourcesPath(isDevelopment),

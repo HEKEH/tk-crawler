@@ -16,6 +16,11 @@ export const TOKEN_EVENTS = {
   REMOVE_TOKEN: 'remove-token',
 };
 
+export const SETTINGS_EVENTS = {
+  SET_SETTINGS: 'set-settings',
+  GET_SETTINGS: 'get-settings',
+};
+
 export const CRAWL_EVENTS = {
   START_LIVE_ANCHOR_CRAWL: 'start-live-anchor-crawl',
   STOP_LIVE_ANCHOR_CRAWL: 'stop-live-anchor-crawl',

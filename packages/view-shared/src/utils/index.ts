@@ -1,5 +1,6 @@
 export * from './confirm-after-seconds';
 export * from './copy';
+export * from './deep-to-raw';
 export * from './download-file';
 export * from './error';
 export * from './local-storage-store';

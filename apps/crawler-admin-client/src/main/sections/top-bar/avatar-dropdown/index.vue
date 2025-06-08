@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import type { Settings } from '@tk-crawler-admin-client/shared';
 import type { OrgMemberChangePasswordRequest } from '@tk-crawler/biz-shared';
-import type { Settings } from '../../../hooks';
 import { Setting, SwitchButton } from '@element-plus/icons-vue';
 import { useQueryClient } from '@tanstack/vue-query';
 // import { useRouter } from 'vue-router';
@@ -20,7 +20,6 @@ import {
 } from 'element-plus';
 import { computed, ref } from 'vue';
 import { Avatar } from '../../../components';
-import { useSettings } from '../../../hooks';
 import { changePassword } from '../../../requests';
 import { useGlobalStore } from '../../../utils';
 import PasswordChangeDialog from './password-change-dialog/index.vue';
@@ -56,9 +55,9 @@ async function handlePasswordChange(data: OrgMemberChangePasswordRequest) {
     passwordChangeDialogVisible.value = false;
   }
 }
-const settings = useSettings();
-function handleSetting(data: Settings) {
-  settings.value = data;
+const settings = computed(() => globalStore.settingsManage.settings);
+async function handleSetting(data: Settings) {
+  await globalStore.settingsManage.setSettings(data);
   settingDialogVisible.value = false;
 }
 const isWebSize = useIsWebSize();

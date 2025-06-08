@@ -16,3 +16,10 @@ export function getTokenPath() {
   }
   return path.join(process.cwd(), '.system-admin-token');
 }
+
+export function getSettingsPath() {
+  if (isProduction) {
+    return path.join(app.getPath('userData'), '.admin-settings');
+  }
+  return path.join(process.cwd(), '.admin-settings');
+}

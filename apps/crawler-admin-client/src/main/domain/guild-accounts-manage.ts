@@ -1,9 +1,9 @@
 import type { Page } from '../types';
+import type { SettingsManage } from './settings';
 import type { UserProfile } from './user-profile';
 import { AdminPrivilege, TK_GUILD_USER_EVENTS } from '@tk-crawler/biz-shared';
 import { RESPONSE_CODE } from '@tk-crawler/shared';
 import { ElMessageBox } from 'element-plus';
-import { getSettings } from '../hooks';
 import { isAnyGuildAccountError } from '../requests';
 import router from '../router';
 import { GuildManagementRouteRecord } from '../router/route-records';
@@ -12,6 +12,7 @@ import { localStorageStore } from '../utils';
 export interface GuildAccountsManageContext {
   readonly token: string | undefined;
   readonly userProfile: UserProfile;
+  readonly settingsManage: SettingsManage;
   readonly goToPage: (page: Page) => void;
 }
 
@@ -45,7 +46,6 @@ export class GuildAccountsManage {
         await window.ipcRenderer.invoke(
           TK_GUILD_USER_EVENTS.IS_ANY_GUILD_USER_ERROR,
           isAnyAccountError,
-          getSettings().error_sound_time,
         );
       } catch (error) {
         console.error(error);

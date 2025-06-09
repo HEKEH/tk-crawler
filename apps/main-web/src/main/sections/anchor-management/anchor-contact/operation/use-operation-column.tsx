@@ -134,33 +134,35 @@ export function useOperationColumn(props: {
     ({ rowData }: { rowData: DisplayedAnchorItem }) => (
       <div class="operation-buttons">
         {rowData.assigned_user && !rowData.contacted_user ? (
-          <ElButton
-            class="bg-[var(--el-color-primary-dark-2)]"
-            size="small"
-            type="primary"
-            onClick={() => onContactAnchor(rowData)}
-          >
-            <ElIcon>
-              <StarFilled />
-            </ElIcon>
-            建联
-          </ElButton>
+          <>
+            <ElButton
+              class="bg-[var(--el-color-primary-dark-2)]"
+              size="small"
+              type="primary"
+              onClick={() => onContactAnchor(rowData)}
+            >
+              <ElIcon>
+                <StarFilled />
+              </ElIcon>
+              建联
+            </ElButton>
+            <ElButton
+              size="small"
+              type="info"
+              onClick={() => ignoreAnchor(rowData)}
+            >
+              跳过
+            </ElButton>
+          </>
         ) : rowData.contacted_user ? (
           <ElButton
             size="small"
             type="danger"
             onClick={() => handleCancelAnchorContact([rowData])}
           >
-            重置建联
+            取消建联
           </ElButton>
         ) : null}
-        <ElButton
-          size="small"
-          type="info"
-          onClick={() => ignoreAnchor(rowData)}
-        >
-          跳过
-        </ElButton>
       </div>
     ),
   );

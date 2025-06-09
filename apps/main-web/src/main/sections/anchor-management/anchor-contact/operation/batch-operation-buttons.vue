@@ -33,6 +33,6 @@ const anchorsContactedSelected = computed(() =>
     size="small"
     @click="handleBatchCancelAnchorContact(anchorsContactedSelected)"
   >
-    批量重置建联状态
+    批量取消建联
   </ElButton>
 </template>

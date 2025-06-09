@@ -63,7 +63,7 @@ function handleButtonClick() {
       </div>
     </div>
     <div class="hero-image-container">
-      <img src="/images/iphone.png" alt="Iphone" />
+      <img src="/images/iphone.webp" alt="Iphone" />
     </div>
   </section>
   <LoginDialog

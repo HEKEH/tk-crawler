@@ -52,7 +52,7 @@ const downloadButtons = [
       </div>
     </div>
     <div class="download-image">
-      <img src="/images/computer.png" height="500" alt="computer" />
+      <img src="/images/computer.webp" height="500" alt="computer" />
     </div>
   </section>
 </template>

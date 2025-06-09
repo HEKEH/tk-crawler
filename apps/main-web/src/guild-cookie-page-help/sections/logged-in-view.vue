@@ -16,12 +16,12 @@ function finish() {
     <div class="description">
       右侧页面如遇到如下验证弹窗，请选择两个相同的图形完成验证
     </div>
-    <ElImage class="image" src="images/live-admin-verify-popup.png" />
+    <ElImage class="image" src="images/live-admin-verify-popup.webp" />
     <div class="description">
       如果您看到如下页面，则表明激活成功。此时请点击右侧完成按钮 →
       <ElButton type="primary" size="small" @click="finish"> 完成 </ElButton>
     </div>
-    <ElImage class="image" src="images/account-activate-finish.png" />
+    <ElImage class="image" src="images/account-activate-finish.webp" />
   </div>
 </template>
 

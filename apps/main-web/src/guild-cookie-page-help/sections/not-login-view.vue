@@ -19,7 +19,7 @@ async function nextStep() {
     <div class="description">
       如果遇到如下验证弹窗，则无法自动登录成功，需要您来手动选择两个相同图形来操作完成。
     </div>
-    <ElImage src="images/live-admin-verify-popup.png" />
+    <ElImage src="images/live-admin-verify-popup.webp" />
     <div class="description">
       请在登录成功后，点击按钮
       <ElButton type="primary" size="small" @click="nextStep">

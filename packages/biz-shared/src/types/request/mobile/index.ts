@@ -5,7 +5,11 @@ import type {
   GetAnchorListRequest,
   GetAnchorListResponse,
 } from '../anchor';
-import type { OrgMemberLoginRequest, OrgMemberLoginResponse } from '../auth';
+import type {
+  OrgMemberLoginRequest,
+  OrgMemberLoginResponse,
+  OrgMemberLoginResponseData,
+} from '../auth';
 import type { AnchorContactedRequest, AnchorContactedResponse } from '../task';
 
 export interface MobileOrgMemberLoginRequest extends OrgMemberLoginRequest {
@@ -20,6 +24,13 @@ export interface LoginByTokenRequest {
 }
 
 export type LoginByTokenResponse = OrgMemberLoginResponse;
+
+export interface MobileOrgMemberLoginByTokenResponse {
+  status_code: RESPONSE_CODE;
+  data?: Pick<OrgMemberLoginResponseData, 'org_info' | 'user_info'>;
+  message?: string;
+  token_expires_at: number;
+}
 
 export type MobileGetAssignedAnchorListRequest = Omit<
   GetAnchorListRequest,

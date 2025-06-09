@@ -3,10 +3,12 @@ import type {
   LoginByTokenRequest,
   MobileAnchorContactedRequest,
   MobileGetAssignedAnchorListRequest,
+  MobileOrgMemberLoginByTokenResponse,
   MobileOrgMemberLoginRequest,
 } from '@tk-crawler/biz-shared';
 import type { Context, Next } from 'koa';
 import assert from 'node:assert';
+import { RESPONSE_CODE } from '@tk-crawler/shared';
 import {
   getAutoFollowMobileDeviceList,
   mobileAnchorContacted,
@@ -29,10 +31,18 @@ export default class MobileController {
     if (data.device_id !== token_device_id) {
       throw new BusinessError('设备不匹配');
     }
-    ctx.body = {
-      org_info,
-      user_info,
+    const responseBody: MobileOrgMemberLoginByTokenResponse & {
+      $is_whole_response: true;
+    } = {
+      $is_whole_response: true,
+      status_code: RESPONSE_CODE.SUCCESS,
+      data: {
+        org_info,
+        user_info,
+      },
+      token_expires_at: ctx.clientInfo!.token_expires_at,
     };
+    ctx.body = responseBody;
     await next();
   }
 

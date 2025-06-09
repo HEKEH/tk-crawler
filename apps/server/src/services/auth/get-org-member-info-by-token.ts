@@ -14,7 +14,7 @@ export async function getOrgMemberInfoByToken(
     fetchPassword?: boolean;
     fetchMobileDevices?: boolean;
   },
-): Promise<OrgMemberUserInfoWithOrgInfo> {
+): Promise<OrgMemberUserInfoWithOrgInfo & { token_expires_at: number }> {
   if (!token) {
     throw new BusinessError('Token不能为空');
   }
@@ -93,5 +93,6 @@ export async function getOrgMemberInfoByToken(
       })),
     },
     device_id: deviceId,
+    token_expires_at: expires,
   };
 }

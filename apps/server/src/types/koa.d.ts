@@ -13,7 +13,9 @@ interface CustomContext {
 
   logger: Logger;
 
-  readonly clientInfo?: OrgMemberUserInfoWithOrgInfo;
+  readonly clientInfo?: OrgMemberUserInfoWithOrgInfo & {
+    token_expires_at: number;
+  };
   readonly systemUserInfo?: SystemAdminUser;
 }
 

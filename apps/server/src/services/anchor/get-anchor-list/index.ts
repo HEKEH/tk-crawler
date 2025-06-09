@@ -107,48 +107,44 @@ export async function getAnchorList(
 
   // 构建主查询
   const sql = `
-    SELECT
-      base.*
-      ${include_task_assign ? `,au.id as assign_to, au.display_name as assigned_user_display_name` : ''}
-      ${include_anchor_contact ? `,cu.id as contacted_by, cu.display_name as contacted_user_display_name` : ''}
-    FROM (
-      SELECT
-        ${aic}.id,
-        ${aic}.org_id,
-        ${aic}.anchor_id,
-        ${aic}.checked_at,
-        ${aic}.checked_by,
-        ${aic}.checked_result,
-        ${aic}.area,
-        ${aic}.created_at,
-        ${aic}.updated_at,
-        ${aic}.invite_type,
-        ${aic}.assign_to,
-        ${aic}.contacted_by,
-        ${a}.user_id,
-        ${a}.display_id,
-        ${a}.rank_league,
-        ${a}.region,
-        ${a}.has_commerce_goods,
-        ${a}.follower_count,
-        ${a}.audience_count,
-        ${a}.current_diamonds,
-        ${a}.last_diamonds,
-        ${a}.highest_diamonds,
-        ${a}.room_id,
-        ${a}.level,
-        ${a}.tag,
-        ${a}.updated_at as anchor_updated_at
-      FROM AnchorInviteCheck ${aic}
-      INNER JOIN Anchor ${a} ON ${a}.user_id = ${aic}.anchor_id
-      ${whereClause}
-      ${orderByClause}
-      LIMIT ?
-      OFFSET ?
-    ) base
-    ${include_task_assign ? `LEFT JOIN OrgUser au ON au.id = base.assign_to` : ''}
-    ${include_anchor_contact ? `LEFT JOIN OrgUser cu ON cu.id = base.contacted_by` : ''}
-  `;
+SELECT
+  ${aic}.id,
+  ${aic}.org_id,
+  ${aic}.anchor_id,
+  ${aic}.checked_at,
+  ${aic}.checked_by,
+  ${aic}.checked_result,
+  ${aic}.area,
+  ${aic}.created_at,
+  ${aic}.updated_at,
+  ${aic}.invite_type,
+  ${aic}.assign_to,
+  ${aic}.contacted_by,
+  ${a}.user_id,
+  ${a}.display_id,
+  ${a}.rank_league,
+  ${a}.region,
+  ${a}.has_commerce_goods,
+  ${a}.follower_count,
+  ${a}.audience_count,
+  ${a}.current_diamonds,
+  ${a}.last_diamonds,
+  ${a}.highest_diamonds,
+  ${a}.room_id,
+  ${a}.level,
+  ${a}.tag,
+  ${a}.updated_at as anchor_updated_at
+  ${include_task_assign ? `,au.id as assign_to, au.display_name as assigned_user_display_name` : ''}
+  ${include_anchor_contact ? `,cu.id as contacted_by, cu.display_name as contacted_user_display_name` : ''}
+  FROM AnchorInviteCheck ${aic}
+  INNER JOIN Anchor ${a} ON ${a}.user_id = ${aic}.anchor_id
+  ${include_task_assign ? `LEFT JOIN OrgUser au ON au.id = ${aic}.assign_to` : ''}
+  ${include_anchor_contact ? `LEFT JOIN OrgUser cu ON cu.id = ${aic}.contacted_by` : ''}
+  ${whereClause}
+  ${orderByClause}
+  LIMIT ?
+  OFFSET ?
+`;
 
   // 并行执行两个查询
   const [countResult, queryResult] = await Promise.all([

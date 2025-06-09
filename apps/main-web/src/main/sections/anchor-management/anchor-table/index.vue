@@ -132,7 +132,7 @@ const operationColumnResult = useOperationColumn({
 const customColumns = computed<CustomColumnConfig[]>(() => {
   return [
     {
-      ...operationColumnResult.value.column.value,
+      ...operationColumnResult.value.column,
       customPosition: { after: 'display_id' },
     },
   ];

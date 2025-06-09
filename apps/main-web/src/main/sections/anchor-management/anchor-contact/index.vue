@@ -13,6 +13,7 @@ import {
   VirtualizedTable,
 } from '@tk-crawler/view-shared';
 import { ElButton } from 'element-plus';
+import { isEqual } from 'lodash';
 import { computed, ref } from 'vue';
 import config from '../../../config';
 import { useGetAnchorList } from '../../../hooks';
@@ -83,17 +84,6 @@ const defaultFilterViewValues = computed<FilterViewValues>(() => {
 // 过滤条件
 const filters = ref<FilterViewValues>(defaultFilterViewValues.value);
 
-// 处理过滤器变化
-function handleFilterSubmit(_filters: FilterViewValues) {
-  filters.value = _filters;
-  pageNum.value = 1; // 重置页码
-}
-
-function handleFilterReset() {
-  filters.value = defaultFilterViewValues.value;
-  pageNum.value = 1; // 重置页码
-}
-
 const queryFilter = computed(() => {
   const filter = transformFilterViewValuesToFilterValues(filters.value);
   return {
@@ -114,6 +104,22 @@ const { data, isFetching, refetch } = useGetAnchorList(
   token,
 );
 
+// 处理过滤器变化
+function handleFilterSubmit(_filters: FilterViewValues) {
+  if (!isEqual(_filters, filters.value) || pageNum.value !== 1) {
+    filters.value = _filters;
+    pageNum.value = 1; // 重置页码
+  } else {
+    // 仍然触发刷新
+    refetch();
+  }
+}
+
+function handleFilterReset() {
+  filters.value = defaultFilterViewValues.value;
+  pageNum.value = 1; // 重置页码
+}
+
 // 刷新功能
 async function refresh() {
   // isRefreshing.value = true;
@@ -125,7 +131,15 @@ async function refresh() {
 const selectedRows = ref<DisplayedAnchorItem[]>([]);
 
 const operationColumnResult = useOperationColumn({
-  refetch,
+  onDeleteAnchorContactRow: (anchor: DisplayedAnchorItem) => {
+    selectedRows.value = selectedRows.value.filter(
+      item => item.id !== anchor.id,
+    );
+    const index = data.value?.list.findIndex(item => item.id === anchor.id);
+    if (index !== undefined && index !== -1) {
+      data.value!.list.splice(index, 1);
+    }
+  },
 });
 const customColumns = computed<CustomColumnConfig[]>(() => {
   return [
@@ -182,10 +196,7 @@ onKeepAliveActivated(refetch);
     <div class="header-row">
       <div class="left-part"></div>
       <div class="right-part">
-        <BatchOperationButtons
-          :refetch="refetch"
-          :selected-rows="selectedRows"
-        />
+        <BatchOperationButtons :selected-rows="selectedRows" />
         <ElButton v-if="isWeb" type="default" size="small" @click="resetSort">
           重置排序
         </ElButton>

@@ -13,6 +13,7 @@ import {
   VirtualizedTable,
 } from '@tk-crawler/view-shared';
 import { ElButton } from 'element-plus';
+import { isEqual } from 'lodash';
 import { computed, ref } from 'vue';
 import config from '../../../config';
 import { useGetAnchorList } from '../../../hooks';
@@ -88,17 +89,6 @@ const defaultFilterViewValues = computed<FilterViewValues>(() => {
 // 过滤条件
 const filters = ref<FilterViewValues>(defaultFilterViewValues.value);
 
-// 处理过滤器变化
-function handleFilterSubmit(_filters: FilterViewValues) {
-  filters.value = _filters;
-  pageNum.value = 1; // 重置页码
-}
-
-function handleFilterReset() {
-  filters.value = defaultFilterViewValues.value;
-  pageNum.value = 1; // 重置页码
-}
-
 const queryFilter = computed(() => {
   return transformFilterViewValuesToFilterValues(filters.value);
 });
@@ -122,6 +112,22 @@ async function refresh() {
   return refetch().finally(() => {
     // isRefreshing.value = false;
   });
+}
+
+// 处理过滤器变化
+function handleFilterSubmit(_filters: FilterViewValues) {
+  if (!isEqual(_filters, filters.value) || pageNum.value !== 1) {
+    filters.value = _filters;
+    pageNum.value = 1; // 重置页码
+  } else {
+    // 仍然触发刷新
+    refetch();
+  }
+}
+
+function handleFilterReset() {
+  filters.value = defaultFilterViewValues.value;
+  pageNum.value = 1; // 重置页码
 }
 
 const selectedRows = ref<DisplayedAnchorItem[]>([]);

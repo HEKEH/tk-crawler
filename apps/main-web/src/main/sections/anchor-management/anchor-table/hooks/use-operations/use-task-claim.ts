@@ -1,20 +1,16 @@
-import type { QueryObserverResult } from '@tanstack/vue-query';
-import type {
-  DisplayedAnchorItem,
-  GetAnchorListResponseData,
-} from '@tk-crawler/biz-shared';
+import type { DisplayedAnchorItem } from '@tk-crawler/biz-shared';
 import { RESPONSE_CODE } from '@tk-crawler/shared';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { cancelClaimTask, claimTask } from '../../../../../requests';
 import { useGlobalStore } from '../../../../../utils';
 
-export interface UseTaskClaimParams {
-  refetch: () => Promise<
-    QueryObserverResult<GetAnchorListResponseData | undefined, Error>
-  >;
-}
+// export interface UseTaskClaimParams {
+//   refetch: () => Promise<
+//     QueryObserverResult<GetAnchorListResponseData | undefined, Error>
+//   >;
+// }
 
-export function useTaskClaim(params: UseTaskClaimParams) {
+export function useTaskClaim() {
   const globalStore = useGlobalStore();
   async function handleClaimTask(taskAnchors: DisplayedAnchorItem[]) {
     const result = await claimTask(
@@ -26,7 +22,11 @@ export function useTaskClaim(params: UseTaskClaimParams) {
     if (result.status_code !== RESPONSE_CODE.SUCCESS) {
       return;
     }
-    await params.refetch();
+    const userInfo = { ...globalStore.userProfile.userInfo! };
+    taskAnchors.forEach(item => {
+      item.assigned_user = userInfo;
+    });
+    // await params.refetch();
     ElMessage.success('认领分配成功');
   }
 
@@ -40,7 +40,9 @@ export function useTaskClaim(params: UseTaskClaimParams) {
     if (result.status_code !== RESPONSE_CODE.SUCCESS) {
       return;
     }
-    await params.refetch();
+    taskAnchors.forEach(item => {
+      item.assigned_user = null;
+    });
     ElMessage.success('取消任务成功');
   }
 

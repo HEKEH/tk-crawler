@@ -1,9 +1,5 @@
 <script setup lang="ts">
-import {
-  type Area,
-  OrgMemberRole,
-  OrgMemberStatus,
-} from '@tk-crawler/biz-shared';
+import { OrgMemberRole, OrgMemberStatus } from '@tk-crawler/biz-shared';
 import { useIsWebSize } from '@tk-crawler/view-shared';
 import { ElOption, ElSelect, ElTag } from 'element-plus';
 import { computed, ref } from 'vue';
@@ -42,7 +38,13 @@ const emit = defineEmits<{
 const globalStore = useGlobalStore();
 const token = computed(() => globalStore.token);
 
-type PropsValue = string | 'all';
+type PropsValue =
+  | string
+  | 'all'
+  | 'assigned'
+  | 'not_assigned'
+  | 'contacted'
+  | 'not_contacted';
 
 const filterText = ref<string>();
 
@@ -50,7 +52,7 @@ function handleFilter(query: string) {
   filterText.value = query;
 }
 
-function handleChange(value: Area) {
+function handleChange(value: PropsValue) {
   emit('change', value);
 }
 

@@ -11,7 +11,7 @@ const props = defineProps<{
 }>();
 
 const globalStore = useGlobalStore();
-const { handleBatchClaimTask, handleBatchCancelClaim } = useTaskClaim(props);
+const { handleBatchClaimTask, handleBatchCancelClaim } = useTaskClaim();
 const anchorsNotAssignedSelected = computed(() =>
   props.selectedRows.filter(item => !item.assigned_user),
 );
@@ -22,6 +22,12 @@ const anchorsAssignedToSelfSelected = computed(() =>
       item.assigned_user.id === globalStore.userProfile.userId,
   ),
 );
+function onBatchClaimTask() {
+  return handleBatchClaimTask(anchorsNotAssignedSelected.value);
+}
+function onBatchCancelClaim() {
+  return handleBatchCancelClaim(anchorsAssignedToSelfSelected.value);
+}
 </script>
 
 <template>
@@ -29,7 +35,7 @@ const anchorsAssignedToSelfSelected = computed(() =>
     type="primary"
     size="small"
     :disabled="!anchorsNotAssignedSelected.length"
-    @click="handleBatchClaimTask(anchorsNotAssignedSelected)"
+    @click="onBatchClaimTask"
   >
     批量认领
   </ElButton>
@@ -37,7 +43,7 @@ const anchorsAssignedToSelfSelected = computed(() =>
     :disabled="!anchorsAssignedToSelfSelected.length"
     type="danger"
     size="small"
-    @click="handleBatchCancelClaim(anchorsAssignedToSelfSelected)"
+    @click="onBatchCancelClaim"
   >
     批量重置任务
   </ElButton>

@@ -23,15 +23,17 @@ export function useOperationColumn(props: {
 
   function getResult(): OperationColumnResult {
     if (globalStore.userProfile.isAdmin) {
-      return useAdminOperationColumn(props);
+      return useAdminOperationColumn({
+        refetch: props.refetch,
+      });
     }
-    return useMemberOperationColumn(props);
+    return useMemberOperationColumn();
   }
 
-  const result = ref<OperationColumnResult>(getResult());
+  const result = ref(getResult());
 
   watch(
-    () => globalStore.userProfile.isAdmin,
+    () => [globalStore.userProfile.isAdmin, props.refetch],
     () => {
       result.value = getResult();
     },

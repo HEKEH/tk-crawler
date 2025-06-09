@@ -1,26 +1,26 @@
+import type { DisplayedAnchorItem } from '@tk-crawler/biz-shared';
 import type { VirtualizedTableColumn } from '@tk-crawler/view-shared';
 import { StarFilled } from '@element-plus/icons-vue';
-import {
-  type DisplayedAnchorItem,
-  getTiktokAnchorLink,
-} from '@tk-crawler/biz-shared';
+import { getTiktokAnchorLink } from '@tk-crawler/biz-shared';
 import {
   isMobilePlatform,
   openScheme,
   useIsWebSize,
 } from '@tk-crawler/view-shared';
 import { ElButton, ElIcon, ElMessage, ElMessageBox } from 'element-plus';
-import { computed, markRaw, ref, toRaw } from 'vue';
+import { computed, markRaw, ref } from 'vue';
 import { clearAnchorCheck } from '../../../../requests';
 import { localStorageStore, useGlobalStore } from '../../../../utils';
-import { useAnchorContact, type UseAnchorContactParams } from '../hooks';
+import { useAnchorContact } from '../hooks';
 
 export function useOperationColumn(props: {
-  refetch: UseAnchorContactParams['refetch'];
+  // refetch: () => Promise<
+  //   QueryObserverResult<GetAnchorListResponseData | undefined, Error>
+  // >;
+  onDeleteAnchorContactRow: (anchor: DisplayedAnchorItem) => void;
 }) {
   const isWeb = useIsWebSize();
-  const { handleContactAnchor, handleCancelAnchorContact } =
-    useAnchorContact(props);
+  const { handleContactAnchor, handleCancelAnchorContact } = useAnchorContact();
 
   const hasNotifiedTKInstall = ref(
     localStorageStore.getItem('has_notified_TK_install') === '1',
@@ -126,7 +126,7 @@ export function useOperationColumn(props: {
       },
       globalStore.token,
     );
-    await props.refetch();
+    props.onDeleteAnchorContactRow(anchor);
     ElMessage.success('已跳过');
   }
 
@@ -138,7 +138,7 @@ export function useOperationColumn(props: {
             class="bg-[var(--el-color-primary-dark-2)]"
             size="small"
             type="primary"
-            onClick={() => onContactAnchor(toRaw(rowData))}
+            onClick={() => onContactAnchor(rowData)}
           >
             <ElIcon>
               <StarFilled />

@@ -1,11 +1,13 @@
 import type { QueryObserverResult } from '@tanstack/vue-query';
-import type {
-  DisplayedAnchorItem,
-  GetAnchorListResponseData,
+import {
+  type DisplayedAnchorItem,
+  type GetAnchorListResponseData,
+  OrgMemberStatus,
 } from '@tk-crawler/biz-shared';
 import { RESPONSE_CODE } from '@tk-crawler/shared';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
+import { useGetOrgMemberList } from '../../../../../hooks';
 import { assignTask } from '../../../../../requests';
 import { useGlobalStore } from '../../../../../utils';
 
@@ -19,8 +21,19 @@ export function useTaskAssign(params: UseTaskAssignParams) {
   const globalStore = useGlobalStore();
   const assignTaskDialogVisible = ref(false);
   const taskAnchors = ref<DisplayedAnchorItem[]>([]);
-  function openAssignTaskDialog(item: DisplayedAnchorItem[]) {
-    taskAnchors.value = item;
+  const token = computed(() => globalStore.token);
+  const { data: orgMembers } = useGetOrgMemberList(
+    {
+      pageNum: 1,
+      pageSize: 1000,
+      filter: {
+        status: OrgMemberStatus.normal,
+      },
+    },
+    token,
+  );
+  function openAssignTaskDialog(items: DisplayedAnchorItem[]) {
+    taskAnchors.value = items;
     assignTaskDialogVisible.value = true;
   }
   function onCloseAssignTaskDialog() {
@@ -38,9 +51,19 @@ export function useTaskAssign(params: UseTaskAssignParams) {
     if (result.status_code !== RESPONSE_CODE.SUCCESS) {
       return;
     }
+    if (taskAnchors.value.length <= 1) {
+      // 单个分配的时候，直接更新本地数据
+      taskAnchors.value.forEach(item => {
+        item.assigned_user = orgMembers.value?.list.find(
+          member => member.id === data.orgMemberId,
+        );
+      });
+    } else {
+      // 批量分配的话，刷新数据
+      await params.refetch();
+    }
     onCloseAssignTaskDialog();
     ElMessage.success('主播分配成功');
-    await params.refetch();
   }
   async function handleCancelAssignTask(data: DisplayedAnchorItem) {
     try {
@@ -64,7 +87,7 @@ export function useTaskAssign(params: UseTaskAssignParams) {
     if (result.status_code !== RESPONSE_CODE.SUCCESS) {
       return;
     }
-    await params.refetch();
+    data.assigned_user = null;
     ElMessage.success('主播取消分配成功');
   }
   async function batchCancelAssignTasks(anchors: DisplayedAnchorItem[]) {

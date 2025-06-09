@@ -7,7 +7,7 @@ import type { ComputedRef } from 'vue';
 import { useQuery } from '@tanstack/vue-query';
 import { UseTkAnchorList } from '@tk-crawler/secure';
 import { RESPONSE_CODE } from '@tk-crawler/shared';
-import { toValue } from 'vue';
+import { ref, toValue, watch } from 'vue';
 import { getAnchorList } from '../requests';
 
 export function useGetAnchorList(
@@ -38,7 +38,9 @@ export function useGetAnchorList(
     includeTaskAssign,
     includeAnchorContact,
   ] as const;
-  return useQuery<GetAnchorListResponseData | undefined>({
+  const { data: originalData, ...rest } = useQuery<
+    GetAnchorListResponseData | undefined
+  >({
     queryKey,
     retry: false,
     refetchOnWindowFocus: false,
@@ -67,4 +69,24 @@ export function useGetAnchorList(
     },
     placeholderData: previousData => previousData,
   });
+  // 创建可编辑的本地数据
+  const data = ref<GetAnchorListResponseData | undefined>();
+
+  // 监听原始数据变化，更新可编辑数据
+  watch(
+    originalData,
+    newData => {
+      data.value = newData
+        ? {
+            list: newData.list.map(item => ({ ...item })),
+            total: newData.total,
+          }
+        : undefined;
+    },
+    { immediate: true },
+  );
+  return {
+    data,
+    ...rest,
+  };
 }

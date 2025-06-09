@@ -4,21 +4,19 @@ import { useIsWebSize } from '@tk-crawler/view-shared';
 import { ElButton } from 'element-plus';
 import { computed } from 'vue';
 import { useGlobalStore } from '../../../../utils';
-import { type UseTaskAssignParams, useTaskClaim } from '../hooks';
+import { useTaskClaim } from '../hooks';
 
-export function useMemberOperationColumn(props: {
-  refetch: UseTaskAssignParams['refetch'];
-}) {
+export function useMemberOperationColumn() {
   const globalStore = useGlobalStore();
   const isWeb = useIsWebSize();
 
-  const { handleClaimTask, handleCancelClaimTask } = useTaskClaim(props);
+  const { handleClaimTask, handleCancelClaimTask } = useTaskClaim();
 
   const column = computed<VirtualizedTableColumn<DisplayedAnchorItem>>(() => ({
     key: 'member-operation',
     title: '操作',
     width: isWeb.value ? 130 : 110,
-    fixed: isWeb.value ? ('left' as any) : undefined,
+    fixed: isWeb.value ? 'left' : undefined,
     cellRenderer: ({ rowData }: { rowData: DisplayedAnchorItem }) => (
       <div class="operation-buttons">
         {!rowData.assigned_user ? (

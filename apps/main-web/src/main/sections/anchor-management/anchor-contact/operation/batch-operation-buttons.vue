@@ -2,14 +2,14 @@
 import type { DisplayedAnchorItem } from '@tk-crawler/biz-shared';
 import { ElButton } from 'element-plus';
 import { computed } from 'vue';
-import { useAnchorContact, type UseAnchorContactParams } from '../hooks';
+import { useAnchorContact } from '../hooks';
 
 const props = defineProps<{
-  refetch: UseAnchorContactParams['refetch'];
+  // refetch: UseAnchorContactParams['refetch'];
   selectedRows: DisplayedAnchorItem[];
 }>();
 
-const { handleBatchCancelAnchorContact } = useAnchorContact(props);
+const { handleBatchCancelAnchorContact } = useAnchorContact();
 // const anchorsNotContactedSelected = computed(() =>
 //   props.selectedRows.filter(item => !item.contacted_user),
 // );

@@ -1,7 +1,7 @@
 import type { ClientPrivilege } from '@tk-crawler/biz-shared';
 import type { Context, Next } from 'koa';
 import { hasClientPrivilege } from '@tk-crawler/biz-shared';
-import { BusinessError } from '../utils';
+import { BusinessError } from '../../utils';
 
 export function clientHasPrivilegeMiddleware(options: {
   privilege: ClientPrivilege;

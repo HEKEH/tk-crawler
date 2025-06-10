@@ -1,6 +1,6 @@
 import type { Context, Next } from 'koa';
 import { CLIENT_TOKEN_HEADER_KEY } from '@tk-crawler/biz-shared';
-import { getOrgMemberInfoByToken } from '../services/auth/get-org-member-info-by-token';
+import { getOrgMemberInfoByToken } from '../../services/auth/get-org-member-info-by-token';
 
 /** Token authentication */
 export function clientTokenAuthMiddleware(options?: {

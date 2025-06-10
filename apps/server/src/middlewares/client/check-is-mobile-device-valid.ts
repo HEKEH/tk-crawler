@@ -1,5 +1,5 @@
 import type { Context, Next } from 'koa';
-import { BusinessError } from '../utils';
+import { BusinessError } from '../../utils';
 
 export async function checkIsMobileDeviceValid(ctx: Context, next: Next) {
   const { org_info, device_id: token_device_id } = ctx.clientInfo!;

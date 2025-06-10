@@ -4,8 +4,8 @@ import {
   hasAdminPrivilege,
   SYSTEM_TOKEN_HEADER_KEY,
 } from '@tk-crawler/biz-shared';
-import { getSystemAdminUserInfoByToken } from '../services';
-import { BusinessError } from '../utils';
+import { getSystemAdminUserInfoByToken } from '../../services';
+import { BusinessError } from '../../utils';
 
 /** Token authentication */
 export function systemAdminTokenAuthMiddleware(options?: {

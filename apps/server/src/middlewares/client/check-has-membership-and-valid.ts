@@ -1,6 +1,6 @@
 import type { Context, Next } from 'koa';
 import { OrganizationStatus } from '@tk-crawler/biz-shared';
-import { BusinessError } from '../utils';
+import { BusinessError } from '../../utils';
 
 export async function checkHasMembershipAndValid(ctx: Context, next: Next) {
   const { org_info } = ctx.clientInfo!;

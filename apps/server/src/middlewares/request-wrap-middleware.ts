@@ -39,8 +39,8 @@ export async function requestWrapMiddleware(ctx: Context, next: Next) {
       const body = ctx.body;
       let responseBody: any;
       if ((body as any).$is_whole_response) {
-        const { $is_whole_response, ...rest } = body as any;
-        responseBody = rest;
+        responseBody = { ...(body as any) };
+        delete responseBody.$is_whole_response;
       } else {
         responseBody = {
           status_code: RESPONSE_CODE.SUCCESS,

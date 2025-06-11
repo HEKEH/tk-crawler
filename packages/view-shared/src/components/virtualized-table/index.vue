@@ -1,9 +1,9 @@
 <script setup lang="tsx" generic="T extends Record<string, any>">
+import type { VirtualizedTableColumn } from './types';
 import { ElCheckbox, ElPagination } from 'element-plus';
 import { computed, onMounted, shallowRef, watch } from 'vue';
 import { VxeColumn, VxeTable } from 'vxe-table';
 import { useIsWebSize, useTableMultiSelect } from '../../hooks';
-import type { VirtualizedTableColumn } from './types';
 
 const props = withDefaults(
   defineProps<{
@@ -23,6 +23,7 @@ const props = withDefaults(
       order: 'asc' | 'desc' | null;
     };
     selectedRows?: T[];
+    hidePagination?: boolean;
   }>(),
   {
     loading: false,
@@ -39,6 +40,7 @@ const props = withDefaults(
       order: null,
     }),
     selectedRows: () => [],
+    hidePagination: false,
   },
 );
 
@@ -177,7 +179,7 @@ onMounted(async () => {
       {{ error }}
     </div>
     <div v-show="!error" class="table-main">
-      <div ref="tableContainer" class="table-container">
+      <div class="table-container">
         <VxeTable
           v-bind="$attrs"
           :data="tableData"
@@ -240,7 +242,7 @@ onMounted(async () => {
           </template>
         </VxeTable>
       </div>
-      <div class="pagination-row">
+      <div v-if="!hidePagination" class="pagination-row">
         <ElPagination
           :current-page="pageNum"
           :page-size="pageSize"

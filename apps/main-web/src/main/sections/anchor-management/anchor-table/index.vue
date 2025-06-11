@@ -19,6 +19,7 @@ import config from '../../../config';
 import { useGetAnchorList } from '../../../hooks';
 import { localStorageStore, useGlobalStore } from '../../../utils';
 import useAnchorTableColumns from './anchor-table-columns';
+import TKAnchorTablePagination from './anchor-table-pagination.vue';
 import ExportButton from './export-button/index.vue';
 import {
   type FilterViewValues,
@@ -237,8 +238,14 @@ onKeepAliveActivated(refetch);
       :sort-state="sortState"
       :show-selection="true"
       :selection-column-config="selectionColumnConfig"
+      :hide-pagination="true"
       row-key="id"
       @update:sort-state="handleSortChange"
+    />
+    <TKAnchorTablePagination
+      v-model:page-num="pageNum"
+      v-model:page-size="pageSize"
+      :total="data?.total"
     />
   </div>
   <component

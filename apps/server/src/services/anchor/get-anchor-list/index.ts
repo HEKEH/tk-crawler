@@ -1,14 +1,15 @@
-import type {
-  AnchorRankLeague,
-  Area,
-  DisplayedAnchorItem,
-  GetAnchorListRequest,
-  GetAnchorListResponseData,
-  OrgMemberItem,
-  Region,
-} from '@tk-crawler/biz-shared';
 import type { Logger } from '@tk-crawler/shared';
 import assert from 'node:assert';
+import {
+  ANCHOR_LIST_QUERY_COUNT_LIMIT,
+  type AnchorRankLeague,
+  type Area,
+  type DisplayedAnchorItem,
+  type GetAnchorListRequest,
+  type GetAnchorListResponseData,
+  type OrgMemberItem,
+  type Region,
+} from '@tk-crawler/biz-shared';
 import { mysqlClient } from '@tk-crawler/database';
 import { AnchorInviteCheckTableAlias, AnchorTableAlias } from './constants';
 import { transformAnchorListFilterValuesToRawSql } from './filter';
@@ -103,7 +104,7 @@ export async function getAnchorList(
   const aic = AnchorInviteCheckTableAlias;
 
   // 构建总数查询
-  const countSql = `SELECT COUNT(*) as total_count FROM AnchorInviteCheck ${aic} INNER JOIN Anchor ${a} ON ${a}.user_id = ${aic}.anchor_id ${whereClause}`;
+  const countSql = `SELECT COUNT(*) as total_count FROM (SELECT id FROM AnchorInviteCheck ${aic} INNER JOIN Anchor ${a} ON ${a}.user_id = ${aic}.anchor_id ${whereClause} LIMIT ${ANCHOR_LIST_QUERY_COUNT_LIMIT}) as t`;
 
   // 构建主查询
   const sql = `

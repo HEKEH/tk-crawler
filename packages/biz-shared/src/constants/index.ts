@@ -1,3 +1,4 @@
+export * from './anchor-list';
 export * from './area';
 export * from './client-privileges';
 export * from './guild-cookie-page-help';

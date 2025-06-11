@@ -58,11 +58,12 @@ export function useTaskAssign(params: UseTaskAssignParams) {
           member => member.id === data.orgMemberId,
         );
       });
+      onCloseAssignTaskDialog();
     } else {
+      onCloseAssignTaskDialog();
       // 批量分配的话，刷新数据
       await params.refetch();
     }
-    onCloseAssignTaskDialog();
     ElMessage.success('主播分配成功');
   }
   async function handleCancelAssignTask(data: DisplayedAnchorItem) {

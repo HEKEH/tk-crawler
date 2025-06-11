@@ -1,0 +1,1 @@
+export const ANCHOR_LIST_QUERY_COUNT_LIMIT = 10000;

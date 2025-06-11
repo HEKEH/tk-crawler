@@ -105,10 +105,7 @@ model AnchorInviteCheck {
   checked_by_user LiveAdminUser? @relation(fields: [checked_by], references: [id], onDelete: SetNull)
 
   @@unique([org_id, anchor_id], name: "org_id_anchor_id")
-  @@index([org_id])
-  @@index([checked_result])
-  @@index([checked_at])
-  @@index([area])
+  @@index([org_id, area, checked_result, contacted_by, checked_at(sort: Desc)])
 }
 
 // 机构表

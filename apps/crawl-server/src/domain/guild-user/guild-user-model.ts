@@ -46,7 +46,7 @@ export class GuildUserModel {
   private _currentQueryPerDay: number = 0;
 
   private _hasRequestError: boolean = false;
-  private _systemRequestTimer: NodeJS.Timeout | null = null;
+  private _requestErrorTimer: NodeJS.Timeout | null = null;
 
   private _keepAliveTimer: NodeJS.Timeout | null = null;
 
@@ -163,7 +163,7 @@ export class GuildUserModel {
 
   private _encounterRequestError(stopMinutes: number = 5) {
     this._hasRequestError = true;
-    this._systemRequestTimer = setTimeout(
+    this._requestErrorTimer = setTimeout(
       () => {
         this._hasRequestError = false; // 5 分钟之后恢复
       },
@@ -356,9 +356,9 @@ export class GuildUserModel {
   }
 
   async destroy() {
-    if (this._systemRequestTimer) {
-      clearTimeout(this._systemRequestTimer);
-      this._systemRequestTimer = null;
+    if (this._requestErrorTimer) {
+      clearTimeout(this._requestErrorTimer);
+      this._requestErrorTimer = null;
     }
     if (this._keepAliveTimer) {
       clearTimeout(this._keepAliveTimer);

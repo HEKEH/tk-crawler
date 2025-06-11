@@ -197,7 +197,3 @@ tiktok爬虫爬取的基础信息
 
 - INDEX (org_id)
 - INDEX (anchor_id)
-
-## TODO: 数据分配
-
-将查询到的数据分配给机构，根据机构的地区和上传的Live Admin User数量来分配

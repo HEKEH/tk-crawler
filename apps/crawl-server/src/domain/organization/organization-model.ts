@@ -7,8 +7,11 @@ import type {
 } from '@tk-crawler/biz-shared';
 import type { GuildUserCollectionContext } from '../guild-user/guild-user-collection';
 import { OrganizationStatus } from '@tk-crawler/biz-shared';
+import { isArrayEqual } from '@tk-crawler/shared';
 import dayjs from 'dayjs';
+import { logger } from '../../infra/logger';
 import { GuildUserCollection } from '../guild-user/guild-user-collection';
+import { AreaRunner } from './area-runner';
 
 export class OrganizationModel implements GuildUserCollectionContext {
   readonly id: string;
@@ -17,6 +20,7 @@ export class OrganizationModel implements GuildUserCollectionContext {
   private _membership_expire_at: Date | string | null;
   private _status: OrganizationStatus;
   private _areas: Area[];
+  private _areaRunners: AreaRunner[];
   private _guildUserCollection: GuildUserCollection;
 
   private _anchor_search_policies: OrgAnchorSearchPolicies;
@@ -45,6 +49,10 @@ export class OrganizationModel implements GuildUserCollectionContext {
     return this._anchor_search_policies;
   }
 
+  get validGuildUsers() {
+    return this._guildUserCollection.validGuildUsers;
+  }
+
   // async handleAnchorMessage(message: BroadcastAnchorMessage) {
   //   if (!this.isValid) {
   //     return;
@@ -58,6 +66,8 @@ export class OrganizationModel implements GuildUserCollectionContext {
   }
 
   async destroy() {
+    this._areaRunners.forEach(runner => runner.destroy());
+    this._areaRunners = [];
     await this._guildUserCollection.destroy();
   }
 
@@ -72,7 +82,6 @@ export class OrganizationModel implements GuildUserCollectionContext {
       guild_users?: BroadcastGuildUserMessageData[];
     },
   ) {
-    data.areas !== undefined && (this._areas = data.areas);
     data.name !== undefined && (this._name = data.name);
     data.membership_start_at !== undefined &&
       (this._membership_start_at = data.membership_start_at);
@@ -82,6 +91,36 @@ export class OrganizationModel implements GuildUserCollectionContext {
     data.ignore_commerce_anchor !== undefined &&
       (this._anchor_search_policies.ignore_commerce_anchor =
         data.ignore_commerce_anchor);
+    if (
+      data.areas !== undefined &&
+      !isArrayEqual(this._areas, data.areas, undefined, true)
+    ) {
+      const oldAreas = this._areas;
+      this._areas = data.areas;
+      const oldAreaRunnerMap = this._areaRunners.reduce(
+        (acc, areaRunner) => {
+          acc[areaRunner.area] = areaRunner;
+          return acc;
+        },
+        {} as Record<string, AreaRunner>,
+      );
+      const newAreaRunnerList = this._areas.map(area => {
+        const areaRunner = oldAreaRunnerMap[area];
+        if (areaRunner) {
+          delete oldAreaRunnerMap[area];
+          return areaRunner;
+        }
+        return new AreaRunner(area, this);
+      });
+      this._areaRunners = newAreaRunnerList;
+      logger.info(`[update area runner list]`, {
+        oldAreas,
+        areas: this._areaRunners.map(item => item.area),
+      });
+      Object.values(oldAreaRunnerMap).forEach(areaRunner =>
+        areaRunner.destroy(),
+      );
+    }
     if (data.guild_users) {
       await this._handleGuildUsersChange(data.guild_users);
     }
@@ -102,5 +141,6 @@ export class OrganizationModel implements GuildUserCollectionContext {
       ignore_commerce_anchor: data.ignore_commerce_anchor,
     };
     this._guildUserCollection = new GuildUserCollection(data.guild_users, this);
+    this._areaRunners = data.areas.map(area => new AreaRunner(area, this));
   }
 }

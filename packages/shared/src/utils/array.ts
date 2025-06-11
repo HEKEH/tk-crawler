@@ -2,12 +2,19 @@ export function isArrayEqual(
   a: unknown[],
   b: unknown[],
   compareFn: (a: unknown, b: unknown) => boolean = (a, b) => a === b,
+  needSort: boolean = false,
 ): boolean {
   if (a.length !== b.length) {
     return false;
   }
-  return a.every((item, index) => {
-    return compareFn(item, b[index]);
+  let a_copy = a;
+  let b_copy = b;
+  if (needSort) {
+    a_copy = [...a].sort();
+    b_copy = [...b].sort();
+  }
+  return a_copy.every((item, index) => {
+    return compareFn(item, b_copy[index]);
   });
 }
 

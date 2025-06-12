@@ -8,7 +8,7 @@
   },
   "peerDependencies": {
     "@tk-crawler/secure": "workspace:*",
-    "electron": "^35.2.1",
+    "electron": "^35.5.1",
     "get-system-proxy": "^1.0.0",
     "global-agent": "^3.0.0"
   },

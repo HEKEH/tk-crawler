@@ -1,6 +1,6 @@
 {
   "name": "tk-crawler-admin-client",
-  "version": "0.0.30",
+  "version": "0.0.31",
   "description": "TK Live Crawler Admin Client",
   "author": "Will Ho",
   "main": "dist-electron/main.js",
@@ -31,7 +31,7 @@
     "axios": "^1.7.9",
     "crypto-js": "^4.2.0",
     "dayjs": "^1.11.13",
-    "electron": "^35.2.1",
+    "electron": "^35.5.1",
     "electron-builder": "^26.0.12",
     "element-plus": "^2.9.9",
     "get-system-proxy": "^1.0.0",

@@ -12,6 +12,7 @@ import {
 import zhCn from 'element-plus/es/locale/lang/zh-cn';
 
 import { computed, onBeforeUnmount, onErrorCaptured } from 'vue';
+import { useRouter } from 'vue-router';
 import Homepage from './sections/homepage.vue';
 import { provideGlobalStore } from './utils';
 
@@ -29,6 +30,17 @@ async function initialize() {
   }
 }
 initialize();
+
+const router = useRouter();
+
+async function reload() {
+  try {
+    await globalStore.init();
+    router.go(0);
+  } catch {
+    // 不用处理
+  }
+}
 
 const isLoading = computed(() => {
   return globalStore.isInitializing;
@@ -70,7 +82,7 @@ onErrorCaptured(e => {
       sub-title="请检查网络连接是否正常，或稍后重试"
     >
       <template #extra>
-        <ElButton type="primary" @click="initialize">
+        <ElButton type="primary" @click="reload">
           <ElIcon class="mr-1"><Refresh /></ElIcon>
           重新加载
         </ElButton>

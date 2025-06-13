@@ -83,8 +83,6 @@ export class GuildCookiePageViewGroup {
     this._views = this._views.filter(v => v.key !== viewKey);
     if (this._views.length === 0) {
       this._onAllClose?.();
-    } else {
-      this._views[this._views.length - 1].focus();
     }
   }
 

@@ -24,13 +24,7 @@ import {
   RESPONSE_CODE,
   sleep,
 } from '@tk-crawler/shared';
-import {
-  BaseWindow,
-  globalShortcut,
-  ipcMain,
-  screen,
-  WebContentsView,
-} from 'electron';
+import { BaseWindow, globalShortcut, screen, WebContentsView } from 'electron';
 
 const DEMO_ANCHOR = [
   'amyna.bou.sonko',
@@ -382,46 +376,49 @@ export class GuildCookiePageView implements IView {
     await this._openThirdPartyPageView();
   }
 
-  private _eventNames: Array<string> = [];
+  private _helpPageEventNames: Array<string> = [];
 
-  private _addEventHandler(
+  private _addHelpPageEventHandler(
     event: string,
     handler: (event: Electron.IpcMainInvokeEvent, ...args: any[]) => void,
   ) {
-    this._eventNames.push(event);
-    ipcMain.handle(event, handler);
+    this._helpPageEventNames.push(event);
+    this._helpView!.webContents.ipc.handle(event, handler);
   }
 
-  private _addEventHandlers() {
-    this._addEventHandler(GUILD_COOKIE_PAGE_HELP_EVENTS.GET_STATUS, () => {
-      return this._status;
-    });
-    this._addEventHandler(
+  private _addHelpPageEventHandlers() {
+    this._addHelpPageEventHandler(
+      GUILD_COOKIE_PAGE_HELP_EVENTS.GET_STATUS,
+      () => {
+        return this._status;
+      },
+    );
+    this._addHelpPageEventHandler(
       GUILD_COOKIE_PAGE_HELP_EVENTS.REFRESH_RUNNING_STATUS,
       async () => {
         await this._refreshRunningStatus();
       },
     );
-    this._addEventHandler(
+    this._addHelpPageEventHandler(
       GUILD_COOKIE_PAGE_HELP_EVENTS.GET_RUNNING_STATUS,
       () => {
         return this._runningStatus;
       },
     );
-    this._addEventHandler(
+    this._addHelpPageEventHandler(
       GUILD_COOKIE_PAGE_HELP_EVENTS.RETRY_OPEN_PAGE,
       async () => {
         await initProxy(this._logger);
         await this._reopenThirdPartyPageView();
       },
     );
-    this._addEventHandler(
-      GUILD_COOKIE_PAGE_HELP_EVENTS.BACK_TO_MAIN_VIEW,
-      async () => {
-        await this._onClose();
-      },
-    );
-    this._addEventHandler(
+    // this._addEventHandler(
+    //   GUILD_COOKIE_PAGE_HELP_EVENTS.BACK_TO_MAIN_VIEW,
+    //   async () => {
+    //     await this._onClose();
+    //   },
+    // );
+    this._addHelpPageEventHandler(
       GUILD_COOKIE_PAGE_HELP_EVENTS.CHECK_IF_LOGIN_SUCCESS,
       async () => {
         const isLoginSuccess = await this._checkIfLoginSuccess();
@@ -430,16 +427,22 @@ export class GuildCookiePageView implements IView {
         }
       },
     );
-    this._addEventHandler(GUILD_COOKIE_PAGE_HELP_EVENTS.FINISH, async () => {
-      await this._finishActivate();
-    });
+    this._addHelpPageEventHandler(
+      GUILD_COOKIE_PAGE_HELP_EVENTS.FINISH,
+      async () => {
+        await this._finishActivate();
+      },
+    );
   }
 
-  private _removeEventHandlers() {
-    this._eventNames.forEach(event => {
-      ipcMain.removeHandler(event);
+  private _removeHelpPageEventHandlers() {
+    if (!this._helpView) {
+      return;
+    }
+    this._helpPageEventNames.forEach(event => {
+      this._helpView!.webContents.ipc.removeHandler(event);
     });
-    this._eventNames = [];
+    this._helpPageEventNames = [];
   }
 
   private get isClosed() {
@@ -704,51 +707,47 @@ export class GuildCookiePageView implements IView {
     this._guildUser = guildUser;
   }
 
+  private _getWindowPosition() {
+    const primaryDisplay = screen.getPrimaryDisplay();
+    const { width: screenWidth, height: screenHeight } =
+      primaryDisplay.workAreaSize;
+
+    // Get existing windows
+    const existingWindows = BaseWindow.getAllWindows();
+
+    const offset = 20;
+
+    const width = 1200;
+    const height = 800;
+
+    // Calculate center position
+    const centerX = Math.round((screenWidth - width) / 2); // 1200 is window width
+    const centerY = Math.round((screenHeight - height) / 2); // 800 is window height
+
+    // Calculate new position - start from center, cascade right
+    const x = Math.min(
+      centerX + existingWindows.length * offset,
+      screenWidth - width,
+    );
+    const y = Math.max(centerY - existingWindows.length * offset, 0);
+    return { width, height, x, y };
+  }
+
   async show() {
     try {
-      if (!this._window) {
-        // Get screen bounds
-        const primaryDisplay = screen.getPrimaryDisplay();
-        const { width: screenWidth, height: screenHeight } =
-          primaryDisplay.workAreaSize;
-
-        // Get existing windows
-        const existingWindows = BaseWindow.getAllWindows();
-
-        // Calculate offset (30px seems reasonable)
-        const offset = 30;
-
-        const width = 1200;
-        const height = 800;
-
-        // Calculate center position
-        const centerX = (screenWidth - width) / 2; // 1200 is window width
-        const centerY = (screenHeight - height) / 2; // 800 is window height
-
-        // Calculate new position - start from center, cascade right
-        const x = Math.min(
-          centerX + existingWindows.length * offset,
-          screenWidth - width,
-        );
-        const y = Math.max(centerY - existingWindows.length * offset, 0);
-
-        // Create window with position
-        this._window = new BaseWindow({
-          width,
-          height,
-          title: `账号激活 - ${this._guildUser.username}`,
-          autoHideMenuBar: true,
-          x,
-          y,
-        });
-        this._window.on('close', () => {
-          this.close();
-        });
-      } else {
+      if (this._window) {
         this.focus();
         return;
       }
-      this._addEventHandlers();
+      // Create window with position
+      this._window = new BaseWindow({
+        title: `账号激活 - ${this._guildUser.username}`,
+        autoHideMenuBar: true,
+        ...this._getWindowPosition(),
+      });
+      this._window.on('close', () => {
+        this.close();
+      });
       const onResize = () => {
         this._onResize();
       };
@@ -758,6 +757,7 @@ export class GuildCookiePageView implements IView {
         this._removeResizeListener = null;
       };
       await this._openHelpView();
+      this._addHelpPageEventHandlers();
       await this._openThirdPartyPageView();
       // const result = await this._openThirdPartyPageView();
       // if (result === 'failed') {
@@ -801,7 +801,7 @@ export class GuildCookiePageView implements IView {
     this._clearActivateSuccessInterval();
     this._unregisterDevToolsShortcut();
     this._removeResizeListener?.();
-    this._removeEventHandlers();
+    this._removeHelpPageEventHandlers();
     this._closeThirdPartyPageView();
     this._closeHelpView();
     this._setStatus(GUILD_COOKIE_PAGE_HELP_STATUS.stateless);

@@ -63,6 +63,16 @@ export class ViewsManager {
     this._onClose = props.onClose;
   }
 
+  private async _activateTKGuildUserAccount(
+    params: Omit<StartTKLiveAdminAccountRequest, 'faction_id' | 'area'>,
+  ) {
+    const response = await activateTKGuildUserAccount(params);
+    if (response.status_code === RESPONSE_CODE.SUCCESS) {
+      this._mainView?.refreshGuildUsers();
+    }
+    return response;
+  }
+
   init() {
     this._baseWindow = new BaseWindow({
       width: 1200,
@@ -83,7 +93,8 @@ export class ViewsManager {
       logger,
       isDevelopment,
       helpPageUrl: `${config.mainWebUrl}guild-cookie-page-help.html`,
-      startTKGuildUserAccount: activateTKGuildUserAccount,
+      startTKGuildUserAccount: params =>
+        this._activateTKGuildUserAccount(params),
       onAllClose: () => {
         this._focusBaseWindow();
       },
@@ -125,7 +136,7 @@ export class ViewsManager {
     }
   }
 
-  async openCookiePage(data: { guildUser: TKGuildUser }) {
+  async openCookiePage(data: { guildUser: TKGuildUser | TKGuildUser[] }) {
     await this._cookiePageViewGroup!.openCookiePage(data);
   }
 

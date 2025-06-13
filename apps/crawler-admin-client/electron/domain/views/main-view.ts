@@ -159,6 +159,10 @@ export class MainView implements IView {
     this._view?.webContents.send(CUSTOM_EVENTS.TIKTOK_COOKIE_UPDATED);
   }
 
+  refreshGuildUsers() {
+    this._view?.webContents.send(CUSTOM_EVENTS.REFRESH_GUILD_USERS);
+  }
+
   /** 只是隐藏视图，不销毁 */
   close() {
     this._unregisterDevToolsShortcut();

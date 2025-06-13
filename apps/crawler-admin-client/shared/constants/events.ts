@@ -8,6 +8,7 @@ export const CUSTOM_EVENTS = {
   TIKTOK_COOKIE_OUTDATED: 'tiktok-cookie-outdated',
   // 请求错误，一般是vpn问题
   CRAWL_REQUEST_ERROR: 'crawl-request-error',
+  REFRESH_GUILD_USERS: 'refresh-guild-users',
 };
 
 export const TOKEN_EVENTS = {

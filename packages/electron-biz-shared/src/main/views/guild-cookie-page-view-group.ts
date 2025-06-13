@@ -1,5 +1,5 @@
 import type { TKGuildUser } from '@tk-crawler/biz-shared';
-import type { Logger } from '@tk-crawler/shared';
+import { type Logger, sleep } from '@tk-crawler/shared';
 import {
   getGuildCookiePageViewKey,
   GuildCookiePageView,
@@ -37,12 +37,11 @@ export class GuildCookiePageViewGroup {
     this._iconPath = props.iconPath;
   }
 
-  async openCookiePage(data: { guildUser: TKGuildUser }) {
-    const viewKey = getGuildCookiePageViewKey(data.guildUser);
+  private _createCookiePageView(guildUser: TKGuildUser) {
+    const viewKey = getGuildCookiePageViewKey(guildUser);
     let view = this._views.find(view => view.key === viewKey);
     if (view) {
-      view.focus();
-      return;
+      return view;
     }
     view = new GuildCookiePageView({
       onClose: () => {
@@ -53,10 +52,25 @@ export class GuildCookiePageViewGroup {
       helpPageUrl: this._helpPageUrl,
       iconPath: this._iconPath,
       startTKGuildUserAccount: this._startTKGuildUserAccount,
-      guildUser: data.guildUser,
+      guildUser,
     });
     this._views.push(view);
-    await view.show();
+    return view;
+  }
+
+  async openCookiePage(data: { guildUser: TKGuildUser | TKGuildUser[] }) {
+    if (Array.isArray(data.guildUser)) {
+      const views = data.guildUser.map(guildUser =>
+        this._createCookiePageView(guildUser),
+      );
+      for (const view of views) {
+        await view.show();
+        await sleep(500); // 间隔500ms打开下一个窗口
+      }
+    } else {
+      const view = this._createCookiePageView(data.guildUser);
+      await view.show();
+    }
   }
 
   private _onCloseView(viewKey: string) {

@@ -13,7 +13,6 @@ async function updateStatus() {
     GUILD_COOKIE_PAGE_HELP_EVENTS.GET_STATUS,
   );
 }
-updateStatus();
 const intervalId = setInterval(updateStatus, 100);
 onBeforeUnmount(() => {
   clearInterval(intervalId);

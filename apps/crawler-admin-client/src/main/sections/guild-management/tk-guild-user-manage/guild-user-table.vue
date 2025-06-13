@@ -6,7 +6,9 @@ import type {
 } from '@tk-crawler/biz-shared';
 import type { TableColumnCtx } from 'element-plus';
 import { useQuery } from '@tanstack/vue-query';
+import { CUSTOM_EVENTS } from '@tk-crawler-admin-client/shared';
 import { AREA_NAME_MAP } from '@tk-crawler/biz-shared';
+import { ElectronRenderListeners } from '@tk-crawler/electron-utils/render';
 import { formatDateTime, RESPONSE_CODE } from '@tk-crawler/shared';
 import {
   AreaTooltipIcon,
@@ -17,7 +19,7 @@ import {
   VisiblePassword,
 } from '@tk-crawler/view-shared';
 import { ElButton, ElPagination, ElTable, ElTableColumn } from 'element-plus';
-import { computed, ref } from 'vue';
+import { computed, onBeforeUnmount, ref } from 'vue';
 import { getAllTKGuildUserList } from '../../../requests';
 import { useGlobalStore } from '../../../utils/vue';
 import {
@@ -157,6 +159,17 @@ function onFinishOperation() {
 }
 
 onKeepAliveActivated(refresh);
+
+ElectronRenderListeners.getInstance().on(
+  CUSTOM_EVENTS.REFRESH_GUILD_USERS,
+  refresh,
+);
+onBeforeUnmount(() => {
+  ElectronRenderListeners.getInstance().off(
+    CUSTOM_EVENTS.REFRESH_GUILD_USERS,
+    refresh,
+  );
+});
 </script>
 
 <template>

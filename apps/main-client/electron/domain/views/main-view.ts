@@ -4,6 +4,7 @@ import type { Subscription } from 'rxjs';
 import type { IView } from './types';
 import path from 'node:path';
 import { bindViewToWindowBounds } from '@tk-crawler/electron-utils/main';
+import { CUSTOM_EVENTS } from '@tk-crawler/main-client-shared';
 import { globalShortcut, WebContentsView } from 'electron';
 import config from '../../config';
 import { isDevelopment } from '../../env';
@@ -119,6 +120,10 @@ export class MainView implements IView {
       subscription.unsubscribe();
     });
     this._subscriptions = [];
+  }
+
+  refreshGuildUsers() {
+    this._view?.webContents.send(CUSTOM_EVENTS.REFRESH_GUILD_USERS);
   }
 
   /** 只是隐藏视图，不销毁 */

@@ -72,7 +72,7 @@ export class Services {
       GUILD_COOKIE_PAGE_HELP_EVENTS.GO_TO_GUILD_COOKIE_PAGE,
       async (
         _: Electron.IpcMainInvokeEvent,
-        data: { guildUser: TKGuildUser },
+        data: { guildUser: TKGuildUser | TKGuildUser[] },
       ) => {
         logger.info('[GO TO GUILD COOKIE PAGE]', data);
         return this._viewManager.openCookiePage(data);

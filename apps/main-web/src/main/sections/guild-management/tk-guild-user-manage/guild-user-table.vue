@@ -8,9 +8,16 @@ import type {
   UpdateTKGuildUserResponse,
 } from '@tk-crawler/biz-shared';
 import type { TableColumnCtx } from 'element-plus';
+import type { TKGuildUserRow } from './types';
 // import { InfoFilled } from '@element-plus/icons-vue';
 import { useQuery } from '@tanstack/vue-query';
-import { AREA_NAME_MAP, TIKTOK_LIVE_ADMIN_URL } from '@tk-crawler/biz-shared';
+import {
+  AREA_NAME_MAP,
+  TIKTOK_LIVE_ADMIN_URL,
+  VALID_GUILD_USER_STATUS_LIST,
+} from '@tk-crawler/biz-shared';
+import { ElectronRenderListeners } from '@tk-crawler/electron-utils/render';
+import { CUSTOM_EVENTS } from '@tk-crawler/main-client-shared';
 import { formatDateTime, RESPONSE_CODE } from '@tk-crawler/shared';
 import {
   AreaTooltipIcon,
@@ -29,7 +36,7 @@ import {
   ElTableColumn,
   ElTooltip,
 } from 'element-plus';
-import { computed, ref } from 'vue';
+import { computed, onBeforeUnmount, ref } from 'vue';
 import {
   createTKGuildUser,
   deleteTKGuildUser,
@@ -46,12 +53,11 @@ import TKGuildUserFilter from './guild-user-filter.vue';
 import FormDialog from './guild-user-form-dialog.vue';
 import StartStopButtonColumn from './start-stop-button-column.vue';
 import StatusTag from './status-tag.vue';
+import { onStartGuildUsers } from './utils';
 
 defineOptions({
   name: 'TKGuildUserTable',
 });
-
-type TKGuildUserRow = GetTKGuildUserListResponseData['list'][number];
 
 interface ScopeType {
   row: TKGuildUserRow;
@@ -182,11 +188,18 @@ function handlePageSizeChange(_pageSize: number) {
   pageSize.value = _pageSize;
 }
 
-const selectedRows = ref<TKGuildUser[]>([]);
+const selectedRows = ref<TKGuildUserRow[]>([]);
 
 // 处理选择变化
-function handleSelectionChange(rows: TKGuildUser[]) {
+function handleSelectionChange(rows: TKGuildUserRow[]) {
   selectedRows.value = rows;
+}
+
+async function onBatchStartGuildUsers() {
+  await onStartGuildUsers(
+    selectedRows.value,
+    globalStore.userProfile.hasMembership,
+  );
 }
 
 // // 批量删除
@@ -277,6 +290,17 @@ function onFinishOperation() {
 }
 
 onKeepAliveActivated(refresh);
+
+ElectronRenderListeners.getInstance().on(
+  CUSTOM_EVENTS.REFRESH_GUILD_USERS,
+  refresh,
+);
+onBeforeUnmount(() => {
+  ElectronRenderListeners.getInstance().off(
+    CUSTOM_EVENTS.REFRESH_GUILD_USERS,
+    refresh,
+  );
+});
 </script>
 
 <template>
@@ -321,6 +345,18 @@ onKeepAliveActivated(refresh);
         </ElTooltip>
       </div>
       <div class="right-part">
+        <ElButton
+          type="primary"
+          :disabled="
+            selectedRows.filter(
+              item => !VALID_GUILD_USER_STATUS_LIST.includes(item.status),
+            ).length === 0
+          "
+          size="small"
+          @click="onBatchStartGuildUsers"
+        >
+          批量激活账号
+        </ElButton>
         <!-- <ElButton
           :disabled="!hasSelectedRows"
           type="danger"

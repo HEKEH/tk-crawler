@@ -6,7 +6,7 @@ import type { Subscription } from 'rxjs';
 import type { IView } from './types';
 import path from 'node:path';
 import process from 'node:process';
-import { GuildCookiePageViewOld } from '@tk-crawler/electron-biz-shared/main';
+import { GuildCookiePageViewGroup } from '@tk-crawler/electron-biz-shared/main';
 import { MAIN_APP_PRODUCT_NAME } from '@tk-crawler/main-client-shared';
 import { type MessageCenter, RESPONSE_CODE } from '@tk-crawler/shared';
 import { app, BaseWindow } from 'electron';
@@ -39,7 +39,7 @@ export class ViewsManager {
 
   private _mainView: MainView | null = null;
 
-  private _cookiePageView: GuildCookiePageViewOld | null = null;
+  private _cookiePageViewGroup: GuildCookiePageViewGroup | null = null;
 
   private _messageCenter: MessageCenter;
 
@@ -48,17 +48,26 @@ export class ViewsManager {
   private _onClose: () => void;
 
   private get allViews() {
-    return [this._mainView, this._cookiePageView];
+    return [this._mainView];
   }
 
   private _clearAllViewVariables() {
     this._mainView = null;
-    this._cookiePageView = null;
   }
 
   constructor(props: { messageCenter: MessageCenter; onClose: () => void }) {
     this._messageCenter = props.messageCenter;
     this._onClose = props.onClose;
+  }
+
+  private async _activateTKGuildUserAccount(
+    params: Omit<StartTKLiveAdminAccountRequest, 'faction_id' | 'area'>,
+  ) {
+    const response = await activateTKGuildUserAccount(params);
+    if (response.status_code === RESPONSE_CODE.SUCCESS) {
+      this._mainView?.refreshGuildUsers();
+    }
+    return response;
   }
 
   init() {
@@ -73,15 +82,15 @@ export class ViewsManager {
       parentWindow: this._baseWindow,
       messageCenter: this._messageCenter,
     });
-    this._cookiePageView = new GuildCookiePageViewOld({
-      parentWindow: this._baseWindow,
-      backToMainView: () => {
-        this._toMainView();
-      },
+    this._cookiePageViewGroup = new GuildCookiePageViewGroup({
       logger,
       isDevelopment,
       helpPageUrl: `${config.mainWebUrl}guild-cookie-page-help.html`,
-      startTKGuildUserAccount: activateTKGuildUserAccount,
+      startTKGuildUserAccount: params =>
+        this._activateTKGuildUserAccount(params),
+      onAllClose: () => {
+        this._focusBaseWindow();
+      },
     });
     this._baseWindow.on('close', this._onClose);
   }
@@ -91,6 +100,10 @@ export class ViewsManager {
     this._currentView = this._mainView;
     await this._currentView?.show();
     this._baseWindow?.show();
+  }
+
+  private async _focusBaseWindow() {
+    this._baseWindow?.focus();
   }
 
   private async _toMainView() {
@@ -113,9 +126,8 @@ export class ViewsManager {
     await this._currentView.show();
   }
 
-  async openCookiePage(data: { guildUser: TKGuildUser }) {
-    this._cookiePageView!.setGuildUser(data.guildUser);
-    await this._changeView(this._cookiePageView!);
+  async openCookiePage(data: { guildUser: TKGuildUser | TKGuildUser[] }) {
+    await this._cookiePageViewGroup!.openCookiePage(data);
   }
 
   private _clearSubscriptions() {
@@ -125,15 +137,16 @@ export class ViewsManager {
     this._subscriptions = [];
   }
 
-  close() {
-    this._closeCurrentView();
-    if (this._baseWindow?.isVisible()) {
-      this._baseWindow.close();
-    }
-  }
+  // close() {
+  //   this._closeCurrentView();
+  //   if (this._baseWindow?.isVisible()) {
+  //     this._baseWindow.close();
+  //   }
+  // }
 
   destroy() {
     this._clearSubscriptions();
+    this._cookiePageViewGroup?.destroy();
     this.allViews.forEach(view => {
       view?.destroy();
     });

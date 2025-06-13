@@ -4,6 +4,7 @@ import type {
   TKGuildUser,
 } from '@tk-crawler/biz-shared';
 import type { Logger } from '@tk-crawler/shared';
+import type { BaseWindow } from 'electron';
 import type { IView } from '../types';
 import path from 'node:path';
 import {
@@ -24,13 +25,7 @@ import {
   RESPONSE_CODE,
   sleep,
 } from '@tk-crawler/shared';
-import {
-  BaseWindow,
-  globalShortcut,
-  ipcMain,
-  screen,
-  WebContentsView,
-} from 'electron';
+import { globalShortcut, ipcMain, WebContentsView } from 'electron';
 
 const DEMO_ANCHOR = [
   'amyna.bou.sonko',
@@ -41,18 +36,12 @@ const DEMO_ANCHOR = [
   'iaempresa',
 ];
 
-export type StartTKGuildUserAccount = (
+type StartTKGuildUserAccount = (
   params: Omit<StartTKLiveAdminAccountRequest, 'faction_id' | 'area'>,
 ) => Promise<StartTKLiveAdminAccountResponse>;
 
-export function getGuildCookiePageViewKey(guildUser: TKGuildUser) {
-  return `guild-cookie-page-view-${guildUser.id}`;
-}
-
-export class GuildCookiePageView implements IView {
-  readonly key: string;
-
-  private _window: BaseWindow | null = null;
+export class GuildCookiePageViewOld implements IView {
+  private _parentWindow: BaseWindow;
 
   private _thirdPartyView: WebContentsView | null = null;
 
@@ -64,7 +53,7 @@ export class GuildCookiePageView implements IView {
   private _runningStatus: GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS =
     GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS.stateless;
 
-  private _guildUser: TKGuildUser;
+  private _guildUser: TKGuildUser | undefined;
 
   private _openTurnId: number = 0;
 
@@ -84,24 +73,20 @@ export class GuildCookiePageView implements IView {
 
   private _removeResizeListener: (() => void) | null = null;
 
-  private _onClose: () => void;
+  private _backToMainView: () => void;
 
   private _startTKGuildUserAccount: StartTKGuildUserAccount;
 
-  private _isClosed = false;
-
   constructor(props: {
-    guildUser: TKGuildUser;
-    onClose: () => void;
+    parentWindow: BaseWindow;
+    backToMainView: () => void;
     logger: Logger;
     isDevelopment: boolean;
     helpPageUrl: string;
     startTKGuildUserAccount: StartTKGuildUserAccount;
-    iconPath?: string;
   }) {
-    this._guildUser = props.guildUser;
-    this.key = getGuildCookiePageViewKey(props.guildUser);
-    this._onClose = props.onClose;
+    this._parentWindow = props.parentWindow;
+    this._backToMainView = props.backToMainView;
     this._logger = props.logger;
     this._isDevelopment = props.isDevelopment;
     this._helpPageUrl = props.helpPageUrl;
@@ -142,10 +127,10 @@ export class GuildCookiePageView implements IView {
   }
 
   private _onResize() {
-    if (!this._window || this._window?.isDestroyed()) {
+    if (this._parentWindow.isDestroyed()) {
       return;
     }
-    const bounds = this._window.getBounds();
+    const bounds = this._parentWindow.getBounds();
     if (this._status === GUILD_COOKIE_PAGE_HELP_STATUS.opened) {
       const sidebarWidth = Math.min(GUILD_COOKIE_PAGE_HELP_WIDTH, bounds.width);
       this._helpView?.setBounds({
@@ -173,9 +158,6 @@ export class GuildCookiePageView implements IView {
   }
 
   private async _openHelpView() {
-    if (this._isClosed) {
-      return;
-    }
     if (!this._helpView) {
       this._helpView = new WebContentsView({
         webPreferences: {
@@ -189,9 +171,6 @@ export class GuildCookiePageView implements IView {
         this._helpView.webContents.close();
         throw error;
       }
-      if (this._isClosed || !this._window) {
-        return;
-      }
       if (this._isDevelopment) {
         if (this._helpView?.webContents) {
           this._helpView.webContents.openDevTools({
@@ -199,7 +178,7 @@ export class GuildCookiePageView implements IView {
           });
         }
       }
-      this._window.contentView.addChildView(this._helpView);
+      this._parentWindow.contentView.addChildView(this._helpView);
       this._onResize();
     }
   }
@@ -222,9 +201,6 @@ export class GuildCookiePageView implements IView {
   }
 
   private async _refreshRunningStatus() {
-    if (this._isClosed) {
-      return;
-    }
     if (!this._thirdPartyView) {
       this._runningStatus = GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS.stateless;
       return;
@@ -233,9 +209,6 @@ export class GuildCookiePageView implements IView {
       this._thirdPartyView,
       'button[data-id="login"]',
     );
-    if (this._isClosed) {
-      return;
-    }
     if (loginButton.success) {
       this._runningStatus = GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS.not_login;
       return;
@@ -244,9 +217,6 @@ export class GuildCookiePageView implements IView {
       this._thirdPartyView,
       '.semi-avatar-circle',
     );
-    if (this._isClosed) {
-      return;
-    }
     if (avatarElem.success) {
       this._runningStatus = GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS.logged_in;
       return;
@@ -256,9 +226,6 @@ export class GuildCookiePageView implements IView {
   }
 
   private async _openThirdPartyPageView(): Promise<void> {
-    if (this._isClosed) {
-      return;
-    }
     this._openTurnId++;
     const currentOpenTurnId = this._openTurnId;
     if (!this._guildUser) {
@@ -269,7 +236,7 @@ export class GuildCookiePageView implements IView {
       // 加载目标网页
       const maxRetries = 3;
       let retryCount = 0;
-      while (retryCount < maxRetries && !this._isClosed) {
+      while (retryCount < maxRetries) {
         this._logger.info('Loading TIKTOK_LIVE_ADMIN_URL URL:', {
           retryCount,
         });
@@ -301,7 +268,7 @@ export class GuildCookiePageView implements IView {
         }
       }
       await sleep(2000);
-      if (currentOpenTurnId !== this._openTurnId || this._isClosed) {
+      if (currentOpenTurnId !== this._openTurnId) {
         // 已过时
         return;
       }
@@ -312,7 +279,7 @@ export class GuildCookiePageView implements IView {
           });
         }
       }
-      this._window!.contentView.addChildView(this._thirdPartyView!);
+      this._parentWindow.contentView.addChildView(this._thirdPartyView!);
       this._registerDevToolsShortcut();
       this._setStatus(GUILD_COOKIE_PAGE_HELP_STATUS.opened);
       this._catchBatchCheckAnchorRequestCookies();
@@ -320,8 +287,7 @@ export class GuildCookiePageView implements IView {
       let tryRemainCount = 150; // 15s
       while (
         this._runningStatus === GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS.unknown &&
-        tryRemainCount > 0 &&
-        !this._isClosed
+        tryRemainCount > 0
       ) {
         await sleep(100);
         await this._refreshRunningStatus();
@@ -349,16 +315,13 @@ export class GuildCookiePageView implements IView {
   }
 
   private _closeView(view: WebContentsView) {
-    if (!this._window) {
-      return;
-    }
     const webContents = view.webContents;
     if (webContents && !webContents.isDestroyed()) {
       webContents.debugger.detach();
       webContents.removeAllListeners();
       webContents.close();
       view.removeAllListeners();
-      this._window.contentView.removeChildView(view);
+      this._parentWindow.contentView.removeChildView(view);
     }
   }
 
@@ -418,7 +381,7 @@ export class GuildCookiePageView implements IView {
     this._addEventHandler(
       GUILD_COOKIE_PAGE_HELP_EVENTS.BACK_TO_MAIN_VIEW,
       async () => {
-        await this._onClose();
+        await this._backToMainView();
       },
     );
     this._addEventHandler(
@@ -447,9 +410,6 @@ export class GuildCookiePageView implements IView {
   }
 
   private async _tryLogin() {
-    if (this._isClosed) {
-      return;
-    }
     const webContents = this._thirdPartyView!.webContents;
     if (webContents.isLoading()) {
       await new Promise(resolve => {
@@ -540,9 +500,6 @@ export class GuildCookiePageView implements IView {
   }
 
   private async _handleLoginSuccess() {
-    if (this._isClosed) {
-      return;
-    }
     const webContents = this._thirdPartyView!.webContents;
     const operationResult = await webContents.executeJavaScript(`
       (async function() {
@@ -658,9 +615,6 @@ export class GuildCookiePageView implements IView {
     }
     this._isActivating = true;
     try {
-      if (this._isClosed) {
-        return;
-      }
       const cookies = await this._getCookies();
       this._logger.info('[cookie-page-view] finishActivate cookies:', cookies);
       // if (!token) {
@@ -684,7 +638,7 @@ export class GuildCookiePageView implements IView {
           `保存失败: ${response.message}`,
         );
       } else {
-        this.close();
+        this._backToMainView();
       }
     } catch (error) {
       this._logger.error(
@@ -706,55 +660,13 @@ export class GuildCookiePageView implements IView {
 
   async show() {
     try {
-      if (!this._window) {
-        // Get screen bounds
-        const primaryDisplay = screen.getPrimaryDisplay();
-        const { width: screenWidth, height: screenHeight } =
-          primaryDisplay.workAreaSize;
-
-        // Get existing windows
-        const existingWindows = BaseWindow.getAllWindows();
-
-        // Calculate offset (30px seems reasonable)
-        const offset = 30;
-
-        const width = 1200;
-        const height = 800;
-
-        // Calculate center position
-        const centerX = (screenWidth - width) / 2; // 1200 is window width
-        const centerY = (screenHeight - height) / 2; // 800 is window height
-
-        // Calculate new position - start from center, cascade right
-        const x = Math.min(
-          centerX + existingWindows.length * offset,
-          screenWidth - width,
-        );
-        const y = Math.max(centerY - existingWindows.length * offset, 0);
-
-        // Create window with position
-        this._window = new BaseWindow({
-          width,
-          height,
-          title: `账号激活 - ${this._guildUser.username}`,
-          autoHideMenuBar: true,
-          x,
-          y,
-        });
-        this._window.on('close', () => {
-          this.close();
-        });
-      } else {
-        this.focus();
-        return;
-      }
       this._addEventHandlers();
       const onResize = () => {
         this._onResize();
       };
-      this._window.on('resize', onResize);
+      this._parentWindow.on('resize', onResize);
       this._removeResizeListener = () => {
-        this._window?.removeListener('resize', onResize);
+        this._parentWindow.removeListener('resize', onResize);
         this._removeResizeListener = null;
       };
       await this._openHelpView();
@@ -790,14 +702,7 @@ export class GuildCookiePageView implements IView {
     }
   }
 
-  focus() {
-    this._window?.focus();
-  }
-
   close() {
-    if (this._isClosed || !this._window) {
-      return;
-    }
     this._clearActivateSuccessInterval();
     this._unregisterDevToolsShortcut();
     this._removeResizeListener?.();
@@ -805,11 +710,7 @@ export class GuildCookiePageView implements IView {
     this._closeThirdPartyPageView();
     this._closeHelpView();
     this._setStatus(GUILD_COOKIE_PAGE_HELP_STATUS.stateless);
-    this._window.removeAllListeners();
-    this._window.destroy();
-    this._window = null;
-    this._isClosed = true;
-    this._onClose();
+    this._guildUser = undefined;
   }
 
   destroy() {

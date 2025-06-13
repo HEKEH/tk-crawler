@@ -47,7 +47,7 @@ const isWeb = useIsWebSize();
 
 const tableRef = ref<InstanceType<typeof ElTable>>();
 const pageNum = ref(1);
-const pageSize = ref(20);
+const pageSize = ref(10);
 const sortField = ref<keyof TKGuildUser>();
 const sortOrder = ref<'ascending' | 'descending'>();
 

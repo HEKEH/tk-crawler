@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import type { IpcRendererEvent } from 'electron';
-import { ArrowLeftBold } from '@element-plus/icons-vue';
+// import { ArrowLeftBold } from '@element-plus/icons-vue';
 import {
   GUILD_COOKIE_PAGE_HELP_EVENTS,
   GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS,
 } from '@tk-crawler/biz-shared';
 import { ElectronRenderListeners } from '@tk-crawler/electron-utils/render';
 import { MessageQueue } from '@tk-crawler/view-shared';
-import { ElButton, ElIcon } from 'element-plus';
+// import { ElButton, ElIcon } from 'element-plus';
 import { onBeforeUnmount, ref } from 'vue';
 import LoggedInView from './logged-in-view.vue';
 import NotLoginView from './not-login-view.vue';
@@ -28,11 +28,11 @@ onBeforeUnmount(() => {
   clearInterval(intervalId);
 });
 
-async function backToMainView() {
-  await window.ipcRenderer.invoke(
-    GUILD_COOKIE_PAGE_HELP_EVENTS.BACK_TO_MAIN_VIEW,
-  );
-}
+// async function backToMainView() {
+//   await window.ipcRenderer.invoke(
+//     GUILD_COOKIE_PAGE_HELP_EVENTS.BACK_TO_MAIN_VIEW,
+//   );
+// }
 
 const messageQueue = new MessageQueue({
   messageOffset: 200,
@@ -67,9 +67,9 @@ onBeforeUnmount(() => {
     class="main-view-container"
   >
     <div class="view-header">
-      <ElButton link type="primary" @click="backToMainView">
+      <!-- <ElButton link type="primary" @click="backToMainView">
         <ElIcon><ArrowLeftBold /></ElIcon>返回主页
-      </ElButton>
+      </ElButton> -->
     </div>
     <NotLoginView
       v-if="status === GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS.not_login"

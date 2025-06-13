@@ -6,7 +6,7 @@ import type { Subscription } from 'rxjs';
 import type { IView } from './types';
 import path from 'node:path';
 import process from 'node:process';
-import { GuildCookiePageView } from '@tk-crawler/electron-biz-shared/main';
+import { GuildCookiePageViewOld } from '@tk-crawler/electron-biz-shared/main';
 import { MAIN_APP_PRODUCT_NAME } from '@tk-crawler/main-client-shared';
 import { type MessageCenter, RESPONSE_CODE } from '@tk-crawler/shared';
 import { app, BaseWindow } from 'electron';
@@ -39,7 +39,7 @@ export class ViewsManager {
 
   private _mainView: MainView | null = null;
 
-  private _cookiePageView: GuildCookiePageView | null = null;
+  private _cookiePageView: GuildCookiePageViewOld | null = null;
 
   private _messageCenter: MessageCenter;
 
@@ -73,7 +73,7 @@ export class ViewsManager {
       parentWindow: this._baseWindow,
       messageCenter: this._messageCenter,
     });
-    this._cookiePageView = new GuildCookiePageView({
+    this._cookiePageView = new GuildCookiePageViewOld({
       parentWindow: this._baseWindow,
       backToMainView: () => {
         this._toMainView();

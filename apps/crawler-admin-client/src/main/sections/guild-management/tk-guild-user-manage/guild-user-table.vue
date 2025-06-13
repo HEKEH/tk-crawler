@@ -5,9 +5,13 @@ import type {
   TKGuildUser,
 } from '@tk-crawler/biz-shared';
 import type { TableColumnCtx } from 'element-plus';
+import type { TKGuildUserRow } from './types';
 import { useQuery } from '@tanstack/vue-query';
 import { CUSTOM_EVENTS } from '@tk-crawler-admin-client/shared';
-import { AREA_NAME_MAP } from '@tk-crawler/biz-shared';
+import {
+  AREA_NAME_MAP,
+  VALID_GUILD_USER_STATUS_LIST,
+} from '@tk-crawler/biz-shared';
 import { ElectronRenderListeners } from '@tk-crawler/electron-utils/render';
 import { formatDateTime, RESPONSE_CODE } from '@tk-crawler/shared';
 import {
@@ -30,12 +34,11 @@ import {
 import TKGuildUserFilter from './guild-user-filter.vue';
 import StartStopButtonColumn from './start-stop-button-column.vue';
 import StatusTag from './status-tag.vue';
+import { onStartGuildUsers } from './utils';
 
 defineOptions({
   name: 'TKGuildUserTable',
 });
-
-type TKGuildUserRow = GetAllTKGuildUserListResponseData['list'][number];
 
 interface ScopeType {
   row: TKGuildUserRow;
@@ -104,14 +107,6 @@ const { data, isFetching, refetch } = useQuery<
       throw new Error(response.message);
     }
     return response.data;
-    // return {
-    //   list: new Array(pageSize.value).fill(0).map((_, index) => ({
-    //     ...response.data?.list![0],
-    //     username: `用户${index}`,
-    //     id: index.toString(),
-    //   })),
-    //   total: 200,
-    // };
   },
   placeholderData: previousData => previousData,
 });
@@ -147,11 +142,15 @@ function handlePageSizeChange(_pageSize: number) {
   pageSize.value = _pageSize;
 }
 
-const selectedRows = ref<TKGuildUser[]>([]);
+const selectedRows = ref<TKGuildUserRow[]>([]);
 
 // 处理选择变化
-function handleSelectionChange(rows: TKGuildUser[]) {
+function handleSelectionChange(rows: TKGuildUserRow[]) {
   selectedRows.value = rows;
+}
+
+async function onBatchStartGuildUsers() {
+  await onStartGuildUsers(selectedRows.value);
 }
 
 function onFinishOperation() {
@@ -187,6 +186,18 @@ onBeforeUnmount(() => {
     <div class="header-row">
       <div class="left-part"></div>
       <div class="right-part">
+        <ElButton
+          type="primary"
+          :disabled="
+            selectedRows.filter(
+              item => !VALID_GUILD_USER_STATUS_LIST.includes(item.status),
+            ).length === 0
+          "
+          size="small"
+          @click="onBatchStartGuildUsers"
+        >
+          批量激活账号
+        </ElButton>
         <ElButton type="default" size="small" @click="resetSort">
           重置排序
         </ElButton>

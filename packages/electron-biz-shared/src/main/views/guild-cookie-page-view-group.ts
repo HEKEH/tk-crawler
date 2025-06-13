@@ -1,10 +1,12 @@
 import type { TKGuildUser } from '@tk-crawler/biz-shared';
-import { type Logger, sleep } from '@tk-crawler/shared';
+import { ConcurrentLimitTaskQueue, type Logger } from '@tk-crawler/shared';
 import {
   getGuildCookiePageViewKey,
   GuildCookiePageView,
   type StartTKGuildUserAccount,
 } from './guild-cookie-page-view';
+
+export const viewOpenTaskQueue = new ConcurrentLimitTaskQueue(3);
 
 export class GuildCookiePageViewGroup {
   private _views: GuildCookiePageView[] = [];
@@ -64,8 +66,12 @@ export class GuildCookiePageViewGroup {
         this._createCookiePageView(guildUser),
       );
       for (const view of views) {
-        await view.show();
-        await sleep(500); // 间隔500ms打开下一个窗口
+        viewOpenTaskQueue.addTask(async () => {
+          if (view.isClosed) {
+            return;
+          }
+          await view.show();
+        });
       }
     } else {
       const view = this._createCookiePageView(data.guildUser);

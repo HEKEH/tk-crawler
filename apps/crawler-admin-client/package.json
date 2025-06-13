@@ -1,6 +1,6 @@
 {
   "name": "tk-crawler-admin-client",
-  "version": "0.0.31",
+  "version": "0.0.32",
   "description": "TK Live Crawler Admin Client",
   "author": "Will Ho",
   "main": "dist-electron/main.js",

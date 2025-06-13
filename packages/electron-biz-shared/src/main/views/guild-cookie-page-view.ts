@@ -84,6 +84,10 @@ export class GuildCookiePageView implements IView {
 
   private _isClosed = false;
 
+  get isClosed() {
+    return this._isClosed;
+  }
+
   constructor(props: {
     guildUser: TKGuildUser;
     onClose: () => void;
@@ -443,10 +447,6 @@ export class GuildCookiePageView implements IView {
       this._helpView!.webContents.ipc.removeHandler(event);
     });
     this._helpPageEventNames = [];
-  }
-
-  private get isClosed() {
-    return this._thirdPartyView === null;
   }
 
   private async _tryLogin() {

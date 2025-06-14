@@ -20,9 +20,9 @@ onBeforeUnmount(() => {
 function onRetry() {
   window.ipcRenderer.invoke(GUILD_COOKIE_PAGE_HELP_EVENTS.RETRY_OPEN_PAGE);
 }
-function onBackToMainView() {
-  window.ipcRenderer.invoke(GUILD_COOKIE_PAGE_HELP_EVENTS.BACK_TO_MAIN_VIEW);
-}
+// function onBackToMainView() {
+//   window.ipcRenderer.invoke(GUILD_COOKIE_PAGE_HELP_EVENTS.BACK_TO_MAIN_VIEW);
+// }
 </script>
 
 <template>
@@ -37,14 +37,14 @@ function onBackToMainView() {
       </div>
       <div class="button-app-container">
         <ElButton type="primary" @click="onRetry">点击重试</ElButton>
-        <ElButton @click="onBackToMainView">回到主页</ElButton>
+        <!-- <ElButton @click="onBackToMainView">回到主页</ElButton> -->
       </div>
     </template>
     <template v-else-if="status === GUILD_COOKIE_PAGE_HELP_STATUS.fail">
       <div class="tip-text">打开TK直播公会后台页失败，请检查网络</div>
       <div class="button-app-container">
         <ElButton type="primary" @click="onRetry">点击重试</ElButton>
-        <ElButton @click="onBackToMainView">回到主页</ElButton>
+        <!-- <ElButton @click="onBackToMainView">回到主页</ElButton> -->
       </div>
     </template>
     <MainView v-else-if="status === GUILD_COOKIE_PAGE_HELP_STATUS.opened" />

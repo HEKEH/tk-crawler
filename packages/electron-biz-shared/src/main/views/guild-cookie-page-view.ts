@@ -18,6 +18,7 @@ import {
   findElement,
   initProxy,
   InputEventFunctionStr,
+  loadUrlWithPreconnect,
 } from '@tk-crawler/electron-utils/main';
 import {
   getRandomArrayElement,
@@ -281,11 +282,10 @@ export class GuildCookiePageView implements IView {
           this._thirdPartyView.webContents.setUserAgent(
             'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
           );
-          await this._thirdPartyView.webContents.session.preconnect({
-            url: TIKTOK_LIVE_ADMIN_URL,
-            numSockets: 2,
-          });
-          await this._thirdPartyView.webContents.loadURL(TIKTOK_LIVE_ADMIN_URL);
+          await loadUrlWithPreconnect(
+            this._thirdPartyView,
+            TIKTOK_LIVE_ADMIN_URL,
+          );
           break;
         } catch (error) {
           this._logger.error(

@@ -6,7 +6,10 @@ import {
   LOGIN_TIKTOK_HELP_EVENTS,
   LOGIN_TIKTOK_STATUS,
 } from '@tk-crawler-admin-client/shared';
-import { initProxy } from '@tk-crawler/electron-utils/main';
+import {
+  initProxy,
+  loadUrlWithPreconnect,
+} from '@tk-crawler/electron-utils/main';
 import { ipcMain, WebContentsView } from 'electron';
 import config from '../../config';
 import { isDevelopment } from '../../env';
@@ -202,7 +205,7 @@ export class TKLoginView implements IView {
           'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
         );
         try {
-          await this._tkPageView.webContents.loadURL(TK_LOGIN_PAGE_URL);
+          await loadUrlWithPreconnect(this._tkPageView, TK_LOGIN_PAGE_URL);
           break;
         } catch (error) {
           logger.error('Error loading tiktok login page URL:', error, {

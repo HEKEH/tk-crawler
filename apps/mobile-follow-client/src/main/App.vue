@@ -8,7 +8,9 @@ import { computed, onBeforeUnmount, onErrorCaptured } from 'vue';
 import Homepage from './sections/homepage.vue';
 import NetworkErrorView from './sections/network-error-view/index.vue';
 import { provideGlobalStore } from './utils/vue';
-import { RequestError } from '@tk-crawler/view-shared';
+import { RequestError, useChunkLoadErrorHandle } from '@tk-crawler/view-shared';
+
+useChunkLoadErrorHandle();
 
 const globalStore: GlobalStore = provideGlobalStore();
 

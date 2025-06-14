@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import type GlobalStore from './domain/global-store';
 import { Refresh, Warning } from '@element-plus/icons-vue';
-import { provideVConsole, RequestError } from '@tk-crawler/view-shared';
+import {
+  provideVConsole,
+  RequestError,
+  useChunkLoadErrorHandle,
+} from '@tk-crawler/view-shared';
 import {
   ElButton,
   ElConfigProvider,
@@ -20,6 +24,8 @@ import { provideGlobalStore } from './utils';
 provideVConsole({
   defaultOpen: false,
 });
+
+useChunkLoadErrorHandle();
 
 const globalStore: GlobalStore = provideGlobalStore();
 

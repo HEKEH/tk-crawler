@@ -1,5 +1,6 @@
 export * from './keep-alive';
 export * from './responsive';
+export * from './use-chunk-load-error-handle';
 export * from './use-click-multiple-times';
 export * from './use-is-component-active';
 export * from './use-is-window-active';

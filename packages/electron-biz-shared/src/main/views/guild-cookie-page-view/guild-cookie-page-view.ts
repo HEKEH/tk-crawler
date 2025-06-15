@@ -15,7 +15,6 @@ import {
 } from '@tk-crawler/biz-shared';
 import {
   catchRequestCookies,
-  findElement,
   initProxy,
   loadUrlWithPreconnect,
 } from '@tk-crawler/electron-utils/main';
@@ -54,8 +53,6 @@ export class GuildCookiePageView implements IView {
 
   private _isActivating = false;
 
-  private _activateSuccessCheckInterval: NodeJS.Timeout | null = null;
-
   private _logger: Logger;
 
   private _isDevelopment: boolean;
@@ -93,34 +90,6 @@ export class GuildCookiePageView implements IView {
     this._isDevelopment = props.isDevelopment;
     this._helpPageUrl = props.helpPageUrl;
     this._startTKGuildUserAccount = props.startTKGuildUserAccount;
-  }
-
-  private _clearActivateSuccessInterval() {
-    if (this._activateSuccessCheckInterval) {
-      clearInterval(this._activateSuccessCheckInterval);
-      this._activateSuccessCheckInterval = null;
-    }
-  }
-
-  private _setActivateSuccessCheckInterval() {
-    if (this.isClosed) {
-      return;
-    }
-    if (this._activateSuccessCheckInterval) {
-      return;
-    }
-    this._activateSuccessCheckInterval = setInterval(async () => {
-      this._logger.info('[cookie-page-view] _setActivateSuccessInterval');
-      if (this.isClosed) {
-        this._clearActivateSuccessInterval();
-        return;
-      }
-      const isActivateSuccess = await this._checkIfFinishActivate();
-      if (isActivateSuccess) {
-        this._clearActivateSuccessInterval();
-        this._finishActivate();
-      }
-    }, 100);
   }
 
   private _setStatus(status: GUILD_COOKIE_PAGE_HELP_STATUS) {
@@ -416,21 +385,13 @@ export class GuildCookiePageView implements IView {
     });
     const result = await this._automationStateMachine.execute();
     if (result.success) {
-      this._setActivateSuccessCheckInterval();
+      this._finishActivate();
     } else {
       this._logger.error(
-        '[cookie-page-view] handleLoginSuccess error:',
+        '[cookie-page-view] activateAccount error:',
         result.error,
       );
     }
-  }
-
-  private async _checkIfFinishActivate() {
-    const { success } = await findElement(
-      this._thirdPartyView!,
-      'div[data-id="host-info"] div[data-id="host-table"]',
-    );
-    return success;
   }
 
   private async _getCookies(): Promise<string> {
@@ -604,7 +565,6 @@ export class GuildCookiePageView implements IView {
       return;
     }
     this._destroyAutomationMachine();
-    this._clearActivateSuccessInterval();
     this._unregisterDevToolsShortcut();
     this._removeResizeListener?.();
     this._removeHelpPageEventHandlers();

@@ -18,7 +18,7 @@ enum NotLoggedInAutomationState {
   INPUTTING_LOGIN_FORM = 'not-logged-in:INPUTTING_LOGIN_FORM',
   INPUTTING_LOGIN_FORM_SUCCESS = 'not-logged-in:INPUTTING_LOGIN_FORM_SUCCESS',
   CLICKING_LOGIN_SUBMIT_BUTTON = 'not-logged-in:CLICKING_LOGIN_SUBMIT_BUTTON',
-  COMPLETED = 'not-logged-in:COMPLETED',
+  FINISHED = 'not-logged-in:FINISHED',
 }
 
 enum LoggedInAutomationState {
@@ -29,6 +29,7 @@ enum LoggedInAutomationState {
   INPUTTING_DEMO_ANCHORS = 'logged-in:INPUTTING_DEMO_ANCHORS',
   INPUTTING_DEMO_ANCHORS_SUCCESS = 'logged-in:INPUTTING_DEMO_ANCHORS_SUCCESS',
   CLICKING_NEXT = 'logged-in:CLICKING_NEXT',
+  CLICKING_NEXT_SUCCESS = 'logged-in:CLICKING_NEXT_SUCCESS',
 }
 
 enum CommonAutomationState {
@@ -156,8 +157,8 @@ export class GuildCookiePageAutomationStateMachine {
       return CommonAutomationState.INITIAL;
     }
     if (this._isLoggedIn === GuildCookiePageIsLoggedIn.NOT_LOGGED_IN) {
-      if (this._currentState === NotLoggedInAutomationState.COMPLETED) {
-        return NotLoggedInAutomationState.COMPLETED;
+      if (this._currentState === NotLoggedInAutomationState.FINISHED) {
+        return NotLoggedInAutomationState.FINISHED;
       }
       if (
         this._currentState ===
@@ -181,6 +182,19 @@ export class GuildCookiePageAutomationStateMachine {
         return NotLoggedInAutomationState.INPUTTING_LOGIN_FORM;
       }
       return NotLoggedInAutomationState.CLICKING_LOGIN_BUTTON;
+    }
+    if (this._currentState === LoggedInAutomationState.CLICKING_NEXT_SUCCESS) {
+      if (
+        await this.findElement(
+          'div[data-id="host-info"] div[data-id="host-table"]',
+        )
+      ) {
+        return CommonAutomationState.COMPLETED;
+      }
+      return LoggedInAutomationState.CLICKING_NEXT_SUCCESS;
+    }
+    if (this._currentState === LoggedInAutomationState.CLICKING_NEXT) {
+      return LoggedInAutomationState.CLICKING_NEXT;
     }
     if (
       this._currentState ===
@@ -241,7 +255,7 @@ export class GuildCookiePageAutomationStateMachine {
 
       // 如果状态没有变化，不执行动作
       if (detectedState === this._currentState) {
-        await this.sleep(200);
+        await this.sleep(300);
         return true;
       }
 
@@ -294,7 +308,7 @@ export class GuildCookiePageAutomationStateMachine {
             'button[data-id="login-primary-button"]';
           const res = await this.clickElement(loginSubmitButtonSelector);
           if (res) {
-            this._currentState = NotLoggedInAutomationState.COMPLETED;
+            this._currentState = NotLoggedInAutomationState.FINISHED;
           } else {
             return false;
           }
@@ -341,7 +355,7 @@ export class GuildCookiePageAutomationStateMachine {
           const nextButtonSelector = 'button[data-id="invite-host-next"]';
           const res = await this.clickElement(nextButtonSelector);
           if (res) {
-            this._currentState = CommonAutomationState.COMPLETED;
+            this._currentState = LoggedInAutomationState.CLICKING_NEXT_SUCCESS;
           } else {
             return false;
           }

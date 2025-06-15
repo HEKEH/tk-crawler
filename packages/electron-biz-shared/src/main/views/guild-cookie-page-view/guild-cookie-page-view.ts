@@ -17,12 +17,12 @@ import {
   catchRequestCookies,
   findElement,
   initProxy,
-  InputEventFunctionStr,
   loadUrlWithPreconnect,
 } from '@tk-crawler/electron-utils/main';
-import { RESPONSE_CODE, sleep } from '@tk-crawler/shared';
+import { RESPONSE_CODE } from '@tk-crawler/shared';
 import { BaseWindow, globalShortcut, screen, WebContentsView } from 'electron';
 import { GuildCookiePageAutomationStateMachine } from './automation-state-machine';
+import { GuildCookiePageIsLoggedIn } from './types';
 
 export type StartTKGuildUserAccount = (
   params: Omit<StartTKLiveAdminAccountRequest, 'faction_id' | 'area'>,
@@ -43,9 +43,6 @@ export class GuildCookiePageView implements IView {
 
   private _status: GUILD_COOKIE_PAGE_HELP_STATUS =
     GUILD_COOKIE_PAGE_HELP_STATUS.stateless;
-
-  private _runningStatus: GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS =
-    GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS.stateless;
 
   private _guildUser: TKGuildUser;
 
@@ -211,38 +208,22 @@ export class GuildCookiePageView implements IView {
     );
   }
 
-  private async _refreshRunningStatus() {
+  private _getRunningStatus() {
     if (this._isClosed) {
-      return;
+      return GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS.stateless;
     }
-    if (!this._thirdPartyView) {
-      this._runningStatus = GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS.stateless;
-      return;
+    if (!this._thirdPartyView || !this._automationStateMachine) {
+      return GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS.stateless;
     }
-    const loginButton = await findElement(
-      this._thirdPartyView,
-      'button[data-id="login"]',
-    );
-    if (this._isClosed) {
-      return;
+    const isLoggedIn = this._automationStateMachine.isLoggedIn;
+    if (isLoggedIn === GuildCookiePageIsLoggedIn.NOT_LOGGED_IN) {
+      return GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS.not_login;
     }
-    if (loginButton.success) {
-      this._runningStatus = GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS.not_login;
-      return;
+    if (isLoggedIn === GuildCookiePageIsLoggedIn.LOGGED_IN) {
+      return GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS.logged_in;
     }
-    const avatarElem = await findElement(
-      this._thirdPartyView,
-      '.semi-avatar-circle',
-    );
-    if (this._isClosed) {
-      return;
-    }
-    if (avatarElem.success) {
-      this._runningStatus = GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS.logged_in;
-      return;
-    }
-    this._runningStatus = GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS.unknown;
     this._logger.info('[cookie-page-view] Unknown running status');
+    return GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS.unknown;
   }
 
   private async _openThirdPartyPageView(): Promise<void> {
@@ -293,7 +274,7 @@ export class GuildCookiePageView implements IView {
           }
         }
       }
-      await sleep(2000);
+      // await sleep(2000);
       if (currentOpenTurnId !== this._openTurnId || this._isClosed) {
         // 已过时
         return;
@@ -309,27 +290,7 @@ export class GuildCookiePageView implements IView {
       this._registerDevToolsShortcut();
       this._setStatus(GUILD_COOKIE_PAGE_HELP_STATUS.opened);
       this._catchBatchCheckAnchorRequestCookies();
-      await this._refreshRunningStatus();
-      let tryRemainCount = 150; // 15s
-      while (
-        this._runningStatus === GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS.unknown &&
-        tryRemainCount > 0 &&
-        !this._isClosed
-      ) {
-        await sleep(100);
-        await this._refreshRunningStatus();
-        tryRemainCount--;
-      }
-
-      if (
-        this._runningStatus === GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS.not_login
-      ) {
-        await this._tryLogin();
-      } else if (
-        this._runningStatus === GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS.logged_in
-      ) {
-        await this._handleLoginSuccess();
-      }
+      await this._activateAccount();
     } catch (error) {
       if ((error as any)?.code === 'ERR_CONNECTION_TIMED_OUT') {
         this._logger.error('Open cookie page timeout:', error);
@@ -358,7 +319,6 @@ export class GuildCookiePageView implements IView {
   private _closeThirdPartyPageView() {
     if (this._thirdPartyView) {
       this._closeView(this._thirdPartyView);
-      this._runningStatus = GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS.stateless;
       this._thirdPartyView = null;
     }
   }
@@ -393,15 +353,9 @@ export class GuildCookiePageView implements IView {
       },
     );
     this._addHelpPageEventHandler(
-      GUILD_COOKIE_PAGE_HELP_EVENTS.REFRESH_RUNNING_STATUS,
-      async () => {
-        await this._refreshRunningStatus();
-      },
-    );
-    this._addHelpPageEventHandler(
       GUILD_COOKIE_PAGE_HELP_EVENTS.GET_RUNNING_STATUS,
       () => {
-        return this._runningStatus;
+        return this._getRunningStatus();
       },
     );
     this._addHelpPageEventHandler(
@@ -417,15 +371,6 @@ export class GuildCookiePageView implements IView {
     //     await this._onClose();
     //   },
     // );
-    this._addHelpPageEventHandler(
-      GUILD_COOKIE_PAGE_HELP_EVENTS.CHECK_IF_LOGIN_SUCCESS,
-      async () => {
-        const isLoginSuccess = await this._checkIfLoginSuccess();
-        if (isLoginSuccess) {
-          this._handleLoginSuccess();
-        }
-      },
-    );
     this._addHelpPageEventHandler(
       GUILD_COOKIE_PAGE_HELP_EVENTS.FINISH,
       async () => {
@@ -444,106 +389,30 @@ export class GuildCookiePageView implements IView {
     this._helpPageEventNames = [];
   }
 
-  private async _tryLogin() {
+  private async _activateAccount() {
     if (this._isClosed) {
       return;
     }
-    const webContents = this._thirdPartyView!.webContents;
-    if (webContents.isLoading()) {
-      await new Promise(resolve => {
-        webContents.on('did-finish-load', () => {
-          resolve(true);
-        });
-      });
-    }
-    const { username, password } = this._guildUser!;
-    const operationResult = await webContents.executeJavaScript(`
-      (async function() {
-        function sleep(ms) {
-          return new Promise(resolve => setTimeout(resolve, ms));
-        }
-        ${InputEventFunctionStr}
-        try {
-          const loginButton = document.querySelector('button[data-id="login"]');
-          if (!loginButton) {
-            return { success: false, error: 'login button not found' };
-          }
-          loginButton.click();
-          await sleep(500);
-          const loginForm = document.querySelector('form[data-id="login-form-login-email"]');
-          if (!loginForm) {
-            return { success: false, error: 'login form not found' };
-          }
-          const emailInput = loginForm.querySelector('#email');
-          if (!emailInput) {
-            return { success: false, error: 'email input not found' };
-          }
-          inputEvent(emailInput, '${username}');
-          const passwordInput = loginForm.querySelector('#password');
-          if (!passwordInput) {
-            return { success: false, error: 'password input not found' };
-          }
-          inputEvent(passwordInput, '${password}');
-          const passwordIcon = passwordInput.nextElementSibling?.querySelector('.semi-icon');
-          if (passwordIcon) {
-            passwordIcon.click();
-          }
-
-          await sleep(500);
-
-          const loginSubmitButton = document.querySelector('button[data-id="login-primary-button"]');
-          if (!loginSubmitButton) {
-            return { success: false, error: 'login submit button not found' };
-          }
-          loginSubmitButton.click();
-
-          return { success: true };
-        } catch (error) {
-          return { success: false, error: error.message };
-        }
-      })();
-    `);
-    this._logger.info('[cookie-page-view] tryLogin:', operationResult);
-    if (!operationResult.success) {
-      return;
-    }
-    let isLoginSuccess = false;
-    let tryCount = 0;
-    await sleep(1000);
-    while (
-      !isLoginSuccess &&
-      tryCount < 20 &&
-      this._guildUser &&
-      !this.isClosed
-    ) {
-      isLoginSuccess = await this._checkIfLoginSuccess();
-      tryCount++;
-      if (!isLoginSuccess) {
-        await sleep(1000);
-      }
-    }
-    if (isLoginSuccess) {
-      this._handleLoginSuccess();
-    }
-  }
-
-  private async _checkIfLoginSuccess() {
-    await this._refreshRunningStatus();
-    if (this.isClosed) {
-      return false;
-    }
-    const isLoginSuccess =
-      this._runningStatus === GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS.logged_in;
-    return isLoginSuccess;
-  }
-
-  private async _handleLoginSuccess() {
+    // const webContents = this._thirdPartyView!.webContents;
+    // if (webContents.isLoading()) {
+    //   await new Promise(resolve => {
+    //     webContents.on('did-finish-load', () => {
+    //       resolve(true);
+    //     });
+    //   });
+    // }
     if (this._isClosed) {
       return;
+    }
+    if (this._automationStateMachine) {
+      this._automationStateMachine.destroy();
+      this._automationStateMachine = null;
     }
     this._automationStateMachine = new GuildCookiePageAutomationStateMachine({
       logger: this._logger,
       thirdPartyView: this._thirdPartyView!,
+      username: this._guildUser!.username,
+      password: this._guildUser!.password,
     });
     const result = await this._automationStateMachine.execute();
     if (result.success) {

@@ -1,6 +1,6 @@
 {
   "name": "tk-crawler-main-client",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "description": "TK Crawler Main Client",
   "author": "Will Ho",
   "main": "dist-electron/main.js",

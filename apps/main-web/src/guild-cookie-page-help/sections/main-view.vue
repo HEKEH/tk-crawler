@@ -77,6 +77,12 @@ onBeforeUnmount(() => {
     <LoggedInView
       v-else-if="status === GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS.logged_in"
     />
+    <div
+      v-else-if="status === GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS.unknown"
+      class="tip"
+    >
+      正在检测页面...
+    </div>
   </div>
 </template>
 
@@ -99,6 +105,12 @@ onBeforeUnmount(() => {
     align-items: center;
     font-size: 16px;
     font-weight: bold;
+  }
+  .tip {
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    color: var(--el-color-primary);
   }
 }
 </style>

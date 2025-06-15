@@ -2,6 +2,7 @@ import type { Logger } from '@tk-crawler/shared';
 import type { WebContents, WebContentsView } from 'electron';
 import { InputEventFunctionStr } from '@tk-crawler/electron-utils/main';
 import { getRandomArrayElement } from '@tk-crawler/shared';
+import { GuildCookiePageIsLoggedIn } from './types';
 
 const DEMO_ANCHOR = [
   'amyna.bou.sonko',
@@ -12,18 +13,34 @@ const DEMO_ANCHOR = [
   'iaempresa',
 ];
 
-// 定义自动化状态
-enum AutomationState {
+enum NotLoggedInAutomationState {
+  CLICKING_LOGIN_BUTTON = 'not-logged-in:CLICKING_LOGIN_BUTTON',
+  INPUTTING_LOGIN_FORM = 'not-logged-in:INPUTTING_LOGIN_FORM',
+  INPUTTING_LOGIN_FORM_SUCCESS = 'not-logged-in:INPUTTING_LOGIN_FORM_SUCCESS',
+  CLICKING_LOGIN_SUBMIT_BUTTON = 'not-logged-in:CLICKING_LOGIN_SUBMIT_BUTTON',
+  COMPLETED = 'not-logged-in:COMPLETED',
+}
+
+enum LoggedInAutomationState {
+  INITIAL = 'logged-in:LOGGED_IN_INITIAL',
+  FINDING_NAVIGATION = 'logged-in:FINDING_NAVIGATION',
+  FINDING_SCOUT_TAB = 'logged-in:FINDING_SCOUT_TAB',
+  FINDING_INVITE_BUTTON = 'logged-in:FINDING_INVITE_BUTTON',
+  INPUTTING_DEMO_ANCHORS = 'logged-in:INPUTTING_DEMO_ANCHORS',
+  INPUTTING_DEMO_ANCHORS_SUCCESS = 'logged-in:INPUTTING_DEMO_ANCHORS_SUCCESS',
+  CLICKING_NEXT = 'logged-in:CLICKING_NEXT',
+}
+
+enum CommonAutomationState {
   INITIAL = 'INITIAL',
-  FINDING_NAVIGATION = 'FINDING_NAVIGATION',
-  FINDING_SCOUT_TAB = 'FINDING_SCOUT_TAB',
-  FINDING_INVITE_BUTTON = 'FINDING_INVITE_BUTTON',
-  INPUTTING_DEMO_ANCHORS = 'INPUTTING_DEMO_ANCHORS',
-  INPUTTING_DEMO_ANCHORS_SUCCESS = 'INPUTTING_DEMO_ANCHORS_SUCCESS',
-  CLICKING_NEXT = 'CLICKING_NEXT',
   COMPLETED = 'COMPLETED',
   ERROR = 'ERROR',
 }
+
+type AutomationState =
+  | NotLoggedInAutomationState
+  | LoggedInAutomationState
+  | CommonAutomationState;
 
 // 定义操作结果接口
 interface OperationResult {
@@ -31,26 +48,36 @@ interface OperationResult {
   error?: string;
 }
 
-// 定义DOM元素接口
-interface DOMElement {
-  click: () => void;
-  value?: string;
-  dispatchEvent: (event: Event) => boolean;
-  selector: string;
-}
-
 export class GuildCookiePageAutomationStateMachine {
+  private _username: string;
+  private _password: string;
   private _logger: Logger;
   private _thirdPartyView: WebContentsView;
-  private _currentState: AutomationState = AutomationState.INITIAL;
+
+  private _currentState: AutomationState = CommonAutomationState.INITIAL;
+
+  private _isLoggedIn: GuildCookiePageIsLoggedIn =
+    GuildCookiePageIsLoggedIn.UNKNOWN;
+
   private _retryCount: number = 0;
   private _destroyed: boolean = false;
   private readonly MAX_RETRIES = 3;
   private readonly RETRY_DELAY = 1000;
 
-  constructor(props: { logger: Logger; thirdPartyView: WebContentsView }) {
+  constructor(props: {
+    logger: Logger;
+    thirdPartyView: WebContentsView;
+    username: string;
+    password: string;
+  }) {
     this._logger = props.logger;
     this._thirdPartyView = props.thirdPartyView;
+    this._username = props.username;
+    this._password = props.password;
+  }
+
+  get isLoggedIn() {
+    return this._isLoggedIn;
   }
 
   // 执行JavaScript代码
@@ -63,8 +90,8 @@ export class GuildCookiePageAutomationStateMachine {
   }
 
   // 查找元素
-  private async findElement(selector: string): Promise<DOMElement | null> {
-    const element = await this.executeScript<DOMElement | null>(`
+  private async findElement(selector: string): Promise<object | null> {
+    const element = await this.executeScript<object | null>(`
       (function() {
         const element = document.querySelector('${selector}');
         if (element) {
@@ -110,22 +137,69 @@ export class GuildCookiePageAutomationStateMachine {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
+  private async detectIsLoggedIn(): Promise<GuildCookiePageIsLoggedIn> {
+    const avatarElem = await this.findElement('.semi-avatar-circle');
+    if (avatarElem) {
+      return GuildCookiePageIsLoggedIn.LOGGED_IN;
+    }
+    const loginButton = await this.findElement('button[data-id="login"]');
+    if (loginButton) {
+      return GuildCookiePageIsLoggedIn.NOT_LOGGED_IN;
+    }
+    return GuildCookiePageIsLoggedIn.UNKNOWN;
+  }
+
   // 检测当前状态
   private async detectCurrentState(): Promise<AutomationState> {
-    if (this._currentState === AutomationState.INPUTTING_DEMO_ANCHORS_SUCCESS) {
+    this._isLoggedIn = await this.detectIsLoggedIn();
+    if (this._isLoggedIn === GuildCookiePageIsLoggedIn.UNKNOWN) {
+      return CommonAutomationState.INITIAL;
+    }
+    if (this._isLoggedIn === GuildCookiePageIsLoggedIn.NOT_LOGGED_IN) {
+      if (this._currentState === NotLoggedInAutomationState.COMPLETED) {
+        return NotLoggedInAutomationState.COMPLETED;
+      }
+      if (
+        this._currentState ===
+        NotLoggedInAutomationState.INPUTTING_LOGIN_FORM_SUCCESS
+      ) {
+        const loginSubmitButton = await this.findElement(
+          'button[data-id="login-primary-button"]',
+        );
+        if (loginSubmitButton) {
+          return NotLoggedInAutomationState.CLICKING_LOGIN_SUBMIT_BUTTON;
+        }
+        return NotLoggedInAutomationState.INPUTTING_LOGIN_FORM_SUCCESS;
+      }
+      const emailInput = await this.findElement(
+        'form[data-id="login-form-login-email"] #email',
+      );
+      const passwordInput = await this.findElement(
+        'form[data-id="login-form-login-email"] #password',
+      );
+      if (emailInput && passwordInput) {
+        return NotLoggedInAutomationState.INPUTTING_LOGIN_FORM;
+      }
+      return NotLoggedInAutomationState.CLICKING_LOGIN_BUTTON;
+    }
+    if (
+      this._currentState ===
+      LoggedInAutomationState.INPUTTING_DEMO_ANCHORS_SUCCESS
+    ) {
       const nextButton = await this.findElement(
         'button[data-id="invite-host-next"]',
       );
       if (nextButton) {
-        return AutomationState.CLICKING_NEXT;
+        return LoggedInAutomationState.CLICKING_NEXT;
       }
+      return LoggedInAutomationState.INPUTTING_DEMO_ANCHORS_SUCCESS;
     }
 
     const inviteHostTextArea = await this.findElement(
       'textarea[data-testid="inviteHostTextArea"]',
     );
     if (inviteHostTextArea) {
-      return AutomationState.INPUTTING_DEMO_ANCHORS;
+      return LoggedInAutomationState.INPUTTING_DEMO_ANCHORS;
     }
 
     // 检查是否在邀请主播页面
@@ -133,7 +207,7 @@ export class GuildCookiePageAutomationStateMachine {
       'button[data-id="agent-workplace-add-host"]',
     );
     if (inviteButton) {
-      return AutomationState.FINDING_INVITE_BUTTON;
+      return LoggedInAutomationState.FINDING_INVITE_BUTTON;
     }
 
     // 检查是否在Scout标签页
@@ -141,7 +215,7 @@ export class GuildCookiePageAutomationStateMachine {
       '.semi-tabs[data-id="TodoTaskStageCard2"] #semiTab1',
     );
     if (scoutTab) {
-      return AutomationState.FINDING_SCOUT_TAB;
+      return LoggedInAutomationState.FINDING_SCOUT_TAB;
     }
 
     // 检查是否在导航列表
@@ -149,11 +223,11 @@ export class GuildCookiePageAutomationStateMachine {
       '.semi-navigation-vertical .semi-navigation-list',
     );
     if (navigationList) {
-      return AutomationState.FINDING_NAVIGATION;
+      return LoggedInAutomationState.FINDING_NAVIGATION;
     }
 
     // 如果都不符合，返回初始状态
-    return AutomationState.INITIAL;
+    return LoggedInAutomationState.INITIAL;
   }
 
   // 执行状态动作
@@ -178,52 +252,106 @@ export class GuildCookiePageAutomationStateMachine {
       this._currentState = detectedState;
 
       switch (this._currentState) {
-        case AutomationState.FINDING_NAVIGATION: {
+        case NotLoggedInAutomationState.CLICKING_LOGIN_BUTTON: {
+          const loginButtonSelector = 'button[data-id="login"]';
+          return await this.clickElement(loginButtonSelector);
+        }
+
+        case NotLoggedInAutomationState.INPUTTING_LOGIN_FORM: {
+          const emailInputSelector =
+            'form[data-id="login-form-login-email"] #email';
+          if (!(await this.inputText(emailInputSelector, this._username))) {
+            return false;
+          }
+          const passwordInputSelector =
+            'form[data-id="login-form-login-email"] #password';
+          if (!(await this.inputText(passwordInputSelector, this._password))) {
+            return false;
+          }
+          await this._thirdPartyView.webContents.executeJavaScript(`
+            (async function() {
+              const passwordInput = document.querySelector('form[data-id="login-form-login-email"] #password');
+              if (!passwordInput) {
+                return;
+              }
+              const passwordIcon = passwordInput.nextElementSibling?.querySelector('.semi-icon');
+              if (passwordIcon) {
+                passwordIcon.click();
+              }
+            })();
+          `);
+          this._currentState =
+            NotLoggedInAutomationState.INPUTTING_LOGIN_FORM_SUCCESS;
+          return true;
+        }
+
+        case NotLoggedInAutomationState.INPUTTING_LOGIN_FORM_SUCCESS: {
+          return true;
+        }
+
+        case NotLoggedInAutomationState.CLICKING_LOGIN_SUBMIT_BUTTON: {
+          const loginSubmitButtonSelector =
+            'button[data-id="login-primary-button"]';
+          const res = await this.clickElement(loginSubmitButtonSelector);
+          if (res) {
+            this._currentState = NotLoggedInAutomationState.COMPLETED;
+          } else {
+            return false;
+          }
+          break;
+        }
+
+        case LoggedInAutomationState.FINDING_NAVIGATION: {
           const workspaceButtonSelector =
             '.semi-navigation-vertical .semi-navigation-list > *:first-child';
           return await this.clickElement(workspaceButtonSelector);
         }
 
-        case AutomationState.FINDING_SCOUT_TAB: {
+        case LoggedInAutomationState.FINDING_SCOUT_TAB: {
           const scoutTabSelector =
             '.semi-tabs[data-id="TodoTaskStageCard2"] #semiTab1';
           return await this.clickElement(scoutTabSelector);
         }
 
-        case AutomationState.FINDING_INVITE_BUTTON: {
+        case LoggedInAutomationState.FINDING_INVITE_BUTTON: {
           const inviteButtonSelector =
             'button[data-id="agent-workplace-add-host"]';
           return await this.clickElement(inviteButtonSelector);
         }
 
-        case AutomationState.INPUTTING_DEMO_ANCHORS: {
+        case LoggedInAutomationState.INPUTTING_DEMO_ANCHORS: {
           const res = await this.inputText(
             'textarea[data-testid="inviteHostTextArea"]',
             getRandomArrayElement(DEMO_ANCHOR),
           );
           if (res) {
-            this._currentState = AutomationState.INPUTTING_DEMO_ANCHORS_SUCCESS;
+            this._currentState =
+              LoggedInAutomationState.INPUTTING_DEMO_ANCHORS_SUCCESS;
           } else {
             return false;
           }
           break;
         }
 
-        case AutomationState.CLICKING_NEXT: {
+        case LoggedInAutomationState.INPUTTING_DEMO_ANCHORS_SUCCESS: {
+          return true;
+        }
+
+        case LoggedInAutomationState.CLICKING_NEXT: {
           const nextButtonSelector = 'button[data-id="invite-host-next"]';
           const res = await this.clickElement(nextButtonSelector);
           if (res) {
-            this._currentState = AutomationState.COMPLETED;
+            this._currentState = CommonAutomationState.COMPLETED;
           } else {
             return false;
           }
           break;
         }
 
-        case AutomationState.COMPLETED:
+        case CommonAutomationState.COMPLETED:
           return true;
 
-        case AutomationState.ERROR:
+        case CommonAutomationState.ERROR:
           return false;
       }
 
@@ -242,8 +370,8 @@ export class GuildCookiePageAutomationStateMachine {
 
     while (
       !this._destroyed &&
-      this._currentState !== AutomationState.COMPLETED &&
-      this._currentState !== AutomationState.ERROR
+      this._currentState !== CommonAutomationState.COMPLETED &&
+      this._currentState !== CommonAutomationState.ERROR
     ) {
       const success = await this.executeStateAction();
       if (this._destroyed) {
@@ -253,7 +381,7 @@ export class GuildCookiePageAutomationStateMachine {
       if (!success) {
         this._retryCount++;
         if (this._retryCount >= this.MAX_RETRIES) {
-          this._currentState = AutomationState.ERROR;
+          this._currentState = CommonAutomationState.ERROR;
           return {
             success: false,
             error: `Failed at state: ${this._currentState} after ${this.MAX_RETRIES} retries`,
@@ -274,7 +402,7 @@ export class GuildCookiePageAutomationStateMachine {
     }
 
     const result: OperationResult = {
-      success: this._currentState === AutomationState.COMPLETED,
+      success: this._currentState === CommonAutomationState.COMPLETED,
     };
 
     if (!result.success) {

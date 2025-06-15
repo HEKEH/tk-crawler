@@ -4,7 +4,7 @@ import type {
   TKGuildUser,
 } from '@tk-crawler/biz-shared';
 import type { Logger } from '@tk-crawler/shared';
-import type { IView } from '../types';
+import type { IView } from '../../types';
 import path from 'node:path';
 import {
   GUILD_COOKIE_PAGE_HELP_EVENTS,
@@ -20,21 +20,9 @@ import {
   InputEventFunctionStr,
   loadUrlWithPreconnect,
 } from '@tk-crawler/electron-utils/main';
-import {
-  getRandomArrayElement,
-  RESPONSE_CODE,
-  sleep,
-} from '@tk-crawler/shared';
+import { RESPONSE_CODE, sleep } from '@tk-crawler/shared';
 import { BaseWindow, globalShortcut, screen, WebContentsView } from 'electron';
-
-const DEMO_ANCHOR = [
-  'amyna.bou.sonko',
-  'gracekelly_mcguire',
-  'sephoratshalamukendi',
-  'ainhoatoga0',
-  'kadirlalgerien',
-  'iaempresa',
-];
+import { GuildCookiePageAutomationStateMachine } from './automation-state-machine';
 
 export type StartTKGuildUserAccount = (
   params: Omit<StartTKLiveAdminAccountRequest, 'faction_id' | 'area'>,
@@ -84,6 +72,9 @@ export class GuildCookiePageView implements IView {
   private _startTKGuildUserAccount: StartTKGuildUserAccount;
 
   private _isClosed = false;
+
+  private _automationStateMachine: GuildCookiePageAutomationStateMachine | null =
+    null;
 
   get isClosed() {
     return this._isClosed;
@@ -550,85 +541,19 @@ export class GuildCookiePageView implements IView {
     if (this._isClosed) {
       return;
     }
-    const webContents = this._thirdPartyView!.webContents;
-    const operationResult = await webContents.executeJavaScript(`
-      (async function() {
-        function sleep(ms) {
-          return new Promise(resolve => setTimeout(resolve, ms));
-        }
-        ${InputEventFunctionStr}
-        try {
-          const navigationList = document.querySelector('.semi-navigation-vertical .semi-navigation-list');
-          if (!navigationList) {
-            return { success: false, error: 'navigationList not found' };
-          }
-          const workspaceButton = navigationList.childNodes[0];
-          if (!workspaceButton) {
-            return { success: false, error: 'workspaceButton not found' };
-          }
-          workspaceButton.click();
-          await sleep(1000);
-          let scoutCreatorsTabBar = document.querySelector('.semi-tabs[data-id="TodoTaskStageCard2"] #semiTab1');
-          if (!scoutCreatorsTabBar) {
-            await sleep(1000);
-            scoutCreatorsTabBar = document.querySelector('.semi-tabs[data-id="TodoTaskStageCard2"] #semiTab2');
-          }
-          if (!scoutCreatorsTabBar) {
-            return { success: false, error: 'scoutCreatorsTabBar not found' };
-          }
-          scoutCreatorsTabBar.click();
-          await sleep(500);
-          let inviteCreatorsButton = document.querySelector('button[data-id="agent-workplace-add-host"]');
-          if (!inviteCreatorsButton) {
-            await sleep(1000);
-            inviteCreatorsButton = document.querySelector('button[data-id="agent-workplace-add-host"]');
-          }
-          if (!inviteCreatorsButton) {
-            return { success: false, error: 'inviteCreatorsButton not found' };
-          }
-          inviteCreatorsButton.click();
-          await sleep(1000);
-          const inviteHostTextArea = document.querySelector('textarea[data-testid="inviteHostTextArea"]');
-          if (!inviteHostTextArea) {
-            return { success: false, error: 'inviteHostTextArea not found' };
-          }
-          inputEvent(inviteHostTextArea, '${getRandomArrayElement(DEMO_ANCHOR)}');
-          await sleep(200);
-          const nextButton = document.querySelector('button[data-id="invite-host-next"]');
-          if (!nextButton) {
-            return { success: false, error: 'nextButton not found' };
-          }
-          nextButton.click();
-          await sleep(500);
-
-          return { success: true };
-        } catch (error) {
-          return { success: false, error: error.message };
-        }
-      })();
-    `);
-    this._logger.info(
-      '[cookie-page-view] handleLoginSuccess:',
-      operationResult,
-    );
-    if (!operationResult.success) {
-      return;
+    this._automationStateMachine = new GuildCookiePageAutomationStateMachine({
+      logger: this._logger,
+      thirdPartyView: this._thirdPartyView!,
+    });
+    const result = await this._automationStateMachine.execute();
+    if (result.success) {
+      this._setActivateSuccessCheckInterval();
+    } else {
+      this._logger.error(
+        '[cookie-page-view] handleLoginSuccess error:',
+        result.error,
+      );
     }
-    this._setActivateSuccessCheckInterval();
-    // let isActivateSuccess = false;
-    // let tryCount = 0;
-    // await sleep(1000);
-    // while (!isActivateSuccess && tryCount < 80 && !this.isClosed) {
-    //   isActivateSuccess = await this._checkIfFinishActivate();
-    //   tryCount++;
-    //   if (!isActivateSuccess) {
-    //     await sleep(500);
-    //   }
-    // }
-    // // await sleep(2000);
-    // if (isActivateSuccess) {
-    //   this._finishActivate();
-    // }
   }
 
   private async _checkIfFinishActivate() {
@@ -794,6 +719,13 @@ export class GuildCookiePageView implements IView {
     }
   }
 
+  private _destroyAutomationMachine() {
+    if (this._automationStateMachine) {
+      this._automationStateMachine.destroy();
+      this._automationStateMachine = null;
+    }
+  }
+
   focus() {
     this._window?.focus();
   }
@@ -802,6 +734,7 @@ export class GuildCookiePageView implements IView {
     if (this._isClosed || !this._window) {
       return;
     }
+    this._destroyAutomationMachine();
     this._clearActivateSuccessInterval();
     this._unregisterDevToolsShortcut();
     this._removeResizeListener?.();

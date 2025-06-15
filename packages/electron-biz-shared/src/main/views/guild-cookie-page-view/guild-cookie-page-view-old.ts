@@ -5,7 +5,7 @@ import type {
 } from '@tk-crawler/biz-shared';
 import type { Logger } from '@tk-crawler/shared';
 import type { BaseWindow } from 'electron';
-import type { IView } from '../types';
+import type { IView } from '../../types';
 import path from 'node:path';
 import {
   GUILD_COOKIE_PAGE_HELP_EVENTS,

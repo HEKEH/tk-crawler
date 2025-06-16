@@ -371,6 +371,9 @@ export class GuildCookiePageAutomationStateMachine {
 
       return true;
     } catch (error: unknown) {
+      if (this._destroyed) {
+        return false;
+      }
       const errorMessage =
         error instanceof Error ? error.message : 'Unknown error';
       this._logger.error(`Error in state ${this._currentState}:`, errorMessage);

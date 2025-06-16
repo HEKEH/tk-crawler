@@ -5,7 +5,7 @@ export async function loadUrlWithPreconnect(
   url: string,
   numSockets: number = 3,
 ) {
-  await view.webContents.session.preconnect({
+  view.webContents.session.preconnect({
     url,
     numSockets,
   });

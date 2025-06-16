@@ -502,6 +502,7 @@ export class GuildCookiePageView implements IView {
       this._window = new BaseWindow({
         title: `账号激活 - ${this._guildUser.username}`,
         autoHideMenuBar: true,
+        show: false,
         ...this._getWindowPosition(),
       });
       this._window.on('close', () => {
@@ -515,6 +516,7 @@ export class GuildCookiePageView implements IView {
         this._window?.removeListener('resize', onResize);
         this._removeResizeListener = null;
       };
+      this._window.showInactive();
       await this._openHelpView();
       this._addHelpPageEventHandlers();
       await this._openThirdPartyPageView();

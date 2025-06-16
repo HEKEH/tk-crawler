@@ -259,7 +259,7 @@ export class GuildCookiePageView implements IView {
       this._registerDevToolsShortcut();
       this._setStatus(GUILD_COOKIE_PAGE_HELP_STATUS.opened);
       this._catchBatchCheckAnchorRequestCookies();
-      await this._activateAccount();
+      this._activateAccount();
     } catch (error) {
       if ((error as any)?.code === 'ERR_CONNECTION_TIMED_OUT') {
         this._logger.error('Open cookie page timeout:', error);
@@ -286,6 +286,7 @@ export class GuildCookiePageView implements IView {
   }
 
   private _closeThirdPartyPageView() {
+    this._destroyAutomationMachine();
     if (this._thirdPartyView) {
       this._closeView(this._thirdPartyView);
       this._thirdPartyView = null;
@@ -373,10 +374,7 @@ export class GuildCookiePageView implements IView {
     if (this._isClosed) {
       return;
     }
-    if (this._automationStateMachine) {
-      this._automationStateMachine.destroy();
-      this._automationStateMachine = null;
-    }
+    this._destroyAutomationMachine();
     this._automationStateMachine = new GuildCookiePageAutomationStateMachine({
       logger: this._logger,
       thirdPartyView: this._thirdPartyView!,
@@ -385,7 +383,7 @@ export class GuildCookiePageView implements IView {
     });
     const result = await this._automationStateMachine.execute();
     if (result.success) {
-      this._finishActivate();
+      await this._finishActivate();
     } else {
       this._logger.error(
         '[cookie-page-view] activateAccount error:',

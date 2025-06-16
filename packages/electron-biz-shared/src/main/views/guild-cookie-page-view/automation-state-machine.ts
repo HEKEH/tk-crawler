@@ -82,7 +82,7 @@ export class GuildCookiePageAutomationStateMachine {
   }
 
   // 执行JavaScript代码
-  private async executeScript<T>(
+  private async _executeScript<T>(
     script: string,
     userGesture?: boolean,
   ): Promise<T> {
@@ -91,8 +91,8 @@ export class GuildCookiePageAutomationStateMachine {
   }
 
   // 查找元素
-  private async findElement(selector: string): Promise<object | null> {
-    const element = await this.executeScript<object | null>(`
+  private async _findElement(selector: string): Promise<object | null> {
+    const element = await this._executeScript<object | null>(`
       (function() {
         const element = document.querySelector('${selector}');
         if (element) {
@@ -105,8 +105,8 @@ export class GuildCookiePageAutomationStateMachine {
   }
 
   // 点击元素
-  private async clickElement(selector: string): Promise<boolean> {
-    return await this.executeScript<boolean>(`
+  private async _clickElement(selector: string): Promise<boolean> {
+    return await this._executeScript<boolean>(`
       (function() {
         const element = document.querySelector('${selector}');
         if (element) {
@@ -119,8 +119,8 @@ export class GuildCookiePageAutomationStateMachine {
   }
 
   // 输入文本
-  private async inputText(selector: string, text: string): Promise<boolean> {
-    return await this.executeScript<boolean>(`
+  private async _inputText(selector: string, text: string): Promise<boolean> {
+    return await this._executeScript<boolean>(`
       (function() {
         const element = document.querySelector('${selector}');
         if (element) {
@@ -134,16 +134,16 @@ export class GuildCookiePageAutomationStateMachine {
   }
 
   // 等待函数
-  private async sleep(ms: number): Promise<void> {
+  private async _sleep(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  private async detectIsLoggedIn(): Promise<GuildCookiePageIsLoggedIn> {
-    const avatarElem = await this.findElement('.semi-avatar-circle');
+  private async _detectIsLoggedIn(): Promise<GuildCookiePageIsLoggedIn> {
+    const avatarElem = await this._findElement('.semi-avatar-circle');
     if (avatarElem) {
       return GuildCookiePageIsLoggedIn.LOGGED_IN;
     }
-    const loginButton = await this.findElement('button[data-id="login"]');
+    const loginButton = await this._findElement('button[data-id="login"]');
     if (loginButton) {
       return GuildCookiePageIsLoggedIn.NOT_LOGGED_IN;
     }
@@ -151,8 +151,8 @@ export class GuildCookiePageAutomationStateMachine {
   }
 
   // 检测当前状态
-  private async detectCurrentState(): Promise<AutomationState> {
-    this._isLoggedIn = await this.detectIsLoggedIn();
+  private async _detectCurrentState(): Promise<AutomationState> {
+    this._isLoggedIn = await this._detectIsLoggedIn();
     if (this._isLoggedIn === GuildCookiePageIsLoggedIn.UNKNOWN) {
       return CommonAutomationState.INITIAL;
     }
@@ -164,7 +164,7 @@ export class GuildCookiePageAutomationStateMachine {
         this._currentState ===
         NotLoggedInAutomationState.INPUTTING_LOGIN_FORM_SUCCESS
       ) {
-        const loginSubmitButton = await this.findElement(
+        const loginSubmitButton = await this._findElement(
           'button[data-id="login-primary-button"]',
         );
         if (loginSubmitButton) {
@@ -172,10 +172,10 @@ export class GuildCookiePageAutomationStateMachine {
         }
         return NotLoggedInAutomationState.INPUTTING_LOGIN_FORM_SUCCESS;
       }
-      const emailInput = await this.findElement(
+      const emailInput = await this._findElement(
         'form[data-id="login-form-login-email"] #email',
       );
-      const passwordInput = await this.findElement(
+      const passwordInput = await this._findElement(
         'form[data-id="login-form-login-email"] #password',
       );
       if (emailInput && passwordInput) {
@@ -185,7 +185,7 @@ export class GuildCookiePageAutomationStateMachine {
     }
     if (this._currentState === LoggedInAutomationState.CLICKING_NEXT_SUCCESS) {
       if (
-        await this.findElement(
+        await this._findElement(
           'div[data-id="host-info"] div[data-id="host-table"]',
         )
       ) {
@@ -200,7 +200,7 @@ export class GuildCookiePageAutomationStateMachine {
       this._currentState ===
       LoggedInAutomationState.INPUTTING_DEMO_ANCHORS_SUCCESS
     ) {
-      const nextButton = await this.findElement(
+      const nextButton = await this._findElement(
         'button[data-id="invite-host-next"]',
       );
       if (nextButton) {
@@ -209,7 +209,7 @@ export class GuildCookiePageAutomationStateMachine {
       return LoggedInAutomationState.INPUTTING_DEMO_ANCHORS_SUCCESS;
     }
 
-    const inviteHostTextArea = await this.findElement(
+    const inviteHostTextArea = await this._findElement(
       'textarea[data-testid="inviteHostTextArea"]',
     );
     if (inviteHostTextArea) {
@@ -217,7 +217,7 @@ export class GuildCookiePageAutomationStateMachine {
     }
 
     // 检查是否在邀请主播页面
-    const inviteButton = await this.findElement(
+    const inviteButton = await this._findElement(
       'button[data-id="agent-workplace-add-host"]',
     );
     if (inviteButton) {
@@ -225,7 +225,7 @@ export class GuildCookiePageAutomationStateMachine {
     }
 
     // 检查是否在Scout标签页
-    const scoutTab = await this.findElement(
+    const scoutTab = await this._findElement(
       '.semi-tabs[data-id="TodoTaskStageCard2"] #semiTab1',
     );
     if (scoutTab) {
@@ -233,7 +233,7 @@ export class GuildCookiePageAutomationStateMachine {
     }
 
     // 检查是否在导航列表
-    const navigationList = await this.findElement(
+    const navigationList = await this._findElement(
       '.semi-navigation-vertical .semi-navigation-list',
     );
     if (navigationList) {
@@ -245,17 +245,17 @@ export class GuildCookiePageAutomationStateMachine {
   }
 
   // 执行状态动作
-  private async executeStateAction(): Promise<boolean> {
+  private async _executeStateAction(): Promise<boolean> {
     try {
       // 检测当前状态
-      const detectedState = await this.detectCurrentState();
+      const detectedState = await this._detectCurrentState();
       if (this._destroyed) {
         return false;
       }
 
       // 如果状态没有变化，不执行动作
       if (detectedState === this._currentState) {
-        await this.sleep(300);
+        await this._sleep(300);
         return true;
       }
 
@@ -268,18 +268,18 @@ export class GuildCookiePageAutomationStateMachine {
       switch (this._currentState) {
         case NotLoggedInAutomationState.CLICKING_LOGIN_BUTTON: {
           const loginButtonSelector = 'button[data-id="login"]';
-          return await this.clickElement(loginButtonSelector);
+          return await this._clickElement(loginButtonSelector);
         }
 
         case NotLoggedInAutomationState.INPUTTING_LOGIN_FORM: {
           const emailInputSelector =
             'form[data-id="login-form-login-email"] #email';
-          if (!(await this.inputText(emailInputSelector, this._username))) {
+          if (!(await this._inputText(emailInputSelector, this._username))) {
             return false;
           }
           const passwordInputSelector =
             'form[data-id="login-form-login-email"] #password';
-          if (!(await this.inputText(passwordInputSelector, this._password))) {
+          if (!(await this._inputText(passwordInputSelector, this._password))) {
             return false;
           }
           await this._thirdPartyView.webContents.executeJavaScript(`
@@ -306,7 +306,7 @@ export class GuildCookiePageAutomationStateMachine {
         case NotLoggedInAutomationState.CLICKING_LOGIN_SUBMIT_BUTTON: {
           const loginSubmitButtonSelector =
             'button[data-id="login-primary-button"]';
-          const res = await this.clickElement(loginSubmitButtonSelector);
+          const res = await this._clickElement(loginSubmitButtonSelector);
           if (res) {
             this._currentState = NotLoggedInAutomationState.FINISHED;
           } else {
@@ -318,23 +318,23 @@ export class GuildCookiePageAutomationStateMachine {
         case LoggedInAutomationState.FINDING_NAVIGATION: {
           const workspaceButtonSelector =
             '.semi-navigation-vertical .semi-navigation-list > *:first-child';
-          return await this.clickElement(workspaceButtonSelector);
+          return await this._clickElement(workspaceButtonSelector);
         }
 
         case LoggedInAutomationState.FINDING_SCOUT_TAB: {
           const scoutTabSelector =
             '.semi-tabs[data-id="TodoTaskStageCard2"] #semiTab1';
-          return await this.clickElement(scoutTabSelector);
+          return await this._clickElement(scoutTabSelector);
         }
 
         case LoggedInAutomationState.FINDING_INVITE_BUTTON: {
           const inviteButtonSelector =
             'button[data-id="agent-workplace-add-host"]';
-          return await this.clickElement(inviteButtonSelector);
+          return await this._clickElement(inviteButtonSelector);
         }
 
         case LoggedInAutomationState.INPUTTING_DEMO_ANCHORS: {
-          const res = await this.inputText(
+          const res = await this._inputText(
             'textarea[data-testid="inviteHostTextArea"]',
             getRandomArrayElement(DEMO_ANCHOR),
           );
@@ -353,7 +353,7 @@ export class GuildCookiePageAutomationStateMachine {
 
         case LoggedInAutomationState.CLICKING_NEXT: {
           const nextButtonSelector = 'button[data-id="invite-host-next"]';
-          const res = await this.clickElement(nextButtonSelector);
+          const res = await this._clickElement(nextButtonSelector);
           if (res) {
             this._currentState = LoggedInAutomationState.CLICKING_NEXT_SUCCESS;
           } else {
@@ -374,15 +374,13 @@ export class GuildCookiePageAutomationStateMachine {
       if (this._destroyed) {
         return false;
       }
-      const errorMessage =
-        error instanceof Error ? error.message : 'Unknown error';
-      this._logger.error(`Error in state ${this._currentState}:`, errorMessage);
+      this._logger.error(`Error in state ${this._currentState}:`, error);
       return false;
     }
   }
 
-  // 主执行方法
-  public async execute(): Promise<OperationResult> {
+  /** 主执行方法 */
+  async execute(): Promise<OperationResult> {
     this._logger.info('Starting automation process');
 
     while (
@@ -390,7 +388,7 @@ export class GuildCookiePageAutomationStateMachine {
       this._currentState !== CommonAutomationState.COMPLETED &&
       this._currentState !== CommonAutomationState.ERROR
     ) {
-      const success = await this.executeStateAction();
+      const success = await this._executeStateAction();
       if (this._destroyed) {
         break;
       }
@@ -407,7 +405,7 @@ export class GuildCookiePageAutomationStateMachine {
         this._logger.warn(
           `Retry ${this._retryCount} for state ${this._currentState}`,
         );
-        await this.sleep(this.RETRY_DELAY);
+        await this._sleep(this.RETRY_DELAY);
       }
     }
 

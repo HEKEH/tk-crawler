@@ -6,6 +6,7 @@ import type {
 import type { Logger } from '@tk-crawler/shared';
 import type { IView } from '../../types';
 import path from 'node:path';
+import process from 'node:process';
 import {
   GUILD_COOKIE_PAGE_HELP_EVENTS,
   GUILD_COOKIE_PAGE_HELP_RUNNING_STATUS,
@@ -18,7 +19,11 @@ import {
   initProxy,
   loadUrlWithPreconnect,
 } from '@tk-crawler/electron-utils/main';
-import { RESPONSE_CODE } from '@tk-crawler/shared';
+import {
+  MAC_USER_AGENT,
+  RESPONSE_CODE,
+  WINDOWS_USER_AGENT,
+} from '@tk-crawler/shared';
 import { BaseWindow, globalShortcut, screen, WebContentsView } from 'electron';
 import { GuildCookiePageAutomationStateMachine } from './automation-state-machine';
 import { GuildCookiePageIsLoggedIn } from './types';
@@ -221,7 +226,7 @@ export class GuildCookiePageView implements IView {
             },
           });
           this._thirdPartyView.webContents.setUserAgent(
-            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+            process.platform === 'win32' ? WINDOWS_USER_AGENT : MAC_USER_AGENT,
           );
           await loadUrlWithPreconnect(
             this._thirdPartyView,

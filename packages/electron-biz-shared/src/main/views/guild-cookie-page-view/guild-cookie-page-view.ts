@@ -226,7 +226,7 @@ export class GuildCookiePageView implements IView {
             },
           });
           this._thirdPartyView.webContents.setUserAgent(
-            process.platform === 'win32' ? WINDOWS_USER_AGENT : MAC_USER_AGENT,
+            process.platform === 'win32' ? MAC_USER_AGENT : WINDOWS_USER_AGENT, // 神奇的现象，mac和windows使用自己本身的userAgent无法弹出验证码弹窗，使用对方的userAgent会弹窗
           );
           await loadUrlWithPreconnect(
             this._thirdPartyView,

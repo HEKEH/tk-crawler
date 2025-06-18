@@ -63,7 +63,9 @@ export class GuildCookiePageAutomationStateMachine {
   private _retryCount: number = 0;
   private _destroyed: boolean = false;
   private readonly MAX_RETRIES = 3;
-  private readonly RETRY_DELAY = 1000;
+  private readonly RETRY_DELAY = 500;
+
+  private _stagnationCount: number = 0;
 
   constructor(props: {
     logger: Logger;
@@ -254,10 +256,12 @@ export class GuildCookiePageAutomationStateMachine {
       }
 
       // 如果状态没有变化，不执行动作
-      if (detectedState === this._currentState) {
+      if (detectedState === this._currentState && this._stagnationCount < 5) {
         await this._sleep(300);
+        this._stagnationCount++;
         return true;
       }
+      this._stagnationCount = 0;
 
       if (this._destroyed) {
         return false;
@@ -315,6 +319,10 @@ export class GuildCookiePageAutomationStateMachine {
           break;
         }
 
+        case NotLoggedInAutomationState.FINISHED: {
+          return true;
+        }
+
         case LoggedInAutomationState.FINDING_NAVIGATION: {
           const workspaceButtonSelector =
             '.semi-navigation-vertical .semi-navigation-list > *:first-child';
@@ -362,6 +370,10 @@ export class GuildCookiePageAutomationStateMachine {
           break;
         }
 
+        case LoggedInAutomationState.CLICKING_NEXT_SUCCESS: {
+          return true;
+        }
+
         case CommonAutomationState.COMPLETED:
           return true;
 
@@ -406,6 +418,7 @@ export class GuildCookiePageAutomationStateMachine {
           `Retry ${this._retryCount} for state ${this._currentState}`,
         );
         await this._sleep(this.RETRY_DELAY);
+        this._currentState = CommonAutomationState.INITIAL;
       }
     }
 

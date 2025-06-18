@@ -1,4 +1,5 @@
 import type {
+  AnchorRankLeague,
   Area,
   OrgMemberLoginRequest,
   OrgMemberLoginResponseData,
@@ -100,6 +101,8 @@ export async function orgMemberLogin(
       if_membership_valid:
         Boolean(organization.membership_expire_at) &&
         dayjs(organization.membership_expire_at).isAfter(new Date()),
+      rank_league_limit:
+        organization.rank_league_limit as AnchorRankLeague | null,
     },
     token,
   };

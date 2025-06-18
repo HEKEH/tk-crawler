@@ -1,4 +1,5 @@
 import type {
+  AnchorRankLeague,
   Area,
   OrgMemberUserInfoWithOrgInfo,
 } from '@tk-crawler/biz-shared';
@@ -81,6 +82,7 @@ export async function getOrgMemberInfoByToken(
       ...org,
       areas: orgAreas,
       id: org.id.toString(),
+      rank_league_limit: org.rank_league_limit as AnchorRankLeague | null,
       if_membership_valid:
         Boolean(org.membership_expire_at) &&
         dayjs(org.membership_expire_at).isAfter(new Date()),

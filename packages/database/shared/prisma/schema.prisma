@@ -119,8 +119,11 @@ model Organization {
   created_at             DateTime  @default(now()) @db.DateTime(3)
   updated_at             DateTime  @updatedAt @db.DateTime(3)
   mobile_device_limit    Int       @default(0) @db.UnsignedInt // 自动建联的设备数量限制
-  ignore_commerce_anchor Boolean   @default(true)
-  owner_id               BigInt?   @db.UnsignedBigInt
+  ignore_commerce_anchor Boolean   @default(true) // 采集策略：是否忽略带货主播
+  highest_diamonds_limit Int?      @db.UnsignedInt // 采集策略：最高钻石数下限
+  rank_league_limit      String?   @db.Char(2) // 直播段位：等级联赛下限
+
+  owner_id BigInt? @db.UnsignedBigInt
 
   liveAdminUsers                 LiveAdminUser[]
   orgUsers                       OrgUser[]

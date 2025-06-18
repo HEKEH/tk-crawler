@@ -1,4 +1,5 @@
 import type {
+  AnchorRankLeague,
   GetAutoFollowMobileDeviceListResponseData,
   GetMobileDeviceListRequest,
 } from '@tk-crawler/biz-shared';
@@ -42,6 +43,8 @@ export async function getAutoFollowMobileDeviceList(
           ? {
               ...item.organization,
               id: item.organization.id.toString(),
+              rank_league_limit: item.organization
+                .rank_league_limit as AnchorRankLeague | null,
             }
           : undefined,
       };

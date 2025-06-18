@@ -1,14 +1,20 @@
 <script setup lang="ts">
-import type { OrgAnchorSearchPolicies } from '@tk-crawler/biz-shared';
+import {
+  AnchorRankLeague,
+  type OrgAnchorSearchPolicies,
+} from '@tk-crawler/biz-shared';
 import { RESPONSE_CODE } from '@tk-crawler/shared';
 import { useIsWebSize } from '@tk-crawler/view-shared';
 import {
   ElButton,
   ElForm,
   ElFormItem,
+  ElInputNumber,
   ElMessage,
+  ElOption,
   ElRadio,
   ElRadioGroup,
+  ElSelect,
   type FormInstance,
   type FormRules,
 } from 'element-plus';
@@ -16,7 +22,13 @@ import { reactive, ref } from 'vue';
 import { updateOrgAnchorSearchPolicies } from '../../../requests';
 import { useGlobalStore } from '../../../utils';
 
-export type AnchorSearchPoliciesFormValues = OrgAnchorSearchPolicies;
+export type AnchorSearchPoliciesFormValues = Omit<
+  OrgAnchorSearchPolicies,
+  'rank_league_limit'
+> & {
+  rank_league_limit: AnchorRankLeague | undefined;
+  highest_diamonds_limit: number | undefined;
+};
 
 const formRef = ref<FormInstance>();
 
@@ -25,6 +37,10 @@ const globalStore = useGlobalStore();
 const form = reactive<Partial<AnchorSearchPoliciesFormValues>>({
   ignore_commerce_anchor:
     globalStore.userProfile.orgInfo!.ignore_commerce_anchor,
+  highest_diamonds_limit:
+    globalStore.userProfile.orgInfo!.highest_diamonds_limit ?? undefined,
+  rank_league_limit:
+    globalStore.userProfile.orgInfo!.rank_league_limit ?? undefined,
 });
 
 const rules: FormRules = {
@@ -43,6 +59,8 @@ async function handleSubmit() {
       try {
         const newPolicies: OrgAnchorSearchPolicies = {
           ignore_commerce_anchor: form.ignore_commerce_anchor!,
+          highest_diamonds_limit: form.highest_diamonds_limit ?? null,
+          rank_league_limit: form.rank_league_limit ?? null,
         };
         const res = await updateOrgAnchorSearchPolicies(
           newPolicies,
@@ -62,6 +80,11 @@ async function handleSubmit() {
 }
 
 const isWebSize = useIsWebSize();
+
+const rankLeagueOptions = Object.values(AnchorRankLeague).map(league => ({
+  label: league,
+  value: league,
+}));
 </script>
 
 <template>
@@ -80,6 +103,25 @@ const isWebSize = useIsWebSize();
           <ElRadio :value="false">否</ElRadio>
         </ElRadioGroup>
       </ElFormItem>
+      <ElFormItem label="最高钻石数不小于" prop="highest_diamonds_limit">
+        <ElInputNumber
+          v-model="form.highest_diamonds_limit"
+          :precision="0"
+          :step="50"
+          :min="0"
+          placeholder="请输入"
+        />
+      </ElFormItem>
+      <ElFormItem label="直播段位不低于" prop="rank_league_limit">
+        <ElSelect v-model="form.rank_league_limit" clearable>
+          <ElOption
+            v-for="option in rankLeagueOptions"
+            :key="option.value"
+            :label="option.label"
+            :value="option.value"
+          />
+        </ElSelect>
+      </ElFormItem>
       <ElFormItem>
         <ElButton type="primary" :loading="isLoading" @click="handleSubmit">
           保存
@@ -92,7 +134,7 @@ const isWebSize = useIsWebSize();
 <style scoped>
 .el-form {
   width: 100%;
-  max-width: 500px;
+  max-width: 300px;
   margin: 0 auto;
   .form-item-label {
     display: flex;

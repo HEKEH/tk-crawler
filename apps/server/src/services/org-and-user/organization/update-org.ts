@@ -77,6 +77,8 @@ export async function updateOrg(
         name: data.name,
         status: data.status,
         ignore_commerce_anchor: data.ignore_commerce_anchor,
+        highest_diamonds_limit: data.highest_diamonds_limit,
+        rank_league_limit: data.rank_league_limit,
         areas,
       },
     };

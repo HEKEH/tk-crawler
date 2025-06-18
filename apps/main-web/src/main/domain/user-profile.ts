@@ -70,11 +70,15 @@ export class UserProfile {
   get searchAnchorPolicies(): OrgAnchorSearchPolicies {
     return {
       ignore_commerce_anchor: this.orgInfo!.ignore_commerce_anchor,
+      highest_diamonds_limit: this.orgInfo!.highest_diamonds_limit,
+      rank_league_limit: this.orgInfo!.rank_league_limit,
     };
   }
 
   setSearchAnchorPolicies(policies: OrgAnchorSearchPolicies) {
     this._orgInfo!.ignore_commerce_anchor = policies.ignore_commerce_anchor;
+    this._orgInfo!.highest_diamonds_limit = policies.highest_diamonds_limit;
+    this._orgInfo!.rank_league_limit = policies.rank_league_limit;
   }
 
   clear() {

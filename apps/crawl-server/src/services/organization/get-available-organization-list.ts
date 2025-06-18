@@ -1,4 +1,5 @@
 import type {
+  AnchorRankLeague,
   Area,
   BroadcastGuildUserMessageData,
   BroadcastOrganizationMessageData,
@@ -29,6 +30,8 @@ export async function getAvailableOrganizationList(): Promise<{
       membership_expire_at: true,
       status: true,
       ignore_commerce_anchor: true,
+      highest_diamonds_limit: true,
+      rank_league_limit: true,
       areas: {
         select: {
           area: true,
@@ -67,6 +70,8 @@ export async function getAvailableOrganizationList(): Promise<{
         status: org.status as OrganizationStatus,
         areas: areas.map(item => item.area as Area),
         ignore_commerce_anchor: org.ignore_commerce_anchor,
+        highest_diamonds_limit: org.highest_diamonds_limit,
+        rank_league_limit: org.rank_league_limit as AnchorRankLeague | null,
         guild_users: liveAdminUsers.map(item => ({
           id: item.id.toString(),
           username: item.username,

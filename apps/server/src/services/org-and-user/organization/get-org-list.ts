@@ -1,4 +1,5 @@
 import type {
+  AnchorRankLeague,
   Area,
   GetOrgListFilter,
   GetOrgListRequest,
@@ -107,6 +108,7 @@ export async function getOrgList(
             role_id: org.owner.role_id as SystemAdminUserRole,
           }
         : undefined,
+      rank_league_limit: org.rank_league_limit as AnchorRankLeague | null,
     })),
     total,
   };

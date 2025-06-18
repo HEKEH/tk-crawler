@@ -1,5 +1,6 @@
 import type { Prisma } from '.prisma/client';
 import type { RESPONSE_CODE } from '@tk-crawler/shared';
+import type { AnchorRankLeague } from '../../anchor';
 import type { OrganizationItem, OrganizationStatus } from '../../org-and-user';
 
 export type CreateOrgRequest = Omit<
@@ -11,6 +12,9 @@ export type CreateOrgRequest = Omit<
   | 'mobile_devices'
   | 'owner_id'
   | 'owner'
+  | 'ignore_commerce_anchor'
+  | 'rank_league_limit'
+  | 'highest_diamonds_limit'
 > & {
   membership_days?: number;
 };
@@ -23,6 +27,12 @@ export interface CreateOrgResponse {
 export type UpdateOrgRequest = Partial<
   Omit<CreateOrgRequest, 'membership_days' | 'mobile_device_limit'>
 > &
+  Partial<
+    Pick<
+      OrganizationItem,
+      'ignore_commerce_anchor' | 'rank_league_limit' | 'highest_diamonds_limit'
+    >
+  > &
   Pick<OrganizationItem, 'id'>;
 
 export interface UpdateOrgResponse {
@@ -87,6 +97,8 @@ export interface UpdateOrgAutoFollowDeviceLimitResponse {
 
 export interface OrgAnchorSearchPolicies {
   ignore_commerce_anchor: boolean;
+  highest_diamonds_limit: number | null;
+  rank_league_limit: AnchorRankLeague | null;
 }
 
 export type UpdateOrgAnchorSearchPoliciesRequest = OrgAnchorSearchPolicies;

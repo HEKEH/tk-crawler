@@ -44,12 +44,12 @@ interface QueryResult {
   display_id: string;
   rank_league: string | null;
   region: string;
-  has_commerce_goods: boolean;
-  follower_count: number;
-  audience_count: number;
-  current_diamonds: number;
-  last_diamonds: number;
-  highest_diamonds: number;
+  has_commerce_goods: number;
+  follower_count: bigint;
+  audience_count: bigint | null;
+  current_diamonds: bigint;
+  last_diamonds: bigint | null;
+  highest_diamonds: bigint;
   room_id: bigint;
   level: number;
   tag: string | null;
@@ -188,12 +188,18 @@ SELECT
       invite_type: item.invite_type,
       rank_league: item.rank_league as AnchorRankLeague | null,
       region: item.region as Region,
-      has_commerce_goods: item.has_commerce_goods,
-      follower_count: item.follower_count,
-      audience_count: item.audience_count,
-      current_diamonds: item.current_diamonds,
-      last_diamonds: item.last_diamonds,
-      highest_diamonds: item.highest_diamonds,
+      has_commerce_goods: item.has_commerce_goods === 1,
+      follower_count: Number(item.follower_count),
+      audience_count:
+        item.audience_count !== null && item.audience_count !== undefined
+          ? Number(item.audience_count)
+          : null,
+      current_diamonds: Number(item.current_diamonds),
+      last_diamonds:
+        item.last_diamonds !== null && item.last_diamonds !== undefined
+          ? Number(item.last_diamonds)
+          : null,
+      highest_diamonds: Number(item.highest_diamonds),
       room_id: item.room_id.toString(),
       level: item.level,
       tag: item.tag,

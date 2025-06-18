@@ -1,4 +1,5 @@
 import type {
+  AnchorRankLeague,
   Area,
   MobileOrgMemberLoginRequest,
   MobileOrgMemberLoginResponse,
@@ -65,6 +66,8 @@ export async function mobileOrgMemberLogin(
       areas: organization.areas.map(item => item.area as Area),
       id: organization.id.toString(),
       if_membership_valid: ifMembershipValid,
+      rank_league_limit:
+        organization.rank_league_limit as AnchorRankLeague | null,
     },
     token,
   };

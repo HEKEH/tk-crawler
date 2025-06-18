@@ -1,3 +1,4 @@
+import type { AnchorRankLeague } from './anchor';
 import type { Area } from './area';
 import type { AutoFollowMobileDeviceItem } from './mobile';
 import type { SystemAdminUserInfo } from './request/system';
@@ -40,6 +41,10 @@ export interface OrganizationItem {
 
   /** 是否忽略电商主播，默认为true */
   ignore_commerce_anchor: boolean;
+  /** 最高钻石数下限 */
+  highest_diamonds_limit: number | null;
+  /** 直播段位下限 */
+  rank_league_limit: AnchorRankLeague | null;
   /** 所有者 */
   owner?: Omit<
     SystemAdminUserInfo,

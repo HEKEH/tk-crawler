@@ -91,6 +91,11 @@ export class OrganizationModel implements GuildUserCollectionContext {
     data.ignore_commerce_anchor !== undefined &&
       (this._anchor_search_policies.ignore_commerce_anchor =
         data.ignore_commerce_anchor);
+    data.highest_diamonds_limit !== undefined &&
+      (this._anchor_search_policies.highest_diamonds_limit =
+        data.highest_diamonds_limit);
+    data.rank_league_limit !== undefined &&
+      (this._anchor_search_policies.rank_league_limit = data.rank_league_limit);
     if (
       data.areas !== undefined &&
       !isArrayEqual(this._areas, data.areas, undefined, true)
@@ -139,6 +144,8 @@ export class OrganizationModel implements GuildUserCollectionContext {
     this._areas = data.areas;
     this._anchor_search_policies = {
       ignore_commerce_anchor: data.ignore_commerce_anchor,
+      highest_diamonds_limit: data.highest_diamonds_limit,
+      rank_league_limit: data.rank_league_limit,
     };
     this._guildUserCollection = new GuildUserCollection(data.guild_users, this);
     this._areaRunners = data.areas.map(area => new AreaRunner(area, this));

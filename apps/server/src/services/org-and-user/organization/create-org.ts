@@ -1,4 +1,5 @@
 import type {
+  AnchorRankLeague,
   BroadcastOrganizationCreateMessage,
   CreateOrgRequest,
   SystemAdminUserInfo,
@@ -96,6 +97,8 @@ export async function createOrg(
         status: org.status,
         areas,
         ignore_commerce_anchor: org.ignore_commerce_anchor,
+        highest_diamonds_limit: org.highest_diamonds_limit,
+        rank_league_limit: org.rank_league_limit as AnchorRankLeague | null,
       },
     };
     redisMessageBus.publish(

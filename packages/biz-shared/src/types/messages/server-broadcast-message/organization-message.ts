@@ -9,6 +9,8 @@ export type BroadcastOrganizationMessageData = Pick<
   | 'areas'
   | 'status'
   | 'ignore_commerce_anchor'
+  | 'highest_diamonds_limit'
+  | 'rank_league_limit'
 >;
 
 export interface BroadcastOrganizationUpdateMessage {

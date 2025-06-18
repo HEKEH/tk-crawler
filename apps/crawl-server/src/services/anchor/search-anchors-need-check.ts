@@ -17,11 +17,15 @@ export async function searchAnchorsNeedCheck(data: {
   take: number;
   anchor_search_policies: OrgAnchorSearchPolicies;
 }): Promise<BroadcastAnchorMessageData[]> {
-  logger.info(`[search-anchors-need-check] search anchors need check:`, {
-    org_id: data.org_id,
-    org_name: data.org_name,
-    area: data.area,
-  });
+  logger.info(
+    `[search-anchors-need-check] search anchors need check:`,
+    beautifyJsonStringify({
+      org_id: data.org_id,
+      org_name: data.org_name,
+      area: data.area,
+      anchor_search_policies: data.anchor_search_policies,
+    }),
+  );
   const dbStart = Date.now();
 
   const checkDate = new Date();

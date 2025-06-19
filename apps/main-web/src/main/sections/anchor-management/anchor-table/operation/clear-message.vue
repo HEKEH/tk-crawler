@@ -3,19 +3,21 @@ import { ANCHOR_LIST_QUERY_COUNT_LIMIT } from '@tk-crawler/biz-shared';
 import { ElRadio, ElRadioGroup } from 'element-plus';
 import { ref } from 'vue';
 
+type ClearType = 'all' | 'filtered' | 'notContacted';
+
 interface Props {
-  value: 'all' | 'filtered' | 'notContacted';
+  value: ClearType;
   filteredRowsTotal: number;
 }
 
 const props = defineProps<Props>();
 const emit = defineEmits<{
-  (e: 'update', type: 'all' | 'filtered' | 'notContacted'): void;
+  (e: 'update', type: ClearType): void;
 }>();
 
-const clearType = ref<'all' | 'filtered' | 'notContacted'>(props.value);
+const clearType = ref<ClearType>(props.value);
 
-function handleUpdate(val: 'all' | 'filtered' | 'notContacted') {
+function handleUpdate(val: ClearType) {
   clearType.value = val;
   emit('update', val);
 }

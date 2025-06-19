@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ANCHOR_LIST_QUERY_COUNT_LIMIT } from '@tk-crawler/biz-shared';
 import { ElRadio, ElRadioGroup } from 'element-plus';
 import { ref } from 'vue';
 
@@ -33,7 +34,11 @@ function handleUpdate(val: 'all' | 'filtered' | 'notContacted') {
         清空未建联的主播
       </ElRadio>
       <ElRadio value="filtered" class="radio-item">
-        {{ `清空筛选结果（共 ${filteredRowsTotal} 条记录）` }}
+        {{
+          filteredRowsTotal < ANCHOR_LIST_QUERY_COUNT_LIMIT
+            ? `清空筛选结果（共 ${filteredRowsTotal} 条记录）`
+            : `清空筛选结果（≥ ${ANCHOR_LIST_QUERY_COUNT_LIMIT} 条记录）`
+        }}
       </ElRadio>
       <ElRadio value="all" class="radio-item"> 清空所有数据 </ElRadio>
     </ElRadioGroup>

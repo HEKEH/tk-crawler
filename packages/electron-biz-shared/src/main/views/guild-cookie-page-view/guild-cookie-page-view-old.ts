@@ -243,8 +243,8 @@ export class GuildCookiePageViewOld implements IView {
         try {
           this._thirdPartyView = new WebContentsView({
             webPreferences: {
-              // partition: `persist:tk-live-admin-user-${this._guildUser.username}`,
-              partition: `temp:tk-live-admin-user-${this._guildUser.username}`,
+              partition: `persist:tk-live-admin-user-${this._guildUser.username}`,
+              // partition: `temp:tk-live-admin-user-${this._guildUser.username}`,
             },
           });
           this._thirdPartyView.webContents.setUserAgent(

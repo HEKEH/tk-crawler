@@ -16,6 +16,7 @@ export async function searchAnchorsNeedCheck(data: {
   area: Area;
   take: number;
   anchor_search_policies: OrgAnchorSearchPolicies;
+  only_not_checked?: boolean;
 }): Promise<BroadcastAnchorMessageData[]> {
   logger.info(
     `[search-anchors-need-check] search anchors need check:`,
@@ -52,10 +53,11 @@ export async function searchAnchorsNeedCheck(data: {
       FROM AnchorInviteCheck ic
       WHERE ic.anchor_id = a.user_id
         AND ic.org_id = ${BigInt(data.org_id)}
-        AND (
-          ic.contacted_by IS NOT NULL
-          OR ic.checked_at > ${checkDate}
-        )
+        ${
+          data.only_not_checked
+            ? Prisma.empty
+            : Prisma.sql`AND (ic.contacted_by IS NOT NULL OR ic.checked_at > ${checkDate})`
+        }
     )
   ORDER BY a.updated_at DESC
   LIMIT ${data.take}

@@ -131,6 +131,7 @@ export class AreaRunner {
       }
       if (this._anchorsSearchCache.length < ANCHORS_CHECK_NUMBER) {
         const now = Date.now();
+        const onlyNotChecked = Math.random() < 0.5; // 随机决定是否只搜索未检测过的账号
         let anchors = await searchAnchorsTaskQueue.addTask(() =>
           searchAnchorsNeedCheck({
             area: this._area,
@@ -140,6 +141,7 @@ export class AreaRunner {
             org_id: this._context.orgId,
             org_name: this._context.orgName,
             anchor_search_policies: this._context.anchorSearchPolicies,
+            only_not_checked: onlyNotChecked,
           }),
         );
         logger.info(

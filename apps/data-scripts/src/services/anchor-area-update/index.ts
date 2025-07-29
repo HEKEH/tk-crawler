@@ -13,11 +13,12 @@ const LIMIT = 3000;
 
 export async function updateAnchorArea(region: Region) {
   try {
+    const area = getAreaByRegion(region);
     const result = await mysqlClient.prismaClient.$transaction(
       async tx => {
         const anchors = await tx.anchor.findMany({
           where: {
-            area: null,
+            area: { not: area },
             region,
           },
           select: {
@@ -40,7 +41,6 @@ export async function updateAnchorArea(region: Region) {
             count: 0,
           };
         }
-        const area = getAreaByRegion(region);
         const res = await tx.$executeRaw`
         UPDATE Anchor
         SET area = ${area}

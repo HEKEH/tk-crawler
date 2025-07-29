@@ -53,17 +53,11 @@ const AREA_REGIONS_MAP: Record<Area, Region[]> = {
   // UK+ 区域
   [Area.UK_PLUS]: [
     Region.GB,
-    Region.GR,
-    Region.AL,
     Region.IE,
     Region.LT,
-    Region.RS,
     Region.LV,
     Region.EE,
-    Region.MK,
-    Region.BA,
     Region.MT,
-    Region.ME,
     Region.FO,
     Region.GI,
     Region.JE,
@@ -144,6 +138,18 @@ const AREA_REGIONS_MAP: Record<Area, Region[]> = {
   // SG 区域
   [Area.SG]: [Region.SG],
 
+  // 巴尔干半岛
+  [Area.BK]: [
+    Region.GR,
+    Region.HR,
+    Region.BA,
+    Region.RS,
+    Region.ME,
+    Region.SI,
+    Region.BG,
+    Region.AL,
+  ],
+
   // US+ 区域
   // [Area.US_PLUS]: [Region.US, Region.CA],
 };
@@ -212,6 +218,7 @@ export const AREA_OPTIONS: AreaOption[] = [
   { label: '波兰', value: Area.PL },
   { label: '葡萄牙', value: Area.PT_PLUS },
   { label: '新加坡', value: Area.SG },
+  { label: '巴尔干半岛', value: Area.BK },
   // { label: '美国及加拿大', value: Area.US_PLUS },
 ];
 

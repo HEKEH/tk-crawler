@@ -25,5 +25,6 @@ export enum Area {
   PL = 'PL',
   PT_PLUS = 'PT+',
   SG = 'SG',
+  BK = 'BK',
   // US_PLUS = 'US+',
 }

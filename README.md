@@ -20,14 +20,17 @@ pnpm dev:server
 pnpm dev:crawl-server
 ```
 
-### 启动自动关注助手客户端
+### 启动客户端
+
+管理后台客户端
 
 ```bash
-pnpm dev:mobile-follow-client
+pnpm dev:crawler-admin-client
 ```
 
-### 打包自动关注助手客户端
+用户客户端
 
 ```bash
-pnpm build:mobile-follow-client
+pnpm dev:main-web
+pnpm dev:main-client
 ```
